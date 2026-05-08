@@ -10,13 +10,9 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-10">
                         <div class="am-hero-content" style="color: #fff; text-align: left;">
-                            <h3 style="font-size: 1.5rem; font-weight: 300; margin-bottom: 10px; color: #F2D07F;">Con
-                                Horizontia, empodera tu futuro</h3>
-                            <h1 style="font-size: 3.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 20px;">Aprende
-                                hoy para un<br>futuro más brillante</h1>
-                            <p style="font-size: 1.1rem; margin-bottom: 30px; max-width: 80%;">Alcanza tus metas con
-                                tutorías personalizadas de los mejores expertos. Conéctate con tutores dedicados para
-                                alcanzar el éxito.</p>
+                            <h3 style="font-size: 1.5rem; font-weight: 300; margin-bottom: 10px; color: #F2D07F;">Con Horizontia, empodera tu futuro</h3>
+                            <h1 style="font-size: 3.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 20px;">Aprende hoy para un futuro más brillante</h1>
+                            <p style="font-size: 1.1rem; margin-bottom: 30px; max-width: 80%;">Alcanza tus metas con tutorías personalizadas de los mejores expertos. Conéctate con tutores dedicados para alcanzar el éxito.</p>
                             <a href="#" class="am-btn"
                                 style="background-color: #F2D07F; color: #000; padding: 12px 30px; font-weight: 700; border-radius: 50px; text-decoration: none; display: inline-block;">CONTÁCTANOS</a>
                         </div>
@@ -37,10 +33,8 @@
             <div class="container">
                 <div class="row text-center mb-5">
                     <div class="col-12">
-                        <span style="display: block; font-size: 0.9rem; color: #999; margin-bottom: 5px;">GUÍA PASO A
-                            PASO</span>
-                        <h2 style="font-size: 2.5rem; font-weight: 700; color: #333;">Desbloquea tu potencial con sencillos
-                            pasos</h2>
+                        <span style="display: block; font-size: 0.9rem; color: #999; margin-bottom: 5px;">GUÍA PASO A PASO</span>
+                        <h2 style="font-size: 2.5rem; font-weight: 700; color: #333;">Desbloquea tu potencial con sencillos pasos</h2>
                     </div>
                 </div>
                 <!-- Steps Layout: 3 White Cards + 1 Yellow Card -->
@@ -55,8 +49,7 @@
                                     style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
                             </figure>
                             <h4 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px;">Regístrate</h4>
-                            <p style="color: #666; font-size: 0.95rem; margin-bottom: 20px;">Crea tu cuenta rápidamente para
-                                comenzar a utilizar nuestra plataforma</p>
+                            <p style="color: #666; font-size: 0.95rem; margin-bottom: 20px;">Crea tu cuenta rápidamente para comenzar a utilizar nuestra plataforma</p>
                             <a href="{{ route('register') }}"
                                 style="color: #F2D07F; font-weight: 700; text-decoration: none; border-bottom: 2px solid #F2D07F;">EMPEZAR</a>
                         </div>
@@ -71,8 +64,7 @@
                                     style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
                             </figure>
                             <h4 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px;">Busca un curso</h4>
-                            <p style="color: #666; font-size: 0.95rem; margin-bottom: 20px;">Busca y selecciona el curso de
-                                tu preferencia según tus necesidades</p>
+                            <p style="color: #666; font-size: 0.95rem; margin-bottom: 20px;">Busca y selecciona el curso de tu preferencia según tus necesidades</p>
                             <a href="{{ route('courses.search-courses') }}"
                                 style="color: #F2D07F; font-weight: 700; text-decoration: none; border-bottom: 2px solid #F2D07F;">BUSCAR</a>
                         </div>
@@ -87,8 +79,7 @@
                                     style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
                             </figure>
                             <h4 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px;">Inscríbete</h4>
-                            <p style="color: #666; font-size: 0.95rem; margin-bottom: 20px;">Sigue los pasos para formalizar
-                                tu inscripción en el curso seleccionado</p>
+                            <p style="color: #666; font-size: 0.95rem; margin-bottom: 20px;">Sigue los pasos para formalizar tu inscripción en el curso seleccionado</p>
                             <a href="{{ route('register') }}"
                                 style="color: #F2D07F; font-weight: 700; text-decoration: none; border-bottom: 2px solid #F2D07F;">INSCRIPCIÓN</a>
                         </div>
@@ -101,13 +92,10 @@
                                 style="background: rgba(255,255,255,0.2); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 25px;">
                                 <i class="am-icon-layer-01" style="font-size: 30px; color: #000;"></i>
                             </div>
-                            <h4 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; color: #000;">Comienza tu
-                                viaje</h4>
-                            <p style="color: #000; font-size: 0.95rem; margin-bottom: 25px;">¡Encuentra tu curso y reserva
-                                tu primera sesión hoy mismo!</p>
+                            <h4 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; color: #000;">Comienza tu viaje</h4>
+                            <p style="color: #000; font-size: 0.95rem; margin-bottom: 25px;">¡Encuentra tu curso y reserva tu primera sesión hoy mismo!</p>
                             <a href="{{ url('login') }}" class="am-btn"
-                                style="background-color: #000; color: #fff; padding: 10px 25px; border-radius: 50px; font-size: 0.9rem;">Empieza
-                                ahora!</a>
+                                style="background-color: #000; color: #fff; padding: 10px 25px; border-radius: 50px; font-size: 0.9rem;">Empieza ahora!</a>
                         </div>
                     </div>
                 </div>
@@ -119,49 +107,34 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-6 mb-5 mb-lg-0">
-                        <div class="am-about-content">
-                            <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 30px; color: #000;">Qué ofrece
-                                Horizontia</h2>
-                            <p style="font-size: 1.1rem; margin-bottom: 25px; color: #000;">Nuestra misión es conectar a
-                                estudiantes con tutores de primera categoría para alcanzar sus objetivos académicos y
-                                personales.</p>
-                            <p style="font-size: 1.1rem; margin-bottom: 25px; color: #000;">Ofrecemos una plataforma
-                                intuitiva donde puedes encontrar:</p>
+                        <div class="am-about-content" style="background: rgba(255, 255, 255, 0.9); padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                            <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 30px; color: #000;">Qué ofrece Horizontia</h2>
+                            <p style="font-size: 1.1rem; margin-bottom: 25px; color: #000;">Nuestra misión es conectar a estudiantes con tutores de primera categoría para alcanzar sus objetivos académicos y personales.</p>
+                            <p style="font-size: 1.1rem; margin-bottom: 25px; color: #000;">Ofrecemos una plataforma intuitiva donde puedes encontrar:</p>
                             <ul style="list-style: none; padding: 0; margin-bottom: 30px;">
-                                <li
-                                    style="margin-bottom: 15px; display: flex; align-items: start; color: #000; font-weight: 500;">
-                                    <i class="am-icon-check-circle-01"
-                                        style="color: #000; margin-right: 15px; font-size: 1.2rem;"></i>
+                                <li style="margin-bottom: 15px; display: flex; align-items: start; color: #000; font-weight: 500;">
+                                    <i class="am-icon-check-circle-01" style="color: #000; margin-right: 15px; font-size: 1.2rem;"></i>
                                     <div>
                                         <strong>Tutorías 1 a 1:</strong>
-                                        <p style="margin: 0; font-size: 0.95rem;">Sesiones personalizadas adaptadas a tu
-                                            ritmo.</p>
+                                        <p style="margin: 0; font-size: 0.95rem;">Sesiones personalizadas adaptadas a tu ritmo.</p>
                                     </div>
                                 </li>
-                                <li
-                                    style="margin-bottom: 15px; display: flex; align-items: start; color: #000; font-weight: 500;">
-                                    <i class="am-icon-check-circle-01"
-                                        style="color: #000; margin-right: 15px; font-size: 1.2rem;"></i>
+                                <li style="margin-bottom: 15px; display: flex; align-items: start; color: #000; font-weight: 500;">
+                                    <i class="am-icon-check-circle-01" style="color: #000; margin-right: 15px; font-size: 1.2rem;"></i>
                                     <div>
                                         <strong>Gran variedad de temas:</strong>
-                                        <p style="margin: 0; font-size: 0.95rem;">Desde idiomas hasta desarrollo
-                                            profesional.</p>
+                                        <p style="margin: 0; font-size: 0.95rem;">Desde idiomas hasta desarrollo profesional.</p>
                                     </div>
                                 </li>
-                                <li
-                                    style="margin-bottom: 15px; display: flex; align-items: start; color: #000; font-weight: 500;">
-                                    <i class="am-icon-check-circle-01"
-                                        style="color: #000; margin-right: 15px; font-size: 1.2rem;"></i>
+                                <li style="margin-bottom: 15px; display: flex; align-items: start; color: #000; font-weight: 500;">
+                                    <i class="am-icon-check-circle-01" style="color: #000; margin-right: 15px; font-size: 1.2rem;"></i>
                                     <div>
                                         <strong>Horarios flexibles:</strong>
-                                        <p style="margin: 0; font-size: 0.95rem;">Agenda sesiones cuando más te convenga.
-                                        </p>
+                                        <p style="margin: 0; font-size: 0.95rem;">Agenda sesiones cuando más te convenga.</p>
                                     </div>
                                 </li>
-                                <li
-                                    style="margin-bottom: 15px; display: flex; align-items: start; color: #000; font-weight: 500;">
-                                    <i class="am-icon-check-circle-01"
-                                        style="color: #000; margin-right: 15px; font-size: 1.2rem;"></i>
+                                <li style="margin-bottom: 15px; display: flex; align-items: start; color: #000; font-weight: 500;">
+                                    <i class="am-icon-check-circle-01" style="color: #000; margin-right: 15px; font-size: 1.2rem;"></i>
                                     <div>
                                         <strong>Plataforma segura:</strong>
                                         <p style="margin: 0; font-size: 0.95rem;">Pagos seguros y verificados.</p>
@@ -169,8 +142,7 @@
                                 </li>
                             </ul>
                             <a href="{{ route('register') }}" class="am-btn"
-                                style="background-color: #000; color: #fff; padding: 12px 35px; border-radius: 50px; font-weight: 600;">UNETE
-                                AHORA</a>
+                                style="background-color: #000; color: #fff; padding: 12px 35px; border-radius: 50px; font-weight: 600;">UNETE AHORA</a>
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -197,21 +169,15 @@
                         </figure>
                     </div>
                     <div class="col-lg-6 order-lg-2 order-1 mb-4 mb-lg-0 pl-lg-5">
-                        <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 20px; color: #333;">Soporte
-                            integral<br>en cada paso</h2>
-                        <p style="font-size: 1.1rem; color: #666; line-height: 1.6;">Nuestro equipo de soporte está dedicado
-                            a garantizar que tu experiencia sea fluida y exitosa. Desde problemas técnicos hasta dudas sobre
-                            cursos, estamos aquí para ayudarte en todo momento.</p>
+                        <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 20px; color: #333;">Soporte integral en cada paso</h2>
+                        <p style="font-size: 1.1rem; color: #666; line-height: 1.6;">Nuestro equipo de soporte está dedicado a garantizar que tu experiencia sea fluida y exitosa. Desde problemas técnicos hasta dudas sobre cursos, estamos aquí para ayudarte en todo momento.</p>
                     </div>
                 </div>
                 <!-- Row 2: Team (Wellness Image) -->
                 <div class="row align-items-center">
                     <div class="col-lg-6 pr-lg-5 mb-4 mb-lg-0">
-                        <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 20px; color: #333;">Nuestro
-                            equipo<br>de expertos te guiará</h2>
-                        <p style="font-size: 1.1rem; color: #666; line-height: 1.6;">Contamos con tutores y mentores
-                            altamente calificados, seleccionados rigurosamente para ofrecerte la mejor educación. Aprende de
-                            profesionales con años de experiencia en sus campos.</p>
+                        <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 20px; color: #333;">Nuestro equipo de expertos te guiará</h2>
+                        <p style="font-size: 1.1rem; color: #666; line-height: 1.6;">Contamos con tutores y mentores altamente calificados, seleccionados rigurosamente para ofrecerte la mejor educación. Aprende de profesionales con años de experiencia en sus campos.</p>
                     </div>
                     <div class="col-lg-6">
                         <figure
@@ -354,26 +320,15 @@
                 style="width: 100%; height: auto; display: block; margin-top: -45px;">
         </section>
     </div>
-    </div>
-    </div>
-    </div>
-    </section>
-
-
         <!-- Footer Banner Image -->
-    <section class="am-footer-banner"
-        style="background-image: url('{{ asset('images/nuevo/respiracion-consciente-horizontia.jpg') }}'); background-size: cover; background-position: center; height: 500px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative;">
-        <div
-            style="position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(218, 165, 32, 0.6) 100%);">
-        </div> <!-- Gradient Overlay -->
-        <div style="position: relative; z-index: 2;">
-            <h2
-                style="font-size: 4rem; font-weight: 800; color: #333; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(255,255,255,0.5);">
-                Horizontia</h2>
-            <h3 style="font-size: 2rem; font-weight: 600; color: #333; margin-bottom: 40px;">Conciencia humana con talento
-            </h3>
-        </div>
-    </section>
+        <section class="am-footer-banner"
+            style="background-image: url('{{ asset('images/nuevo/respiracion-consciente-horizontia.jpg') }}'); background-size: cover; background-position: center; height: 500px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative;">
+            <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0, 0, 0, 0.4);"></div> <!-- Dark Overlay -->
+            <div style="position: relative; z-index: 2; padding: 20px;">
+                <h2 style="font-size: 4rem; font-weight: 800; color: #fff; margin-bottom: 20px; text-shadow: 0px 4px 15px rgba(0,0,0,0.8);">Horizontia</h2>
+                <h3 style="font-size: 2rem; font-weight: 600; color: #fff; margin-bottom: 40px; text-shadow: 0px 2px 10px rgba(0,0,0,0.8);">Conciencia humana con talento</h3>
+            </div>
+        </section>
 
     <!-- Dynamic Style Block for Footer Override -->
     <style>
