@@ -363,25 +363,28 @@
 
 @section('content')
 <div class="am-find-tutors-area">
-    <div class="am-searchhead">
-        <div class="container">
+    <div class="am-searchhead" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); position: relative; overflow: hidden;">
+        <!-- Decorative background elements -->
+        <div style="position: absolute; top: -50%; left: -10%; width: 50%; height: 200%; background: radial-gradient(circle, rgba(242,208,127,0.05) 0%, transparent 70%); transform: rotate(30deg); pointer-events: none;"></div>
+        
+        <div class="container" style="position: relative; z-index: 1;">
             <div class="row">
-                <div class="col-12">
-                    <ol class="am-breadcrumb">
-                        <li><a href="{{ route('home') }}">{{ __('sidebar.home') }}</a></li>
+                <div class="col-12 text-center text-md-start">
+                    <ol class="am-breadcrumb justify-content-center justify-content-md-start">
+                        <li><a href="{{ route('home') }}">Inicio</a></li>
                         <li><em>/</em></li>
-                        <li class="active"><span>{{ __('sidebar.find_tutor') }}</span></li>
+                        <li class="active"><span>Buscar Tutores</span></li>
                     </ol>
-                    <div class="am-searchhead_title">
-                        <h2>{{ __('sidebar.discover_tutor_text') }}</h2>
-                        <p>{{ __('sidebar.discover_tutor_desc') }}</p>
+                    <div class="am-searchhead_title mt-3">
+                        <h2 style="font-size: 2.5rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.5rem;">Encuentra a tu <span style="color: #F2D07F;">Tutor Ideal</span></h2>
+                        <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto 0 0; line-height: 1.6;">Conecta con expertos verificados y lleva tu aprendizaje al siguiente nivel. Filtra por materia, precio y modalidad.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <div class="am-searchfilter_wrap">
+    <div class="am-searchfilter_wrap" style="background: #ffffff; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); border-radius: 0 0 20px 20px; position: relative; z-index: 10;">
         <div class="container">
             <div class="row">
                 <div class="col-12">
@@ -389,35 +392,35 @@
                         <ul class="am-searchfilter_tabslist">
                             <li>
                                 <a href="javascript:void(0);" data-type="" @class(['am-session-tab', 'active'=> $filters['session_type'] == ''])>
-                                    {{ __('tutor.all_sessions') }}
+                                    Todas las modalidades
                                 </a>
                             </li>
                             <li>
                                 <a href="javascript:void(0);" data-type="one" @class(['am-session-tab', 'active'=> $filters['session_type'] == 'one'])>
-                                    {{ __('tutor.private_sessions') }}
+                                    Sesiones Privadas
                                 </a>
                             </li>
                             <li>
                                 <a href="javascript:void(0);" data-type="group" @class(['am-session-tab', 'active'=> $filters['session_type'] == 'group'])>
-                                    {{ __('tutor.group_sessions') }}
+                                    Sesiones Grupales
                                 </a>
                             </li>
                         </ul>
                         <div class="am-clearfilterbtn d-none">
-                            <a href="javascript:void(0);" id="clear_filters">
-                                {{ __('general.clear_all_filter') }}
+                            <a href="javascript:void(0);" id="clear_filters" style="font-weight: 600;">
+                                Limpiar Filtros
                                 <i class="am-icon-multiply-02"></i>
                             </a>
                         </div>
                     </div>
                     
-                    <div class="am-searchfilter">
+                    <div class="am-searchfilter mt-4">
                         <div class="am-searchfilter_item">
-                            <span class="am-searchfilter_title">{{ __('subject.subject_group') }}</span>
+                            <span class="am-searchfilter_title">Categoría</span>
                             <span class="am-select">
                                 <select id="group_id" class="am-select2" data-searchable="true"
                                     data-class="am-filter-dropdown"
-                                    data-placeholder="{{ __('subject.choose_subject_group') }}">
+                                    data-placeholder="Elige una categoría">
                                     <option></option>
                                     @foreach ($subjectGroups as $group)
                                     <option value="{{ $group->id }}" {{ $group->id == ($filters['group_id'] ?? '') ? 'selected' : '' }}>
@@ -428,11 +431,11 @@
                             </span>
                         </div>
                         <div class="am-searchfilter_item">
-                            <span class="am-searchfilter_title">{{ __('subject.choose_subject_label') }}</span>
+                            <span class="am-searchfilter_title">Materia</span>
                             <span class="am-select">
                                 <select id="subject_id" class="am-select2" multiple data-searchable="true"
                                     data-class="am-filter-dropdown"
-                                    data-placeholder="{{ __('subject.choose_subject_label') }}">
+                                    data-placeholder="Busca materias">
                                     <option></option>
                                     @foreach ($subjects as $subject)
                                     <option value="{{ $subject->id }}" {{ in_array($subject->id, $filters['subject_id'] ?? []) ? 'selected' : '' }}>
@@ -443,19 +446,19 @@
                             </span>
                         </div>
                         <div class="am-searchfilter_item">
-                            <span class="am-searchfilter_title">{{ __('calendar.max_price') }}</span>
-                            <input type="text" placeholder="{{ getCurrencySymbol() }}0.00" class="form-control"
+                            <span class="am-searchfilter_title">Precio Máximo</span>
+                            <input type="text" placeholder="{{ getCurrencySymbol() }}0.00" class="form-control" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 15px; font-weight: 500;"
                                 id="max_price" value="{!! (!empty($filters['max_price']) ? (getCurrencySymbol().$filters['max_price']) : '') !!}">
                         </div>
                         <div class="am-searchfilter_item">
-                            <span class="am-searchfilter_title">{{ __('general.tutor_location') }}</span>
+                            <span class="am-searchfilter_title">País / Región</span>
                             <span class="am-select">
                                 @if(!empty(setting('_api.google_places_api_key')))
                                 <input type="text" class="form-control" id="map_location" value="{{ $filters['country'] ?? '' }}"
-                                    placeholder="{{ __('general.enter_tutor_location') }}">
+                                    placeholder="Ingresa ubicación">
                                 @else
                                 <select class="am-select2" id="tutor_country" data-searchable="true"
-                                    data-class="am-sort_dp_option am-sort-location" data-placeholder="{{ __('general.search_by_country') }}">
+                                    data-class="am-sort_dp_option am-sort-location" data-placeholder="Cualquier país">
                                     <option></option>
                                     @foreach ($countries as $country)
                                     <option value="{{ $country->id }}" {{ $country->id == ($filters['country'] ?? '') ? 'selected' : '' }}>
@@ -468,38 +471,41 @@
                         </div>
                     </div>
                     
-                    <div class="am-searchfilteritems">
-                        <div class="am-searchfilter_left">
-                            <div class="am-searchinput">
+                    <div class="am-searchfilteritems mt-3 pt-3" style="border-top: 1px dashed #e2e8f0;">
+                        <div class="am-searchfilter_left d-flex align-items-center justify-content-between w-100 flex-wrap gap-3">
+                            <div class="am-searchinput flex-grow-1" style="max-width: 400px;">
                                 <input type="text" value="{{ $filters['keyword'] ?? '' }}"
-                                    placeholder="{{ __('general.search_by_keyword') }}" class="form-control" id="keyword">
-                                <span class="am-searchinput_icon">
-                                    <i class="am-icon-search-02"></i>
+                                    placeholder="Buscar por palabra clave o nombre..." class="form-control" id="keyword" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 15px 12px 40px; font-weight: 500;">
+                                <span class="am-searchinput_icon" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                                 </span>
                             </div>
-                            <span class="am-select">
-                                <span class="am-select_title">{{ __('general.sort_by') }}:</span>
-                                <select class="am-select2" id="sort_by" data-searchable="false"
-                                    data-class="am-sort_dp_option" data-placeholder="{{ __('general.sort_by') }}">
-                                    <option></option>
-                                    <option value="newest" {{ (($filters['sort_by'] ?? '') == 'newest' ? 'selected' : '') }}>{{ __('general.newest_first') }}</option>
-                                    <option value="oldest" {{ (($filters['sort_by'] ?? '') == 'oldest' ? 'selected' : '') }}>{{ __('general.oldest_first') }}</option>
-                                    <option value="asc" {{ (($filters['sort_by'] ?? '') == 'asc' ? 'selected' : '') }}>{{ __('general.sort_by_a_z') }}</option>
-                                    <option value="desc" {{ (($filters['sort_by'] ?? '') == 'desc' ? 'selected' : '') }}>{{ __('general.sort_by_z_a') }}</option>
-                                </select>
-                            </span>
-                            <span class="am-select am-languageselect">
-                                <span class="am-select_title">{{ __('general.language') }}:</span>
-                                <select class="am-select2" id="language_id" data-searchable="true" multiple
-                                    data-class="am-sort_dp_option" data-placeholder="{{ __('general.select_lang') }}">
-                                    <option></option>
-                                    @foreach ($languages as $lang)
-                                    <option value="{{ $lang->id }}" {{ in_array($lang->id, $filters['language_id'] ?? []) ? 'selected' : '' }}>
-                                        {{ $lang->name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </span>
+                            
+                            <div class="d-flex align-items-center gap-4 flex-wrap">
+                                <span class="am-select d-flex align-items-center gap-2">
+                                    <span class="am-select_title text-muted" style="font-size: 0.85rem;">Ordenar por:</span>
+                                    <select class="am-select2" id="sort_by" data-searchable="false"
+                                        data-class="am-sort_dp_option" data-placeholder="Seleccionar">
+                                        <option></option>
+                                        <option value="newest" {{ (($filters['sort_by'] ?? '') == 'newest' ? 'selected' : '') }}>Más Recientes</option>
+                                        <option value="oldest" {{ (($filters['sort_by'] ?? '') == 'oldest' ? 'selected' : '') }}>Más Antiguos</option>
+                                        <option value="asc" {{ (($filters['sort_by'] ?? '') == 'asc' ? 'selected' : '') }}>Nombre (A-Z)</option>
+                                        <option value="desc" {{ (($filters['sort_by'] ?? '') == 'desc' ? 'selected' : '') }}>Nombre (Z-A)</option>
+                                    </select>
+                                </span>
+                                <span class="am-select am-languageselect d-flex align-items-center gap-2">
+                                    <span class="am-select_title text-muted" style="font-size: 0.85rem;">Idioma:</span>
+                                    <select class="am-select2" id="language_id" data-searchable="true" multiple
+                                        data-class="am-sort_dp_option" data-placeholder="Cualquier idioma">
+                                        <option></option>
+                                        @foreach ($languages as $lang)
+                                        <option value="{{ $lang->id }}" {{ in_array($lang->id, $filters['language_id'] ?? []) ? 'selected' : '' }}>
+                                            {{ $lang->name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
