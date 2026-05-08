@@ -220,13 +220,17 @@
                                     <option value="desc" {{ (($filters['sort_by'] ?? '') == 'desc' ? 'selected' : '') }}>Nombre (Z-A)</option>
                                 </select>
                             </span>
-                            <span class="am-select am-languageselect">
+                            <span class="am-select am-languageselect d-none">
                                 <span class="am-select_title">Idioma:</span>
                                 <select class="am-select2" id="language_id" data-searchable="true" multiple
                                     data-class="am-sort_dp_option" data-placeholder="Cualquier idioma">
                                     <option></option>
                                     @foreach ($languages as $lang)
-                                    <option value="{{ $lang->id }}" {{ in_array($lang->id, $filters['language_id'] ?? []) ? 'selected' : '' }}>
+                                    @php
+                                        $isSpanish = (stripos($lang->name, 'español') !== false || stripos($lang->name, 'spanish') !== false);
+                                        $isSelected = in_array($lang->id, $filters['language_id'] ?? []) || (empty($filters['language_id']) && $isSpanish);
+                                    @endphp
+                                    <option value="{{ $lang->id }}" {{ $isSelected ? 'selected' : '' }}>
                                         {{ $lang->name }}
                                     </option>
                                     @endforeach
@@ -368,7 +372,6 @@
             $('#group_id')?.val(null).trigger('change');
             $('#subject_id')?.val(null).trigger('change');
             $('#tutor_country')?.val(null)?.trigger('change');
-            $('#language_id')?.val(null)?.trigger('change');
             $('#clear_filters').parent().addClass('d-none');
             applySearchFilter(false);
             let newUrl = `${window.location.pathname}`;
