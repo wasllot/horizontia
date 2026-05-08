@@ -11,8 +11,8 @@
                     <div class="col-lg-6 col-md-10">
                         <div class="am-hero-content" style="color: #fff; text-align: left;">
                             <h3 style="font-size: 1.5rem; font-weight: 300; margin-bottom: 10px; color: #F2D07F;">Con Horizontia, empodera tu futuro</h3>
-                            <h1 style="font-size: 3.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 20px;">Aprende hoy para un futuro más brillante</h1>
-                            <p style="font-size: 1.1rem; margin-bottom: 30px; max-width: 80%;">Alcanza tus metas con tutorías personalizadas de los mejores expertos. Conéctate con tutores dedicados para alcanzar el éxito.</p>
+                            <h1 style="font-size: 3.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 20px; color: #fff;">Aprende hoy para un futuro más brillante</h1>
+                            <p style="font-size: 1.1rem; margin-bottom: 30px; max-width: 80%; color: #fff;">Alcanza tus metas con tutorías personalizadas de los mejores expertos. Conéctate con tutores dedicados para alcanzar el éxito.</p>
                             <a href="#" class="am-btn"
                                 style="background-color: #F2D07F; color: #000; padding: 12px 30px; font-weight: 700; border-radius: 50px; text-decoration: none; display: inline-block;">CONTÁCTANOS</a>
                         </div>
