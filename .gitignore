@@ -1,0 +1,72 @@
+# Laravel IDE Helper
+.idea/
+*.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Laravel
+/vendor/
+/node_modules/
+/npm-debug.log
+/yarn-error.log
+/.env
+/.env.backup
+/.env.production
+/.phpunit.result.cache
+/storage/*.key
+/storage/app/public/
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+/storage/horizontia.zip
+/bootstrap/cache/*
+!storage/framework/.gitkeep
+!storage/app/public/.gitkeep
+
+# Composer
+composer.phar
+
+# NPM
+npm-debug.log
+yarn-error.log
+
+# Vite
+.vite/
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+
+# Misc
+Inicio _ Horizontia.html
+Makefile
+bootstrap-old/
+
+# Database
+/database/*.sqlite
+/database/*.sqlite3
+
+# Test/debug scripts
+test_db.php
+test_dotenv.php
+test_dotenv_lines.php
+test_http.php
+test_pages.php
+trace_boot.php
+
+# Log files
+container_logs.txt
+docker_logs.txt
+laravel_container_logs.txt
+output.html
+
+# Docker
+/docker/
+/docker-compose.yml

@@ -1,0 +1,35 @@
+<?php
+
+return [
+    'title'                     => 'Certificado',
+    'certificate_wards'         => 'Certificados y Premios',
+    'edit_certificate'          => 'Editar',
+    'delete_certificate'        => 'Eliminar',
+    'view_description'          => 'Descripción',
+    'certificate_description'   => 'Descripción del Certificado',
+    'certificate_details'       => 'Certificados y Premios',
+    'certificate_message'       => 'Lista tus certificados, premios, organizaciones emisoras y fechas de recepción.',
+    'image_title'               => 'Subir Foto de Certificados y Premios',
+    'image_message'             => 'Suelta un archivo aquí o <i>haz clic aquí</i> para subir',
+    'add_new_certificate'       => 'Agregar Nuevos Certificados y Premios',
+    'update_new_certificate'    => 'Editar Certificado',
+    'certificate_title'         => 'Título de Certificados/Premios',
+    'title_placeholder'         => 'Ingresa el título de certificados/premios',
+    'university'                => 'Título de Universidad/Instituto',
+    'university_placeholder'    => 'Ingresa el título de universidad/instituto',
+    'location'                  => 'Ubicación',
+    'location_placeholder'      => 'Ingresa la ubicación',
+    'issue_date'                => 'Fecha de emisión',
+    'expiry_date'               => 'Fecha de vencimiento',
+    'issued'                    => 'Emitido:',
+    'expiry'                    => 'Vencimiento:',
+    'issue_date_placeholder'    => 'Ingresa la fecha de emisión',
+    'expiry_date_placeholder'   => 'Ingresa la fecha de vencimiento',
+    'description'               => 'Descripción',
+    'description_placeholder'   => 'Ingresa la descripción',
+    'save_update'               => 'Guardar y Actualizar',
+
+    'certificate_deleted_message' => 'Certificado eliminado exitosamente.',
+    'certificate_added_message'   => 'Certificado agregado exitosamente.',
+    'certificate_edit_message'    => 'Certificado actualizado exitosamente.'
+];

@@ -1,0 +1,152 @@
+{
+    "name": "laravel/laravel",
+    "type": "project",
+    "version": "2.1.7",
+    "description": "The skeleton application for the Laravel framework.",
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "amentotech/laraguppy": "^1.0",
+        "amentotech/laravel-installer": "^11.0",
+        "amentotech/laravel-translations": "1.0",
+        "amentotech/scssphp": "^1.11",
+        "diglactic/laravel-breadcrumbs": "^9.0",
+        "doctrine/dbal": "^4.0",
+        "google/apiclient": "^2.16",
+        "intervention/image-laravel": "^1.3",
+        "larabuild/optionbuilder": "^1.1",
+        "larabuild/pagebuilder": "^1.4",
+        "laravel/framework": "^11.9",
+        "laravel/reverb": "^1.2",
+        "laravel/sanctum": "^4.0",
+        "laravel/socialite": "^5.16",
+        "laravel/tinker": "^2.9",
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "livewire/livewire": "^3.5",
+        "livewire/volt": "^1.0",
+        "mews/purifier": "^3.4",
+        "nwidart/laravel-modules": "^11.1",
+        "openai-php/laravel": "^0.10.2",
+        "paytm/paytmchecksum": "*",
+        "razorpay/razorpay": "^2.9.0",
+        "socialiteproviders/google": "^4.1",
+        "spatie/browsershot": "^5.0",
+        "spatie/laravel-permission": "^6.9",
+        "staudenmeir/laravel-adjacency-list": "^1.22",
+        "stripe/stripe-php": "^10.21",
+        "symfony/mailer": "~7.1.0",
+        "wire-elements/spotlight": "^2.0"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "laravel/breeze": "^2.1",
+        "laravel/pint": "^1.13",
+        "laravel/sail": "*",
+        "laravel/telescope": "^5.1",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.0",
+        "phpunit/phpunit": "^11.0.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Modules\\": "Modules/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        },
+        "files": [
+            "app/Helpers/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi",
+            "@php artisan module:enable Meetfusion",
+            "@php artisan module:enable LaraPayease"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --graceful --ansi"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": [
+                "laravel/telescope"
+            ]
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true,
+            "wikimedia/composer-merge-plugin": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "repositories": {
+        "optionbuilder": {
+            "type": "path",
+            "url": "packages/larabuild/optionbuilder",
+            "options": {
+                "symlink": false
+            }
+        },
+        "pagebuilder": {
+            "type": "path",
+            "url": "packages/larabuild/pagebuilder",
+            "options": {
+                "symlink": false
+            }
+        },
+        "laravel-translations": {
+            "type": "path",
+            "url": "packages/laravel-translations",
+            "options": {
+                "symlink": false
+            }
+        },
+        "scssphp": {
+            "type": "path",
+            "url": "packages/scssphp",
+            "options": {
+                "symlink": false
+            }
+        },
+        "laraguppy": {
+            "type": "path",
+            "url": "packages/laraguppy",
+            "options": {
+                "symlink": false
+            }
+        },
+        "laravel-installer": {
+            "type": "path",
+            "url": "packages/laravel-installer",
+            "options": {
+                "symlink": false
+            }
+        }
+    }
+}

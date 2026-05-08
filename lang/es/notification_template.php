@@ -1,0 +1,95 @@
+<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | All Translation Lines For Notifcations Templates
+    |--------------------------------------------------------------------------
+    */
+
+    'notification_templates'                    => 'Plantillas de Notificación',
+    'all_templates'                             => 'Todas las Plantillas de Notificación',
+    'select_notification'                       => 'Seleccionar Notificación',
+    'set_notification_status'                   => 'Establecer estado de notificación como',
+    'add_notification'                          => 'Agregar nueva notificación',
+    'update_notification'                       => 'Actualizar notificación',
+    'notification_title'                        => 'Título de notificación',
+    'role_type'                                 => 'Tipo de rol',
+    'approve_instructor'                        => 'Aprobar Instructor',
+    'select_notification'                       => 'Seleccionar notificación',
+    'btn_invite'                                => 'Aceptar Invitación',
+    'admin'                                     => 'Administrador',
+    'verfiy_email'                              => 'Verificar Dirección de Notificación',
+    'login_url'                                 => '"Iniciar Sesión"',
+    'ridirect_login'                            => 'Redirigir al inicio de sesión',
+    'reset_password_txt'                        => 'Restablecer contraseña',
+    'notification_setting_variable'             => 'Variables de configuración de notificación',
+    'notification_content'                      => 'Contenido de notificación',
+    'subject'                                   => 'Asunto de notificación',
+
+    // =========== Notifcation general translation ==================== \\
+    'notification_content'                              => 'Contenido de Notificación',
+    'notification_verification_title'                   => 'Verificación de Notificación',
+    'identity_verification_approved_title'              => 'Verificación de Identidad Aprobada',
+    'identity_verification_rejected_title'              => 'Verificación de Identidad Rechazada',
+    'session_booking_title'                             => 'Reserva de Sesión',
+    'booking_rescheduled_title'                         => 'Reserva Reprogramada',
+    'withdraw_wallet_amount_request_title'              => 'Solicitud de Retiro de Monto de Billetera',
+    'accepted_withdraw_request_title'                   => 'Solicitud de Retiro Aceptada',
+    'new_message_notification_title'                    => 'Notificación de Nuevo Mensaje',
+    'booking_link_title'                                => 'Enlace de Reunión para Tu Próxima Sesión',
+    'session_request_title'                             => 'Solicitud de Sesión',
+    'booking_completion_request_title'                  => 'Solicitud de Finalización de Reserva',
+    'dispute_resolution_title'                          => 'Notificación de Resolución de Disputa',
+    'dispute_title'                                     => 'Razón de Disputa',
+    'dispute_student_confirmation_title'                => 'Confirmación de Razón de Disputa',
+
+    'variables_used'                                    => 'Variables utilizadas en el correo',
+    'subject'                                           => 'Asunto',
+
+    'identity_verification_approved_subject'            => 'Verificación de Identidad Aprobada',
+    'identity_verification_rejected_subject'            => 'Verificación de Identidad Rechazada',
+    'session_booking_student_subject'                   => '¡Gracias por reservar con Lernen!',
+    'session_booking_tutor_subject'                     => '¡Gracias por reservar con Lernen!',
+    'booking_rescheduled_subject'                       => 'Tu Sesión Ha Sido Reprogramada',
+    'withdraw_wallet_amount_request_subject'            => 'Solicitud de Retiro de Monto de Billetera',
+    'accepted_withdraw_request_subject'                 => 'Tu Solicitud de Retiro Ha Sido Aprobada',
+    'new_message_subject'                               => 'Nuevo Mensaje de :messageSender',
+    'meeting_link_subject'                              => 'Enlace de Reunión para Tu Próxima Sesión',
+    'booking_completion_request_subject'                => 'Confirma Tu Sesión con {tutorName}',
+    'session_request_subject'                           => 'Nueva Solicitud de Sesión Personalizada de {studentName}',
+    'dispute_resolved_tutor_subject'                    => 'Disputa Resuelta – Pago Liberado para Sesión con :studentName',
+    'dispute_resolved_student_subject'                  => 'Disputa Resuelta – Reembolso Emitido para Tu Sesión con :tutorName',
+    'dispute_tutor_subject'                             => 'Confirmación de Razón de Disputa para Reserva con {studentName}',
+
+    'identity_verification_approved_content'            => '¡Felicidades, :userName! Tu identidad está verificada. ¡Disfruta de todos los beneficios de la plataforma!',
+    'identity_verification_rejected_content'            => 'Desafortunadamente, :userName! Tu verificación de identidad no fue exitosa. Por favor vuelve a enviar tus documentos.',
+    'session_booking_student_content'                   => '¡Tus sesiones están confirmadas! Revisa los detalles de la reserva aquí: :bookingLink',
+    'session_booking_tutor_content'                     => '¡Tus sesiones están confirmadas! Revisa los detalles de la reserva aquí: :bookingLink',
+    'booking_rescheduled_content'                       => 'Tu sesión con :tutorName está reprogramada para :newSessionDate (:reason). Ver detalles: :viewLink',
+    'accepted_withdraw_request_content'                 => '¡Tu solicitud de retiro por :withdrawAmount está aprobada! Fondos acreditados pronto.',
+    'new_message_content'                               => 'Nuevo mensaje de :messageSender. Ve a mensajes para responder.',
+    'meeting_link_content'                              => 'Nuevo enlace de reunión para tu sesión con :tutorName el :sessionDate ( :sessionSubject ) :meetingLink',
+    'booking_completion_request_content'                => 'Confirma la finalización de la sesión con :tutorName el :sessionDateTime. Auto-confirmado después de {days} días. {completeBookingLink}',
+    'session_request_content'                           => 'Nueva solicitud de sesión de :studentName (:studentEmail). Tipo: :sessionType. Mensaje: :message',
+    'dispute_resolved_student_content'                  => 'Tu disputa con :tutorName está resuelta. Reembolso de :refundAmount emitido.',
+    'dispute_resolved_tutor_content'                    => 'Tu disputa con :studentName está resuelta. Pago liberado a tu billetera.',
+
+    'identity_verification_approved_student_variables'  => '{userName} - Para Nombre de Usuario',
+    'identity_verification_approved_tutor_variables'    => '{userName} - Para Nombre de Usuario',
+    'identity_verification_rejected_student_variables'  => '{rejectionReason} - Para Razón de Rechazo',
+    'identity_verification_rejected_tutor_variables'    => '{rejectionReason} - Para Razón de Rechazo',
+    'session_booking_student_variables'                 => '{bookingLink} - Para Enlace de Detalles de Reserva', 
+    'session_booking_tutor_variables'                   => '{bookingLink} - Para Enlace de Detalles de Reserva', 
+    'booking_rescheduled_student_variables'             => '{newSessionDate} - Para Nueva Fecha de Sesión <br> {tutorName} - Para Nombre del Tutor <br> {reason} - Para Razón de Reprogramación <br> {viewDetailLink} - Para ver detalle',
+    'accepted_withdraw_request_tutor_variables'         => '{withdrawAmount} - Para Monto de Retiro',
+    'booking_completion_request_student_variables'      => '{tutorName} - Para Nombre del Tutor <br> {sessionDateTime} - Para Fecha y Hora de la Sesión <br> {completeBookingLink} - Para Enlace de Completar Reserva <br> {days} - Para Días',
+    'new_message_student_variables'                     => '{messageSender} - Para Remitente del Mensaje',
+    'new_message_tutor_variables'                       => '{messageSender} - Para Remitente del Mensaje',
+    'meeting_link_student_variables'                    => '{tutorName} - Para Nombre del Tutor <br> {sessionSubject} - Para Materia de la Sesión <br> {sessionDate} - Para Fecha y Hora de la Sesión <br> {meetingLink} - Para Enlace de Reunión',
+    'session_request_student_variables'                 => '{studentName} - Para Nombre del Estudiante <br> {studentEmail} - Para Notificación del Estudiante <br> {sessionType} - Para Tipo de Sesión <br> {message} - Para Mensaje',
+    'dispute_resolve_student_variables'                 => '{tutorName} - Para Nombre del Tutor <br> {refundAmount} - Para Monto de Reembolso',
+    'dispute_resolve_tutor_variables'                   => '{studentName} - Para Nombre del Estudiante',
+
+];

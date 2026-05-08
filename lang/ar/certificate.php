@@ -1,0 +1,35 @@
+<?php
+
+return [
+    'title'                     => 'شهادة',
+    'certificate_wards'         => 'الشهادات والجوائز',
+    'edit_certificate'          => 'تعديل',
+    'delete_certificate'        => 'حذف',
+    'view_description'          => 'الوصف',
+    'certificate_description'   => 'وصف الشهادة',
+    'certificate_details'       => 'تفاصيل الشهادات والجوائز',
+    'certificate_message'       => 'قم بإدراج شهاداتك وجوائزك والمنظمات المصدرة والتواريخ المستلمة.',
+    'image_title'               => 'تحميل صورة الشهادات والجوائز',
+    'image_message'             => 'أسقط ملفًا هنا أو <i>انقر هنا</i> للتحميل',
+    'add_new_certificate'       => 'إضافة شهادات وجوائز جديدة',
+    'update_new_certificate'    => 'تعديل الشهادة',
+    'certificate_title'         => 'عنوان الشهادات/الجوائز',
+    'title_placeholder'         => 'أدخل عنوان الشهادات/الجوائز',
+    'university'                => 'عنوان الجامعة/المعهد',
+    'university_placeholder'    => 'أدخل عنوان الجامعة/المعهد',
+    'location'                  => 'الموقع',
+    'location_placeholder'      => 'أدخل الموقع',
+    'issue_date'                => 'تاريخ الإصدار',
+    'expiry_date'               => 'تاريخ الانتهاء',
+    'issued'                    => 'تم الإصدار:',
+    'expiry'                    => 'الانتهاء:',
+    'issue_date_placeholder'    => 'أدخل تاريخ الإصدار',
+    'expiry_date_placeholder'   => 'أدخل تاريخ الانتهاء',
+    'description'               => 'الوصف',
+    'description_placeholder'   => 'أدخل الوصف',
+    'save_update'               => 'حفظ وتحديث',
+
+    'certificate_deleted_message' => 'تم حذف الشهادة بنجاح.',
+    'certificate_added_message'   => 'تم إضافة الشهادة بنجاح.',
+    'certificate_edit_message'    => 'تم تحديث الشهادة بنجاح.'
+];

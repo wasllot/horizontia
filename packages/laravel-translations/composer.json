@@ -1,0 +1,80 @@
+{
+    "name": "amentotech/laravel-translations",
+    "version": "1.0",
+    "description": "Laravel Translations UI provides a simple way to manage your translations in your Laravel application. It allows you to add, edit, delete and export translations, and it also provides a search functionality to find translations.",
+    "keywords": [
+        "laravel",
+        "laravel-translations",
+        "translations",
+        "localization",
+        "inertiajs",
+        "inertia",
+        "translation-manager"
+    ],
+    "homepage": "https://github.com/MohmmedAshraf/laravel-translations",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mohamed Ashraf",
+            "email": "cupo.ashraf@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2|^8.3",
+        "based/momentum-modal": "^0.3.0",
+        "brick/varexporter": "^0.5.0",
+        "inertiajs/inertia-laravel": "^1.0",
+        "spatie/laravel-package-tools": "^1.0",
+        "stichoza/google-translate-php": "^5.1",
+        "tightenco/ziggy": "^2.0",
+        "ext-zip": "*"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "nunomaduro/collision": "^8.0",
+        "orchestra/testbench": "^9.0",
+        "pestphp/pest": "^2.18",
+        "pestphp/pest-plugin-faker": "^2.0",
+        "pestphp/pest-plugin-laravel": "^2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Outhebox\\TranslationsUI\\": "src",
+            "Outhebox\\TranslationsUI\\Database\\Factories\\": "database/factories",
+            "Outhebox\\TranslationsUI\\Database\\Seeders\\": "database/seeders"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Outhebox\\TranslationsUI\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Outhebox\\TranslationsUI\\TranslationsUIServiceProvider"
+            ],
+            "aliases": {
+                "TranslationsUI": "Outhebox\\TranslationsUI\\Facades\\TranslationsUI"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

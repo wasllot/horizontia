@@ -1,0 +1,156 @@
+.am-invoicelist{
+    padding: 20px;
+    border-radius: 20px;
+    background: $clr-white;
+    border: 1px solid $border-color;
+    box-shadow: 0px 1px 3px 0px rgba(16, 24, 40, 0.10), 0px 1px 2px 0px rgba(16, 24, 40, 0.06);
+    .am-dbbox_title{
+        padding: 0 0 20px;
+        .am-select{
+            min-width: 150px;
+        }
+    }
+    .am-page-error{
+        min-height: calc(100vh - 298px);
+    }
+    &_wrap{
+       border: 0;
+       padding: 20px;
+       border-radius: 0;
+       box-shadow: none;
+       background-color: transparent;
+    } 
+    .tb-varification_userinfo{
+        gap: 10px;
+        display: flex;
+        align-items: center;
+        img{
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+        }
+        span{
+            font: 500 rem(14)/em(20,14) $heading-font-family;
+            small{
+                display: block;
+            }
+        }
+    }
+    .tk-project-tag-two,
+    .tk-project-tag{
+        gap: 7px;
+        border-radius: 6px;
+        background: $formbg;
+        align-items: center;
+        display: inline-flex;
+        vertical-align: middle;
+        padding: 2px 8px 2px 20px;
+        text-transform: capitalize;
+        font: 500 rem(12)/em(18,12) $body-font-family;
+        &_declined,
+        &_paid{
+            width: 6px;
+            height: 6px;
+            display: block;
+            border-radius: 50%;
+            background: #17B26A;
+        }
+        &_declined{
+            background: #F97066;
+        }
+    }
+    .am-table span{
+        display: block;
+    word-break: break-word;
+    }
+}
+
+.tk-project-tag-two{
+    position: relative;
+    &::after{
+        top: 50%;
+        left: 8px;
+        width: 8px;
+        height: 8px;
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        transform: translateY(-50%);
+    }
+}
+.tk-drafted{
+    border: 0;
+    color: #0A0F26;
+    background: #F7F7F7;
+}
+.tk-awaiting{
+    border-color: #64748B;
+
+}
+.tk-canceled{
+    border-color: #EF4444;
+    &:hover,
+    &:focus{
+        background: transparent !important;
+    }
+}
+.tk-ongoing {
+    border-color: #F97316; 
+    &::after{
+        background-color: #F97316;
+    }
+}
+.tk-success-tag{
+    &::after{
+        background-color: #22C55E;
+    }
+    &:hover{
+        color: #0A0F26;
+        background-color: transparent !important;
+    }
+}
+.tk-active{
+    &::after{
+        background: #22C55E;
+
+    }
+
+}
+.tk-disabled{
+    color: #999999;
+    pointer-events: none;
+    border-color: $lighter;
+    background-color: $lighter;
+}
+.tk-fixed-tag{
+    &:after {
+        background-color: #F97316;
+    }
+}
+.tk-hourly-tag{
+    &:after {
+        background-color: #22C55E;
+    }
+}
+.tk-awaiting{
+    &:after {
+        background-color: #1C1C1C;
+    }
+}
+.am-invoicetable_actions{
+    gap: 10px 20px;
+    display: flex;
+    align-items: center;
+    a{
+        padding: 0;
+        display: block;
+        font-size: 18px;
+        i{
+            display: block;
+        }
+        .am-tooltip-text{
+            width: auto;
+            white-space: nowrap;
+        }
+    }
+}

@@ -1,0 +1,26 @@
+* text=auto
+
+# Git auto-detection for specific file types
+*.php diff=php
+*.md text
+*.txt text
+
+# Force binary files to be stored as-is
+*.zip binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg binary
+*.ico binary
+*.pdf binary
+
+# Do not diff vendor directory
+/vendor/** linguist-vendored
+
+# Exclude node_modules from language stats
+node_modules/** -export
+
+# Large files warning
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.tar.gz filter=lfs diff=lfs merge=lfs -text

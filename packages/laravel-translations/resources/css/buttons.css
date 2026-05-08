@@ -1,0 +1,87 @@
+.btn {
+  @apply relative inline-flex items-center justify-center overflow-hidden rounded-lg border font-semibold;
+}
+.btn:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+.btn:focus-visible {
+  @apply outline outline-2 outline-offset-2;
+}
+.btn.btn-xs {
+  @apply gap-x-1.5 px-4 py-1 text-sm;
+}
+.btn.btn-sm {
+  @apply gap-x-1.5 px-4 py-1.5 text-sm;
+}
+.btn.btn-md {
+  @apply gap-x-1.5 px-6 py-2 text-sm;
+}
+.btn.btn-lg {
+  @apply gap-x-2 px-8 py-2.5 text-sm;
+}
+.btn.btn-xl {
+  @apply gap-x-2.5 px-8 py-3 text-base;
+}
+.btn.btn-primary {
+  @apply border-blue-600 bg-blue-600 text-white;
+}
+.btn.btn-primary:hover {
+  @apply bg-blue-700;
+}
+.btn.btn-primary:focus-visible {
+  @apply outline-blue-700;
+}
+.btn.btn-dark {
+  @apply border-gray-900 bg-gray-900 text-white;
+}
+.btn.btn-dark:hover {
+  @apply bg-gray-700;
+}
+.btn.btn-dark:focus-visible {
+  @apply outline-gray-700;
+}
+.btn.btn-secondary {
+  @apply border-gray-300 bg-white text-gray-900;
+}
+.btn.btn-secondary:hover {
+  @apply bg-gray-100;
+}
+.btn.btn-secondary:focus-visible {
+  @apply outline-gray-100;
+}
+.btn.btn-secondary-darker {
+  @apply border-gray-300 bg-gray-300 text-gray-700;
+}
+.btn.btn-secondary-darker:hover {
+  @apply bg-gray-200;
+}
+.btn.btn-secondary-darker:focus-visible {
+  @apply outline-gray-200;
+}
+.btn.btn-success {
+  @apply border-green-600 bg-green-600 text-white;
+}
+.btn.btn-success:hover {
+  @apply bg-green-500;
+}
+.btn.btn-success:focus-visible {
+  @apply outline-green-500;
+}
+.btn.btn-danger {
+  @apply border-red-600 bg-red-600 text-white;
+}
+.btn.btn-danger:hover {
+  @apply bg-red-500;
+}
+.btn.btn-danger:focus-visible {
+  @apply outline-red-500;
+}
+.btn.btn-warning {
+  @apply border-yellow-600 bg-yellow-600 text-white;
+}
+.btn.btn-warning:hover {
+  @apply bg-yellow-500;
+}
+.btn.btn-warning:focus-visible {
+  @apply outline-yellow-500;
+}/*# sourceMappingURL=buttons.css.map */

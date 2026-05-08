@@ -1,0 +1,582 @@
+
+.am-dispute-system{
+    // Invoice Table Start
+    &.am-invoice-system{
+        .tb-table{
+            thead{
+                tr{
+                    th:last-child,
+                    th:first-child{
+                        min-width: 130px;
+                        max-width: 130px;
+                    }
+                    th:nth-child(3){
+                        min-width: 166px;
+                        max-width: 166px;
+                    }
+                    th:nth-child(2){
+                        min-width: 270px;
+                        max-width: 270px;
+                    }
+                    th:nth-child(4){
+                        min-width: 200px;
+                        max-width: 200px;
+                    }
+                    th:nth-child(6){
+                        min-width: 120px;
+                        max-width: 120px;
+                    }
+                    th:nth-child(7){
+                        min-width: 175px;
+                        max-width: 175px;
+                    }
+                    th:nth-child(8){
+                        min-width: 150px;
+                        max-width: 150px;
+                    }
+                }
+            }
+            tbody{
+                tr{
+                    td:last-child,
+                    td:first-child{
+                        min-width: 130px;
+                        max-width: 130px;
+                    }
+                    td:nth-child(3){
+                        min-width: 166px;
+                        max-width: 166px;
+                    }
+                    td:nth-child(2){
+                        min-width: 260px;
+                        max-width: 260px;
+                    }
+                    td:nth-child(4){
+                        min-width: 200px;
+                        max-width: 200px;
+                    }
+                    td:nth-child(6){
+                        min-width: 120px;
+                        max-width: 120px;
+                    }
+                    td:nth-child(7){
+                        min-width: 175px;
+                        max-width: 175px;
+                    }
+                    td:nth-child(8){
+                        min-width: 150px;
+                        max-width: 150px;
+                    }
+                }
+            }
+        }
+    }
+    // Booking Table Start
+    &.am-booking-system{
+        .tb-table{
+            thead{
+                tr{
+                    th:last-child,
+                    th:first-child{
+                        min-width: 130px;
+                        max-width: 130px;
+                    }
+                    th:nth-child(2){
+                        min-width: 300px;
+                        max-width: 300px;
+                    }
+                    th:nth-child(3),
+                    th:nth-child(4){
+                        min-width: 250px;
+                        max-width: 250px;
+                    }
+                    th:nth-child(6){
+                        min-width: 120px;
+                        max-width: 120px;
+                    }
+                    th:nth-child(7){
+                        min-width: 150px;
+                        max-width: 150px;
+                    }
+                    th:nth-child(8){
+                        min-width: 150px;
+                        max-width: 150px;
+                    }
+                }
+            }
+            tbody{
+                tr{
+                    td:last-child,
+                    td:first-child{
+                        min-width: 130px;
+                        max-width: 130px;
+                    }
+                    td:nth-child(2){
+                        min-width: 300px;
+                        max-width: 300px;
+                    }
+                    td:nth-child(3),
+                    td:nth-child(4){
+                        min-width: 250px;
+                        max-width: 250px;
+                    }
+                    td:nth-child(6){
+                        min-width: 120px;
+                        max-width: 120px;
+                    }
+                    td:nth-child(7){
+                        min-width: 150px;
+                        max-width: 150px;
+                    }
+                }
+            }
+        }
+    }
+    // User Table Start
+    &.am-user-system{
+        .tb-table{
+            thead{
+                tr{
+                    th:first-child{
+                        min-width: 70px;
+                        max-width: 70px;
+                    }
+                    th:nth-child(2),
+                    th:nth-child(3){
+                        min-width: 250px;
+                        max-width: 250px;
+                    }
+                    th:nth-child(4),
+                    th:nth-child(8){
+                        min-width: 180px;
+                        max-width: 180px;
+                    }
+                    th:nth-child(5){
+                        min-width: 120px;
+                        max-width: 120px;
+                    }
+                    th:nth-child(6){
+                        min-width: 160px;
+                        max-width: 160px;
+                    }
+                    th:nth-child(7){
+                        min-width: 130px;
+                        max-width: 130px;
+                    }
+                    th:last-child{
+                        min-width: 130px;
+                        max-width: 130px;
+                    }
+                }
+            }
+            tbody{
+                tr{
+                    td:first-child{
+                        min-width: 70px;
+                        max-width: 70px;
+                    }
+                    td:nth-child(2),
+                    td:nth-child(3){
+                        min-width: 250px;
+                        max-width: 250px;
+                    }
+                    td:nth-child(4),
+                    td:nth-child(8){
+                        min-width: 180px;
+                        max-width: 180px;
+                    }
+                    td:nth-child(5){
+                        min-width: 120px;
+                        max-width: 120px;
+                    }
+                    td:nth-child(6){
+                        min-width: 160px;
+                        max-width: 160px;
+                    }
+                    td:nth-child(7){
+                        min-width: 130px;
+                        max-width: 130px;
+                    }
+                    td:last-child{
+                        gap: 6px;
+                        display: flex;
+                        align-items: center;
+                    }
+                    td:last-child{
+                        min-width: 130px;
+                        max-width: 130px;
+                        justify-content: flex-end;
+                        .am-custom-tooltip.am-tooltip-textimp{
+                            .am-tooltip-text{
+                                left: auto;
+                                right: 24px;
+                                bottom: 50%;
+                                transform: translateY(50%);
+                                &::before{
+                                    left: auto;
+                                    right: -6px;
+                                    bottom: 37.7%;
+                                }
+                            }
+                        }
+                    }
+                    td{
+                        .tb-email-verifiedbtn{white-space: nowrap;}
+                    }
+                }
+            }
+        }
+    }
+    // Blogs Table Start
+    &.am-blogs-system{
+        .tb-table{
+            thead{
+                tr{
+                    th:first-child{
+                        width: 535.84px;
+                        min-width: 535.84px;
+                        max-width: 535.84px;
+                    }
+                    th:nth-child(2){
+                        width: 535.84px;
+                        min-width: 535.84px;
+                        max-width: 535.84px;
+                    }
+                    th:nth-child(3),
+                    th:nth-child(4),
+                    th:last-child{
+                        width: 153.09px;
+                        min-width: 153.09px;
+                        max-width: 153.09px;
+                    }
+                }
+            }
+            tbody{
+                tr{
+                    td:first-child{
+                        width: 535.84px;
+                        min-width: 535.84px;
+                        max-width: 535.84px;
+                    }
+                    td:nth-child(2){
+                        width: 535.84px;
+                        min-width: 535.84px;
+                        max-width: 535.84px;
+                    }
+                    td:nth-child(3),
+                    td:nth-child(4),
+                    td:last-child{
+                        width: 153.09px;
+                        min-width: 153.09px;
+                        max-width: 153.09px;
+                    }
+                }
+            }
+        }
+    }
+    // Courses Table Start
+    &.am-courses-system{
+        .tb-table{
+            thead{
+                tr{
+                    th:first-child{
+                        width: 70px;
+                        min-width: 70px;
+                        max-width: 70px;
+                    }
+                    th:nth-child(2){
+                        width: 500px;
+                        min-width: 500px;
+                        max-width: 500px;
+                    }
+                    th:nth-child(5),
+                    th:nth-child(6){
+                        width: 170px;
+                        min-width: 170px;
+                        max-width: 170px;
+                    }
+                    th:nth-child(3),
+                    th:nth-child(4),
+                    th:last-child{
+                        width: 153.09px;
+                        min-width: 153.09px;
+                        max-width: 153.09px;
+                    }
+                }
+            }
+            tbody{
+                tr{
+                    td:first-child{
+                        width: 70px;
+                        min-width: 70px;
+                        max-width: 70px;
+                    }
+                    td:nth-child(2){
+                        width: 500px;
+                        min-width: 500px;
+                        max-width: 500px;
+                    }
+                    td:nth-child(5),
+                    td:nth-child(6){
+                        width: 170px;
+                        min-width: 170px;
+                        max-width: 170px;
+                    }
+                    td:nth-child(3),
+                    td:nth-child(4),
+                    td:last-child{
+                        width: 153.09px;
+                        min-width: 153.09px;
+                        max-width: 153.09px;
+                    }
+                    td:last-child {
+                        .tb-action-icon{
+                            gap: 0;
+                            @extend %flex;
+                            align-items: center;
+                            .am-tooltip-text{
+                                left: auto;
+                                right: 24px;
+                                bottom: 50%;
+                                transform: translateY(50%);
+                                &::before{
+                                    left: auto;
+                                    right: -6px;
+                                    bottom: 37.7%;
+                                }
+                            }
+                        }
+                        a{font-size: 16px;}
+                    }
+                }
+            }
+        }
+    }
+    // Enrollment Table Start
+    &.am-enrollment-system{
+        .tb-table{
+            thead{
+                tr{
+                    th:first-child{
+                        width: 70px;
+                        min-width: 70px;
+                        max-width: 70px;
+                    }
+                    th:nth-child(2){
+                        width: 200px;
+                        min-width: 200px;
+                        max-width: 200px;
+                    }
+                    th:nth-child(3){
+                        width: 300px;
+                        min-width: 300px;
+                        max-width: 300px;
+                    }
+                    th:nth-child(4),
+                    th:nth-child(5){
+                        width: 200px;
+                        min-width: 200px;
+                        max-width: 200px;
+                    }
+                    th:nth-child(6),
+                    th:nth-child(7){
+                        width: 120px;
+                        min-width: 120px;
+                        max-width: 120px;
+                    }
+                    th:nth-child(8){
+                        width: 160px;
+                        min-width: 160px;
+                        max-width: 160px;
+                    }
+                    th:last-child{
+                        width: 100px;
+                        min-width: 100px;
+                        max-width: 100px;
+                    }
+                }
+            }
+            tbody{
+                tr{
+                    td:first-child{
+                        width: 70px;
+                        min-width: 70px;
+                        max-width: 70px;
+                    }
+                    td:nth-child(2){
+                        width: 200px;
+                        min-width: 200px;
+                        max-width: 200px;
+                        span{word-break: break-all;}
+                    }
+                    th:nth-child(3){
+                        width: 300px;
+                        min-width: 300px;
+                        max-width: 300px;
+                    }
+                    td:nth-child(4),
+                    th:nth-child(5){
+                        width: 200px;
+                        min-width: 200px;
+                        max-width: 200px;
+                    }
+                    td:nth-child(6),
+                    td:nth-child(7){
+                        width: 120px;
+                        min-width: 120px;
+                        max-width: 120px;
+                    }
+                    td:nth-child(8){
+                        width: 160px;
+                        min-width: 160px;
+                        max-width: 160px;
+                    }
+                    td:last-child{
+                        width: 100px;
+                        min-width: 100px;
+                        max-width: 100px;
+                    }
+                }
+            }
+        }
+    }
+    // Identitiy Table Start
+    &.am-identitiy-system{
+        .tb-table{
+            thead{
+                tr{
+                    th:first-child{
+                        min-width: 70px;
+                        max-width: 70px;
+                    }
+                    th:nth-child(2),
+                    th:nth-child(4){
+                        min-width: 250px;
+                        max-width: 250px;
+                    }
+                    th:nth-child(3){
+                        min-width: 150px;
+                        max-width: 150px;
+                    }
+                    th:nth-child(5){
+                        min-width: 120px;
+                        max-width: 120px;
+                    }
+                    th:nth-child(6){
+                        min-width: 160px;
+                        max-width: 160px;
+                    }
+                    th:nth-child(7){
+                        min-width: 130px;
+                        max-width: 130px;
+                    }
+                    th:last-child{
+                        min-width: 130px;
+                        max-width: 130px;
+                    }
+                }
+            }
+            tbody{
+                tr{
+                    td:first-child{
+                        min-width: 70px;
+                        max-width: 70px;
+                    }
+                    td:nth-child(2),
+                    td:nth-child(4){
+                        min-width: 250px;
+                        max-width: 250px;
+                    }
+                    td:nth-child(3){
+                        min-width: 150px;
+                        max-width: 150px;
+                    }
+                    td:nth-child(8){
+                        min-width: 180px;
+                        max-width: 180px;
+                    }
+                    td:nth-child(5){
+                        min-width: 120px;
+                        max-width: 120px;
+                    }
+                    td:nth-child(7){
+                        min-width: 130px;
+                        max-width: 130px;
+                    }
+                    td:last-child{
+                        gap: 6px;
+                        display: flex;
+                        align-items: center;
+                    }
+                    td:last-child{
+                        min-width: 130px;
+                        max-width: 130px;
+                    }
+                    td{
+                        .tb-email-verifiedbtn{white-space: nowrap;}
+                    }
+                }
+            }
+        }
+    }
+    // Purchased Subscription Table Start
+    &.am-purchased-system{
+        .tb-table{
+            thead{
+                tr{
+                    th:first-child{
+                        width: 8%;
+                        min-width: 8%;
+                        max-width: 8%;
+                    }
+                    th:nth-child(2),
+                    th:nth-child(3),
+                    th:nth-child(6){
+                        width: 20%;
+                        min-width: 20%;
+                        max-width: 20%;
+                    }
+                    th:nth-child(4),
+                    th:nth-child(5){
+                        width: 10%;
+                        min-width: 10%;
+                        max-width: 10%;
+                    }
+                    th:last-child{
+                        width: 12%;
+                        min-width: 12%;
+                        max-width: 12%;
+                    }
+                }
+            }
+            tbody{
+                tr{
+                    td:first-child{
+                        width: 8%;
+                        min-width: 8%;
+                        max-width: 8%;
+                    }
+                    td:nth-child(2),
+                    td:nth-child(3),
+                    td:nth-child(6){
+                        width: 20%;
+                        min-width: 20%;
+                        max-width: 20%;
+                        span{word-break: break-all;}
+                    }
+                    td:nth-child(4),
+                    td:nth-child(5){
+                        width: 10%;
+                        min-width: 10%;
+                        max-width: 10%;
+                    }
+                    td:last-child{
+                        width: 12%;
+                        min-width: 12%;
+                        max-width: 12%;
+                    }
+                }
+            }
+        }
+    }
+}
