@@ -10,20 +10,20 @@
     
     /* Header Section */
     .am-searchhead {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         padding: 40px 0;
         color: white;
     }
     
     .am-searchhead_title h2 {
-        font-size: 1.75rem;
-        font-weight: 700;
+        font-size: 2.5rem;
+        font-weight: 800;
         color: white;
         margin-bottom: 0.5rem;
     }
     
     .am-searchhead_title p {
-        font-size: 1rem;
+        font-size: 1.1rem;
         color: rgba(255,255,255,0.7);
         margin: 0;
     }
@@ -63,228 +63,6 @@
         color: #F2D07F;
     }
     
-    /* Filter Tabs */
-    .am-searchfilter_tabs {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 1rem;
-        padding: 1rem 0;
-        border-bottom: 1px solid #e5e7eb;
-    }
-    
-    .am-searchfilter_tabslist {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        flex-wrap: wrap;
-    }
-    
-    .am-session-tab {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.5rem 1rem;
-        border-radius: 9999px;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: #6b7280;
-        background-color: #f3f4f6;
-        text-decoration: none;
-        transition: all 0.2s;
-    }
-    
-    .am-session-tab:hover {
-        background-color: #e5e7eb;
-    }
-    
-    .am-session-tab.active {
-        background-color: #1a1a1a;
-        color: white;
-    }
-    
-    .am-clearfilterbtn a {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        font-size: 0.875rem;
-        color: #ef4444;
-        background: #fef2f2;
-        border-radius: 9999px;
-        text-decoration: none;
-        transition: all 0.2s;
-    }
-    
-    .am-clearfilterbtn a:hover {
-        background: #fee2e2;
-    }
-    
-    /* Search Filter Bar */
-    .am-searchfilter_wrap {
-        background: white;
-        padding: 1.5rem 0;
-        border-bottom: 1px solid #e5e7eb;
-    }
-    
-    .am-searchfilter {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-    
-    .am-searchfilter_item {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .am-searchfilter_title {
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: #6b7280;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    
-    .am-searchfilteritems {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-    
-    .am-searchfilter_left {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-        width: 100%;
-    }
-    
-    .am-searchinput {
-        position: relative;
-        flex: 1;
-        min-width: 200px;
-    }
-    
-    .am-searchinput input {
-        width: 100%;
-        padding: 0.75rem 1rem 0.75rem 2.5rem;
-        border: 1px solid #e5e7eb;
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
-        transition: all 0.2s;
-    }
-    
-    .am-searchinput input:focus {
-        outline: none;
-        border-color: #F2D07F;
-        box-shadow: 0 0 0 3px rgba(242, 208, 127, 0.1);
-    }
-    
-    .am-searchinput_icon {
-        position: absolute;
-        left: 0.75rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #9ca3af;
-    }
-    
-    .am-select_title {
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: #374151;
-        white-space: nowrap;
-    }
-    
-    /* Tutor Search Section */
-    .am-tutorsearch_section {
-        padding: 2rem 0;
-    }
-    
-    /* Best Tutor Card */
-    .am-besttutor {
-        background: white;
-        border-radius: 1rem;
-        padding: 1.5rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        position: sticky;
-        top: 1rem;
-    }
-    
-    .am-besttutor_video {
-        border-radius: 0.75rem;
-        overflow: hidden;
-        margin-bottom: 1.5rem;
-    }
-    
-    .am-besttutor_video video {
-        width: 100%;
-        height: auto;
-        display: block;
-    }
-    
-    .am-besttutor_footer_tips h4 {
-        font-size: 1.125rem;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 0.75rem;
-    }
-    
-    .am-besttutor_footer_tips p {
-        font-size: 0.875rem;
-        color: #6b7280;
-        line-height: 1.6;
-        margin-bottom: 1rem;
-    }
-    
-    .am-besttutor_info_list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-    
-    .am-besttutor_info_list li {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-        padding: 0.5rem 0;
-        font-size: 0.875rem;
-        color: #374151;
-    }
-    
-    .am-besttutor_info_list li::before {
-        content: '✓';
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 1.25rem;
-        height: 1.25rem;
-        background: #dcfce7;
-        color: #16a34a;
-        border-radius: 50%;
-        font-size: 0.75rem;
-        font-weight: bold;
-        flex-shrink: 0;
-    }
-    
-    /* Responsive Design */
-    @media (max-width: 1024px) {
-        .am-searchfilter {
-            grid-template-columns: repeat(2, 1fr);
-        }
-        
-        .am-besttutor {
-            position: static;
-            margin-top: 2rem;
-        }
-    }
-    
     @media (max-width: 768px) {
         .am-searchhead {
             padding: 30px 0;
@@ -292,47 +70,6 @@
         
         .am-searchhead_title h2 {
             font-size: 1.5rem;
-        }
-        
-        .am-searchfilter_wrap {
-            padding: 1rem 0;
-        }
-        
-        .am-searchfilter {
-            grid-template-columns: 1fr;
-        }
-        
-        .am-searchfilter_tabslist {
-            width: 100%;
-            overflow-x: auto;
-            padding-bottom: 0.5rem;
-            flex-wrap: nowrap;
-        }
-        
-        .am-session-tab {
-            white-space: nowrap;
-        }
-        
-        .am-searchfilteritems {
-            flex-direction: column;
-            align-items: stretch;
-        }
-        
-        .am-searchfilter_left {
-            flex-direction: column;
-        }
-        
-        .am-searchinput {
-            width: 100%;
-            min-width: 100%;
-        }
-        
-        .am-select {
-            width: 100%;
-        }
-        
-        .am-select select {
-            width: 100%;
         }
     }
     
@@ -352,39 +89,31 @@
         .am-breadcrumb {
             font-size: 0.75rem;
         }
-        
-        .am-session-tab {
-            padding: 0.4rem 0.75rem;
-            font-size: 0.8rem;
-        }
     }
 </style>
 @endprepend
 
 @section('content')
 <div class="am-find-tutors-area">
-    <div class="am-searchhead" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); position: relative; overflow: hidden;">
-        <!-- Decorative background elements -->
-        <div style="position: absolute; top: -50%; left: -10%; width: 50%; height: 200%; background: radial-gradient(circle, rgba(242,208,127,0.05) 0%, transparent 70%); transform: rotate(30deg); pointer-events: none;"></div>
-        
-        <div class="container" style="position: relative; z-index: 1;">
+    <div class="am-searchhead">
+        <div class="container">
             <div class="row">
-                <div class="col-12 text-center text-md-start">
-                    <ol class="am-breadcrumb justify-content-center justify-content-md-start">
+                <div class="col-12">
+                    <ol class="am-breadcrumb">
                         <li><a href="{{ route('home') }}">Inicio</a></li>
                         <li><em>/</em></li>
                         <li class="active"><span>Buscar Tutores</span></li>
                     </ol>
-                    <div class="am-searchhead_title mt-3">
-                        <h2 style="font-size: 2.5rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.5rem;">Encuentra a tu <span style="color: #F2D07F;">Tutor Ideal</span></h2>
-                        <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto 0 0; line-height: 1.6;">Conecta con expertos verificados y lleva tu aprendizaje al siguiente nivel. Filtra por materia, precio y modalidad.</p>
+                    <div class="am-searchhead_title">
+                        <h2>Encuentra a tu Tutor Ideal</h2>
+                        <p>Conecta con expertos verificados y lleva tu aprendizaje al siguiente nivel.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <div class="am-searchfilter_wrap" style="background: #ffffff; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); border-radius: 0 0 20px 20px; position: relative; z-index: 10;">
+    <div class="am-searchfilter_wrap">
         <div class="container">
             <div class="row">
                 <div class="col-12">
@@ -407,14 +136,14 @@
                             </li>
                         </ul>
                         <div class="am-clearfilterbtn d-none">
-                            <a href="javascript:void(0);" id="clear_filters" style="font-weight: 600;">
+                            <a href="javascript:void(0);" id="clear_filters">
                                 Limpiar Filtros
                                 <i class="am-icon-multiply-02"></i>
                             </a>
                         </div>
                     </div>
                     
-                    <div class="am-searchfilter mt-4">
+                    <div class="am-searchfilter">
                         <div class="am-searchfilter_item">
                             <span class="am-searchfilter_title">Categoría</span>
                             <span class="am-select">
@@ -447,7 +176,7 @@
                         </div>
                         <div class="am-searchfilter_item">
                             <span class="am-searchfilter_title">Precio Máximo</span>
-                            <input type="text" placeholder="{{ getCurrencySymbol() }}0.00" class="form-control" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 15px; font-weight: 500;"
+                            <input type="text" placeholder="{{ getCurrencySymbol() }}0.00" class="form-control"
                                 id="max_price" value="{!! (!empty($filters['max_price']) ? (getCurrencySymbol().$filters['max_price']) : '') !!}">
                         </div>
                         <div class="am-searchfilter_item">
@@ -471,41 +200,38 @@
                         </div>
                     </div>
                     
-                    <div class="am-searchfilteritems mt-3 pt-3" style="border-top: 1px dashed #e2e8f0;">
-                        <div class="am-searchfilter_left d-flex align-items-center justify-content-between w-100 flex-wrap gap-3">
-                            <div class="am-searchinput flex-grow-1" style="max-width: 400px;">
+                    <div class="am-searchfilteritems">
+                        <div class="am-searchfilter_left">
+                            <div class="am-searchinput">
                                 <input type="text" value="{{ $filters['keyword'] ?? '' }}"
-                                    placeholder="Buscar por palabra clave o nombre..." class="form-control" id="keyword" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 15px 12px 40px; font-weight: 500;">
-                                <span class="am-searchinput_icon" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                    placeholder="Buscar por palabra clave o nombre..." class="form-control" id="keyword">
+                                <span class="am-searchinput_icon">
+                                    <i class="am-icon-search-02"></i>
                                 </span>
                             </div>
-                            
-                            <div class="d-flex align-items-center gap-4 flex-wrap">
-                                <span class="am-select d-flex align-items-center gap-2">
-                                    <span class="am-select_title text-muted" style="font-size: 0.85rem;">Ordenar por:</span>
-                                    <select class="am-select2" id="sort_by" data-searchable="false"
-                                        data-class="am-sort_dp_option" data-placeholder="Seleccionar">
-                                        <option></option>
-                                        <option value="newest" {{ (($filters['sort_by'] ?? '') == 'newest' ? 'selected' : '') }}>Más Recientes</option>
-                                        <option value="oldest" {{ (($filters['sort_by'] ?? '') == 'oldest' ? 'selected' : '') }}>Más Antiguos</option>
-                                        <option value="asc" {{ (($filters['sort_by'] ?? '') == 'asc' ? 'selected' : '') }}>Nombre (A-Z)</option>
-                                        <option value="desc" {{ (($filters['sort_by'] ?? '') == 'desc' ? 'selected' : '') }}>Nombre (Z-A)</option>
-                                    </select>
-                                </span>
-                                <span class="am-select am-languageselect d-flex align-items-center gap-2">
-                                    <span class="am-select_title text-muted" style="font-size: 0.85rem;">Idioma:</span>
-                                    <select class="am-select2" id="language_id" data-searchable="true" multiple
-                                        data-class="am-sort_dp_option" data-placeholder="Cualquier idioma">
-                                        <option></option>
-                                        @foreach ($languages as $lang)
-                                        <option value="{{ $lang->id }}" {{ in_array($lang->id, $filters['language_id'] ?? []) ? 'selected' : '' }}>
-                                            {{ $lang->name }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </span>
-                            </div>
+                            <span class="am-select">
+                                <span class="am-select_title">Ordenar por:</span>
+                                <select class="am-select2" id="sort_by" data-searchable="false"
+                                    data-class="am-sort_dp_option" data-placeholder="Seleccionar">
+                                    <option></option>
+                                    <option value="newest" {{ (($filters['sort_by'] ?? '') == 'newest' ? 'selected' : '') }}>Más Recientes</option>
+                                    <option value="oldest" {{ (($filters['sort_by'] ?? '') == 'oldest' ? 'selected' : '') }}>Más Antiguos</option>
+                                    <option value="asc" {{ (($filters['sort_by'] ?? '') == 'asc' ? 'selected' : '') }}>Nombre (A-Z)</option>
+                                    <option value="desc" {{ (($filters['sort_by'] ?? '') == 'desc' ? 'selected' : '') }}>Nombre (Z-A)</option>
+                                </select>
+                            </span>
+                            <span class="am-select am-languageselect">
+                                <span class="am-select_title">Idioma:</span>
+                                <select class="am-select2" id="language_id" data-searchable="true" multiple
+                                    data-class="am-sort_dp_option" data-placeholder="Cualquier idioma">
+                                    <option></option>
+                                    @foreach ($languages as $lang)
+                                    <option value="{{ $lang->id }}" {{ in_array($lang->id, $filters['language_id'] ?? []) ? 'selected' : '' }}>
+                                        {{ $lang->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </span>
                         </div>
                     </div>
                 </div>
