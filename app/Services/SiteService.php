@@ -177,8 +177,10 @@ class SiteService
 
     public function getTutorDetail($slug): User|null
     {
+        $user = auth()?->user();
+        $isNotAdmin  = !$user?->hasRole('admin') ?? true;
+        $isOwner = $user?->profile?->slug === $slug;
 
-        $isNotAdmin  = !auth()?->user()?->hasRole('admin') ?? true;
         return User::with([
             'languages:id,name',
             'subjects.subject:id,name',
@@ -196,8 +198,8 @@ class SiteService
                     }]);
             }])
             ->withMin('subjects as min_price', 'hour_rate')
-            ->withWhereHas('profile', function ($query) use ($slug, $isNotAdmin) {
-                if ($isNotAdmin) {
+            ->withWhereHas('profile', function ($query) use ($slug, $isNotAdmin, $isOwner) {
+                if ($isNotAdmin && !$isOwner) {
                     $query->whereNotNull('verified_at');
                 }
                 $query->whereSlug($slug);
