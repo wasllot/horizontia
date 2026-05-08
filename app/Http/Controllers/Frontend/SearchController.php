@@ -68,7 +68,7 @@ class SearchController extends Controller
         $userService = new UserService($user);
         $isFavourite = $userService->isFavouriteUser($tutor?->id ?? 0);
         $isAdmin = auth()?->user() && auth()?->user()?->hasRole('admin') ?? true;
-        $isOwnProfile = auth()?->id === $tutor?->id;
+        $isOwnProfile = auth()?->id() === $tutor?->id;
         if($tutor?->profile?->verified_at || $isAdmin || $isOwnProfile){
             $reviews       = Rating::where('tutor_id',$tutor->id)->count();
             $courses = [];
