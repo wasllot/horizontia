@@ -702,4 +702,3 @@
     });
 </script>
 @endpush
-@endsection
