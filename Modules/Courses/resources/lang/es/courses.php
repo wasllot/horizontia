@@ -264,6 +264,7 @@ return [
     'all_courses_heading'                           => 'Todos los cursos',
     'explore_courses'                               => 'Explore nuestros cursos mejor calificados y más populares, seleccionados para ayudarlo a alcanzar sus objetivos de aprendizaje.',
     'create_course'                                 => 'Crear curso',
+    'edit_course'                                   => 'Editar curso',
     'active_courses'                                => 'Cursos activos',
     'draft_courses'                                 => 'Cursos en borrador',
     'inactive_courses'                              => 'Cursos inactivos',

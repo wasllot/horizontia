@@ -7,9 +7,11 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Modules\Courses\Models\Course;
 use Modules\Courses\Services\CourseService;
+use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
 
 class CourseDiscussionForum extends Component
 {
+    use AdminAwareCourseRouting;
     public $courseId;
     public $course;
     public $enableDiscussionForum = false;
@@ -55,7 +57,7 @@ class CourseDiscussionForum extends Component
             return;
         }
         if($this->course->status != 'draft' && $this->course->status != 'need_revision') {
-            return redirect()->route('courses.tutor.courses');
+            return redirect($this->courseListingRoute());
         }
 
         DB::beginTransaction();
@@ -68,6 +70,6 @@ class CourseDiscussionForum extends Component
             $this->dispatch('showAlertMessage', type: 'error', title: __('courses::courses.error'), message: __('courses::courses.discussion_forum_update_failed'));
         }
 
-        return redirect()->route('courses.tutor.edit-course', ['tab' => 'publish', 'id' => $this->courseId]);
+        return redirect($this->editCourseRoute('publish', $this->courseId));
     }
 }

@@ -11,9 +11,11 @@ use Modules\Courses\Models\Course;
 use Modules\Courses\Services\CourseService;
 use Livewire\Component;
 use App\Jobs\GenerateCertificateJob;
+use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
 class CourseBasicDetails extends Component
 {
     use PrepareForValidation;
+    use AdminAwareCourseRouting;
     public $courseId = null;
     public $course;
     public $title;
@@ -65,7 +67,7 @@ class CourseBasicDetails extends Component
 
     public function loadCourseData()
     {
-        $course = (new CourseService())->getCourse(courseId: $this->courseId, instructorId: Auth::id());
+        $course = (new CourseService())->getCourse(courseId: $this->courseId, instructorId: $this->instructorId());
 
         if (!$course) {
             abort(404);
@@ -117,10 +119,18 @@ class CourseBasicDetails extends Component
             $this->tags             = SanitizeArray($this->tags);
             $validatedData['tags']  = array_filter($this->tags, fn($tag) => !empty($tag));
 
-            $validatedData['instructor_id'] = Auth::id();
+            // Preserve the original instructor when admin creates/edits; use own ID for tutors
+            if (!$this->courseId) {
+                // New course: set instructor to current user (admin or tutor)
+                $validatedData['instructor_id'] = Auth::id();
+            } else {
+                // Editing: keep original instructor (important for admins)
+                $existingCourse = Course::find($this->courseId);
+                $validatedData['instructor_id'] = $existingCourse ? $existingCourse->instructor_id : Auth::id();
+            }
 
             $course = (new CourseService())->updateOrCreateCourse($this->courseId, $validatedData);
-            return redirect()->route('courses.tutor.edit-course', ['tab' => 'media', 'id' => $course->id]);
+            return redirect($this->editCourseRoute('media', $course->id));
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->dispatch('loadPageJs');
             throw $e;

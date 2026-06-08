@@ -5,8 +5,10 @@ namespace Modules\Courses\Livewire\Pages\Tutor\CourseCreation\Components;
 
 use Livewire\Component;
 use Modules\Courses\Services\CourseService;
+use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
 
 class CourseSidebar extends Component {
+    use AdminAwareCourseRouting;
     public $activeTab;
     public $id;
     public $tabs;
@@ -26,7 +28,7 @@ class CourseSidebar extends Component {
 
     public function navigateToRoute($tab) {
         if ($tab && $this->id) {
-            return redirect()->route('courses.tutor.edit-course', ['id' => $this->id, 'tab' => $tab]);
+            return redirect($this->editCourseRoute($tab, $this->id));
         }
     }
 }

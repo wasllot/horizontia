@@ -10,8 +10,11 @@ use Modules\Courses\Models\Course;
 use Modules\Courses\Services\CourseService;
 use Livewire\Component;
 use Livewire\Attributes\On;
+use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
 
 class CourseFaqs extends Component {
+
+    use AdminAwareCourseRouting;
 
     public $courseId;
     public $course;
@@ -105,7 +108,7 @@ class CourseFaqs extends Component {
             $tab = 'promotions';
         }
         
-        return redirect()->route('courses.tutor.edit-course', ['tab' => $tab, 'id' => $coursePrerequisites->id]);
+        return redirect($this->editCourseRoute($tab, $coursePrerequisites->id));
     }
 
     #[On('delete-faq')]

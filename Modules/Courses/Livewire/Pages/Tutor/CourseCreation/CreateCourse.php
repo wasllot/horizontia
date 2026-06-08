@@ -6,9 +6,11 @@ namespace Modules\Courses\Livewire\Pages\Tutor\CourseCreation;
 use Modules\Courses\Models\Pricing;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
 
 class CreateCourse extends Component
 {
+    use AdminAwareCourseRouting;
     public $tab;
     public $id;
     public $course;
@@ -90,12 +92,12 @@ class CreateCourse extends Component
         }
     }
 
-    #[Layout('layouts.app')]
     public function render()
     {
+        $layout = $this->isAdmin() ? 'layouts.admin-app' : 'layouts.app';
         return view('courses::livewire.tutor.course-creation.create-course', [
             'tab' => $this->tab,
             'id' => $this->id,
-        ]);
+        ])->layout($layout);
     }
 }

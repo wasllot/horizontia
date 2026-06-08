@@ -25,6 +25,10 @@
                                     <input type="text" class="form-control" wire:model.live.debounce.500ms="filters.keyword"
                                         autocomplete="off" placeholder="{{ __('courses::courses.search_by_keyword') }}">
                                 </div>
+                                <a href="{{ route('courses.admin.create-course') }}" class="tb-btn tb-btn-primary" id="admin-create-course-btn">
+                                    <i class="icon-plus"></i>
+                                    {{ __('courses::courses.create_course') }}
+                                </a>
                             </div>
                         </fieldset>
                     </form>
@@ -98,6 +102,14 @@
                                                         <span class="am-tooltip-text">{{ __('courses::courses.view_details') }}</span>
                                                         <a href="{{ route('courses.course-detail', ['slug' => $course->slug]) }}" target="_blank">
                                                             <i class="icon-eye"></i>
+                                                        </a>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="am-custom-tooltip">
+                                                        <span class="am-tooltip-text">{{ __('courses::courses.edit_course') }}</span>
+                                                        <a href="{{ route('courses.admin.edit-course', ['tab' => 'details', 'id' => $course->id]) }}">
+                                                            <i class="icon-edit"></i>
                                                         </a>
                                                     </div>
                                                 </li>

@@ -16,9 +16,11 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
 
 class CoursePromotions extends Component
 {
+    use AdminAwareCourseRouting;
     public $courseId;
     public $course;
     public $form = [
@@ -237,6 +239,6 @@ class CoursePromotions extends Component
             $this->dispatch('showAlertMessage', type: 'error', title: __('courses::courses.error'), message: __('courses::courses.course_promotion_failed'));
         }
 
-        return redirect()->route('courses.tutor.edit-course', ['tab' => 'noticeboard', 'id' => $this->courseId]);
+        return redirect($this->editCourseRoute('noticeboard', $this->courseId));
     }
 }

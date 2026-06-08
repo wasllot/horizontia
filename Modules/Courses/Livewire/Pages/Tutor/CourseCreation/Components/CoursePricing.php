@@ -8,8 +8,11 @@ use Modules\Courses\Http\Requests\CoursePriceRequest;
 use Modules\Courses\Models\Course;
 use Livewire\Component;
 use Modules\Courses\Services\CourseService;
+use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
 
 class CoursePricing extends Component {
+
+    use AdminAwareCourseRouting;
 
     public $courseId;
     public $course;
@@ -135,7 +138,7 @@ class CoursePricing extends Component {
             }
 
             (new CourseService())->updateCoursePricing($this->course, $data);
-            return redirect()->route('courses.tutor.edit-course', ['tab' => 'content', 'id' => $this->courseId]);
+            return redirect($this->editCourseRoute('content', $this->courseId));
         } catch (\Throwable $th) {
             Log::info($th->getMessage());
         }

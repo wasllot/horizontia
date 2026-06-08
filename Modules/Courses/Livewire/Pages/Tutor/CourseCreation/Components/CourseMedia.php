@@ -9,10 +9,12 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Str;
 use Modules\Courses\Http\Requests\CourseMediaRequest;
+use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
 
 class CourseMedia extends Component
 {
     use WithFileUploads;
+    use AdminAwareCourseRouting;
 
     public $courseId;
     public $course;
@@ -204,6 +206,6 @@ class CourseMedia extends Component
         $tab = 'content';
        }
         
-        return redirect()->route('courses.tutor.edit-course', ['tab' => $tab, 'id' => $this->courseId]);
+        return redirect($this->editCourseRoute($tab, $this->courseId));
     }
 }

@@ -10,9 +10,11 @@ use Modules\Courses\Jobs\UpdateCourseContentLength;
 use Modules\Courses\Models\Course;
 use Livewire\Features\SupportPagination\WithoutUrlPagination;
 use Livewire\WithPagination;
+use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
 
 class CourseContent extends Component
 {
+    use AdminAwareCourseRouting;
 
     public $addSection = false;
     protected $allSections = [];
@@ -138,6 +140,6 @@ class CourseContent extends Component
         }
         dispatch(new UpdateCourseContentLength(courseId: (int)$this->course_id));
 
-        return redirect()->route('courses.tutor.edit-course', ['tab' => 'faqs', 'id' => $this->course_id]);
+        return redirect($this->editCourseRoute('faqs', $this->course_id));
     }
 }

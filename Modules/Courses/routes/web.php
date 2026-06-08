@@ -39,6 +39,8 @@ Route::middleware(['locale', 'maintenance', 'enabled:courses'])->as('courses.')-
         Route::get('/admin/course-enrollments', CourseEnrollments::class)->name('course-enrollments');
         Route::get('/admin/categories', Categories::class)->name('categories');
         Route::get('/admin/commission-setting', CommissionSettings::class)->name('commission-setting');
+        Route::get('/admin/create-course', CreateCourse::class)->name('create-course');
+        Route::get('/admin/course/edit/{tab}/{id}', CreateCourse::class)->name('edit-course');
     });
 
     Route::get('/course-taking/{slug}', CourseTaking::class)->middleware(['auth', 'verified'])->name('course-taking');
