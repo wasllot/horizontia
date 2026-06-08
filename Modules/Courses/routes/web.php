@@ -16,6 +16,7 @@ use Modules\Courses\Livewire\Pages\Admin\Categories;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Modules\Courses\Http\Controllers\VideoController;
+use Modules\Courses\Http\Controllers\ScormController;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 Route::middleware(['locale', 'maintenance', 'enabled:courses'])->as('courses.')->prefix(config('courses.url_prefix'))->group(function () {
@@ -45,6 +46,12 @@ Route::middleware(['locale', 'maintenance', 'enabled:courses'])->as('courses.')-
 
     Route::get('/course-taking/{slug}', CourseTaking::class)->middleware(['auth', 'verified'])->name('course-taking');
     Route::get('/course-list', CourseList::class)->middleware(['auth', 'verified', 'role:student'])->name('course-list');
+
+    // SCORM API Routes
+    Route::middleware(['auth', 'verified'])->prefix('scorm')->name('scorm.')->group(function () {
+        Route::get('/progress/{curriculumId}', [ScormController::class, 'getProgress'])->name('get-progress');
+        Route::post('/progress/{curriculumId}', [ScormController::class, 'saveProgress'])->name('save-progress');
+    });
 
     Route::get('secure-video/{path}', [VideoController::class, 'play'])->middleware('auth')->name('secure.video'); 
 });

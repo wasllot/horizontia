@@ -298,6 +298,39 @@
                                 wire:key="profile-video-src-{{ $activeCurriculum['id'] . time() }}"></iframe>
                             </div>
 
+                    @elseif($activeCurriculum['type'] == 'scorm')
+                        <div class="" style="width: 100%; display: flex; flex-direction: column;">
+                            <script src="{{ asset('js/scorm-api-wrapper.js') }}"></script>
+                            <script>
+                                if (typeof window.API !== 'undefined') {
+                                    window.API.init('{{ $activeCurriculum['id'] }}', '{{ csrf_token() }}', '{{ url('/') }}');
+                                }
+                                window.addEventListener('scorm-finished', function(e) {
+                                    console.log('SCORM finished with status:', e.detail.status, 'Score:', e.detail.score);
+                                    @role('student')
+                                    @this.call('updateWatchtime', true);
+                                    @endrole
+                                    showNextItemContent();
+                                });
+                            </script>
+                            <div style="width: 100%; height: 75vh; min-height: 600px; border-radius: 8px; overflow: hidden; background: #fff;">
+                                <iframe 
+                                    id="scorm-iframe-{{ $activeCurriculum['id'] }}"
+                                    src="{{ asset($activeCurriculum['media_path']) }}" 
+                                    frameborder="0" 
+                                    allowfullscreen="true" 
+                                    allow="autoplay; fullscreen; microphone; camera" 
+                                    style="width: 100%; height: 100%; border: none;">
+                                </iframe>
+                            </div>
+                            @role('student')     
+                                <div class="cr-coursedetails_article_actions" style="margin-top: 1.5rem; justify-content: flex-end; display: flex; padding-right: 1rem;">                                 
+                                    @if(!empty($curriculumOrder[$activeCurriculum['id']]))
+                                        <a href="javascript:void(0);" class="am-btn" wire:click.prevent="nextCurriculum({{ $curriculumOrder[$activeCurriculum['id']] }})">Go to next item</a>
+                                    @endif
+                                </div>
+                            @endrole
+                        </div>
                     @elseif($activeCurriculum['type'] == 'genially_link')
                         <div class="" style="width: 100%; display: flex; flex-direction: column;">
                             <div style="width: 100%; height: 75vh; min-height: 600px; border-radius: 8px; overflow: hidden; background: #fff;">

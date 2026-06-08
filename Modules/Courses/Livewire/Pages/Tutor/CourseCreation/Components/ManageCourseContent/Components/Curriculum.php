@@ -27,6 +27,7 @@ class Curriculum extends Component
     public $genially_link;
     public $mediaType = 'video';
     public $curriculumVideo;
+    public $scorm_file;
     public $allowVideoFileExt = ['mp4'];
     public $videoFileSize = 2048;
     public $activeCurriculumItem = null;
@@ -285,6 +286,32 @@ class Curriculum extends Component
             );    
             $this->updateActiveCurriculumItem($curriculum->toArray());
             $this->dispatch('showAlertMessage', type: 'success', title: __('courses::courses.curriculum_updated_successfully'), message: __('courses::courses.curriculum_updated_successfully'));
+        } elseif($this->activeCurriculumItem['type'] == 'scorm') {
+            $this->validate([
+                'scorm_file' => 'required|file|mimes:zip',
+            ]);
+            if ($this->scorm_file) {
+                $fileName = uniqueFileName('public/scorm_temp', $this->scorm_file->getClientOriginalName());
+                $scormPath = $this->scorm_file->storeAs('scorm_temp', $fileName, getStorageDisk());
+                
+                $entryPoint = (new \Modules\Courses\Services\ScormService())->processScormZip($scormPath, $this->activeCurriculumItem['id']);
+                
+                if ($entryPoint) {
+                    $curriculum = (new CurriculumService())->updateCurriculum(
+                        $this->activeCurriculumItem['id'], 
+                        [
+                            'media_path'        => $entryPoint, 
+                            'type'              => 'scorm', 
+                            'content_length'    => $this->duration ?? 0,
+                            'is_preview'        => !empty($this->activeCurriculumItem['is_preview']) ? $this->activeCurriculumItem['is_preview'] : false
+                        ]
+                    );
+                    $this->updateActiveCurriculumItem($curriculum->toArray());
+                    $this->dispatch('showAlertMessage', type: 'success', title: __('courses::courses.curriculum_updated_successfully'), message: __('courses::courses.curriculum_updated_successfully'));
+                } else {
+                    $this->dispatch('showAlertMessage', type: 'error', title: 'Error', message: 'Invalid SCORM package. Could not find entry point.');
+                }
+            }
         }  else {
             $this->validate([
                 'article_content' => 'required|string'
@@ -329,6 +356,9 @@ class Curriculum extends Component
         }
         if ($this->genially_link) {
             $this->genially_link = null;
+        }
+        if ($this->scorm_file) {
+            $this->scorm_file = null;
         }
 
         $curriculum = (new CurriculumService())->updateCurriculum($this->activeCurriculumItem['id'], ['media_path' => null]);

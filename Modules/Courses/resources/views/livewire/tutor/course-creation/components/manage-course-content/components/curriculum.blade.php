@@ -112,6 +112,14 @@
                                 </div>
                                 <span class="cr-tag">{{ __('courses::courses.coming_soon') }}</span>
                             </li>
+                            <li wire:click="updateCurriculumType('scorm')" wire:target="updateCurriculumType('scorm')" wire:loading.class="am-btn_disable" class="{{ $activeCurriculumItem['type'] === 'scorm' ? 'cr-active' : '' }}">
+                                <div class="cr-curriculum-btnconten">
+                                    <figure>
+                                        <i class="am-icon-book" style="font-size:24px; color:#585858;"></i>
+                                    </figure>
+                                    <span>SCORM Package</span>
+                                </div>
+                            </li>
                         </ul>
                         @if($activeCurriculumItem['type'] === 'article')
                             <div class="form-group @error('article_content') cr-invalid @enderror">
@@ -313,6 +321,30 @@
                                     @endif
                                 </div>
                             @endif
+                        @elseif($activeCurriculumItem['type'] === 'scorm')
+                            <div class="am-upload-options" wire:key="media-options-scorm-{{ $section->id }}">
+                                <h6 class="am-important">SCORM Package (.zip)</h6>
+                                <p>Upload a SCORM 1.2 or 2004 zip file.</p>
+                                @if(empty($scorm_file) && empty($curriculumItem->media_path))
+                                    <div wire:loading.remove wire:target="scorm_file" class="form-group" id="scorm-upload-section" wire:ignore.self>
+                                        <label for="at_upload_scorm{{ $activeCurriculumItem['id'] }}" class="am-uploadfile">
+                                            <svg class="am-border-svg "><rect width="100%" height="100%"></rect></svg>
+                                            <input type="file" id="at_upload_scorm{{ $activeCurriculumItem['id'] }}" wire:model="scorm_file" accept=".zip">
+                                            <span class="am-dropfileshadow">
+                                                <span>Upload SCORM .zip file</span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <div wire:loading wire:target="scorm_file">
+                                        <p>Uploading SCORM...</p>
+                                    </div>
+                                @elseif(!empty($activeCurriculumItem['media_path']))
+                                    <div class="am-uploadedfile">
+                                        <p style="color: green;">✔ SCORM file uploaded successfully</p>
+                                        <p><small>Entry point: {{ $activeCurriculumItem['media_path'] }}</small></p>
+                                    </div>
+                                @endif
+                            </div>
                         @endif
                         @error('curriculumVideo')
                             <span class="text-danger">{{ $message }}</span>
@@ -322,7 +354,7 @@
                                 <label for="preview" class="cr-label">{{ __('courses::courses.preview') }}</label>
                                 <input type="checkbox" id="preview" class="cr-toggle" wire:model="activeCurriculumItem.is_preview">
                             </div>
-                           @if( in_array($activeCurriculumItem['type'], ['audio', 'live', 'article']) || ($activeCurriculumItem['type'] === 'video' && !empty($curriculumVideo)) || ($activeCurriculumItem['type'] === 'yt_link' && !empty($yt_link)) || ($activeCurriculumItem['type'] === 'vm_link' && !empty($vm_link)) || ($activeCurriculumItem['type'] === 'genially_link' && !empty($genially_link))) 
+                           @if( in_array($activeCurriculumItem['type'], ['audio', 'live', 'article']) || ($activeCurriculumItem['type'] === 'video' && !empty($curriculumVideo)) || ($activeCurriculumItem['type'] === 'yt_link' && !empty($yt_link)) || ($activeCurriculumItem['type'] === 'vm_link' && !empty($vm_link)) || ($activeCurriculumItem['type'] === 'genially_link' && !empty($genially_link)) || ($activeCurriculumItem['type'] === 'scorm' && (!empty($scorm_file) || !empty($activeCurriculumItem['media_path']))) ) 
                                 <button wire:click="updateActiveCurriculumItem" class="am-white-btn" wire:loading.attr="disabled" wire:target="updateActiveCurriculumItem" wire:loading.class="am-btn_disable">
                                     {{ __('courses::courses.skip') }}
                                 </button>
@@ -333,7 +365,7 @@
                                 </button>
                            @endif
                            
-                            @if (($activeCurriculumItem['type'] === 'video' && !empty($curriculumVideo)) || ($activeCurriculumItem['type'] === 'yt_link' && !empty($yt_link)) || ($activeCurriculumItem['type'] === 'vm_link' && !empty($vm_link)) || ($activeCurriculumItem['type'] === 'genially_link' && !empty($genially_link)))
+                            @if (($activeCurriculumItem['type'] === 'video' && !empty($curriculumVideo)) || ($activeCurriculumItem['type'] === 'yt_link' && !empty($yt_link)) || ($activeCurriculumItem['type'] === 'vm_link' && !empty($vm_link)) || ($activeCurriculumItem['type'] === 'genially_link' && !empty($genially_link)) || ($activeCurriculumItem['type'] === 'scorm' && !empty($activeCurriculumItem['media_path'])))
                                 <button wire:click="removeCurriculumContent" wire:loading.attr="disabled" wire:target="removeCurriculumContent" wire:loading.class="am-btn_disable" type="click" class="am-btn am-remove-curriculum">
                                     <span wire:loading.remove wire:target="removeCurriculumContent">{{ __('courses::courses.remove') }}</span>
                                     <span wire:loading wire:target="removeCurriculumContent">{{ __('courses::courses.removing') }}</span>
