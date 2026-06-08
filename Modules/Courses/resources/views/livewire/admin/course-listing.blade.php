@@ -1,13 +1,15 @@
 <main class="tb-main am-dispute-system am-courses-system">
     <div class="row">
         <div class="col-lg-12 col-md-12">
+            <div style="margin-bottom: 20px;">
+                <a href="{{ route('courses.admin.create-course') }}" class="tb-btn tb-btn-primary" id="admin-create-course-btn" style="background: #f7b205; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="icon-plus"></i>
+                    {{ __('courses::courses.create_course') }}
+                </a>
+            </div>
             <div class="tb-dhb-mainheading">
                 <h4>{{ __('courses::courses.all_courses') . ' (' . $courses->total() . ')' }}</h4>
-                <div class="tb-sortby d-flex align-items-center" style="gap: 15px;">
-                    <a href="{{ route('courses.admin.create-course') }}" class="tb-btn tb-btn-primary" id="admin-create-course-btn">
-                        <i class="icon-plus"></i>
-                        {{ __('courses::courses.create_course') }}
-                    </a>
+                <div class="tb-sortby">
                     <form class="tb-themeform tb-displistform">
                         <fieldset>
                             <div class="tb-themeform__wrap">
