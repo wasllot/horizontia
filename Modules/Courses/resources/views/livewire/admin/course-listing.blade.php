@@ -3,7 +3,11 @@
         <div class="col-lg-12 col-md-12">
             <div class="tb-dhb-mainheading">
                 <h4>{{ __('courses::courses.all_courses') . ' (' . $courses->total() . ')' }}</h4>
-                <div class="tb-sortby">
+                <div class="tb-sortby d-flex align-items-center" style="gap: 15px;">
+                    <a href="{{ route('courses.admin.create-course') }}" class="tb-btn tb-btn-primary" id="admin-create-course-btn">
+                        <i class="icon-plus"></i>
+                        {{ __('courses::courses.create_course') }}
+                    </a>
                     <form class="tb-themeform tb-displistform">
                         <fieldset>
                             <div class="tb-themeform__wrap">
@@ -25,10 +29,6 @@
                                     <input type="text" class="form-control" wire:model.live.debounce.500ms="filters.keyword"
                                         autocomplete="off" placeholder="{{ __('courses::courses.search_by_keyword') }}">
                                 </div>
-                                <a href="{{ route('courses.admin.create-course') }}" class="tb-btn tb-btn-primary" id="admin-create-course-btn">
-                                    <i class="icon-plus"></i>
-                                    {{ __('courses::courses.create_course') }}
-                                </a>
                             </div>
                         </fieldset>
                     </form>
