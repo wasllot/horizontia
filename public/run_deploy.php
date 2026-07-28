@@ -8,8 +8,10 @@
  * ATENCIÓN: Por seguridad, ELIMINA este archivo después de usarlo.
  */
 
-// Aumentar el tiempo límite de ejecución para backups grandes
-set_time_limit(300);
+// Mostrar errores para depurar el 500
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 // Cargar las dependencias y la aplicación de Laravel
 $vendorPaths = [
@@ -70,6 +72,10 @@ try {
     $backupFile = "{$backupDir}/db_backup_{$timestamp}.sql";
 
     if ($dbConnection === 'mysql') {
+        if (!function_exists('exec')) {
+            throw new \Exception("La función 'exec' está deshabilitada en este servidor Plesk. No se puede hacer el dump automáticamente.");
+        }
+        
         $command = sprintf(
             'mysqldump --user="%s" --password="%s" --host="%s" --port="%s" "%s" > "%s" 2>&1',
             $dbUser,
