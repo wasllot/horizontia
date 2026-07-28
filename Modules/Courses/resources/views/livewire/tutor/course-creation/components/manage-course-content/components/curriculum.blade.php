@@ -120,8 +120,16 @@
                                     <span>SCORM Package</span>
                                 </div>
                             </li>
+                            <li wire:click="updateCurriculumType('assignment')" wire:target="updateCurriculumType('assignment')" wire:loading.class="am-btn_disable" class="{{ $activeCurriculumItem['type'] === 'assignment' ? 'cr-active' : '' }}">
+                                <div class="cr-curriculum-btnconten">
+                                    <figure>
+                                        <i class="am-icon-book-1" style="font-size:24px; color:#585858;"></i>
+                                    </figure>
+                                    <span>Tarea / Assignment</span>
+                                </div>
+                            </li>
                         </ul>
-                        @if($activeCurriculumItem['type'] === 'article')
+                        @if(in_array($activeCurriculumItem['type'], ['article', 'assignment']))
                             <div class="form-group @error('article_content') cr-invalid @enderror">
                                 <div wire:ignore class="am-editor-wrapper">
                                     <div class="am-custom-editor am-custom-textarea">
@@ -354,7 +362,7 @@
                                 <label for="preview" class="cr-label">{{ __('courses::courses.preview') }}</label>
                                 <input type="checkbox" id="preview" class="cr-toggle" wire:model="activeCurriculumItem.is_preview">
                             </div>
-                           @if( in_array($activeCurriculumItem['type'], ['audio', 'live', 'article']) || ($activeCurriculumItem['type'] === 'video' && !empty($curriculumVideo)) || ($activeCurriculumItem['type'] === 'yt_link' && !empty($yt_link)) || ($activeCurriculumItem['type'] === 'vm_link' && !empty($vm_link)) || ($activeCurriculumItem['type'] === 'genially_link' && !empty($genially_link)) || ($activeCurriculumItem['type'] === 'scorm' && (!empty($scorm_file) || !empty($activeCurriculumItem['media_path']))) ) 
+                           @if( in_array($activeCurriculumItem['type'], ['audio', 'live', 'article', 'assignment']) || ($activeCurriculumItem['type'] === 'video' && !empty($curriculumVideo)) || ($activeCurriculumItem['type'] === 'yt_link' && !empty($yt_link)) || ($activeCurriculumItem['type'] === 'vm_link' && !empty($vm_link)) || ($activeCurriculumItem['type'] === 'genially_link' && !empty($genially_link)) || ($activeCurriculumItem['type'] === 'scorm' && (!empty($scorm_file) || !empty($activeCurriculumItem['media_path']))) ) 
                                 <button wire:click="updateActiveCurriculumItem" class="am-white-btn" wire:loading.attr="disabled" wire:target="updateActiveCurriculumItem" wire:loading.class="am-btn_disable">
                                     {{ __('courses::courses.skip') }}
                                 </button>

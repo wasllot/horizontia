@@ -57,6 +57,11 @@
                                         <i class="am-icon-user-group" style="color:#f6d365;"></i> Tutores
                                     </a>
                                 </li>
+                                <li class="nav-item" style="list-style:none; padding:0; margin:0; background:none;">
+                                    <a class="nav-link" href="{{ route('contacto') }}" style="color:#1a1a2e; font-weight:600; text-decoration:none; display:flex; align-items:center; gap:5px;">
+                                        <i class="am-icon-email" style="color:#2ecc71;"></i> Contacto
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </nav>
@@ -66,7 +71,6 @@
                     @guest
                         <div class="am-loginbtns">
                             <a href="{{ route('login') }}" class="am-btn">{{ __('general.login') }}</a>
-                            <a href="{{ route('register') }}" class="am-white-btn">{{ __('general.get_started') }}</a>
                         </div>
                     @endguest
                 </div>

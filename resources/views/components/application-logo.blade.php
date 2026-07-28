@@ -17,6 +17,9 @@
         $logo    = setting('_general.logo_white');
         $logoImg = !empty($logo[0]['path']) ? url(Storage::url($logo[0]['path'])) : asset('demo-content/logo-white.svg');
     }
+    
+    // Override logo with Horizontia's logo
+    $logoImg = 'https://horizontia.com/storage/optionbuilder/uploads/683205-07-2025_1205pmlogo-horizontia.png';
 @endphp
 <a href="{{ url('/') }}">
     <img src="{{ $logoImg }}" alt="{{ setting('_general.site_name') ?? config('app.name', __('general.app_name')) }}" {{ $attributes }}>

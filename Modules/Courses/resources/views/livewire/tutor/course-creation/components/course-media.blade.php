@@ -9,14 +9,18 @@
                 <x-input-label class="am-important" :value="__('courses::courses.add_course_thumbnail')" />
                 <div class="am-uploadoption" x-data="{isUploading:false}" wire:key="uploading-thumbnail-{{ time() }}">
                     <div class="tk-draganddrop" wire:loading.class="am-uploading" wire:target="thumbnail" x-bind:class="{ 'am-dragfile' : isDragging, 'am-uploading' : isUploading }" x-on:drop.prevent="isUploading = true; isDragging = false" wire:drop.prevent="$dispatch('file-dropped', $event)">
-                        <x-text-input name="file" type="file" id="at_upload_thumbnail" accept="{{ !empty($allowImgFileExt) ? join(',', array_map(function($ex){return('.'.$ex);}, $allowImgFileExt)) : '*' }}" x-on:change="isUploading = true; $wire.dispatch('file-dropped', {'dataTransfer' : { files :  $event.target.files}})" />
+                        <div style="display: none;">
+                            <div style="display: none;">
+                            <x-text-input name="file" type="file" id="at_upload_thumbnail" accept="{{ !empty($allowImgFileExt) ? join(',', array_map(function($ex){return('.'.$ex);}, $allowImgFileExt)) : '*' }}" x-on:change="isUploading = true; $wire.dispatch('file-dropped', {'dataTransfer' : { files :  $event.target.files}})" />
+                        </div>
+                        </div>
                         <label for="at_upload_thumbnail" class="am-uploadfile">
-                            <svg class="am-border-svg ">
-                                <rect width="100%" height="100%"></rect>
+                            <svg class="am-border-svg " style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                                <rect width="100%" height="100%" fill="transparent" stroke="#EAEAEA" stroke-width="2" stroke-dasharray="6 4" rx="12"></rect>
                             </svg>
                             <span class="am-dropfileshadow">
-                                <svg class="am-border-svg ">
-                                    <rect width="100%" height="100%"></rect>
+                                <svg class="am-border-svg " style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                                    <rect width="100%" height="100%" fill="transparent" stroke="#EAEAEA" stroke-width="2" stroke-dasharray="6 4" rx="12"></rect>
                                 </svg>
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                     <path d="M3.33337 8.00016H8.00004M12.6667 8.00016H8.00004M8.00004 8.00016V3.3335M8.00004 8.00016V12.6668" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -81,10 +85,14 @@
                 <x-input-label class="am-important" :value="__('courses::courses.add_promotional_video')" />
                 <div class="am-uploadoption" x-data="{isUploading:false}" wire:key="uploading-video-{{ time() }}">
                     <div class="tk-draganddrop" x-bind:class="{ 'am-dragfile' : isDragging, 'am-uploading' : isUploading }" x-on:drop.prevent="isDragging = false; isUploading = true" wire:drop.prevent="$upload('promotionalVideo', $event.dataTransfer.files[0])">
-                        <x-text-input name="file" type="file" id="at_upload_video" x-ref="file_upload" accept="{{ !empty($allowVideoFileExt) ?  join(',', array_map(function($ex){return('.'.$ex);}, $allowVideoFileExt)) : '*' }}" x-on:change="isUploading=true; $wire.upload('promotionalVideo', $refs.file_upload.files[0])" />
+                        <div style="display: none;">
+                            <div style="display: none;">
+                            <x-text-input name="file" type="file" id="at_upload_video" x-ref="file_upload" accept="{{ !empty($allowVideoFileExt) ?  join(',', array_map(function($ex){return('.'.$ex);}, $allowVideoFileExt)) : '*' }}" x-on:change="isUploading=true; $wire.upload('promotionalVideo', $refs.file_upload.files[0])" />
+                        </div>
+                        </div>
                         <label for="at_upload_video" class="am-uploadfile">
-                            <svg class="am-border-svg ">
-                                <rect width="100%" height="100%"></rect>
+                            <svg class="am-border-svg " style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                                <rect width="100%" height="100%" fill="transparent" stroke="#EAEAEA" stroke-width="2" stroke-dasharray="6 4" rx="12"></rect>
                             </svg>
                             <span class="am-dropfileshadow">
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -254,7 +262,7 @@
                     let allowFileSize = Number("{{$imageSize}}");
                     
                     let fileExtJson = @json($imageExtensions);
-                    let allowFileExt = fileExtJson.split(',');
+                    let allowFileExt = fileExtJson ? fileExtJson.split(',').map(item => item.trim().replace('.', '')) : [];
 
                     if (allowFileExt.includes(fileExt) && fileSize <= allowFileSize) {
                         withoutCropImage = files[0];
@@ -346,6 +354,7 @@
                     component.set('imageName', fileName);
                     console.log(base64, image_name, fileName, croppedImageSize(base64));
                     component.set('uploadedThumbnailSize', croppedImageSize(base64));
+                    if (typeof component.$refresh === 'function') { component.$refresh(); }
                 };
                 jQuery('#cropedImage').modal('hide');
                 setTimeout(() => {
@@ -365,6 +374,7 @@
                     component.set('imageName', fileName);
 
                     component.set('uploadedThumbnailSize', croppedImageSize(base64));
+                    if (typeof component.$refresh === 'function') { component.$refresh(); }
                 });
                 jQuery('#cropedImage').modal('hide');
                 setTimeout(() => {

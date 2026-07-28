@@ -157,6 +157,18 @@ new #[Layout('layouts.guest')] class extends Component {
                             </div>
                             <a href="{{ route('password.request') }}">{{ __('auth.lost_password') }}</a>
                         </div>
+                        @if(setting('_general.enable_recaptcha') == '1')
+                        <div class="form-group" wire:ignore>
+                            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                            <div class="g-recaptcha" data-sitekey="{{ setting('_general.recaptcha_site_key') }}" data-callback="onLoginRecaptchaComplete"></div>
+                            <script>
+                                function onLoginRecaptchaComplete(response) {
+                                    @this.set('form.recaptchaToken', response);
+                                }
+                            </script>
+                        </div>
+                        <x-input-error field_name="form.recaptchaToken" />
+                        @endif
                         <div class="form-group">
                             <x-primary-button wire:loading.class="am-btn_disable"
                                 wire:target="login"><span>{{ __('auth.login_btn') }}</span><i
@@ -184,17 +196,11 @@ new #[Layout('layouts.guest')] class extends Component {
                                         @click="form.email = 'admin@amentotech.com'; form.password = 'google'">
                                         {{ __('auth.admin') }}
                                     </button>
-                                    <span class="am-already-account">
-                                        {{ __('auth.dont_account_join') }}
-                                        <a href="{{ route('register') }}">{{ __('auth.join') }}</a>
-                                    </span>
+                                    <!-- Registration link removed by request -->
                                 </div>
                             </div>
                         @else
-                            <span class="am-already-account">
-                                {{ __('auth.dont_account_join') }}
-                                <a href="{{ route('register') }}">{{ __('auth.join') }}</a>
-                            </span>
+                            <!-- Registration link removed by request -->
                         @endif
                     </div>
                 </div>

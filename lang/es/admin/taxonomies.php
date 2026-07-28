@@ -1,49 +1,30 @@
 <?php
 
-return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Todas las líneas de traducción
-    |--------------------------------------------------------------------------
-
-
-    @Información de Taxonomías
-    @package LaraBee
-    @author  Amento Tech <info@amentotech.com>
-    @license https://amentotech.com/
-    @link    https://amentotech.com/
-    */
-
-    /* ------------------------- Idiomas ----------------------------- */
-
-    'languages'                                     => 'Idiomas',
-    'add_language'                                  => 'Agregar nuevo idioma',
-    'update_language'                               => 'Actualizar idioma',
-    'name'                                          => 'Nombre',
-    'name_placeholder'                              => 'Ingrese nombre',
-    'description'                                   => 'Descripción',
-    'desc_placeholder'                              => 'Ingrese descripción',
-    'language_status_desc'                          => 'Establecer estado del idioma como',
-    'enabled'                                       => 'Habilitado',
-    'disabled'                                      => 'Deshabilitado',
-    'add_now'                                       => 'Agregar ahora',
-    'search'                                        => 'Buscar',
-    'asc'                                           => 'Ascendente',
-    'desc'                                          => 'Descendente',
-    'sort_by'                                       => 'Ordenar por',
-
-    /* ------------------------- Grupos de Materias ---------------------------------- */
-    'subject_groups'                                => 'Grupos de Materias',
-    'update_subject_group'                          => 'Actualizar grupo de materias',
-    'add_subject_group'                             => 'Agregar nueva materia',
-    'edit_subject_group'                            => 'Editar grupo de materias',
-    'subject_group_status_desc'                     => 'Establecer estado del grupo de materias como',
-    'parent_subject_group_placeholder'              => 'Seleccionar grupo de materias padre',
-    'select_parent_subject_group'                   => 'Seleccionar grupo de materias padre',
-    /* ------------------------- Materias ---------------------------------- */
-    'subjects'                                      => 'Materias',
-    'update_subjects'                               => 'Actualizar materias',
-    'add_subject'                                   => 'Agregar nueva materia',
-    'edit_subject'                                  => 'Editar materia',
-];
+return array (
+  'languages' => 'Idiomas',
+  'add_language' => 'Agregar nuevo idioma',
+  'update_language' => 'Actualizar idioma',
+  'name' => 'Nombre',
+  'name_placeholder' => 'Ingrese nombre',
+  'description' => 'Descripción',
+  'desc_placeholder' => 'Ingrese descripción',
+  'language_status_desc' => 'Establecer estado del idioma como',
+  'enabled' => 'Habilitado',
+  'disabled' => 'Deshabilitado',
+  'add_now' => 'Agregar ahora',
+  'search' => 'Buscar',
+  'asc' => 'Ascendente',
+  'desc' => 'Descendente',
+  'sort_by' => 'Ordenar por',
+  'subject_groups' => 'Grupos de Materias',
+  'update_subject_group' => 'Actualizar grupo de materias',
+  'add_subject_group' => 'Agregar nueva materia',
+  'edit_subject_group' => 'Editar grupo de materias',
+  'subject_group_status_desc' => 'Establecer estado del grupo de materias como',
+  'parent_subject_group_placeholder' => 'Seleccionar grupo de materias padre',
+  'select_parent_subject_group' => 'Seleccionar grupo de materias padre',
+  'subjects' => 'Materias',
+  'update_subjects' => 'Actualizar materias',
+  'add_subject' => 'Agregar nueva materia',
+  'edit_subject' => 'Editar materia',
+);

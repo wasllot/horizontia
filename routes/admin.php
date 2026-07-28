@@ -25,6 +25,7 @@ use App\Livewire\Pages\Admin\Taxonomy\SubjectGroups;
 use App\Livewire\Pages\Admin\Taxonomy\Subjects;
 use App\Livewire\Pages\Admin\Upgrade\Upgrade;
 use App\Livewire\Pages\Admin\Users\Users;
+use App\Livewire\Pages\Admin\Leads\Leads;
 use Illuminate\Support\Facades\Route;
 
 
@@ -52,6 +53,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('identity-verification',          IdentityVerification::class)->name('identity-verification');
     Route::get('bookings',          Bookings::class)->name('bookings');
     Route::get('invoices',          Invoices::class)->name('invoices');
+    Route::get('leads',             Leads::class)->name('leads');
     Route::get('email-settings',    EmailTemplates::class)->name('email-settings');
     Route::get('notification-settings', NotificationTemplates::class)->name('notification-settings');
     Route::get('users/approve-identity/{id}', [Users::class, 'approveUserIdentity'])->name('approve-user-identity');

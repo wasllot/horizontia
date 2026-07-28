@@ -480,72 +480,32 @@ h6 a:hover {
   z-index: 9999;
   position: fixed;
   background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .lb-preloader-outer img {
-  display: inline-block;
-  animation: lbload3 1.4s infinite linear;
-  top: 50%;
-  left: 50%;
-  margin: -20px 0 0 -20px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  position: relative;
-  -webkit-animation: lbload3 1.4s infinite linear;
-  animation: lbload3 1.4s infinite linear;
-  -webkit-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  transform: translateZ(0);
+  display: none;
 }
 
 .lb-loader {
-  top: 50%;
-  left: 50%;
-  margin: -20px 0 0 -20px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  position: relative;
-  -webkit-animation: lbload3 1.4s infinite linear;
-  animation: lbload3 1.4s infinite linear;
-  -webkit-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  transform: translateZ(0);
+  display: none;
 }
 
-.lb-loader:before {
-  width: 75%;
-  height: 75%;
+/* Generic spinner */
+.lb-generic-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(5, 18, 55, 0.08);
+  border-top-color: #fdc500;
   border-radius: 50%;
-  content: "";
-  margin: auto;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+  animation: lb-spin 0.75s linear infinite;
 }
 
-@-webkit-keyframes lbload3 {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
+@keyframes lb-spin {
+  to { transform: rotate(360deg); }
 }
-@keyframes lbload3 {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
+
 .lb-spinner {
   background: rgba(5, 18, 55, 0.12) !important;
 }
@@ -2086,23 +2046,33 @@ input[type=datetime-local]::-webkit-calendar-picker-indicator {
   list-style: none;
 }
 .op-feildlisting li a {
-  padding: 12px;
+  padding: 11px 16px;
   display: block;
   cursor: pointer;
-  border-style: solid;
-  color: #051237;
-  width: calc(100% + 1px);
-  border-color: transparent;
-  border-width: 1px 0px 1px 1px;
-  border-radius: 22px 0px 0px 22px !important;
+  color: #374151;
+  width: 100%;
+  border: none;
+  border-radius: 0 !important;
+  border-left: 3px solid transparent;
+  background-color: transparent;
   font: 500 0.875rem/1.4285714286em "Inter", sans-serif;
+  transition: all 0.2s ease;
 }
-.op-feildlisting li a:hover, .op-feildlisting li a.active {
-  color: #051237;
+.op-feildlisting li a:hover {
+  color: #111827;
+  background: #f9fafb;
+  border-left: 3px solid #d1d5db;
+  border-width: 0 0 0 3px;
+  border-style: none none none solid;
+  border-color: transparent transparent transparent #d1d5db;
+}
+.op-feildlisting li a.active {
+  color: #111827;
   background: #fff;
-  border-style: solid;
-  border-width: 1px 0px 1px 1px;
-  border-color: rgba(5, 18, 55, 0.08) !important;
+  font-weight: 600;
+  border: none;
+  border-left: 3px solid #fdc500;
+  box-shadow: none;
 }
 
 .op-content-title {
@@ -2739,7 +2709,7 @@ input[type=datetime-local]::-webkit-calendar-picker-indicator {
   padding-bottom: 52px;
   border-radius: 0 0 0 20px;
   border-right: 1px solid rgba(5, 18, 55, 0.08);
-  background: linear-gradient(0deg, rgba(5, 18, 55, 0.02), rgba(5, 18, 55, 0.02)), #FFFFFF;
+  background: #ffffff;
 }
 
 .op-fields-content {

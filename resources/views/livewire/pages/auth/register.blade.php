@@ -23,6 +23,7 @@ new #[Layout('layouts.guest')] class extends Component
     public bool $isProfilePhoneMendatory = true;
     public $tutor_name = '';
     public $student_name = '';
+    public string $recaptchaToken = '';
 
     /**
      * Handle an incoming registration request.
@@ -48,7 +49,15 @@ new #[Layout('layouts.guest')] class extends Component
             return;
         }
         
-        $validated = $this->validate((new RegisterUserRequest())->rules());
+        $rules = (new RegisterUserRequest())->rules();
+        if (setting('_general.enable_recaptcha') == '1') {
+            $rules['recaptchaToken'] = ['required', new \App\Rules\RecaptchaRule];
+        }
+
+        $validated = $this->validate($rules, [
+            'recaptchaToken.required' => 'Por favor, completa la verificación del reCAPTCHA.'
+        ]);
+        
         $user = (new RegisterService)->registerUser($validated);
         Auth::login($user);
         $this->redirect($user->redirect_after_login, navigate: true);
@@ -138,6 +147,20 @@ new #[Layout('layouts.guest')] class extends Component
                             </div>
                             <x-input-error :field_name="'terms'"></x-input-error>
                         </div>
+
+                        @if(setting('_general.enable_recaptcha') == '1')
+                        <div class="form-group" wire:ignore>
+                            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                            <div class="g-recaptcha" data-sitekey="{{ setting('_general.recaptcha_site_key') }}" data-callback="onRegisterRecaptchaComplete"></div>
+                            <script>
+                                function onRegisterRecaptchaComplete(response) {
+                                    @this.set('recaptchaToken', response);
+                                }
+                            </script>
+                        </div>
+                        <x-input-error field_name="recaptchaToken" />
+                        @endif
+
                         <div class="form-group">
                             <x-primary-button wire:target="register" wire:loading.class="am-btn_disable"><span>{{ __('auth.register') }}</span><i class="icon icon-arrow-right"></i></x-primary-button>
                              <span class="am-already-account"> {{ __('auth.already_have_account') }} <a href="{{ route('login') }}">{{ __('auth.login') }}</a></span>

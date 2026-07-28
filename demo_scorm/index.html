@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo SCORM Interactivo</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; background-color: #f4f7f6; margin: 0; }
+        .container { background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; max-width: 500px; border-top: 5px solid #ffcc00; }
+        h1 { color: #333; margin-bottom: 10px; }
+        p { color: #666; line-height: 1.6; margin-bottom: 25px; }
+        .btn { background: #ffcc00; color: #333; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.2s; }
+        .btn:hover { background: #e6b800; transform: translateY(-2px); }
+        #status { margin-top:20px; color: #28a745; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>¡Hola! Soy un SCORM 🚀</h1>
+        <p>Has subido con éxito este paquete SCORM interactivo a tu plataforma. Esta vista representa el contenido que verían tus estudiantes dentro de la lección.</p>
+        <button class="btn" onclick="finishScorm()">Marcar lección como Completada</button>
+        <p id="status">✅ ¡Progreso registrado exitosamente!</p>
+    </div>
+    <script>
+        function finishScorm() {
+            document.getElementById('status').style.display = 'block';
+            // SCORM API code would go here
+        }
+    </script>
+</body>
+</html>

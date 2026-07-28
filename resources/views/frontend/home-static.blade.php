@@ -50,7 +50,7 @@
                             </figure>
                             <h4 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px;">Regístrate</h4>
                             <p style="color: #666; font-size: 0.95rem; margin-bottom: 20px;">Crea tu cuenta rápidamente para comenzar a utilizar nuestra plataforma</p>
-                            <a href="{{ route('register') }}"
+                            <a href="{{ route('login') }}"
                                 style="color: #F2D07F; font-weight: 700; text-decoration: none; border-bottom: 2px solid #F2D07F;">EMPEZAR</a>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
                             </figure>
                             <h4 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px;">Inscríbete</h4>
                             <p style="color: #666; font-size: 0.95rem; margin-bottom: 20px;">Sigue los pasos para formalizar tu inscripción en el curso seleccionado</p>
-                            <a href="{{ route('register') }}"
+                            <a href="{{ route('login') }}"
                                 style="color: #F2D07F; font-weight: 700; text-decoration: none; border-bottom: 2px solid #F2D07F;">INSCRIPCIÓN</a>
                         </div>
                     </div>
@@ -95,7 +95,7 @@
                             <h4 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; color: #000;">Comienza tu viaje</h4>
                             <p style="color: #000; font-size: 0.95rem; margin-bottom: 25px;">¡Encuentra tu curso y reserva tu primera sesión hoy mismo!</p>
                             <a href="{{ url('login') }}" class="am-btn"
-                                style="background-color: #000; color: #fff; padding: 10px 25px; border-radius: 50px; font-size: 0.9rem;">Empieza ahora!</a>
+                                style="background-color: #000; color: #fff !important; padding: 10px 25px; border-radius: 50px; font-size: 0.9rem;">Empieza ahora!</a>
                         </div>
                     </div>
                 </div>
@@ -141,8 +141,8 @@
                                     </div>
                                 </li>
                             </ul>
-                            <a href="{{ route('register') }}" class="am-btn"
-                                style="background-color: #000; color: #fff; padding: 12px 35px; border-radius: 50px; font-weight: 600;">UNETE AHORA</a>
+                            <a href="{{ route('login') }}" class="am-btn"
+                                style="background-color: #000; color: #fff !important; padding: 12px 35px; border-radius: 50px; font-weight: 600;">UNETE AHORA</a>
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -152,10 +152,8 @@
                                 style="width: 100%; height: auto; display: block;">
                         </figure>
                     </div>
-                </div>
-            </div>
         </section>
-
+        
         <!-- Support / Experts Section -->
         <section class="am-support-section" style="padding: 100px 0; background-color: #fff;">
             <div class="container">
@@ -269,45 +267,36 @@
                     </div>
                 </div>
 
-                <!-- List Content -->
+                <!-- Dynamic Course List Banner -->
                 <div class="row justify-content-center" style="margin-top: 30px; padding-bottom: 80px;">
-                    <div class="col-md-8">
+                    <div class="col-md-10">
+                        @php
+                            $homeCourses = \Modules\Courses\Models\Course::with(['instructor.profile'])->where('status', 'published')->latest()->take(6)->get();
+                        @endphp
+                        
                         <div class="row">
-                            <!-- Left Column -->
-                            <div class="col-md-6 mb-3">
-                                <ul class="am-course-list">
-                                    <li class="am-course-item">
-                                        <span class="am-course-dot">●</span> Coaching
-                                    </li>
-                                    <li class="am-course-item">
-                                        <span class="am-course-dot">●</span> Motivación
-                                    </li>
-                                    <li class="am-course-item">
-                                        <span class="am-course-dot">●</span> Gestión del tiempo
-                                    </li>
-                                    <li class="am-course-item">
-                                        <span class="am-course-dot">●</span> Manejo del estrés
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <!-- Right Column -->
-                            <div class="col-md-6 mb-3">
-                                <ul class="am-course-list">
-                                    <li class="am-course-item">
-                                        <span class="am-course-dot">●</span> Liderazgo
-                                    </li>
-                                    <li class="am-course-item">
-                                        <span class="am-course-dot">●</span> Innovación
-                                    </li>
-                                    <li class="am-course-item">
-                                        <span class="am-course-dot">●</span> Creatividad
-                                    </li>
-                                    <li class="am-course-item">
-                                        <span class="am-course-dot">●</span> Networking
-                                    </li>
-                                </ul>
-                            </div>
+                            @foreach($homeCourses as $course)
+                                <div class="col-md-4 mb-4">
+                                    <a href="{{ route('courses.course-detail', $course->slug) }}" style="text-decoration: none;">
+                                        <div class="am-course-card" style="background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s; height: 100%;">
+                                            <figure style="margin: 0; position: relative; padding-top: 56.25%;">
+                                                @if(!empty($course->thumbnail) && Storage::disk(getStorageDisk())->exists($course->thumbnail))
+                                                    <img src="{{ Storage::url($course->thumbnail) }}" alt="{{ $course->title }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                                                @else
+                                                    <img src="{{ asset('images/default-course.png') }}" alt="{{ $course->title }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; background: #eee;">
+                                                @endif
+                                            </figure>
+                                            <div style="padding: 15px;">
+                                                <h4 style="font-size: 1.1rem; font-weight: 700; color: #333; margin-bottom: 10px; line-height: 1.4;">{{ Str::limit($course->title, 50) }}</h4>
+                                                <p style="margin: 0; font-size: 0.9rem; color: #777;">
+                                                    <i class="am-icon-user-01" style="margin-right: 5px;"></i> 
+                                                    {{ $course->instructor->profile->full_name ?? 'Tutor' }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -316,10 +305,11 @@
 
         <!-- Office Meditation Banner Section -->
         <section class="am-meditation-banner" style="width: 100%; overflow: hidden; line-height: 0; margin: 0; padding: 0;">
-            <img src="{{ asset('images/nuevo/meditacion-oficina.png') }}" alt="Meditación en la oficina"
-                style="width: 100%; height: auto; display: block; margin-top: -45px;">
+            <div style="width: 100%; aspect-ratio: 1024 / 333; position: relative; overflow: hidden; background-color: #000;">
+                <img src="{{ asset('images/nuevo/meditacion-oficina.png') }}" alt="Meditación en la oficina"
+                    style="width: 100%; height: auto; position: absolute; top: calc(-100% * 19 / 333); left: 0; display: block;">
+            </div>
         </section>
-    </div>
         <!-- Footer Banner Image -->
         <section class="am-footer-banner"
             style="background-image: url('{{ asset('images/nuevo/respiracion-consciente-horizontia.jpg') }}'); background-size: cover; background-position: center; height: 500px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative;">

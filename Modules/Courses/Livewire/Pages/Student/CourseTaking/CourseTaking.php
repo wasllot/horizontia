@@ -20,9 +20,12 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Renderless;
+use Livewire\WithFileUploads;
+use Modules\Courses\Models\AssignmentSubmission;
 
 class CourseTaking extends Component
 {
+    use WithFileUploads;
 
     public $logo;
     public $activeCurriculum;
@@ -37,6 +40,8 @@ class CourseTaking extends Component
     public $backRoute = null;
     public $curriculumOrder = [];
     public $nextCurriculumItem = [];
+    public $assignment_comment;
+    public $assignment_file;
     public $socialIcons = [
         'Facebook' => 'am-icon-facebook-1',
         'X/Twitter' => 'am-icon-twitter-02',
@@ -466,6 +471,42 @@ class CourseTaking extends Component
         );
 
         $this->studentRating = $courseRatings->ratings->where('student_id', auth()->id())->first();
+    }
+
+    public function submitAssignment()
+    {
+        $response = isDemoSite();
+        if ($response) {
+            $this->dispatch('showAlertMessage', type: 'error', title: __('general.demosite_res_title'), message: __('general.demosite_res_txt'));
+            return;
+        }
+
+        $this->validate([
+            'assignment_file' => 'nullable|file|max:10240', // 10MB max
+            'assignment_comment' => 'nullable|string|max:1000',
+        ]);
+
+        $filePath = null;
+        if ($this->assignment_file) {
+            $filePath = $this->assignment_file->store('assignments', getStorageDisk());
+        }
+
+        AssignmentSubmission::updateOrCreate(
+            [
+                'curriculum_id' => $this->activeCurriculum['id'],
+                'user_id' => auth()->id(),
+            ],
+            [
+                'file_path' => $filePath,
+                'student_comment' => $this->assignment_comment,
+                'status' => 'submitted',
+            ]
+        );
+
+        $this->assignment_file = null;
+        $this->assignment_comment = null;
+
+        $this->dispatch('showAlertMessage', type: 'success', title: 'Éxito', message: 'Tarea enviada correctamente');
     }
 
     private function getCourseSingedUrl($path) {

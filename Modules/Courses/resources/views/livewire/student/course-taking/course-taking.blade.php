@@ -357,6 +357,56 @@
                                     @endif
                                 </div>
                         @endrole
+                    @elseif($activeCurriculum['type'] == 'assignment')
+                        @role('student')     
+                            <div id="assignment-{{ $activeCurriculum['id'] }}" class="cr-coursedetails_article">
+                                <div class="cr-coursedetails_article_wrap">{!! $activeCurriculum['article_content'] !!}</div>
+                                
+                                <div class="cr-assignment-upload" style="margin-top: 2rem; padding: 1.5rem; background: #f9f9f9; border-radius: 8px;">
+                                    <h4 style="margin-bottom: 1rem;">{{ __('courses::courses.submit_assignment') ?? 'Subir Tarea' }}</h4>
+                                    
+                                    @php
+                                        $submission = \Modules\Courses\Models\AssignmentSubmission::where('curriculum_id', $activeCurriculum['id'])
+                                                        ->where('user_id', auth()->id())->first();
+                                    @endphp
+
+                                    @if($submission && $submission->status == 'graded')
+                                        <div class="alert alert-success">
+                                            <strong>Calificación / Score:</strong> {{ $submission->score }}/100<br>
+                                            <strong>Feedback:</strong> {{ $submission->tutor_feedback }}
+                                        </div>
+                                    @else
+                                        <div class="form-group">
+                                            <label>Comentario (opcional):</label>
+                                            <textarea class="form-control" wire:model="assignment_comment" rows="3"></textarea>
+                                        </div>
+                                        <div class="form-group mt-3" style="display: flex; gap: 1rem; align-items: center;">
+                                            <input type="file" wire:model="assignment_file" class="form-control" style="max-width: 300px;">
+                                            <button type="button" class="am-btn" wire:click.prevent="submitAssignment()" wire:loading.attr="disabled">Enviar Tarea</button>
+                                        </div>
+                                        @error('assignment_file') <span class="text-danger">{{ $message }}</span> @enderror
+                                        
+                                        @if($submission)
+                                            <div class="alert alert-info mt-3">
+                                                Tarea enviada. En espera de calificación.
+                                                @if($submission->file_path)
+                                                    <br><a href="{{ Storage::url($submission->file_path) }}" target="_blank">Ver archivo enviado</a>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    @endif
+                                </div>
+                                
+                                <div class="cr-coursedetails_article_actions" style="margin-top: 1.5rem; justify-content: flex-end; display: flex;">
+                                    @if($submission && $submission->status == 'graded')
+                                        @if(!empty($curriculumOrder[$activeCurriculum['id']]))
+                                            <a href="javascript:void(0);" class="am-btn" wire:click.prevent="nextCurriculum({{ $curriculumOrder[$activeCurriculum['id']] }})">Go to next item</a>
+                                        @endif
+                                        <button type="button" class="am-btnnext"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none"><path d="M3.16699 8.66667L6.50033 12L13.8337 4" stroke="#34A853" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg> Completed</button>
+                                    @endif
+                                </div>
+                            </div>
+                        @endrole
                     @elseif($activeCurriculum['type'] == 'article')
                         @role('student')     
                             <div 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Courses\database\Seeders;
+namespace Modules\Courses\database\seeders;
 
 use Modules\Courses\Models\Category;
 use Modules\Courses\Models\Course;

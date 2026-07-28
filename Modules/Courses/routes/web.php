@@ -12,6 +12,7 @@ use Modules\Courses\Livewire\Pages\Student\CourseList\CourseList;
 use Modules\Courses\Livewire\Pages\Student\CourseTaking\CourseTaking;
 use Modules\Courses\Livewire\Pages\Tutor\CourseCreation\CreateCourse;
 use Modules\Courses\Livewire\Pages\Tutor\CourseListing\CourseListing;
+use Modules\Courses\Livewire\Pages\Tutor\CourseAssignments\CourseAssignments;
 use Modules\Courses\Livewire\Pages\Admin\Categories;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -29,6 +30,7 @@ Route::middleware(['locale', 'maintenance', 'enabled:courses'])->as('courses.')-
         Route::get('/course/edit/{tab}/{id}', CreateCourse::class)->name('edit-course');
         Route::get('/tutor/schedule-live-stream', \Modules\Courses\Livewire\Pages\Tutor\LiveStreams\ScheduleLiveStream::class)->name('schedule-live-stream');
         Route::get('/tutor/manage-live-streams', \Modules\Courses\Livewire\Pages\Tutor\LiveStreams\ManageLiveStreams::class)->name('manage-live-streams');
+        Route::get('/tutor/assignments', CourseAssignments::class)->name('assignments');
     });
 
     $middleware = ['auth', 'verified', 'role:admin|sub_admin'];

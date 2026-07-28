@@ -21,6 +21,8 @@ class LoginForm extends Form
     #[Validate('boolean')]
     public bool $remember = false;
 
+    public string $recaptchaToken = '';
+
     /**
      * Attempt to authenticate the request's credentials.
      *
@@ -28,6 +30,14 @@ class LoginForm extends Form
      */
     public function authenticate(): void
     {
+        if (setting('_general.enable_recaptcha') == '1') {
+            $this->validate([
+                'recaptchaToken' => ['required', new \App\Rules\RecaptchaRule],
+            ], [
+                'recaptchaToken.required' => 'Por favor, completa la verificación del reCAPTCHA.'
+            ]);
+        }
+
         $this->ensureIsNotRateLimited();
 
         $user = Auth::getProvider()->retrieveByCredentials($this->only(['email', 'password']));

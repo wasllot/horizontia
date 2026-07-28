@@ -16,12 +16,13 @@ class CheckLocale
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $localeToSet = 'en';
+        $localeToSet = 'es';
 
-        if (!empty(session()->get('locale'))) {
+        if (!empty(session()->get('locale')) && session()->get('locale') !== 'en') {
            $localeToSet = session()->get('locale');
         } else {
-            $localeToSet = setting('_general.default_language') ?? 'en';
+            $dbLang = setting('_general.default_language');
+            $localeToSet = ($dbLang && $dbLang !== 'en') ? $dbLang : 'es';
         }
         $selectedLang = getTranslatedLanguages($localeToSet);
         if(!empty($selectedLang->rtl)){

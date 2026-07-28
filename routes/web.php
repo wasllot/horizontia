@@ -42,6 +42,8 @@ Route::get('/', function () {
     return view('frontend.home-static', $seoService->getViewData());
 })->name('home');
 
+Route::view('/contacto', 'frontend.contacto')->name('contacto');
+
 Route::get('auth/{provider}', [SocialController::class, 'redirect'])->name('social.redirect');
 Route::get('auth/{provider}/callback', [SocialController::class, 'callback'])->name('social.callback');
 

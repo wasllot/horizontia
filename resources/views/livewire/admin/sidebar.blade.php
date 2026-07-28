@@ -23,88 +23,50 @@ new class extends Component
                 ],
             ],
             [
-                'title' =>  __('sidebar.site_management'),
-                'icon'  => 'icon-layout',
-                'links' => [
-                    'manage-menu' => [
-                        'link'  => '',
-                        'title' => __('sidebar.menu')
-                    ]
-                ],
+                'title' =>  'Leads & Contactos',
+                'icon'  => 'icon-inbox',
                 'routes' => [
-                    'admin.manage-menus' => __('sidebar.menu'),
-                    'optionbuilder' => __('sidebar.settings'),
-                    'pagebuilder' => __('sidebar.sitepages'),
-                    'admin.email-settings' => __('sidebar.email_settings'),
-                    'admin.notification-settings' => __('sidebar.notification_settings'),
+                    'admin.leads' => 'Ver Mensajes'
                 ],
             ],
             [
-                'title' =>  __('sidebar.taxonomies'),
-                'icon'  => 'icon-database',
-                'routes' => [
-                    'admin.taxonomy.languages' => __('sidebar.languages'),
-                    'admin.taxonomy.subjects' => __('sidebar.subjects'),
-                    'admin.taxonomy.subject-groups' => __('sidebar.subject_groups'),
-                ],
-            ],
-            [
-                'title' =>  __('sidebar.translation_settings'),
-                'icon'  => 'icon-globe',
-                'routes' => [
-                    'ltu.translation.index' => __('sidebar.languages')
-                ],
-            ],
-            [
-                'title' =>  __('sidebar.manage_packages'),
-                'icon'  => 'icon-folder-plus',
-                'routes' => [
-                    'admin.packages.index' => __('sidebar.add_new_package'),
-                    'admin.packages.installed' => __('sidebar.installed_packages')
-                ],
-            ],
-            [
-                'title' =>  __('sidebar.upgrade'),
-                'icon'  => 'icon-upload-cloud',
-                'routes' => [
-                    'admin.upgrade' => __('sidebar.upgrade')
-                ],
-            ],
-            [
-                'title' =>  __('admin/sidebar.users'),
+                'title' =>  'Usuarios y Perfiles',
                 'icon'  => 'icon-users',
                 'routes' => [
-                    'admin.users' => __('admin.users')
+                    'admin.users' => __('admin/sidebar.users'),
+                    'admin.identity-verification' => __('admin/general.identity_verification')
                 ],
             ],
             [
-                'title' =>  __('admin/general.identity_verification'),
-                'icon'  => 'icon-user-check',
-                'routes' => [
-                    'admin.identity-verification' => __('identity-verification')
-                ],
-            ],
-            [
-                'title' =>  __('admin/sidebar.invoices'),
+                'title' =>  'Finanzas y Pagos',
                 'icon'  => 'icon-dollar-sign',
                 'routes' => [
-                    'admin.invoices' => __('invoices')
-                ],
-            ],
-            [
-                'title' =>  __('admin/sidebar.bookings'),
-                'icon'  => 'icon-file-text',
-                'routes' => [
-                    'admin.bookings' => __('bookings')
-                ],
-            ],
-            [
-                'title' =>  __('sidebar.transaction_payment'),
-                'icon'  => 'icon-credit-card',
-                'routes' => [
+                    'admin.bookings' => __('admin/sidebar.bookings'),
+                    'admin.invoices' => __('admin/sidebar.invoices'),
                     'admin.withdraw-requests' => __('sidebar.withdraw_requests'),
-                    'admin.commission-settings' => __('sidebar.commission_settings'),
                     'admin.payment-methods' => __('sidebar.payment_methods'),
+                    'admin.commission-settings' => __('sidebar.commission_settings'),
+                    'admin.disputes' => __('sidebar.disputes'),
+                ],
+            ],
+            [
+                'title' =>  'Sistema y Plataforma',
+                'icon'  => 'icon-layout',
+                'routes' => [
+                    'admin.manage-menus' => __('sidebar.menu'),
+                    'pagebuilder' => __('sidebar.sitepages'),
+                    'admin.taxonomy.subjects' => __('sidebar.subjects'),
+                    'admin.taxonomy.subject-groups' => __('sidebar.subject_groups'),
+                    'admin.taxonomy.languages' => __('sidebar.languages'),
+                ],
+            ],
+            [
+                'title' =>  'Ajustes Generales',
+                'icon'  => 'icon-settings',
+                'routes' => [
+                    'optionbuilder' => 'Ajustes Generales',
+                    'admin.email-settings' => __('sidebar.email_settings'),
+                    'admin.notification-settings' => __('sidebar.notification_settings'),
                 ],
             ]
         ];
@@ -195,12 +157,6 @@ new class extends Component
                         @endif
                     </li>
                 @endforeach
-                <li class="{{ request()->routeIs('admin.disputes') || request()->routeIs('admin.manage-dispute') ? 'active' : '' }}">
-                    <a href="{{route('admin.disputes')}}" class="tb-menuitm">
-                        <i class="icon-alert-triangle"></i><span class="tb-navdashboard__title">{{ __('sidebar.disputes')}}</span>
-                    </a>
-                </li>
-
             </ul>
             <div class="admin-sidebar-footer">
                 <!-- <div class="am-wallet">

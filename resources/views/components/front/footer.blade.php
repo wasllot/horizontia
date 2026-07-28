@@ -13,6 +13,9 @@
 @endphp
 
 @if($footerVariation != 'am-footer_three')
+    <div class="container">
+        @livewire('frontend.newsletter')
+    </div>
     <footer class="am-footer">
         <div class="container">
             <div class="row">
@@ -158,6 +161,9 @@
         </div>
     </footer>
 @else
+    <div class="container">
+        @livewire('frontend.newsletter')
+    </div>
     <footer class="am-footer-v4">
         <div class="container">
             <div class="row">

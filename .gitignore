@@ -69,4 +69,5 @@ output.html
 
 # Docker
 /docker/
-/docker-compose.yml
+/docker-compose.yml*.zip
+*.mp4
