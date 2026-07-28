@@ -249,49 +249,47 @@
                 <div class="col-12 col-lg-8 col-xl-9">
                     <livewire:components.search-tutor :filters="$filters" wire:key="tutors-list-{{ time() }}" />
                 </div>
-                @if(!empty(setting('_lernen.help_section_media')) ||
-                    !empty(setting('_lernen.help_section_title')) ||
-                    !empty(setting('_lernen.help_section_description')) ||
-                    !empty(setting('_lernen.help_section_bullets')) ||
-                    !empty(setting('_lernen.or_section_title')) ||
-                    !empty(setting('_lernen.or_section_description'))
-                )
                 <div class="col-12 col-lg-4 col-xl-3">
-                    <div class="am-besttutor">
+                    <div class="am-besttutor" style="background:#fff; border-radius:16px; padding:24px; box-shadow:0 4px 20px rgba(0,0,0,0.04); border:1px solid #f1f5f9;">
                         @if(!empty(setting('_lernen.help_section_media')[0]['path']))
-                        <div class="am-besttutor_video">
-                            <video width="560" height="180"
+                        <div class="am-besttutor_video" style="margin-bottom: 20px; border-radius:12px; overflow:hidden;">
+                            <video width="100%" height="auto"
                                 src="{{ url(Storage::url(setting('_lernen.help_section_media')[0]['path'])) }}" controls
                                 class="video-js" data-setup='{}' preload="auto"></video>
                         </div>
                         @endif
-                        @if (!empty(setting('_lernen.help_section_title')) ||
-                            !empty(setting('_lernen.help_section_description')) ||
-                            !empty(setting('_lernen.help_section_bullets')) ||
-                            !empty(setting('_lernen.or_section_title')) ||
-                            !empty(setting('_lernen.or_section_description'))
-                        )
                         <div class="am-besttutor_footer">
                             <div class="am-besttutor_footer_tips">
-                                @if (!empty(setting('_lernen.help_section_title')))
-                                <h4>{{ setting('_lernen.help_section_title') }}</h4>
-                                @endif
-                                @if (!empty(setting('_lernen.help_section_description')))
-                                <p>{{ setting('_lernen.help_section_description') }}</p>
-                                @endif
-                                @if (!empty(setting('_lernen.help_section_bullets')))
-                                <ul class="am-besttutor_info_list">
-                                    @foreach (setting('_lernen.help_section_bullets') as $bullet)
-                                    <li><span>{{ $bullet['help_section'] }}</span></li>
-                                    @endforeach
+                                <h4 style="font-size:1.2rem; font-weight:700; margin-bottom:12px; color:#1e293b;">Consejos para encontrar al Tutor ideal</h4>
+                                <p style="color:#64748b; font-size:0.95rem; margin-bottom:20px; line-height:1.6;">
+                                    Elegir el tutor adecuado requiere atención. Aquí tienes algunos consejos para tomar la mejor decisión:
+                                </p>
+                                <ul class="am-besttutor_info_list" style="list-style:none; padding:0; margin:0;">
+                                    <li style="margin-bottom:12px; display:flex; align-items:flex-start; gap:10px;">
+                                        <i class="am-icon-check-circle" style="color:#fdc500; font-size:1.2rem; margin-top:2px;"></i>
+                                        <span style="color:#475569; font-size:0.95rem;">Filtra según tus requisitos específicos</span>
+                                    </li>
+                                    <li style="margin-bottom:12px; display:flex; align-items:flex-start; gap:10px;">
+                                        <i class="am-icon-check-circle" style="color:#fdc500; font-size:1.2rem; margin-top:2px;"></i>
+                                        <span style="color:#475569; font-size:0.95rem;">Verifica calificaciones y experiencia profesional</span>
+                                    </li>
+                                    <li style="margin-bottom:12px; display:flex; align-items:flex-start; gap:10px;">
+                                        <i class="am-icon-check-circle" style="color:#fdc500; font-size:1.2rem; margin-top:2px;"></i>
+                                        <span style="color:#475569; font-size:0.95rem;">Lee reseñas y opiniones de otros estudiantes</span>
+                                    </li>
+                                    <li style="margin-bottom:12px; display:flex; align-items:flex-start; gap:10px;">
+                                        <i class="am-icon-check-circle" style="color:#fdc500; font-size:1.2rem; margin-top:2px;"></i>
+                                        <span style="color:#475569; font-size:0.95rem;">Contacta previamente para evaluar compatibilidad</span>
+                                    </li>
+                                    <li style="display:flex; align-items:flex-start; gap:10px;">
+                                        <i class="am-icon-check-circle" style="color:#fdc500; font-size:1.2rem; margin-top:2px;"></i>
+                                        <span style="color:#475569; font-size:0.95rem;">Comprueba su disponibilidad y flexibilidad de horarios</span>
+                                    </li>
                                 </ul>
-                                @endif
                             </div>
                         </div>
-                        @endif
                     </div>
                 </div>
-                @endif
             </div>
         </div>
     </div>

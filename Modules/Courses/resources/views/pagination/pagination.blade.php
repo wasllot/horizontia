@@ -14,11 +14,11 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
         <ul>
             @if($paginator->onFirstPage())
                 <li class="am-prevpage disabled">
-                    <a href="javascript:void(0);">@lang('pagination.previous')</a>
+                    <a href="javascript:void(0);">Anterior</a>
                 </li>
             @else
                 <li class="am-prevpage">
-                    <a href="javascript:void(0);" dusk="previousPage{{ $paginator->getPageName() == 'page' ? '' : '.' . $paginator->getPageName() }}" wire:click="previousPage('{{ $paginator->getPageName() }}')" x-on:click="{{ $scrollIntoViewJsSnippet }}" wire:loading.attr="disabled" >@lang('pagination.previous')</a>
+                    <a href="javascript:void(0);" dusk="previousPage{{ $paginator->getPageName() == 'page' ? '' : '.' . $paginator->getPageName() }}" wire:click="previousPage('{{ $paginator->getPageName() }}')" x-on:click="{{ $scrollIntoViewJsSnippet }}" wire:loading.attr="disabled" >Anterior</a>
                 </li>
             @endif
 
@@ -52,11 +52,11 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
 
             @if ($paginator->hasMorePages())
                 <li class="am-nextpage">
-                    <a href="javascript:void(0);" dusk="nextPage{{ $paginator->getPageName() == 'page' ? '' : '.' . $paginator->getPageName() }}" wire:click="nextPage('{{ $paginator->getPageName() }}')" x-on:click="{{ $scrollIntoViewJsSnippet }}" wire:loading.attr="disabled" >@lang('pagination.next')</a>
+                    <a href="javascript:void(0);" dusk="nextPage{{ $paginator->getPageName() == 'page' ? '' : '.' . $paginator->getPageName() }}" wire:click="nextPage('{{ $paginator->getPageName() }}')" x-on:click="{{ $scrollIntoViewJsSnippet }}" wire:loading.attr="disabled" >Siguiente</a>
                 </li>
             @else
                 <li class="am-nextpage disabled">
-                    <a href="javascript:void(0);">@lang('pagination.next')</a>
+                    <a href="javascript:void(0);">Siguiente</a>
                 </li>
             @endif
         </ul>

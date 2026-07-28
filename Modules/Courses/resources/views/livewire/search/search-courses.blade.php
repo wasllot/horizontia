@@ -371,7 +371,7 @@
                                                     </div>
                                                 </template>
                                                 <template x-if="!isOpen">
-                                                    <img height="200" width="360" src="{{ !empty($course->thumbnail->path) ? url(Storage::url($course->thumbnail->path)) : asset('modules/courses/images/course.png') }}" alt="{{ $course->title }}" class="cr-background-image" />
+                                                    <img height="200" width="360" src="{{ !empty($course->thumbnail->path) ? url(Storage::url($course->thumbnail->path)) : 'https://placehold.co/360x200/F1F5F9/94A3B8?text=Curso' }}" alt="{{ $course->title }}" class="cr-background-image" style="object-fit: cover; width: 100%; height: 200px; object-position: center;" />
                                                 </template>
                                                 @if(!empty($course?->promotionalVideo?->path) && Storage::disk(getStorageDisk())->exists($course?->promotionalVideo?->path) )
                                                     <template x-if="!isOpen">

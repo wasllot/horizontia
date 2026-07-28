@@ -20,39 +20,41 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <div class="am-footer_wrap">
-                        <div class="am-footer_logoarea">
-                            <strong class="am-flogo">
+                    <div class="am-footer_wrap" style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:2rem;">
+                        <div class="am-footer_logoarea" style="max-width: 400px;">
+                            <strong class="am-flogo" style="display:block; margin-bottom:1.5rem;">
                                 <a href="/">
-                                    <img src="{{ asset('images/nuevo/Logo-Horizontia-footer.png') }}" alt="Logo Horizontia">
+                                    <img src="{{ asset('images/nuevo/Logo-Horizontia-footer.png') }}" alt="Logo Horizontia" style="max-width: 250px;">
                                 </a>
                             </strong>
-                            @if(!empty(setting('_front_page_settings.footer_paragraph')))
-                                <p>{!! setting('_front_page_settings.footer_paragraph') !!}</p>
-                            @endif
+                            <p style="color:#d1d5db; line-height:1.6; margin-bottom:1.5rem;">
+                                Horizontia es la plataforma líder de tutorías en línea, dedicada a conectar a cada estudiante con el tutor perfecto. Con una amplia red de profesionales calificados, brindamos apoyo educativo excepcional en todas las materias.
+                            </p>
+                            
                             @if(
                                 !empty(setting('_front_page_settings.footer_contact')) ||
                                 !empty(setting('_front_page_settings.footer_email')) ||
                                 !empty(setting('_front_page_settings.footer_address'))
                             )
-                                <ul class="am-footer_contact">
+                                <ul class="am-footer_contact" style="list-style:none; padding:0; margin:0 0 1.5rem 0;">
                                     @if(!empty(setting('_front_page_settings.footer_contact')))
-                                        <li>
-                                            <a href="tel:{!! setting('_front_page_settings.footer_contact') !!}"><i class="am-icon-audio-03"></i>{!! setting('_front_page_settings.footer_contact') !!}</a>
+                                        <li style="margin-bottom:0.5rem;">
+                                            <a href="tel:{!! setting('_front_page_settings.footer_contact') !!}" style="color:#f3f4f6; text-decoration:none;"><i class="am-icon-audio-03" style="margin-right:8px; color:#fdc500;"></i>{!! setting('_front_page_settings.footer_contact') !!}</a>
                                         </li>
                                     @endif
                                     @if(!empty(setting('_front_page_settings.footer_email')))
-                                        <li>
-                                            <a href="mailto:hello@gmail.com"><i class="am-icon-email-01"></i>{!! setting('_front_page_settings.footer_email') !!}</a>
+                                        <li style="margin-bottom:0.5rem;">
+                                            <a href="mailto:hello@gmail.com" style="color:#f3f4f6; text-decoration:none;"><i class="am-icon-email-01" style="margin-right:8px; color:#fdc500;"></i>{!! setting('_front_page_settings.footer_email') !!}</a>
                                         </li>
                                     @endif
                                     @if(!empty(setting('_front_page_settings.footer_address')))
                                         <li>
-                                            <address><i class="am-icon-location"></i>{!! setting('_front_page_settings.footer_address') !!}</address>
+                                            <address style="color:#f3f4f6; font-style:normal; margin:0;"><i class="am-icon-location" style="margin-right:8px; color:#fdc500;"></i>{!! setting('_front_page_settings.footer_address') !!}</address>
                                         </li>
                                     @endif
                                 </ul>
                             @endif
+
                             @if (
                                 !empty( setting('_general.fb_link')) ||
                                 !empty( setting('_general.insta_link')) ||
@@ -60,80 +62,50 @@
                                 !empty(setting('_general.yt_link')) ||
                                 !empty(setting('_general.tiktok_link'))
                                 )
-                                <ul class="am-socialmedia">
+                                <ul class="am-socialmedia" style="display:flex; gap:10px; list-style:none; padding:0; margin:0;">
                                     @if ( !empty( setting('_general.fb_link')))
-                                        <li><a href="{{ setting('_general.fb_link') }}"><i class="am-icon-facebook"></i></a></li>
+                                        <li><a href="{{ setting('_general.fb_link') }}" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; color:#fff; transition:0.3s;"><i class="am-icon-facebook"></i></a></li>
                                     @endif
                                     @if ( !empty( setting('_general.insta_link')))
-                                        <li><a href="{{ setting('_general.insta_link') }}"><i class="am-icon-instagram"></i></a></li>
+                                        <li><a href="{{ setting('_general.insta_link') }}" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; color:#fff; transition:0.3s;"><i class="am-icon-instagram"></i></a></li>
                                     @endif
                                     @if ( !empty( setting('_general.linkedin_link')))
-                                        <li><a href="{{ setting('_general.linkedin_link') }}"><i class="am-icon-linkedin"></i></a></li>
+                                        <li><a href="{{ setting('_general.linkedin_link') }}" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; color:#fff; transition:0.3s;"><i class="am-icon-linkedin"></i></a></li>
                                     @endif
                                     @if ( !empty( setting('_general.yt_link')))
-                                        <li><a href="{{ setting('_general.yt_link') }}"><i class="am-icon-youtube"></i></a></li>
+                                        <li><a href="{{ setting('_general.yt_link') }}" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; color:#fff; transition:0.3s;"><i class="am-icon-youtube"></i></a></li>
                                     @endif
                                     @if ( !empty( setting('_general.tiktok_link')))
-                                        <li><a href="{{ setting('_general.tiktok_link') }}"><i class="am-icon-tiktok"></i></a></li>
+                                        <li><a href="{{ setting('_general.tiktok_link') }}" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; color:#fff; transition:0.3s;"><i class="am-icon-tiktok"></i></a></li>
                                     @endif
                                 </ul>
                             @endif
-                            @if(!empty(setting('_front_page_settings.footer_button_text')))
-                                <a href="{{ !empty(setting('_front_page_settings.footer_button_url')) ? url(setting('_front_page_settings.footer_button_url')) : '#' }}" class="am-btn">
-                                    {{ setting('_front_page_settings.footer_button_text') }}
-                                </a>
-                            @endif
                         </div>
-                        <div class="am-fnavigation_wrap">
+                        
+                        <div class="am-fnavigation_wrap" style="display:flex; gap:4rem; flex-wrap:wrap;">
                             <nav class="am-fnavigation">
-                                <div class="am-fnavigation_title">
-                                    <h3>Explorar</h3>
+                                <div class="am-fnavigation_title" style="margin-bottom:1.5rem;">
+                                    <h3 style="color:#fff; font-size:1.125rem; font-weight:600;">Explorar</h3>
                                 </div>
-                                <ul>
-                                    <li><a href="{{ route('home', [], false) }}">Inicio</a></li>
-                                    <li><a href="{{ route('courses.search-courses', [], false) }}">Cursos</a></li>
-                                    <li><a href="{{ route('find-tutors', [], false) }}">Tutores</a></li>
+                                <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.75rem;">
+                                    <li><a href="{{ route('home', [], false) }}" style="color:#d1d5db; text-decoration:none; transition:0.3s;">Inicio</a></li>
+                                    <li><a href="{{ route('courses.search-courses', [], false) }}" style="color:#d1d5db; text-decoration:none; transition:0.3s;">Cursos</a></li>
+                                    <li><a href="{{ route('find-tutors', [], false) }}" style="color:#d1d5db; text-decoration:none; transition:0.3s;">Tutores</a></li>
                                 </ul>
                             </nav>
                             
-                            <!-- Eliminado temporalmente por no existir las páginas de soporte y legal -->
-                            <!--
-                            <nav class="am-fnavigation">
-                                <div class="am-fnavigation_title">
-                                    <h3>Soporte</h3>
+                            <div class="am-fnavigation" style="max-width: 250px;">
+                                <div class="am-fnavigation_title" style="margin-bottom:1.5rem;">
+                                    <h3 style="color:#fff; font-size:1.125rem; font-weight:600;">Lleva el aprendizaje contigo</h3>
                                 </div>
-                                <ul>
-                                    <li><a href="/faq">Preguntas Frecuentes</a></li>
-                                    <li><a href="/contact-us">Contáctanos</a></li>
-                                </ul>
-                            </nav>
-                            
-                            <nav class="am-fnavigation">
-                                <div class="am-fnavigation_title">
-                                    <h3>Legal</h3>
+                                <p style="color:#d1d5db; line-height:1.6; margin-bottom:1rem;">
+                                    Continúa tu educación en cualquier lugar. ¡Descarga nuestra app móvil gratis para dispositivos iOS y Android!
+                                </p>
+                                <div style="display:flex; gap:10px;">
+                                    <a href="#" style="opacity:0.8; transition:opacity 0.3s;"><i class="am-icon-apple" style="font-size:2rem; color:#fff;"></i></a>
+                                    <a href="#" style="opacity:0.8; transition:opacity 0.3s;"><i class="am-icon-android" style="font-size:2rem; color:#fff;"></i></a>
                                 </div>
-                                <ul>
-                                    <li><a href="/terms-condition">Términos y Condiciones</a></li>
-                                    <li><a href="/privacy-policy">Política de Privacidad</a></li>
-                                </ul>
-                            </nav>
-                            -->
-                            
-                            @if (
-                            !empty( setting('_front_page_settings.app_section_heading')) ||
-                            !empty(setting('_front_page_settings.app_section_description'))
-                            )
-                            <div class="am-fnavigation">
-                                @if (!empty( setting('_front_page_settings.app_section_heading')))
-                                    <div class="am-fnavigation_title">
-                                        <h3>{{ setting('_front_page_settings.app_section_heading') }}</h3>
-                                    </div>
-                                @endif
-                                @if (!empty( setting('_front_page_settings.app_section_description')))
-                                    <p>{{ setting('_front_page_settings.app_section_description') }}</p>
-                                @endif
                             </div>
-                            @endif
                         </div>
                     </div>
                 </div>
