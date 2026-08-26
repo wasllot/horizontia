@@ -84,6 +84,14 @@ class MessageController extends Controller
      */
     public function store(Request $request)
     {
+        // Without this guard, posting to a thread_id that doesn't exist
+        // creates an orphaned Message row and then crashes with a 500 when
+        // GuppyMessageResource tries to read ->thread->participants on a
+        // null thread. index() already guards the same way for reads.
+        if (! (new ThreadsService)->threadExists($request->threadId)) {
+            return $this->error(__('laraguppy::chatapp.conversation_not_exists'));
+        }
+
         $message = (new MessagesService)->storeMessage(
                 [
                     'thread_id'          => $request->threadId,

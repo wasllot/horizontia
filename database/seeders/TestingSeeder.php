@@ -3,7 +3,13 @@
 namespace Database\Seeders;
 
 use App\Models\CartItem;
+use App\Models\Subject;
+use App\Models\SubjectGroup;
+use App\Models\SlotBooking;
 use App\Models\User;
+use App\Models\UserSubjectGroup;
+use App\Models\UserSubjectGroupSubject;
+use App\Models\UserSubjectSlot;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Modules\Courses\Models\Category;
@@ -170,6 +176,66 @@ class TestingSeeder extends Seeder
                 'cartable_id' => $course2->id,
             ],
             ['name' => $course2->title, 'qty' => 1, 'price' => 19.99, 'options' => []]
+        );
+
+        // A SCORM-type curriculum item (no media yet) so tests can exercise the
+        // SCORM upload endpoint without needing to create one from scratch.
+        Curriculum::firstOrCreate(
+            ['section_id' => $section->id, 'title' => 'QA SCORM Lesson'],
+            [
+                'description' => 'A SCORM lesson used for automated SCORM upload/playback tests.',
+                'type' => 'scorm',
+                'media_path' => null,
+                'sort_order' => 2,
+                'is_preview' => false,
+            ]
+        );
+
+        // A completed 1:1 booking between the QA tutor and QA student, purely
+        // as a DB fixture so dispute-flow tests have something to dispute
+        // over. Built from real demo Subject/SubjectGroup rows (seeded by
+        // DatabaseSeeder) — no filesystem writes, safe to run repeatedly.
+        $subjectGroup = SubjectGroup::firstOrCreate(
+            ['name' => 'QA Subject Group'],
+            []
+        );
+        $subject = Subject::firstOrCreate(
+            ['name' => 'QA Subject'],
+            []
+        );
+        $userSubjectGroup = UserSubjectGroup::firstOrCreate(
+            ['user_id' => $tutor->id, 'subject_group_id' => $subjectGroup->id],
+            ['sort_order' => 0]
+        );
+        $userSubjectGroupSubject = UserSubjectGroupSubject::firstOrCreate(
+            ['user_subject_group_id' => $userSubjectGroup->id, 'subject_id' => $subject->id],
+            ['hour_rate' => 10, 'description' => 'QA subject used for booking/dispute tests']
+        );
+        $userSubjectSlot = UserSubjectSlot::firstOrCreate(
+            ['user_subject_group_subject_id' => $userSubjectGroupSubject->id],
+            [
+                'start_time' => now()->subDay(),
+                'end_time' => now()->subDay()->addMinutes(30),
+                'spaces' => 1,
+                'duration' => 30,
+                'total_booked' => 1,
+                'session_fee' => 20,
+                'type' => 0,
+            ]
+        );
+        SlotBooking::firstOrCreate(
+            [
+                'student_id' => $student->id,
+                'tutor_id' => $tutor->id,
+                'user_subject_slot_id' => $userSubjectSlot->id,
+            ],
+            [
+                'start_time' => now()->subDay(),
+                'end_time' => now()->subDay()->addMinutes(30),
+                'session_fee' => 20,
+                'booked_at' => now()->subDay(),
+                'status' => 5, // completed
+            ]
         );
     }
 }

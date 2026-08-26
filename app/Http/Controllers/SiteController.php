@@ -95,7 +95,11 @@ class SiteController extends Controller
             if ($request->source == 'api' && $request->upi) {
                 return response()->json(['success' => true, 'message' => __('general.payment_successful')], Response::HTTP_OK);
             }
-            return redirect()->route('thank-you', ['id' => Order::latest()->first()?->id]);
+            $latestOrder = Order::latest()->first();
+            if (empty($latestOrder)) {
+                return redirect(route('checkout'))->with('error', __('general.payment_cancelled_desc'));
+            }
+            return redirect()->route('thank-you', ['id' => $latestOrder->id]);
         } else {
             $gatewayObj = getGatewayObject(empty($request['payment_method']) ? 'payfast' : $request['payment_method']);
             if(!empty($gatewayObj)) {

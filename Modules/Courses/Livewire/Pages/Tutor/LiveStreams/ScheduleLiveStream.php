@@ -61,12 +61,16 @@ class ScheduleLiveStream extends Component
 
         // Dispatch email notification here later...
         // event(new LiveStreamScheduledEvent($liveStream));
-        $course = Course::with('enrollments.student.profile')->find($this->course_id);
+        // Note: Enrollment::student() returns the student's Profile (not a
+        // User) — see Modules/Courses/Models/Enrollment.php — so the user
+        // record (and its email) has to be reached via Profile::user().
+        $course = Course::with('enrollments.student.user')->find($this->course_id);
         if ($course) {
             foreach ($course->enrollments as $enrollment) {
-                if ($enrollment->student && $enrollment->student->email) {
-                    $studentName = $enrollment->student->profile?->full_name ?? $enrollment->student->name ?? 'Estudiante';
-                    \Illuminate\Support\Facades\Mail::to($enrollment->student->email)
+                $studentUser = $enrollment->student?->user;
+                if ($studentUser && $studentUser->email) {
+                    $studentName = $enrollment->student->full_name ?? $studentUser->name ?? 'Estudiante';
+                    \Illuminate\Support\Facades\Mail::to($studentUser->email)
                         ->queue(new \App\Mail\LiveStreamScheduledEmail($liveStream, $studentName));
                 }
             }

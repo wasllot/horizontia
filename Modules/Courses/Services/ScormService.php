@@ -18,8 +18,12 @@ class ScormService
     public function processScormZip($zipFilePath, $curriculumId)
     {
         $zip = new ZipArchive;
-        $absoluteZipPath = storage_path('app/' . $zipFilePath);
-        
+        // $zipFilePath is relative to the 'public' disk root (it comes from
+        // $file->storeAs(..., getStorageDisk()), which resolves to the
+        // 'public' disk in this app) — must match $extractPath below, which
+        // already accounts for that.
+        $absoluteZipPath = storage_path('app/public/' . $zipFilePath);
+
         $extractPath = 'public/scorm/' . $curriculumId;
         $absoluteExtractPath = storage_path('app/' . $extractPath);
 

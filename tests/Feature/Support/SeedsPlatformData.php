@@ -4,6 +4,7 @@ namespace Tests\Feature\Support;
 
 use App\Models\Blog;
 use App\Models\BlogCategory;
+use App\Models\SlotBooking;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\TestingSeeder;
@@ -86,6 +87,22 @@ trait SeedsPlatformData
     protected function curriculum(): Curriculum
     {
         return Curriculum::where('section_id', $this->section()->id)->firstOrFail();
+    }
+
+    /** The SCORM-type curriculum item created by TestingSeeder (no media uploaded yet). */
+    protected function scormCurriculum(): Curriculum
+    {
+        return Curriculum::where('section_id', $this->section()->id)
+            ->where('title', 'QA SCORM Lesson')
+            ->firstOrFail();
+    }
+
+    /** A completed 1:1 booking between the QA tutor and QA student, for dispute tests. */
+    protected function booking(): SlotBooking
+    {
+        return SlotBooking::where('student_id', $this->student()->id)
+            ->where('tutor_id', $this->tutor()->id)
+            ->firstOrFail();
     }
 
     protected function category(): Category
