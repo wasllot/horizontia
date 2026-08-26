@@ -2084,7 +2084,7 @@ if (!function_exists('getGatewayObject')) {
             $settings['currency'] = getCurrentCurrency()['code'];
         }
         $gateways = PaymentDriver::supportedGateways();
-        if (!empty($data)) {
+        if (!empty($data) && !empty($gateways[$gateway])) {
             $mode = !empty($settings['enable_test_mode']) ? 'test' : 'live';
 
             $keys = array_intersect_key($settings, $gateways[$gateway]['keys']);

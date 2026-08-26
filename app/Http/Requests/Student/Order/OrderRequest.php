@@ -24,6 +24,7 @@ class OrderRequest extends BaseFormRequest {
             'state'                 => 'required|string|max:255',
             'zipcode'               => 'required|regex:/^[A-Za-z0-9\s\-]{3,10}$/',
             'city'                  => 'required|string|max:150',
+            'amount'                => 'required|numeric|min:0',
         ];
     }
 
@@ -51,6 +52,11 @@ class OrderRequest extends BaseFormRequest {
             'country'               => sanitizeTextField($this->country),
             'state'                 => sanitizeTextField($this->state),
             'city'                  => sanitizeTextField($this->city),
+            // `orders.phone` is a NOT NULL column but this field is validated
+            // as `nullable`; default to '' (same treatment as `company` above)
+            // so an omitted phone number fails validation gracefully instead
+            // of crashing the checkout with a DB integrity error.
+            'phone'                 => sanitizeTextField($this->phone),
         ]);
     }
 }

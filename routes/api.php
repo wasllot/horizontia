@@ -45,9 +45,9 @@ Route::get('student-reviews/{id}',                              [StudentControll
 Route::get('tutor-available-slots',                             [TutorController::class,'getTutorAvailableSlots']);
 Route::get('slot-detail/{id}',                                  [TutorController::class,'slotDetail']);
 
-Route::apiResource('tutor-education',                           EducationController::class)->only(['show','store','update','destroy']);
-Route::apiResource('tutor-experience',                          ExperienceController::class)->only(['show','store','update','destroy']);
-Route::apiResource('tutor-certification',                       CertificationController::class)->only(['show','store','destroy']);
+Route::apiResource('tutor-education',                           EducationController::class)->only(['show']);
+Route::apiResource('tutor-experience',                          ExperienceController::class)->only(['show']);
+Route::apiResource('tutor-certification',                       CertificationController::class)->only(['show']);
 
 Route::get('countries',                                     [TaxonomiesController::class,'getCountries']);
 Route::get('languages',                                     [TaxonomiesController::class,'getLanguages']);
@@ -56,6 +56,9 @@ Route::get('states',                                        [TaxonomiesControlle
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('upcoming-bookings',                             [BookingController::class,'getUpComingBooking']);
+    Route::apiResource('tutor-education',                       EducationController::class)->only(['store','update','destroy']);
+    Route::apiResource('tutor-experience',                      ExperienceController::class)->only(['store','update','destroy']);
+    Route::apiResource('tutor-certification',                   CertificationController::class)->only(['store','destroy']);
     Route::post('tutor-certification/{id}',                     [CertificationController::class,'update']);
     Route::post('reset-password',                               [AuthController::class,'resetPassword']);
     Route::post('update-password/{id}',                         [AccountSettingController::class,'updatePassword']);

@@ -47,7 +47,7 @@ $pBuilder->group(function () {
     Route::post('set-section-settings', 'setSectionSettings')->name('pagebuilder.set-section-settings');
     Route::post('set-page-settings', 'setPageSettings')->name('pagebuilder.set-page-settings');
 });
-Route::get('get-pb-section', [PageBuilderController::class, 'getPageSectionHtml'])->name('pagebuilder.html');
+Route::get('get-pb-section', [PageBuilderController::class, 'getSectionHtml'])->name('pagebuilder.html');
 
 Route::get('pages/{id}/iframe', [PageBuilderController::class, 'iframe'])->name('pagebuilder.iframe');
 

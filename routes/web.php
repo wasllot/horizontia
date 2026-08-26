@@ -110,7 +110,11 @@ Route::middleware(['locale', 'maintenance'])->group(function () {
 
     Route::get('tutor/{slug}', [SearchController::class, 'tutorDetail'])->name('tutor-detail');
     Route::get('{gateway}/process/payment', [SiteController::class, 'processPayment'])->name('payment.process');
-    Route::get('checkout/cancel', fn() => redirect()->route('invoices')->with('payment_cancel', __('general.payment_cancelled_desc')))->name('checkout.cancel');
+    Route::get('checkout/cancel', function () {
+        $user = auth()->user();
+        $routeName = $user?->hasRole('tutor') ? 'tutor.invoices' : ($user?->hasRole('student') ? 'student.invoices' : 'home');
+        return redirect()->route($routeName)->with('payment_cancel', __('general.payment_cancelled_desc'));
+    })->name('checkout.cancel');
     Route::post('payfast/webhook', [SiteController::class, 'payfastWebhook'])->name('payfast.webhook');
     Route::post('payment/success', [SiteController::class, 'paymentSuccess'])->name('post.success');
     Route::get('payment/success', [SiteController::class, 'paymentSuccess'])->name('get.success');

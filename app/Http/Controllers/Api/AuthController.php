@@ -203,9 +203,14 @@ class AuthController extends Controller
      */
 
     public function logout(Request $request) {
-       $response = $request->user()->currentAccessToken()->delete();
+       $token = $request->user()->currentAccessToken();
+       // currentAccessToken() returns a Sanctum TransientToken (no delete())
+       // when the user was resolved via a session/cookie guard instead of a
+       // real personal access token — nothing to revoke in that case.
+       $response = ($token && method_exists($token, 'delete')) ? $token->delete() : true;
         if($response){
             return $this->success(message: __('api.user_logout_successfully'));
         }
+        return $this->error(message: __('api.not_found'));
     }
 }

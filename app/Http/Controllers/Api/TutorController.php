@@ -135,6 +135,9 @@ class TutorController extends Controller
     {
         $bookingService  = new BookingService();
         $currentSlot     = $bookingService->getSlotDetail($id);
+        if (empty($currentSlot)) {
+            return $this->error(data: null, message: __('api.slot_not_found'), code: Response::HTTP_NOT_FOUND);
+        }
         return $this->success(data: new TutorSlotResource($currentSlot));
     }
 

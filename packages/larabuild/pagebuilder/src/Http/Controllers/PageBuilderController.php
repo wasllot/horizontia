@@ -189,7 +189,7 @@ class PageBuilderController extends Controller {
         );
     }
 
-    public function getSectionHtml($sectionId, $directory = null) {
+    public function getSectionHtml($sectionId = null, $directory = null) {
         $html = '';
         if ($sectionId && $directory) {
             $edit = true;
