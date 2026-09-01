@@ -10,6 +10,8 @@
     }
     .cr-sidebar_goback a,
     .cr-sidebar_title span { color: #aab3c5 !important; }
+    .cr-sidebar_toggle a { background: rgba(255,255,255,0.08) !important; }
+    .cr-sidebar_toggle a:hover { background: rgba(254,211,4,0.15) !important; }
     .cr-sidebar_accordion_title > a[aria-expanded="true"] {
         background: rgba(254,211,4,0.12) !important;
     }

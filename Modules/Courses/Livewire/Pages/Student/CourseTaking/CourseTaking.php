@@ -60,8 +60,11 @@ class CourseTaking extends Component
     {
         $this->slug = request()->route('slug');
         $this->role = Auth::user()->role;
-        $logo = setting('_general.logo_white');
-        $this->logo = !empty($logo[0]['path']) ? Storage::url($logo[0]['path']) : asset('modules/courses/images/logo.svg');
+        // The admin-configurable '_general.logo_white' setting still points at
+        // the base theme's stock demo logo (never replaced with a real branded
+        // asset), so it's not trustworthy here. Use the same real, dark-background-
+        // ready Horizontia asset login.blade.php already relies on instead.
+        $this->logo = asset('images/nuevo/Logo-Horizontia-footer.png');
 
         if (!$this->course) {
             abort(404);
