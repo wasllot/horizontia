@@ -56,7 +56,16 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('leads',             Leads::class)->name('leads');
     Route::get('email-settings',    EmailTemplates::class)->name('email-settings');
     Route::get('notification-settings', NotificationTemplates::class)->name('notification-settings');
-    Route::get('users/approve-identity/{id}', [Users::class, 'approveUserIdentity'])->name('approve-user-identity');
+    // NOTE: this link is emailed to admins (see NotificationService::approve_identity_link) but
+    // previously pointed at a Livewire "controller action" (Users::approveUserIdentity) that does
+    // not exist, causing a 500 (BadMethodCallException via Livewire's magic __call) for every
+    // admin who clicked it. The real approve action lives on the identity-verification listing
+    // page (IdentityVerification::verifiedTemplate, invoked via wire:click), which has no support
+    // for deep-linking/pre-selecting a single user id, so route this link to that working page
+    // instead of a non-existent action rather than guess at new deep-link business logic.
+    Route::get('users/approve-identity/{id}', function () {
+        return redirect()->route('admin.identity-verification');
+    })->name('approve-user-identity');
     Route::get('upgrade', Upgrade::class)->name('upgrade');
     Route::get('upgrade/logs', [App\Http\Controllers\Admin\GeneralController::class, 'getUpgradeLogs'])->name('upgrade-logs');
 

@@ -212,7 +212,7 @@
                                                         <h3><a href="javascript:void(0);">{{ $item['name'] }}</a></h3>
                                                         <span>{{$item['options']['subject_group']}}</span>
                                                     @elseif($item['cartable_type'] == 'Modules\Courses\Models\Course')
-                                                        <span>{{$item['options']['sub_category']}}</span>
+                                                        <span>{{$item['options']['sub_category'] ?? ''}}</span>
                                                         <h3><a href="javascript:void(0);">{{ $item['name'] }}</a></h3>
                                                     @elseif($item['cartable_type'] == 'Modules\Subscriptions\Models\Subscription')
                                                         <span>{{ $item['options']['period'] }}</span>

@@ -94,6 +94,6 @@ class CourseAssignments extends Component
 
         return view('courses::livewire.tutor.course-assignments.course-assignments', [
             'submissions' => $submissions
-        ])->extends('layouts.tutor-app');
+        ])->extends('layouts.app');
     }
 }

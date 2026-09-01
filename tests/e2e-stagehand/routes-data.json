@@ -1,0 +1,1423 @@
+[
+  {
+    "uri": "/",
+    "name": "home",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "uri": "admin/blog-categories",
+    "name": "admin.blog-categories",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/blogs",
+    "name": "admin.blog-listing",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/blogs/create",
+    "name": "admin.create-blog",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/blogs/update/{id}",
+    "name": "admin.update-blog",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/bookings",
+    "name": "admin.bookings",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/categories",
+    "name": "courses.admin.categories",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin|sub_admin"
+    ]
+  },
+  {
+    "uri": "admin/clear-cache",
+    "name": "admin.clear-cache",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/commission-setting",
+    "name": "courses.admin.commission-setting",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin|sub_admin"
+    ]
+  },
+  {
+    "uri": "admin/commission-settings",
+    "name": "admin.commission-settings",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/course-enrollments",
+    "name": "courses.admin.course-enrollments",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin|sub_admin"
+    ]
+  },
+  {
+    "uri": "admin/course/edit/{tab}/{id}",
+    "name": "courses.admin.edit-course",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin|sub_admin"
+    ]
+  },
+  {
+    "uri": "admin/courses",
+    "name": "courses.admin.courses",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin|sub_admin"
+    ]
+  },
+  {
+    "uri": "admin/create-course",
+    "name": "courses.admin.create-course",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin|sub_admin"
+    ]
+  },
+  {
+    "uri": "admin/disputes",
+    "name": "admin.disputes",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/email-settings",
+    "name": "admin.email-settings",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/identity-verification",
+    "name": "admin.identity-verification",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/insights",
+    "name": "admin.insights",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/invoices",
+    "name": "admin.invoices",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/leads",
+    "name": "admin.leads",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/manage-dispute/{id}",
+    "name": "admin.manage-dispute",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/manage-menus",
+    "name": "admin.manage-menus",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/notification-settings",
+    "name": "admin.notification-settings",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/option-builder",
+    "name": "optionbuilder",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/packages",
+    "name": "admin.packages.index",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/packages/installed",
+    "name": "admin.packages.installed",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/pages",
+    "name": "pagebuilder",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/pages/create",
+    "name": "page.create",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/pages/{id}/build",
+    "name": "pagebuilder.build",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/pages/{page}/edit",
+    "name": "page.edit",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/payment-methods",
+    "name": "admin.payment-methods",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/profile",
+    "name": "admin.profile",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/taxonomies/languages",
+    "name": "admin.taxonomy.languages",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/taxonomies/subject-groups",
+    "name": "admin.taxonomy.subject-groups",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/taxonomies/subjects",
+    "name": "admin.taxonomy.subjects",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/translations",
+    "name": "ltu.translation.index",
+    "middleware": [
+      "web",
+      "Authenticate",
+      "RoleMiddleware:admin",
+      "HandleInertiaRequests"
+    ]
+  },
+  {
+    "uri": "admin/translations/add-translation",
+    "name": "ltu.translation.create",
+    "middleware": [
+      "web",
+      "Authenticate",
+      "RoleMiddleware:admin",
+      "HandleInertiaRequests"
+    ]
+  },
+  {
+    "uri": "admin/translations/download",
+    "name": "ltu.translation.download",
+    "middleware": [
+      "web",
+      "Authenticate",
+      "RoleMiddleware:admin",
+      "HandleInertiaRequests"
+    ]
+  },
+  {
+    "uri": "admin/translations/import",
+    "name": "ltu.translation.import",
+    "middleware": [
+      "web",
+      "Authenticate",
+      "RoleMiddleware:admin",
+      "HandleInertiaRequests"
+    ]
+  },
+  {
+    "uri": "admin/translations/phrases/{translation}",
+    "name": "ltu.phrases.index",
+    "middleware": [
+      "web",
+      "Authenticate",
+      "RoleMiddleware:admin",
+      "HandleInertiaRequests"
+    ]
+  },
+  {
+    "uri": "admin/translations/phrases/{translation}/edit/{phrase}",
+    "name": "ltu.phrases.edit",
+    "middleware": [
+      "web",
+      "Authenticate",
+      "RoleMiddleware:admin",
+      "HandleInertiaRequests"
+    ]
+  },
+  {
+    "uri": "admin/translations/publish",
+    "name": "ltu.translation.publish",
+    "middleware": [
+      "web",
+      "Authenticate",
+      "RoleMiddleware:admin",
+      "HandleInertiaRequests"
+    ]
+  },
+  {
+    "uri": "admin/translations/source-translation",
+    "name": "ltu.source_translation",
+    "middleware": [
+      "web",
+      "Authenticate",
+      "RoleMiddleware:admin",
+      "HandleInertiaRequests"
+    ]
+  },
+  {
+    "uri": "admin/translations/source-translation/create",
+    "name": "ltu.source_translation.add_source_key",
+    "middleware": [
+      "web",
+      "Authenticate",
+      "RoleMiddleware:admin",
+      "HandleInertiaRequests"
+    ]
+  },
+  {
+    "uri": "admin/translations/source-translation/{phrase}",
+    "name": "ltu.source_translation.edit",
+    "middleware": [
+      "web",
+      "Authenticate",
+      "RoleMiddleware:admin",
+      "HandleInertiaRequests"
+    ]
+  },
+  {
+    "uri": "admin/upgrade",
+    "name": "admin.upgrade",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/upgrade/logs",
+    "name": "admin.upgrade-logs",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/users",
+    "name": "admin.users",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/users/approve-identity/{id}",
+    "name": "admin.approve-user-identity",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "admin/withdraw-requests",
+    "name": "admin.withdraw-requests",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:admin"
+    ]
+  },
+  {
+    "uri": "auth/{provider}",
+    "name": "social.redirect",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "uri": "auth/{provider}/callback",
+    "name": "social.callback",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "uri": "blog/{slug}",
+    "name": "blog-details",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode"
+    ]
+  },
+  {
+    "uri": "blogs",
+    "name": "blogs",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode"
+    ]
+  },
+  {
+    "uri": "broadcasting/auth",
+    "name": null,
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "uri": "checkout",
+    "name": "checkout",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor|student"
+    ]
+  },
+  {
+    "uri": "checkout/cancel",
+    "name": "checkout.cancel",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode"
+    ]
+  },
+  {
+    "uri": "confirm-password",
+    "name": "password.confirm",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate"
+    ]
+  },
+  {
+    "uri": "contacto",
+    "name": "contacto",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "uri": "course-list",
+    "name": "courses.course-list",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "RoleMiddleware:student"
+    ]
+  },
+  {
+    "uri": "course-taking/{slug}",
+    "name": "courses.course-taking",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate",
+      "EnsureEmailIsVerified"
+    ]
+  },
+  {
+    "uri": "course/edit/{tab}/{id}",
+    "name": "courses.tutor.edit-course",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "course/{slug}",
+    "name": "courses.course-detail",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses"
+    ]
+  },
+  {
+    "uri": "courses",
+    "name": "courses.tutor.courses",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "create-course",
+    "name": "courses.tutor.create-course",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "exit-impersonate",
+    "name": "exit-impersonate",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode"
+    ]
+  },
+  {
+    "uri": "find-tutors",
+    "name": "find-tutors",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode"
+    ]
+  },
+  {
+    "uri": "forgot-password",
+    "name": "password.request",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "RedirectIfAuthenticated"
+    ]
+  },
+  {
+    "uri": "get-pb-section",
+    "name": "pagebuilder.html",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode"
+    ]
+  },
+  {
+    "uri": "google/callback",
+    "name": null,
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline"
+    ]
+  },
+  {
+    "uri": "livewire/livewire.js",
+    "name": null,
+    "middleware": []
+  },
+  {
+    "uri": "livewire/livewire.min.js.map",
+    "name": null,
+    "middleware": []
+  },
+  {
+    "uri": "livewire/preview-file/{filename}",
+    "name": "livewire.preview-file",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "uri": "login",
+    "name": "login",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "RedirectIfAuthenticated"
+    ]
+  },
+  {
+    "uri": "logout",
+    "name": "logout",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline"
+    ]
+  },
+  {
+    "uri": "messenger",
+    "name": "laraguppy.messenger",
+    "middleware": [
+      "web",
+      "Authenticate"
+    ]
+  },
+  {
+    "uri": "pages/{id}/iframe",
+    "name": "pagebuilder.iframe",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode"
+    ]
+  },
+  {
+    "uri": "pay/{id}",
+    "name": "pay",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode"
+    ]
+  },
+  {
+    "uri": "payment/success",
+    "name": "get.success",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode"
+    ]
+  },
+  {
+    "uri": "register",
+    "name": "register",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "RedirectIfAuthenticated"
+    ]
+  },
+  {
+    "uri": "reset-password/{token}",
+    "name": "password.reset",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "RedirectIfAuthenticated"
+    ]
+  },
+  {
+    "uri": "sanctum/csrf-cookie",
+    "name": "sanctum.csrf-cookie",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "uri": "scorm/progress/{curriculumId}",
+    "name": "courses.scorm.get-progress",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate",
+      "EnsureEmailIsVerified"
+    ]
+  },
+  {
+    "uri": "search-courses",
+    "name": "courses.search-courses",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses"
+    ]
+  },
+  {
+    "uri": "secure-video/{path}",
+    "name": "courses.secure.video",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate"
+    ]
+  },
+  {
+    "uri": "social-profile",
+    "name": "social-profile",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode"
+    ]
+  },
+  {
+    "uri": "student/billing-detail",
+    "name": "student.billing-detail",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:student"
+    ]
+  },
+  {
+    "uri": "student/bookings",
+    "name": "student.bookings",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:student"
+    ]
+  },
+  {
+    "uri": "student/certificates",
+    "name": "student.certificate-list",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:student"
+    ]
+  },
+  {
+    "uri": "student/complete-booking/{id}",
+    "name": "student.complete-booking",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:student"
+    ]
+  },
+  {
+    "uri": "student/disputes",
+    "name": "student.disputes",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:student"
+    ]
+  },
+  {
+    "uri": "student/favourites",
+    "name": "student.favourites",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:student"
+    ]
+  },
+  {
+    "uri": "student/invoices",
+    "name": "student.invoices",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:student"
+    ]
+  },
+  {
+    "uri": "student/manage-dispute/{id}",
+    "name": "student.manage-dispute",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:student"
+    ]
+  },
+  {
+    "uri": "student/profile",
+    "name": "student.profile",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:student"
+    ]
+  },
+  {
+    "uri": "student/profile/account-settings",
+    "name": "student.profile.account-settings",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:student"
+    ]
+  },
+  {
+    "uri": "student/profile/identification",
+    "name": "student.profile.identification",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:student"
+    ]
+  },
+  {
+    "uri": "student/profile/personal-details",
+    "name": "student.profile.personal-details",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:student"
+    ]
+  },
+  {
+    "uri": "student/reschedule-session/{id}",
+    "name": "student.reschedule-session",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:student"
+    ]
+  },
+  {
+    "uri": "thank-you/{id}",
+    "name": "thank-you",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor|student"
+    ]
+  },
+  {
+    "uri": "tutor/assignments",
+    "name": "courses.tutor.assignments",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/bookings/manage-sessions",
+    "name": "tutor.bookings.manage-sessions",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/bookings/manage-subjects",
+    "name": "tutor.bookings.subjects",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/bookings/session-detail/{date}",
+    "name": "tutor.bookings.session-detail",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/bookings/upcoming-bookings",
+    "name": "tutor.bookings.upcoming-bookings",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/dashboard",
+    "name": "tutor.dashboard",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/disputes",
+    "name": "tutor.disputes",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/invoices",
+    "name": "tutor.invoices",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/manage-dispute/{id}",
+    "name": "tutor.manage-dispute",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/manage-live-streams",
+    "name": "courses.tutor.manage-live-streams",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/payouts",
+    "name": "tutor.payouts",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/profile",
+    "name": "tutor.profile",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/profile/account-settings",
+    "name": "tutor.profile.account-settings",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/profile/identification",
+    "name": "tutor.profile.identification",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/profile/personal-details",
+    "name": "tutor.profile.personal-details",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/profile/resume/certificate",
+    "name": "tutor.profile.resume.certificate",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/profile/resume/education",
+    "name": "tutor.profile.resume.education",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/profile/resume/experience",
+    "name": "tutor.profile.resume.experience",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/schedule-live-stream",
+    "name": "courses.tutor.schedule-live-stream",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "CheckModuleEnabled:courses",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline",
+      "RoleMiddleware:tutor"
+    ]
+  },
+  {
+    "uri": "tutor/{slug}",
+    "name": "tutor-detail",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode"
+    ]
+  },
+  {
+    "uri": "up",
+    "name": null,
+    "middleware": []
+  },
+  {
+    "uri": "user/identity-confirmation/{id}",
+    "name": "confirm-identity",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "EnsureEmailIsVerified",
+      "UserOnline"
+    ]
+  },
+  {
+    "uri": "verify-email",
+    "name": "verification.notice",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate"
+    ]
+  },
+  {
+    "uri": "verify-email/{id}/{hash}",
+    "name": "verification.verify",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode",
+      "Authenticate",
+      "ValidateSignature",
+      "ThrottleRequests:6,1"
+    ]
+  },
+  {
+    "uri": "{any}",
+    "name": "pagebuilder.page",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode"
+    ]
+  },
+  {
+    "uri": "{gateway}/process/payment",
+    "name": "payment.process",
+    "middleware": [
+      "web",
+      "CheckLocale",
+      "CheckMaintenanceMode"
+    ]
+  }
+]

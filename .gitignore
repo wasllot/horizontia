@@ -71,3 +71,9 @@ output.html
 /docker/
 /docker-compose.yml*.zip
 *.mp4
+
+# Stagehand/Playwright E2E harness
+/tests/e2e-stagehand/node_modules/
+/tests/e2e-stagehand/failures/
+/tests/e2e-stagehand/results-*.json
+/tests/e2e-stagehand/downloads/

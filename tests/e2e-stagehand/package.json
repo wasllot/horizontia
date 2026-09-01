@@ -1,0 +1,14 @@
+{
+  "name": "horizontia-e2e-stagehand",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node run.js"
+  },
+  "dependencies": {
+    "@browserbasehq/stagehand": "^2",
+    "playwright": "^1.47.0",
+    "zod": "^3"
+  }
+}
