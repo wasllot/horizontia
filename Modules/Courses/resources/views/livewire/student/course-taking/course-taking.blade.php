@@ -4,9 +4,15 @@
        instead of the theme's generic flat black/green. Same !important
        requirement as course-detail.blade.php: modules/courses/css/main.css
        defines its own rules for these classes and loads later in the head. */
+    /* Solid, not a gradient: the header bar (.cr-usercourse_header, set further
+       below) sits directly beside the sidebar at the same y-position, and a
+       gradient here created a visible seam where the two backgrounds met. */
     .cr-sidebar,
     .cr-sidebar_logo {
-        background: linear-gradient(180deg, #14213d, #0f3460) !important;
+        background: #14213d !important;
+    }
+    .cr-sidebar_goback {
+        margin-top: 20px !important;
     }
     .cr-sidebar_goback a,
     .cr-sidebar_title span { color: #aab3c5 !important; }
