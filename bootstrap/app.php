@@ -44,6 +44,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'maintenance' => \App\Http\Middleware\CheckMaintenanceMode::class,
             'enabled' => \App\Http\Middleware\CheckModuleEnabled::class,
         ]);
+        $middleware->web(append: [
+            \App\Http\Middleware\AddVaryCookieHeader::class,
+        ]);
         $middleware->validateCsrfTokens(except: [
             'payfast/webhook',
         ]);
