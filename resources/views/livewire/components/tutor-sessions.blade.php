@@ -1,4 +1,16 @@
 
+@push('styles')
+<style>
+    /* A global `.am-btn{color:#000 !important;}` rule (public/css/main.css) combined
+       with another broad background override leaves this specific button rendering
+       as solid black-on-black (invisible text) since it has no page-scoped override
+       like other .am-btn usages elsewhere do. Restore the theme's own default look. */
+    .am-booksession-title .am-btn {
+        color: #fff !important;
+        background-color: #fed304 !important;
+    }
+</style>
+@endpush
 <div class="am-userinfo_section"  wire:init="loadPage" x-data="{
     defaultTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     timezone: $wire.entangle('timezone'),
