@@ -36,6 +36,19 @@
     .cr-next-curriculum_btn { background: #fed304 !important; color: #14213d !important; }
     .cr-next-curriculum_btn i::before { color: #14213d !important; }
 
+    /* The "no thumbnail" fallback is a tiny 44x45 icon -- stretched to fill
+       this wrapper like a real thumbnail it just blows up into a blank-
+       looking blur (this is what showed as a big empty white area). */
+    .cr-image-wrapper { background: #14213d !important; }
+    .cr-image-wrapper img.cr-background-image--placeholder {
+        width: 64px !important;
+        height: 64px !important;
+        object-fit: none !important;
+        display: block !important;
+        margin: 0 auto !important;
+        opacity: 0.6;
+    }
+
     /* The "Resumen" tab embeds the same banner/stats markup as the course
        detail page -- reuse the exact same overrides so it matches. */
     .cr-coursecontent_tabs_content .cr-course-details-banner {
@@ -512,7 +525,7 @@
                                 @if(!empty($course->thumbnail?->path) && Storage::disk(getStorageDisk())->exists($course->thumbnail?->path))
                                     <img src="{{ Storage::url($course->thumbnail->path) }}" alt="{{ $course->title }}" class="cr-background-image" />
                                 @else
-                                    <img src="{{ asset('modules/courses/images/course.png') }}" alt="{{ $course->title }}" />
+                                    <img src="{{ asset('modules/courses/images/course.png') }}" alt="{{ $course->title }}" class="cr-background-image--placeholder" />
                                 @endif
                             
                                 @if(!empty($course?->promotionalVideo?->path) && Storage::disk(getStorageDisk())->exists($course?->promotionalVideo?->path))

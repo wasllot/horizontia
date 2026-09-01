@@ -82,6 +82,16 @@
     }
     .cr-image-wrapper { position: relative !important; width: 100% !important; border-radius: 20px 20px 0 0 !important; overflow: hidden !important; background: #14213d !important; }
     .cr-image-wrapper img { width: 100% !important; height: 260px !important; object-fit: cover !important; }
+    /* The "no thumbnail" fallback is a tiny 44x45 icon -- stretched with
+       object-fit:cover like a real thumbnail it just blows up into a blank-
+       looking blur. Show it at a sane size, centered, on the card's own bg. */
+    .cr-image-wrapper img.cr-background-image--placeholder {
+        object-fit: none !important;
+        width: 64px !important;
+        height: 64px !important;
+        margin: 98px auto !important;
+        opacity: 0.6;
+    }
     .cr-image-wrapper figcaption {
         position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
         background: rgba(20,33,61,0.35) !important;
@@ -558,7 +568,7 @@
                                     </div>
                                 </template>
                                 <template x-if="!isOpen">
-                                    <img height="200" width="360" src="{{ !empty($course?->thumbnail?->path) ? url(Storage::url($course?->thumbnail?->path)) : asset('module/courses/images/course.png') }}" alt="{{ $course?->title }}" class="cr-background-image" />
+                                    <img height="200" width="360" src="{{ !empty($course?->thumbnail?->path) ? url(Storage::url($course?->thumbnail?->path)) : asset('modules/courses/images/course.png') }}" alt="{{ $course?->title }}" class="cr-background-image {{ empty($course?->thumbnail?->path) ? 'cr-background-image--placeholder' : '' }}" />
                                 </template>
                                 @if(!empty($course?->promotionalVideo?->path) && Storage::disk(getStorageDisk())->exists($course?->promotionalVideo?->path) )
                                     <template x-if="!isOpen">
