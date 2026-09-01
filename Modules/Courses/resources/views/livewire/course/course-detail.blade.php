@@ -1,3 +1,4 @@
+@push('styles')
 <style>
     /* Modern Premium Course Details Redesign */
     .cr-course-details-page { background: #f8f9fc; }
@@ -103,6 +104,7 @@
     .cr-action-buttons .am-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(255,140,0,0.4); }
 
 </style>
+@endpush
 <div class="cr-course-details-page">
     <div class="cr-course-content">
         <div class="cr-course-details-wrapper">
