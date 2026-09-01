@@ -1,107 +1,112 @@
 @push('styles')
 <style>
-    /* Modern Premium Course Details Redesign */
-    .cr-course-details-page { background: #f8f9fc; }
+    /* Premium / corporate / educational redesign.
+       !important is required throughout: modules/courses/css/main.css defines
+       its own (plainer) rules for these same classes and loads AFTER this
+       pushed block, so same-specificity selectors would otherwise win by
+       source order alone and silently cancel this styling out. */
+    .cr-course-details-page { background: #f8f9fc !important; }
     .cr-course-details-banner {
-        background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
-        border-radius: 0 0 40px 40px;
-        padding: 50px 0;
-        margin-bottom: 40px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        position: relative;
-        overflow: hidden;
+        background: linear-gradient(135deg, #14213d, #1a2b52, #0f3460) !important;
+        border-radius: 0 0 40px 40px !important;
+        padding: 50px 0 !important;
+        margin-bottom: 40px !important;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.12) !important;
+        position: relative !important;
+        overflow: hidden !important;
     }
     .cr-course-details-banner::before {
         content: '';
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
         background: url('{{ asset("modules/courses/images/bg-shap.svg") }}') no-repeat center right;
-        opacity: 0.1;
+        opacity: 0.08;
         pointer-events: none;
     }
     .cr-course-details-area {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-        position: relative;
-        z-index: 2;
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+        padding: 0 20px !important;
+        position: relative !important;
+        z-index: 2 !important;
     }
     .cr-course-details-banner * { color: #fff !important; }
-    .cr-course-details-banner .am-breadcrumb li a { color: #a1a1b5 !important; }
-    .cr-course-details-banner .am-breadcrumb li.active span { color: #ff9a9e !important; }
-    .cr-course-details-banner .cr-title-box h2 { font-size: 2.8rem; font-weight: 800; margin-bottom: 10px; line-height: 1.2; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-    .cr-course-details-banner .cr-title-box p { font-size: 1.2rem; color: #cbd5e1 !important; }
-    
+    .cr-course-details-banner .am-breadcrumb li a { color: #aab3c5 !important; }
+    .cr-course-details-banner .am-breadcrumb li.active span { color: #fed304 !important; }
+    .cr-course-details-banner .cr-title-box h2 { font-size: 2.8rem !important; font-weight: 800 !important; margin-bottom: 10px !important; line-height: 1.2 !important; }
+    .cr-course-details-banner .cr-title-box p { font-size: 1.2rem !important; color: #c3cadb !important; }
+
     .cr-course-stats {
-        display: flex; gap: 30px; margin-top: 30px;
-        background: rgba(255,255,255,0.05);
-        padding: 20px 30px;
-        border-radius: 20px;
+        display: flex !important; gap: 30px !important; margin-top: 30px !important;
+        background: rgba(255,255,255,0.06) !important;
+        padding: 20px 30px !important;
+        border-radius: 16px !important;
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.1);
-        flex-wrap: wrap;
+        border: 1px solid rgba(255,255,255,0.12) !important;
+        flex-wrap: wrap !important;
     }
-    .cr-stat-item { display: flex; align-items: center; gap: 15px; }
+    .cr-stat-item { display: flex !important; align-items: center !important; gap: 15px !important; }
     .cr-stat-icon-wrapper {
-        width: 45px; height: 45px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, #f5576c, #f093fb);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.2rem;
-        box-shadow: 0 8px 20px rgba(245,87,108,0.3);
+        width: 45px !important; height: 45px !important;
+        border-radius: 10px !important;
+        background: rgba(254,211,4,0.15) !important;
+        border: 1px solid rgba(254,211,4,0.35) !important;
+        display: flex !important; align-items: center !important; justify-content: center !important;
+        font-size: 1.2rem !important;
     }
-    .cr-stat-content { display: flex; flex-direction: column; }
-    .cr-stat-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: #a1a1b5 !important; margin-bottom: 3px; }
-    .cr-stat-value { font-weight: 700; font-size: 1.1rem; }
+    .cr-stat-icon-wrapper i,
+    .cr-stat-icon-wrapper i::before { color: #fed304 !important; }
+    .cr-stat-content { display: flex !important; flex-direction: column !important; }
+    .cr-stat-label { font-size: 0.8rem !important; text-transform: uppercase !important; letter-spacing: 0.05em !important; color: #aab3c5 !important; margin-bottom: 3px !important; }
+    .cr-stat-value { font-weight: 700 !important; font-size: 1.1rem !important; }
 
     /* Tags */
     .tags-list .tag {
-        background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
-        color: #1a1a2e !important;
-        font-weight: 600;
-        border-radius: 10px;
-        padding: 6px 14px;
-        font-size: 0.85rem;
-        box-shadow: 0 4px 10px rgba(142,197,252,0.3);
-        border: none;
+        background: #eef1f8 !important;
+        color: #14213d !important;
+        font-weight: 600 !important;
+        border-radius: 8px !important;
+        padding: 6px 14px !important;
+        font-size: 0.85rem !important;
+        border: 1px solid #dde3f0 !important;
     }
 
     /* Course Card Sidebar */
-    .cr-course-sidebar { margin-top: -150px; }
+    .cr-course-sidebar { margin-top: -150px !important; }
     .cr-course-card {
-        background: #fff;
-        border-radius: 24px;
-        box-shadow: 0 25px 50px rgba(0,0,0,0.08);
-        border: 1px solid #f0f0f0;
-        overflow: hidden;
+        background: #fff !important;
+        border-radius: 20px !important;
+        box-shadow: 0 25px 50px rgba(15,52,96,0.12) !important;
+        border: 1px solid #f0f0f0 !important;
+        overflow: hidden !important;
     }
-    .cr-image-wrapper { position: relative; width: 100%; border-radius: 24px 24px 0 0; overflow: hidden; }
-    .cr-image-wrapper img { width: 100%; height: 260px; object-fit: cover; }
+    .cr-image-wrapper { position: relative !important; width: 100% !important; border-radius: 20px 20px 0 0 !important; overflow: hidden !important; background: #14213d !important; }
+    .cr-image-wrapper img { width: 100% !important; height: 260px !important; object-fit: cover !important; }
     .cr-image-wrapper figcaption {
-        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.3);
-        display: flex; align-items: center; justify-content: center;
+        position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+        background: rgba(20,33,61,0.35) !important;
+        display: flex !important; align-items: center !important; justify-content: center !important;
     }
     .cr-image-wrapper button {
-        width: 70px; height: 70px; border-radius: 50%;
-        background: linear-gradient(135deg, #f5576c, #f093fb);
-        border: none; cursor: pointer;
-        display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 10px 25px rgba(245,87,108,0.4);
-        transition: transform 0.3s;
+        width: 70px !important; height: 70px !important; border-radius: 50% !important;
+        background: #fed304 !important;
+        border: none !important; cursor: pointer !important;
+        display: flex !important; align-items: center !important; justify-content: center !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.25) !important;
+        transition: transform 0.3s !important;
     }
-    .cr-image-wrapper button:hover { transform: scale(1.1); }
-    
+    .cr-image-wrapper button:hover { transform: scale(1.08) !important; }
+
     .cr-action-buttons .am-btn {
-        background: linear-gradient(135deg, #ffd700, #ff8c00);
-        color: #fff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        border: none; padding: 16px; border-radius: 14px;
-        font-weight: 800; font-size: 1.1rem;
-        box-shadow: 0 10px 20px rgba(255,140,0,0.3);
-        width: 100%;
-        transition: transform 0.2s, box-shadow 0.2s;
+        background: #fed304 !important;
+        color: #14213d !important;
+        border: none !important; padding: 16px !important; border-radius: 12px !important;
+        font-weight: 800 !important; font-size: 1.1rem !important;
+        box-shadow: 0 10px 20px rgba(254,211,4,0.25) !important;
+        width: 100% !important;
+        transition: transform 0.2s, box-shadow 0.2s !important;
     }
-    .cr-action-buttons .am-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(255,140,0,0.4); }
+    .cr-action-buttons .am-btn:hover { transform: translateY(-3px) !important; box-shadow: 0 15px 25px rgba(254,211,4,0.35) !important; }
 
 </style>
 @endpush
