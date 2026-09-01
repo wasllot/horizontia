@@ -127,6 +127,36 @@ new class extends Component
     $info       = Auth::user();
 @endphp
 <div class="tb-sidebarwrapperholder">
+    {{--
+        NOTE: intentionally an inline <style> here, not @push('styles').
+        This component is included directly from layouts/admin-app.blade.php
+        (in the <body>), AFTER that layout's own @stack('styles') in the
+        <head> has already rendered -- a @push from here registers too late
+        to reach it. A plain <style> tag works identically wherever it sits
+        in the document, so this renders correctly regardless of order.
+    --}}
+    <style>
+        /* Brand the admin sidebar to match the rest of the redesigned platform
+           (navy + gold) instead of the theme's plain white. */
+        .tb-sidebarwrapper { background: #14213d !important; }
+        /* <x-application-logo /> always resolves to the dark wordmark
+           regardless of variation (see components/application-logo.blade.php --
+           it hardcodes a single logo URL, ignoring the prop entirely), so it's
+           unreadable on this dark sidebar. Force it white, same technique
+           already used in resources/views/livewire/pages/auth/login.blade.php. */
+        .tb-sidebartop img { filter: brightness(0) invert(1); }
+        .tb-siderbar-nav .tb-menuitm { color: #aab3c5 !important; }
+        .tb-siderbar-nav .tb-menuitm i { color: #aab3c5 !important; }
+        .tb-siderbar-nav .tb-menuitm:hover { background: rgba(254,211,4,0.1) !important; color: #fff !important; }
+        .tb-siderbar-nav .tb-menuitm:hover i { color: #fed304 !important; }
+        .tb-siderbar-nav li.active > .tb-menuitm,
+        .tb-siderbar-nav li.active > .tb-menuitm i { color: #14213d !important; }
+        .sidebar-sub-menu li a { color: #aab3c5 !important; }
+        .sidebar-sub-menu li.active a,
+        .sidebar-sub-menu li a:hover { color: #fed304 !important; }
+        #tb-btnmenutoggle a,
+        .tb-icongray { color: #aab3c5 !important; }
+    </style>
     <aside id="tb-sidebarwrapper" class="tb-sidebarwrapper">
         <div id="tb-btnmenutoggle" class="tb-btnmenutoggle">
             <a href="javascript:void(0);"><i class="ti-pin2"></i></a>
