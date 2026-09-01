@@ -11,6 +11,7 @@ services:
         ports:
             - '${APP_PORT:-8000}:8000'
             - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+            - '${QA_PORT:-8001}:8001'
         environment:
             WWWUSER: '${WWWUSER:-1000}'
             LARAVEL_SAIL: 1

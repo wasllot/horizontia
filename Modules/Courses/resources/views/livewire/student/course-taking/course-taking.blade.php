@@ -1,3 +1,50 @@
+@push('styles')
+<style>
+    /* Brand the lesson player to match the course-detail page (navy + gold),
+       instead of the theme's generic flat black/green. Same !important
+       requirement as course-detail.blade.php: modules/courses/css/main.css
+       defines its own rules for these classes and loads later in the head. */
+    .cr-sidebar,
+    .cr-sidebar_logo {
+        background: linear-gradient(180deg, #14213d, #0f3460) !important;
+    }
+    .cr-sidebar_goback a,
+    .cr-sidebar_title span { color: #aab3c5 !important; }
+    .cr-sidebar_accordion_title > a[aria-expanded="true"] {
+        background: rgba(254,211,4,0.12) !important;
+    }
+    .cr-sidebar_accordion_title > a[aria-expanded="true"] span,
+    .cr-sidebar_accordion_title > a[aria-expanded="true"] i,
+    .cr-sidebar_accordion_title > a[aria-expanded="true"] i::before {
+        color: #fed304 !important;
+    }
+    .cr-usercourse_header { background: #14213d !important; }
+    .cr-usercourse_header_progress_bar_inner { background: #fed304 !important; }
+    .cr-usercourse_header_actions .cr-btn {
+        background: #14213d !important;
+        color: #fff !important;
+    }
+    .cr-usercourse_header_actions .cr-btn:hover { background: #0f3460 !important; }
+    .cr-next-curriculum_btn { background: #fed304 !important; color: #14213d !important; }
+    .cr-next-curriculum_btn i::before { color: #14213d !important; }
+
+    /* The "Resumen" tab embeds the same banner/stats markup as the course
+       detail page -- reuse the exact same overrides so it matches. */
+    .cr-coursecontent_tabs_content .cr-course-details-banner {
+        background: linear-gradient(135deg, #14213d, #1a2b52, #0f3460) !important;
+        border-radius: 20px !important;
+    }
+    .cr-coursecontent_tabs_content .cr-course-details-banner * { color: #fff !important; }
+    .cr-coursecontent_tabs_content .cr-course-stats { background: rgba(255,255,255,0.06) !important; border: 1px solid rgba(255,255,255,0.12) !important; }
+    .cr-coursecontent_tabs_content .cr-stat-icon-wrapper {
+        background: rgba(254,211,4,0.15) !important;
+        border: 1px solid rgba(254,211,4,0.35) !important;
+    }
+    .cr-coursecontent_tabs_content .cr-stat-icon-wrapper i,
+    .cr-coursecontent_tabs_content .cr-stat-icon-wrapper i::before { color: #fed304 !important; }
+    .cr-coursecontent_tabs_content .cr-stat-label { color: #aab3c5 !important; }
+</style>
+@endpush
 <div class="cr-coursesdetails">
     <div class="cr-sidebar" >
         <div class="cr-sidebar_logo">
