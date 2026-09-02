@@ -138,7 +138,12 @@ new class extends Component
     <style>
         /* Brand the admin sidebar to match the rest of the redesigned platform
            (navy + gold) instead of the theme's plain white. */
-        .tb-sidebarwrapper { background: #14213d !important; }
+        .tb-sidebarwrapperholder,
+        .tb-sidebarwrapper {
+            background: #14213d !important;
+            height: auto !important;
+            min-height: 100% !important;
+        }
         /* <x-application-logo /> always resolves to the dark wordmark
            regardless of variation (see components/application-logo.blade.php --
            it hardcodes a single logo URL, ignoring the prop entirely), so it's
@@ -151,11 +156,24 @@ new class extends Component
         .tb-siderbar-nav .tb-menuitm:hover i { color: #fed304 !important; }
         .tb-siderbar-nav li.active > .tb-menuitm,
         .tb-siderbar-nav li.active > .tb-menuitm i { color: #14213d !important; }
-        .sidebar-sub-menu li a { color: #aab3c5 !important; }
-        .sidebar-sub-menu li.active a,
+        .sidebar-sub-menu li a { color: #aab3c5 !important; background: transparent !important; }
         .sidebar-sub-menu li a:hover { color: #fed304 !important; }
+        .sidebar-sub-menu li.active a,
+        .sidebar-sub-menu li.active a:hover { color: #14213d !important; }
         #tb-btnmenutoggle a,
         .tb-icongray { color: #aab3c5 !important; }
+        .tb-haslogout {
+            background: transparent !important;
+            color: #aab3c5 !important;
+            padding: 7px 12px !important;
+        }
+        .tb-haslogout:hover { background: rgba(234,12,12,0.1) !important; color: #ff8a8a !important; }
+        .tb-db-dashboard_box {
+            background: transparent !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+        }
     </style>
     <aside id="tb-sidebarwrapper" class="tb-sidebarwrapper">
         <div id="tb-btnmenutoggle" class="tb-btnmenutoggle">
