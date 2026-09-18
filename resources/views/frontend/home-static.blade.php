@@ -267,39 +267,158 @@
                     </div>
                 </div>
 
-                <!-- Dynamic Course List Banner -->
-                <div class="row justify-content-center" style="margin-top: 30px; padding-bottom: 80px;">
-                    <div class="col-md-10">
-                        @php
-                            $homeCourses = \Modules\Courses\Models\Course::with(['instructor.profile'])->where('status', 'published')->latest()->take(6)->get();
-                        @endphp
-                        
-                        <div class="row">
-                            @foreach($homeCourses as $course)
-                                <div class="col-md-4 mb-4">
-                                    <a href="{{ route('courses.course-detail', $course->slug) }}" style="text-decoration: none;">
-                                        <div class="am-course-card" style="background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s; height: 100%;">
-                                            <figure style="margin: 0; position: relative; padding-top: 56.25%;">
-                                                @if(!empty($course->thumbnail) && Storage::disk(getStorageDisk())->exists($course->thumbnail))
-                                                    <img src="{{ Storage::url($course->thumbnail) }}" alt="{{ $course->title }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
-                                                @else
-                                                    <img src="{{ asset('images/default-course.png') }}" alt="{{ $course->title }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; background: #eee;">
-                                                @endif
-                                            </figure>
-                                            <div style="padding: 15px;">
-                                                <h4 style="font-size: 1.1rem; font-weight: 700; color: #333; margin-bottom: 10px; line-height: 1.4;">{{ Str::limit($course->title, 50) }}</h4>
-                                                <p style="margin: 0; font-size: 0.9rem; color: #777;">
-                                                    <i class="am-icon-user-01" style="margin-right: 5px;"></i> 
-                                                    {{ $course->instructor->profile->full_name ?? 'Tutor' }}
-                                                </p>
-                                            </div>
+                <!-- Premium Course Carousel -->
+                @php
+                    $homeCourses = \Modules\Courses\Models\Course::with([
+                        'thumbnail',
+                        'instructor.profile:id,user_id,first_name,last_name',
+                        'category:id,name',
+                        'pricing',
+                    ])->where('status', 'published')
+                      ->withAvg('ratings', 'rating')
+                      ->withCount('enrollments')
+                      ->latest()->take(12)->get();
+                @endphp
+                @if($homeCourses->isNotEmpty())
+                <div style="padding: 10px 0 70px; position: relative;"
+                     x-data="{
+                         track: null,
+                         canPrev: false,
+                         canNext: true,
+                         init() {
+                             this.track = this.$el.querySelector('.ht-carousel-track');
+                             this.track.addEventListener('scroll', () => this.updateArrows(), { passive: true });
+                             this.updateArrows();
+                         },
+                         updateArrows() {
+                             this.canPrev = this.track.scrollLeft > 8;
+                             this.canNext = this.track.scrollLeft < (this.track.scrollWidth - this.track.clientWidth - 8);
+                         },
+                         prev() { this.track.scrollBy({ left: -(this.track.clientWidth * 0.75), behavior: 'smooth' }); },
+                         next() { this.track.scrollBy({ left: this.track.clientWidth * 0.75, behavior: 'smooth' }); },
+                     }">
+
+                    <!-- Left arrow -->
+                    <button @click="prev()" x-show="canPrev"
+                        style="position:absolute;left:-24px;top:50%;transform:translateY(-50%);z-index:10;
+                               width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+                               background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.18);
+                               display:flex;align-items:center;justify-content:center;
+                               transition:background .2s,box-shadow .2s;"
+                        onmouseover="this.style.background='#F4A617';this.querySelector('svg').style.stroke='#fff'"
+                        onmouseout="this.style.background='#fff';this.querySelector('svg').style.stroke='#14213d'">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="stroke:#14213d;transition:stroke .2s">
+                            <path d="M15 18l-6-6 6-6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+
+                    <!-- Scrollable track -->
+                    <div class="ht-carousel-track"
+                         style="display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;
+                                padding-bottom:8px;scrollbar-width:none;-ms-overflow-style:none;">
+                        @foreach($homeCourses as $course)
+                        <a href="{{ route('courses.course-detail', $course->slug) }}"
+                           style="flex:0 0 calc(33.333% - 15px);scroll-snap-align:start;text-decoration:none;
+                                  min-width:280px;"
+                           @media(max-width:900px){flex:0 0 calc(50% - 11px)}>
+                            <div style="background:#fff;border-radius:18px;overflow:hidden;
+                                        box-shadow:0 4px 24px rgba(20,33,61,.10);
+                                        transition:transform .3s,box-shadow .3s;height:100%;"
+                                 onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 12px 40px rgba(20,33,61,.18)'"
+                                 onmouseout="this.style.transform='';this.style.boxShadow='0 4px 24px rgba(20,33,61,.10)'">
+                                <!-- Thumbnail -->
+                                <div style="position:relative;padding-top:56.25%;overflow:hidden;background:#e8edf5;">
+                                    @if(!empty($course->thumbnail?->path) && Storage::disk(getStorageDisk())->exists($course->thumbnail->path))
+                                        <img src="{{ Storage::url($course->thumbnail->path) }}"
+                                             alt="{{ $course->title }}"
+                                             style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+                                    @else
+                                        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#14213d,#1a3a6b);">
+                                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" style="opacity:.35">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" fill="#fff"/>
+                                            </svg>
                                         </div>
-                                    </a>
+                                    @endif
+                                    @if(!empty($course->category?->name))
+                                        <span style="position:absolute;top:12px;left:12px;
+                                                     background:rgba(20,33,61,.75);backdrop-filter:blur(4px);
+                                                     color:#F4A617;font-size:.65rem;font-weight:800;
+                                                     letter-spacing:.08em;text-transform:uppercase;
+                                                     padding:3px 10px;border-radius:20px;">
+                                            {{ $course->category->name }}
+                                        </span>
+                                    @endif
                                 </div>
-                            @endforeach
-                        </div>
+                                <!-- Body -->
+                                <div style="padding:18px 18px 16px;">
+                                    <h4 style="font-size:.97rem;font-weight:700;color:#14213d;
+                                               margin:0 0 8px;line-height:1.4;
+                                               display:-webkit-box;-webkit-line-clamp:2;
+                                               -webkit-box-orient:vertical;overflow:hidden;">
+                                        {{ $course->title }}
+                                    </h4>
+                                    <p style="font-size:.8rem;color:#6b7280;margin:0 0 10px;
+                                              white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-right:4px">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#9ca3af" stroke-width="2" stroke-linecap="round"/>
+                                            <circle cx="12" cy="7" r="4" stroke="#9ca3af" stroke-width="2"/>
+                                        </svg>
+                                        {{ $course->instructor?->profile?->full_name ?? 'Instructor' }}
+                                    </p>
+                                    <!-- Rating + Enrollments -->
+                                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                                        @php $avg = round($course->ratings_avg_rating ?? 0, 1); @endphp
+                                        <div style="display:flex;align-items:center;gap:3px;">
+                                            @for($s=1;$s<=5;$s++)
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="{{ $s <= $avg ? '#F4A617' : 'none' }}" style="stroke:#F4A617;stroke-width:1.8">
+                                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                                </svg>
+                                            @endfor
+                                            <span style="font-size:.75rem;color:#6b7280;margin-left:3px;">{{ $avg > 0 ? $avg : '—' }}</span>
+                                        </div>
+                                        @if($course->enrollments_count > 0)
+                                            <span style="font-size:.72rem;color:#9ca3af;">
+                                                {{ number_format($course->enrollments_count) }} alumno{{ $course->enrollments_count != 1 ? 's' : '' }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <!-- Price -->
+                                    <div style="display:flex;align-items:center;justify-content:space-between;">
+                                        <span style="font-size:1.1rem;font-weight:800;color:#14213d;">
+                                            @if(!empty($course->pricing?->price) && $course->pricing->price > 0)
+                                                {{ formatAmount($course->pricing->price) }}
+                                            @else
+                                                <span style="color:#17b26a;">Gratis</span>
+                                            @endif
+                                        </span>
+                                        <span style="font-size:.72rem;font-weight:700;color:#F4A617;
+                                                     background:rgba(244,166,23,.12);padding:4px 10px;
+                                                     border-radius:20px;border:1px solid rgba(244,166,23,.3);">
+                                            Ver curso →
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        @endforeach
                     </div>
+                    <style>.ht-carousel-track::-webkit-scrollbar{display:none}</style>
+
+                    <!-- Right arrow -->
+                    <button @click="next()" x-show="canNext"
+                        style="position:absolute;right:-24px;top:50%;transform:translateY(-50%);z-index:10;
+                               width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+                               background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.18);
+                               display:flex;align-items:center;justify-content:center;
+                               transition:background .2s,box-shadow .2s;"
+                        onmouseover="this.style.background='#F4A617';this.querySelector('svg').style.stroke='#fff'"
+                        onmouseout="this.style.background='#fff';this.querySelector('svg').style.stroke='#14213d'">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="stroke:#14213d;transition:stroke .2s">
+                            <path d="M9 18l6-6-6-6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
                 </div>
+                @endif
             </div>
         </section>
 

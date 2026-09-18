@@ -11,7 +11,7 @@
         <p>{{ __('courses::courses.course_live_ready') }}</p>
         <p>{{ __('courses::courses.thank_you_contributing') }}</p>
     </div>
-    <a href="{{ route('courses.tutor.courses') }}" class="am-btn">{{ __('courses::courses.go_to_dashboard') }}</a>
+    <a href="{{ $dashboardUrl }}" class="am-btn">{{ __('courses::courses.go_to_dashboard') }}</a>
 </div>
 
 @push('styles')

@@ -734,6 +734,27 @@
 
 /* ── Content-type selector tabs (inside lesson editor) ───────────── */
 .cr-course-body .am-uploadoption { max-width: 100% !important; }
+
+/* ── SCORM upload wrapper ────────────────────────────────────────── */
+.cr-scorm-upload { width: 100%; }
+.cr-scorm-upload .form-group { margin: 0 !important; }
+.cr-scorm-uploading {
+    display: flex !important; align-items: center !important; gap: 10px !important;
+    padding: 20px !important; background: #f0f4ff !important;
+    border: 1.5px solid #c7d4f8 !important; border-radius: 12px !important;
+    font-size: .85rem !important; color: #3d52a4 !important; font-weight: 600 !important;
+}
+.cr-scorm-uploading i { font-size: 20px !important; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.cr-scorm-done {
+    display: flex !important; align-items: center !important; gap: 12px !important;
+    padding: 16px 20px !important; background: #f0fdf4 !important;
+    border: 1.5px solid #86efac !important; border-radius: 12px !important;
+}
+.cr-scorm-done > i { font-size: 24px !important; color: #22c55e !important; flex-shrink: 0; }
+.cr-scorm-done > div { display: flex; flex-direction: column; gap: 2px; }
+.cr-scorm-done strong { font-size: .85rem !important; color: #166534 !important; }
+.cr-scorm-done small { font-size: .72rem !important; color: #4ade80 !important; word-break: break-all; }
 </style>
 @endpush
 @push('scripts')

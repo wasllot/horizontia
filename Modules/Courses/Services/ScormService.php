@@ -18,14 +18,13 @@ class ScormService
     public function processScormZip($zipFilePath, $curriculumId)
     {
         $zip = new ZipArchive;
-        // $zipFilePath is relative to the 'public' disk root (it comes from
-        // $file->storeAs(..., getStorageDisk()), which resolves to the
-        // 'public' disk in this app) — must match $extractPath below, which
-        // already accounts for that.
-        $absoluteZipPath = storage_path('app/public/' . $zipFilePath);
 
-        $extractPath = 'public/scorm/' . $curriculumId;
-        $absoluteExtractPath = storage_path('app/' . $extractPath);
+        // Resolve zip path via the configured public disk (works regardless of
+        // whether the disk root is storage/app/public or public/storage)
+        $absoluteZipPath = \Storage::disk(getStorageDisk())->path($zipFilePath);
+
+        // Extract to public/storage/scorm/{id}/ so the web server can serve it
+        $absoluteExtractPath = public_path('storage/scorm/' . $curriculumId);
 
         if ($zip->open($absoluteZipPath) === TRUE) {
             $zip->extractTo($absoluteExtractPath);

@@ -512,6 +512,25 @@ class CourseTaking extends Component
         $this->dispatch('showAlertMessage', type: 'success', title: 'Éxito', message: 'Tarea enviada correctamente');
     }
 
+    public function submitQuiz(array $answers, int $score)
+    {
+        if (isDemoSite()) {
+            $this->dispatch('showAlertMessage', type: 'error', title: __('general.demosite_res_title'), message: __('general.demosite_res_txt'));
+            return;
+        }
+
+        AssignmentSubmission::updateOrCreate(
+            ['curriculum_id' => $this->activeCurriculum['id'], 'user_id' => auth()->id()],
+            [
+                'student_comment' => json_encode($answers),
+                'score'           => $score,
+                'status'          => 'graded',
+            ]
+        );
+
+        $this->dispatch('showAlertMessage', type: 'success', title: 'Test enviado', message: "Puntaje: {$score}%");
+    }
+
     private function getCourseSingedUrl($path) {
         $finalPath = Str::replace(['courses/', 'curriculum_videos/'], '', $path);
         return URL::signedRoute('courses.secure.video', [

@@ -55,5 +55,11 @@ Route::middleware(['locale', 'maintenance', 'enabled:courses'])->as('courses.')-
         Route::post('/progress/{curriculumId}', [ScormController::class, 'saveProgress'])->name('save-progress');
     });
 
-    Route::get('secure-video/{path}', [VideoController::class, 'play'])->middleware('auth')->name('secure.video'); 
+    Route::get('secure-video/{path}', [VideoController::class, 'play'])->middleware('auth')->name('secure.video');
+
+    Route::middleware(['auth', 'verified'])->post('/editor/upload-image', function (Request $request) {
+        $request->validate(['image' => 'required|image|max:5120']);
+        $path = $request->file('image')->store('editor-images', getStorageDisk());
+        return response()->json(['url' => Storage::url($path)]);
+    })->name('editor.upload-image');
 });

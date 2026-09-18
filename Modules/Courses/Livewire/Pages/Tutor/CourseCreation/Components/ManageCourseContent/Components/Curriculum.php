@@ -223,23 +223,26 @@ class Curriculum extends Component
                 $this->dispatch('showAlertMessage', type: 'error', title: __('courses::courses.please_add_a_video'), message: __('courses::courses.please_add_a_video'));
             }
         } elseif($this->activeCurriculumItem['type'] == 'yt_link' ) {
-            
+
             $this->validate([
                 'yt_link' => [
                     'required',
                     'url',
                     function ($attribute, $value, $fail) {
-                        if (!preg_match('/^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[a-zA-Z0-9_-]+$/', $value)) {
-                            $fail('Please enter a valid YouTube video link.');
+                        if (!$this->extractYouTubeId($value)) {
+                            $fail('Por favor ingresa un enlace de YouTube válido (watch, youtu.be, embed o shorts).');
                         }
                     },
                 ],
             ], [
-                'yt_link.required' => 'Please enter a YouTube link.',
-                'yt_link.url' => 'Please enter a valid URL.',
+                'yt_link.required' => 'Por favor ingresa un enlace de YouTube.',
+                'yt_link.url' => 'Por favor ingresa una URL válida.',
             ]);
-            
-           
+
+            // Normalize any YouTube URL format to a standard embed URL
+            $videoId = $this->extractYouTubeId($this->yt_link);
+            $this->yt_link = 'https://www.youtube.com/embed/' . $videoId;
+
             $curriculum = (new CurriculumService())->updateCurriculum(
                 $this->activeCurriculumItem['id'],
                 [
@@ -313,7 +316,23 @@ class Curriculum extends Component
                     $this->dispatch('showAlertMessage', type: 'error', title: 'Error', message: 'Invalid SCORM package. Could not find entry point.');
                 }
             }
-        }  else {
+        } elseif($this->activeCurriculumItem['type'] == 'assignment') {
+            $this->validate(['article_content' => 'required|string']);
+            $quizData = json_decode($this->article_content, true);
+            $questionCount = isset($quizData['questions']) ? count($quizData['questions']) : 0;
+            // Estimate ~1 min per question for content_length
+            $curriculum = (new CurriculumService())->updateCurriculum(
+                $this->activeCurriculumItem['id'],
+                [
+                    'article_content'   => $this->article_content,
+                    'type'              => 'assignment',
+                    'content_length'    => $questionCount * 60,
+                    'is_preview'        => !empty($this->activeCurriculumItem['is_preview']) ? $this->activeCurriculumItem['is_preview'] : false,
+                ]
+            );
+            $this->updateActiveCurriculumItem($curriculum->toArray());
+            $this->dispatch('showAlertMessage', type: 'success', title: __('courses::courses.curriculum_updated_successfully'), message: __('courses::courses.curriculum_updated_successfully'));
+        } else {
             $this->validate([
                 'article_content' => 'required|string'
             ]);
@@ -324,12 +343,12 @@ class Curriculum extends Component
             if($totalMinutes > 0){
                 $duration = $totalMinutes * 60;
             }
-            
+
             $curriculum = (new CurriculumService())->updateCurriculum(
-                $this->activeCurriculumItem['id'], 
+                $this->activeCurriculumItem['id'],
                 [
-                    'article_content'   => $this->article_content, 
-                    'type'              => 'article', 
+                    'article_content'   => $this->article_content,
+                    'type'              => 'article',
                     'content_length'    => $duration,
                     'is_preview' => !empty($this->activeCurriculumItem['is_preview']) ? $this->activeCurriculumItem['is_preview'] : false
                 ]
@@ -365,6 +384,15 @@ class Curriculum extends Component
         $curriculum = (new CurriculumService())->updateCurriculum($this->activeCurriculumItem['id'], ['media_path' => null]);
         $this->updateActiveCurriculumItem($curriculum->toArray());
         $this->dispatch('showAlertMessage', type: 'success', title: __('courses::courses.curriculum_updated_successfully'), message: __('courses::courses.curriculum_updated_successfully'));
+    }
+
+    private function extractYouTubeId(string $url): ?string
+    {
+        // Handles: watch?v=, youtu.be/, embed/, shorts/
+        if (preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $url, $m)) {
+            return $m[1];
+        }
+        return null;
     }
 
     public function editCurriculumModal($curriculum)

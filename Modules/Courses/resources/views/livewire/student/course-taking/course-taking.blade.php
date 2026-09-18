@@ -71,13 +71,45 @@
     .cr-coursedetails_body_video {
         height: auto !important;
         min-height: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
     }
+    .cr-coursedetails_body_video:has(.cr-coursetasking-video),
+    .cr-coursedetails_body_video:has(.cr-scorm-player),
+    .cr-coursedetails_body_video:has(iframe),
+    .cr-coursedetails_body_video:has(.cr-image-wrapper) {
+        background: #0d1a2e !important;
+    }
+    .cr-coursedetails_body_video:has(.cr-coursedetails_article) {
+        background: #f9f9fb !important;
+        padding: 32px 48px !important;
+    }
+    /* Video player: fill the container, no extra black bars */
+    .cr-coursetasking-video {
+        position: relative;
+        width: 100% !important;
+        background: #0d1a2e !important;
+    }
+    .cr-coursetasking-video .video-js {
+        width: 100% !important;
+        max-height: 72vh !important;
+        aspect-ratio: 16/9 !important;
+        height: auto !important;
+        display: block !important;
+        background: #0d1a2e !important;
+    }
+    /* Remove the harsh black from Video.js default skin */
+    .vjs-default-skin .vjs-big-play-button {
+        border-color: rgba(254,211,4,.7) !important;
+        background: rgba(20,33,61,.7) !important;
+    }
+    .vjs-default-skin:hover .vjs-big-play-button { background: rgba(254,211,4,.2) !important; }
+    .vjs-default-skin .vjs-progress-holder .vjs-play-progress,
+    .vjs-default-skin .vjs-progress-holder .vjs-load-progress div { background: #fed304 !important; }
+    .vjs-default-skin .vjs-play-progress:before { color: #fed304 !important; }
     /* main.css also fixes .cr-coursedetails_article at 579px (scrollable box
        designed for long articles), and adds padding:50px 70px on the wrapper.
        Both create a large blank area when the article is short. */
-    .cr-coursedetails_body_video:has(.cr-coursedetails_article) {
-        padding: 24px 40px !important;
-    }
     .cr-coursedetails_article {
         height: auto !important;
         min-height: 0 !important;
@@ -86,6 +118,101 @@
     .cr-coursedetails_article_actions {
         display: flex !important;
     }
+
+    /* ── SCORM Player ──────────────────────────────────────────────── */
+    .cr-scorm-player {
+        display: flex; flex-direction: column;
+        width: 100%; border-radius: 14px; overflow: hidden;
+        border: 1.5px solid #e4e9f0;
+        box-shadow: 0 4px 24px rgba(20,33,61,.08);
+        background: #fff;
+    }
+    /* fullscreen mode */
+    .cr-scorm-player:fullscreen { border-radius: 0; border: none; }
+
+    /* Header */
+    .cr-scorm-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 10px 16px;
+        background: linear-gradient(135deg, #14213d 0%, #1a2b52 100%);
+        flex-shrink: 0;
+    }
+    .cr-scorm-header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .cr-scorm-badge {
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 3px 10px; border-radius: 20px;
+        background: rgba(254,211,4,.15); border: 1px solid rgba(254,211,4,.35);
+        font-size: .68rem; font-weight: 800; letter-spacing: .08em;
+        color: #fed304; text-transform: uppercase; flex-shrink: 0;
+    }
+    .cr-scorm-badge i { font-size: 12px; }
+    .cr-scorm-title {
+        font-size: .82rem; font-weight: 600; color: #e2e8f0;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .cr-scorm-header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .cr-scorm-action-btn {
+        display: flex; align-items: center; justify-content: center;
+        width: 32px; height: 32px; border-radius: 8px;
+        background: rgba(255,255,255,.1); border: none; cursor: pointer;
+        color: #aab3c5; transition: background .2s, color .2s;
+    }
+    .cr-scorm-action-btn:hover { background: rgba(254,211,4,.2); color: #fed304; }
+
+    /* Frame wrapper */
+    .cr-scorm-frame-wrap {
+        position: relative; width: 100%;
+        height: 75vh; min-height: 560px;
+        background: #f8f9fc;
+    }
+    /* Fullscreen: player becomes 100vh column, frame fills everything after header */
+    .cr-scorm-player:-webkit-full-screen { display: flex; flex-direction: column; width: 100vw; height: 100vh; border-radius: 0; border: none; }
+    .cr-scorm-player:-moz-full-screen    { display: flex; flex-direction: column; width: 100vw; height: 100vh; border-radius: 0; border: none; }
+    .cr-scorm-player:fullscreen          { display: flex; flex-direction: column; width: 100vw; height: 100vh; border-radius: 0; border: none; }
+    .cr-scorm-player:-webkit-full-screen .cr-scorm-frame-wrap,
+    .cr-scorm-player:-moz-full-screen    .cr-scorm-frame-wrap,
+    .cr-scorm-player:fullscreen          .cr-scorm-frame-wrap { height: 0; flex: 1 1 auto; min-height: 0; }
+
+    /* Loading state */
+    .cr-scorm-spinner {
+        position: absolute; inset: 0; z-index: 10;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 14px;
+        background: #f8f9fc;
+    }
+    .cr-scorm-spinner span {
+        font-size: .8rem; color: #64748b; font-weight: 500;
+    }
+    .cr-scorm-spinner-ring {
+        width: 44px; height: 44px; border-radius: 50%;
+        border: 3px solid #e4e9f0;
+        border-top-color: #14213d;
+        animation: scorm-spin .7s linear infinite;
+    }
+    @keyframes scorm-spin { to { transform: rotate(360deg); } }
+
+    /* Footer */
+    .cr-scorm-footer {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 12px 20px;
+        background: #f8f9fc; border-top: 1.5px solid #e4e9f0;
+        flex-shrink: 0; flex-wrap: wrap; gap: 10px;
+    }
+    .cr-scorm-hint {
+        display: flex; align-items: center; gap: 6px;
+        font-size: .75rem; color: #94a3b8; font-weight: 500;
+    }
+    .cr-scorm-hint i { font-size: 14px; color: #22c55e; }
+    .cr-scorm-next-btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 9px 20px; border-radius: 8px;
+        background: linear-gradient(135deg, #14213d 0%, #1a2b52 100%);
+        color: #fff; font-size: .82rem; font-weight: 700;
+        text-decoration: none; transition: opacity .2s, box-shadow .2s;
+        box-shadow: 0 4px 14px rgba(20,33,61,.22);
+    }
+    .cr-scorm-next-btn:hover { opacity: .9; color: #fed304; box-shadow: 0 6px 20px rgba(20,33,61,.3); }
+    .cr-scorm-next-btn svg { flex-shrink: 0; }
 </style>
 @endpush
 <div class="cr-coursesdetails">
@@ -255,40 +382,28 @@
                             </div>
                         </div>
                         <div class="cr-coursetasking-video"
-                            x-data="{ showVideo: false }" 
-                            x-init="
-                                showVideo = true; 
-                                $nextTick(() => {
-                                    let video = document.getElementById('video-{{ $activeCurriculum['id'] }}');
-                                    if (video) {
-                                        let player = videojs(video, {
-                                                        controls: true,
-                                                        autoplay: false,
-                                                        playbackRates: [0.5, 1, 1.5, 2]
-                                                    });
-                                        player.ready(() => {
-                                            player.load();
-                                        });
-                                    } 
-                                });"
+                            x-data="{}"
+                            x-init="$nextTick(() => {
+                                const vid = document.getElementById('video-{{ $activeCurriculum['id'] }}');
+                                if (!vid) return;
+                                const player = videojs(vid, { controls: true, autoplay: false, playbackRates: [0.5, 1, 1.5, 2] });
+                                player.ready(() => {
+                                    player.load();
+                                    const sk = document.getElementById('cr-card-skeleton-{{ $activeCurriculum['id'] }}');
+                                    if (sk) sk.style.display = 'none';
+                                });
+                            })"
                         >
-                            <!-- Use x-show instead of x-if -->
-                            <template x-if="showVideo">
-                                <video 
-                                    id="video-{{ $activeCurriculum['id'] }}"
-                                    preload="auto" 
-                                    class="video-js vjs-default-skin d-none" 
-                                    data-setup="{}"
-                                    onloadstart="initializeVideoPlayer(this, '{{ $activeCurriculum['id'] }}')"
-                                    onloadeddata="initializeVideoPlayer(this, '{{ $activeCurriculum['id'] }}')"
-                                    onplay="updateWatchtime({{ $activeCurriculum['id'] }})" 
-                                    width="320" 
-                                    height="240" 
-                                    controls
-                                >
-                                    <source src="{{ $activeCurriculum['media_path'] }}" type="video/mp4">
-                                </video>
-                            </template>
+                            <video
+                                id="video-{{ $activeCurriculum['id'] }}"
+                                preload="auto"
+                                class="video-js vjs-default-skin"
+                                onplay="updateWatchtime({{ $activeCurriculum['id'] }})"
+                                width="100%"
+                                controls
+                            >
+                                <source src="{{ $activeCurriculum['media_path'] }}" type="video/mp4">
+                            </video>
                             <strong class="am-logo">
                                 @if(!empty(setting('_general.watermark_logo')))
                                     <img src="{{ url(Storage::url(setting('_general.watermark_logo')[0]['path'])) }}" alt="watermark-logo">
@@ -318,8 +433,9 @@
                         </div>                    
                     @elseif($activeCurriculum['type'] == 'yt_link')
                         @php
-                            $yt_link = explode('v=', $activeCurriculum['media_path']);
-                            $yt_id = end($yt_link);
+                            // media_path is stored as a normalized embed URL; extract the video ID from it
+                            preg_match('/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/', $activeCurriculum['media_path'], $ytMatches);
+                            $yt_id = $ytMatches[1] ?? '';
                         @endphp
                         <div x-data="{
                             onYouTubeIframeAPIReady(videoId){
@@ -349,10 +465,11 @@
                                 };
                             },
                         }">
-                            <iframe 
-                                id="yt-video-{{ $activeCurriculum['id'] }}" 
-                                src="https://www.youtube.com/embed/{{ $yt_id }}?enablejsapi=1" 
-                                frameborder="0" 
+                            <iframe
+                                id="yt-video-{{ $activeCurriculum['id'] }}"
+                                src="https://www.youtube-nocookie.com/embed/{{ $yt_id }}?enablejsapi=1&rel=0"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                 x-on:load="onYouTubeIframeAPIReady('{{ $activeCurriculum['id'] }}')"
                                 allowfullscreen
                             ></iframe>
@@ -389,36 +506,88 @@
                             </div>
 
                     @elseif($activeCurriculum['type'] == 'scorm')
-                        <div class="" style="width: 100%; display: flex; flex-direction: column;">
+                        <div class="cr-scorm-player" x-data="{ loading: true, fullscreen: false }"
+                            x-on:fullscreenchange.window="fullscreen = !!document.fullscreenElement">
                             <script src="{{ asset('js/scorm-api-wrapper.js') }}"></script>
                             <script>
                                 if (typeof window.API !== 'undefined') {
                                     window.API.init('{{ $activeCurriculum['id'] }}', '{{ csrf_token() }}', '{{ url('/') }}');
                                 }
                                 window.addEventListener('scorm-finished', function(e) {
-                                    console.log('SCORM finished with status:', e.detail.status, 'Score:', e.detail.score);
                                     @role('student')
                                     @this.call('updateWatchtime', true);
                                     @endrole
                                     showNextItemContent();
                                 });
                             </script>
-                            <div style="width: 100%; height: 75vh; min-height: 600px; border-radius: 8px; overflow: hidden; background: #fff;">
-                                <iframe 
+
+                            {{-- Header bar --}}
+                            <div class="cr-scorm-header">
+                                <div class="cr-scorm-header-left">
+                                    <span class="cr-scorm-badge">
+                                        <i class="am-icon-dataflow-04"></i>
+                                        SCORM
+                                    </span>
+                                    <span class="cr-scorm-title">{{ $activeCurriculum['title'] ?? 'Contenido interactivo' }}</span>
+                                </div>
+                                <div class="cr-scorm-header-right">
+                                    <button class="cr-scorm-action-btn"
+                                        title="Pantalla completa"
+                                        @click="
+                                            let el = $el.closest('.cr-scorm-player');
+                                            if (!document.fullscreenElement) { el.requestFullscreen(); }
+                                            else { document.exitFullscreen(); }
+                                        ">
+                                        <template x-if="!fullscreen">
+                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                <path d="M2 5.5V2.5H5M11 2.5H14V5.5M14 10.5V13.5H11M5 13.5H2V10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </template>
+                                        <template x-if="fullscreen">
+                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                <path d="M5.5 2V5H2.5M10.5 2V5H13.5M13.5 11H10.5V14M2.5 11H5.5V14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </template>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {{-- iframe container --}}
+                            <div class="cr-scorm-frame-wrap" :class="{ 'cr-scorm-loading': loading }">
+                                <div class="cr-scorm-spinner" x-show="loading">
+                                    <div class="cr-scorm-spinner-ring"></div>
+                                    <span>Cargando contenido...</span>
+                                </div>
+                                <iframe
                                     id="scorm-iframe-{{ $activeCurriculum['id'] }}"
-                                    src="{{ asset($activeCurriculum['media_path']) }}" 
-                                    frameborder="0" 
-                                    allowfullscreen="true" 
-                                    allow="autoplay; fullscreen; microphone; camera" 
-                                    style="width: 100%; height: 100%; border: none;">
+                                    src="{{ asset($activeCurriculum['media_path']) }}"
+                                    frameborder="0"
+                                    allowfullscreen="true"
+                                    allow="autoplay; fullscreen; microphone; camera"
+                                    x-on:load="loading = false"
+                                    :style="loading ? 'opacity:0;pointer-events:none' : 'opacity:1'"
+                                    style="width:100%;height:100%;border:none;transition:opacity .3s;">
                                 </iframe>
                             </div>
-                            @role('student')     
-                                <div class="cr-coursedetails_article_actions" style="margin-top: 1.5rem; justify-content: flex-end; display: flex; padding-right: 1rem;">                                 
-                                    @if(!empty($curriculumOrder[$activeCurriculum['id']]))
-                                        <a href="javascript:void(0);" class="am-btn" wire:click.prevent="nextCurriculum({{ $curriculumOrder[$activeCurriculum['id']] }})">Go to next item</a>
-                                    @endif
-                                </div>
+
+                            {{-- Footer --}}
+                            @role('student')
+                            <div class="cr-scorm-footer">
+                                <span class="cr-scorm-hint">
+                                    <i class="am-icon-info-circle"></i>
+                                    Tu progreso se guarda automáticamente
+                                </span>
+                                @if(!empty($curriculumOrder[$activeCurriculum['id']]))
+                                    <a href="javascript:void(0);"
+                                        class="cr-scorm-next-btn"
+                                        wire:click.prevent="nextCurriculum({{ $curriculumOrder[$activeCurriculum['id']] }})">
+                                        Siguiente lección
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <path d="M3 8H13M9 4L13 8L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </a>
+                                @endif
+                            </div>
                             @endrole
                         </div>
                     @elseif($activeCurriculum['type'] == 'genially_link')
@@ -448,54 +617,128 @@
                                 </div>
                         @endrole
                     @elseif($activeCurriculum['type'] == 'assignment')
-                        @role('student')     
-                            <div id="assignment-{{ $activeCurriculum['id'] }}" class="cr-coursedetails_article">
-                                <div class="cr-coursedetails_article_wrap">{!! $activeCurriculum['article_content'] !!}</div>
-                                
-                                <div class="cr-assignment-upload" style="margin-top: 2rem; padding: 1.5rem; background: #f9f9f9; border-radius: 8px;">
-                                    <h4 style="margin-bottom: 1rem;">{{ __('courses::courses.submit_assignment') ?? 'Subir Tarea' }}</h4>
-                                    
-                                    @php
-                                        $submission = \Modules\Courses\Models\AssignmentSubmission::where('curriculum_id', $activeCurriculum['id'])
-                                                        ->where('user_id', auth()->id())->first();
-                                    @endphp
+                        @role('student')
+                            @php
+                                $quizJson    = $activeCurriculum['article_content'] ?? '{}';
+                                $quizData    = json_decode($quizJson, true) ?: [];
+                                $quizQs      = $quizData['questions'] ?? [];
+                                $passScore   = $quizData['pass_score'] ?? 70;
+                                $submission  = \Modules\Courses\Models\AssignmentSubmission::where('curriculum_id', $activeCurriculum['id'])
+                                                ->where('user_id', auth()->id())->first();
+                                $answers     = $submission ? json_decode($submission->student_comment ?? '{}', true) : [];
+                                $quizScore   = $submission ? ($submission->score ?? null) : null;
+                            @endphp
 
-                                    @if($submission && $submission->status == 'graded')
-                                        <div class="alert alert-success">
-                                            <strong>Calificación / Score:</strong> {{ $submission->score }}/100<br>
-                                            <strong>Feedback:</strong> {{ $submission->tutor_feedback }}
+                            <div id="quiz-{{ $activeCurriculum['id'] }}" class="cr-quiz-take"
+                                 x-data="quizTake(@js($quizQs), @js($answers), @js($quizScore !== null))">
+
+                                @if(count($quizQs) === 0)
+                                    <div style="padding:2rem;text-align:center;color:#888;">
+                                        <i class="am-icon-check-square" style="font-size:2rem;display:block;margin-bottom:.5rem;"></i>
+                                        Este test aún no tiene preguntas.
+                                    </div>
+                                @else
+                                    {{-- Results view --}}
+                                    <div x-show="submitted" class="cr-quiz-results">
+                                        <div class="cr-quiz-results-icon" :class="score >= {{ $passScore }} ? 'cr-quiz-pass' : 'cr-quiz-fail'">
+                                            <template x-if="score >= {{ $passScore }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#d1fae5"/><path d="M14 25l8 8L34 17" stroke="#17B26A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                            </template>
+                                            <template x-if="score < {{ $passScore }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#fee2e2"/><path d="M17 17l14 14M31 17L17 31" stroke="#EF4444" stroke-width="3" stroke-linecap="round"/></svg>
+                                            </template>
                                         </div>
-                                    @else
-                                        <div class="form-group">
-                                            <label>Comentario (opcional):</label>
-                                            <textarea class="form-control" wire:model="assignment_comment" rows="3"></textarea>
+                                        <h3 class="cr-quiz-results-title" x-text="score >= {{ $passScore }} ? '¡Felicitaciones!' : 'Inténtalo de nuevo'"></h3>
+                                        <p class="cr-quiz-results-score">Puntaje: <strong x-text="score + '%'"></strong></p>
+                                        <p class="cr-quiz-results-pass" x-text="score >= {{ $passScore }} ? 'Aprobado' : 'Mínimo requerido: {{ $passScore }}%'"
+                                           :class="score >= {{ $passScore }} ? 'text-success' : 'text-danger'"></p>
+                                        <div class="cr-quiz-review">
+                                            @foreach($quizQs as $qi => $q)
+                                                <div class="cr-quiz-review-item" :class="parseInt(userAnswers[{{ $qi }}]) === {{ $q['correct'] }} ? 'cr-quiz-review-correct' : 'cr-quiz-review-wrong'">
+                                                    <p><strong>{{ $qi + 1 }}. {{ $q['text'] }}</strong></p>
+                                                    <p>Tu respuesta: <em x-text="userAnswers[{{ $qi }}] !== undefined ? questions[{{ $qi }}].options[userAnswers[{{ $qi }}]] : '—'"></em></p>
+                                                    @if(isset($q['options'][$q['correct']]))
+                                                        <p>Correcta: <em>{{ $q['options'][$q['correct']] }}</em></p>
+                                                    @endif
+                                                </div>
+                                            @endforeach
                                         </div>
-                                        <div class="form-group mt-3" style="display: flex; gap: 1rem; align-items: center;">
-                                            <input type="file" wire:model="assignment_file" class="form-control" style="max-width: 300px;">
-                                            <button type="button" class="am-btn" wire:click.prevent="submitAssignment()" wire:loading.attr="disabled">Enviar Tarea</button>
+                                        <div style="display:flex;gap:1rem;justify-content:center;margin-top:1.5rem;">
+                                            <button type="button" class="am-btn" @click="retakeQuiz()">Volver a intentar</button>
+                                            @if(!empty($curriculumOrder[$activeCurriculum['id']]))
+                                                <a href="javascript:void(0);" class="am-btn" wire:click.prevent="nextCurriculum({{ $curriculumOrder[$activeCurriculum['id']] }})">Siguiente lección</a>
+                                            @endif
                                         </div>
-                                        @error('assignment_file') <span class="text-danger">{{ $message }}</span> @enderror
-                                        
-                                        @if($submission)
-                                            <div class="alert alert-info mt-3">
-                                                Tarea enviada. En espera de calificación.
-                                                @if($submission->file_path)
-                                                    <br><a href="{{ Storage::url($submission->file_path) }}" target="_blank">Ver archivo enviado</a>
-                                                @endif
+                                    </div>
+
+                                    {{-- Quiz form --}}
+                                    <div x-show="!submitted" class="cr-quiz-form">
+                                        <div class="cr-quiz-form-header">
+                                            <h4>Test — {{ count($quizQs) }} {{ count($quizQs) === 1 ? 'pregunta' : 'preguntas' }}</h4>
+                                            <span>Mínimo para aprobar: {{ $passScore }}%</span>
+                                        </div>
+                                        @foreach($quizQs as $qi => $q)
+                                            <div class="cr-quiz-form-question">
+                                                <p class="cr-quiz-form-qtext"><span class="cr-quiz-qnum">{{ $qi + 1 }}</span> {{ $q['text'] }}</p>
+                                                <div class="cr-quiz-form-options">
+                                                    @foreach($q['options'] as $oi => $opt)
+                                                        <label class="cr-quiz-form-opt" :class="userAnswers[{{ $qi }}] === {{ $oi }} ? 'cr-quiz-form-opt-selected' : ''">
+                                                            <input type="radio" name="q{{ $qi }}" value="{{ $oi }}"
+                                                                   x-model.number="userAnswers[{{ $qi }}]"
+                                                                   @change="userAnswers[{{ $qi }}] = {{ $oi }}">
+                                                            <span>{{ $opt }}</span>
+                                                        </label>
+                                                    @endforeach
+                                                </div>
                                             </div>
-                                        @endif
-                                    @endif
-                                </div>
-                                
-                                <div class="cr-coursedetails_article_actions" style="margin-top: 1.5rem; justify-content: flex-end; display: flex;">
-                                    @if($submission && $submission->status == 'graded')
-                                        @if(!empty($curriculumOrder[$activeCurriculum['id']]))
-                                            <a href="javascript:void(0);" class="am-btn" wire:click.prevent="nextCurriculum({{ $curriculumOrder[$activeCurriculum['id']] }})">Go to next item</a>
-                                        @endif
-                                        <button type="button" class="am-btnnext"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none"><path d="M3.16699 8.66667L6.50033 12L13.8337 4" stroke="#34A853" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg> Completed</button>
-                                    @endif
-                                </div>
+                                        @endforeach
+                                        <div class="cr-quiz-form-actions">
+                                            <button type="button" class="am-btn" @click="submitQuiz()"
+                                                    :disabled="!allAnswered">
+                                                <span x-show="!allAnswered">Responde todas las preguntas</span>
+                                                <span x-show="allAnswered">Enviar respuestas</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
+
+                            @push('scripts')
+                            <script>
+                            function quizTake(questions, savedAnswers, alreadySubmitted) {
+                                const totalQ = questions.length;
+                                return {
+                                    questions,
+                                    userAnswers: savedAnswers && Object.keys(savedAnswers).length ? savedAnswers : {},
+                                    submitted: alreadySubmitted,
+                                    score: 0,
+                                    get allAnswered() {
+                                        return totalQ > 0 && Object.keys(this.userAnswers).length === totalQ;
+                                    },
+                                    init() {
+                                        if (this.submitted) this.calcScore();
+                                    },
+                                    calcScore() {
+                                        let correct = 0;
+                                        this.questions.forEach((q, i) => {
+                                            if (parseInt(this.userAnswers[i]) === parseInt(q.correct)) correct++;
+                                        });
+                                        this.score = totalQ > 0 ? Math.round((correct / totalQ) * 100) : 0;
+                                    },
+                                    submitQuiz() {
+                                        this.calcScore();
+                                        @this.call('submitQuiz', this.userAnswers, this.score);
+                                        this.submitted = true;
+                                    },
+                                    retakeQuiz() {
+                                        this.userAnswers = {};
+                                        this.submitted = false;
+                                        this.score = 0;
+                                    }
+                                };
+                            }
+                            </script>
+                            @endpush
                         @endrole
                     @elseif($activeCurriculum['type'] == 'article')
                         @role('student')     

@@ -357,6 +357,76 @@ function summernoteConfigs(
     };
 }
 
+function articleEditorConfigs(selector = '.summernote', uploadUrl = null, csrfToken = null) {
+    return {
+        toolbar: [
+            ['style',  ['style']],
+            ['font',   ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['fontsize', ['fontsize']],
+            ['color',  ['color']],
+            ['para',   ['ul', 'ol', 'paragraph']],
+            ['table',  ['table']],
+            ['insert', ['link', 'picture', 'hr']],
+            ['view',   ['codeview']],
+        ],
+        styleTags: ['p', 'h2', 'h3', 'h4', 'blockquote'],
+        fontSizes: ['10', '11', '12', '14', '16', '18', '20', '24', '28', '32', '36', '48'],
+        height: 420,
+        minHeight: 300,
+        maxHeight: null,
+        spellCheck: true,
+        dialogsInBody: true,
+        disableDragAndDrop: false,
+        disableResizeEditor: false,
+        callbacks: {
+            onImageUpload: function (files) {
+                if (!uploadUrl) return;
+                Array.from(files).forEach(function (file) {
+                    const fd = new FormData();
+                    fd.append('image', file);
+                    fd.append('_token', csrfToken || document.querySelector('meta[name="csrf-token"]')?.content || '');
+                    fetch(uploadUrl, { method: 'POST', body: fd })
+                        .then(r => r.json())
+                        .then(data => { if (data.url) jQuery(selector).summernote('insertImage', data.url); })
+                        .catch(err => console.error('Image upload error', err));
+                });
+            },
+        },
+    };
+}
+
+// Alpine component factory for the quiz builder (tutor side).
+// Must live in main.js (not inline blade script) so it survives Livewire DOM morphs.
+function quizBuilderFn(initialQs, passScore, nextId) {
+    return {
+        questions: initialQs,
+        passScore: passScore,
+        _nextId: nextId,
+        _sync() {
+            this.$wire.set('article_content', JSON.stringify({ questions: this.questions, pass_score: this.passScore }));
+        },
+        addQuestion() {
+            this.questions = [...this.questions, { id: this._nextId++, text: '', type: 'multiple_choice', options: ['', '', '', ''], correct: 0 }];
+            this._sync();
+        },
+        removeQuestion(qi) {
+            this.questions = this.questions.filter((_, i) => i !== qi);
+            this._sync();
+        },
+        onTypeChange(q) {
+            if (q.type === 'true_false') { q.options = ['Verdadero', 'Falso']; q.correct = 0; }
+            else { q.options = ['', '', '', '']; q.correct = 0; }
+            this._sync();
+        },
+        addOption(q) { q.options = [...q.options, '']; this._sync(); },
+        removeOption(q, oi) {
+            q.options = q.options.filter((_, i) => i !== oi);
+            if (q.correct >= q.options.length) q.correct = 0;
+            this._sync();
+        },
+    };
+}
+
 function charLeft(contentLength = 0, charSelector) {
     if (charSelector == '.total-characters') {
         let charShow = charLimit - contentLength;

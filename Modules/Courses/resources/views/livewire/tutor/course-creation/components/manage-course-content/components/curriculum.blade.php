@@ -129,28 +129,148 @@
                                 </div>
                             </li>
                         </ul>
-                        @if(in_array($activeCurriculumItem['type'], ['article', 'assignment']))
-                            <div class="form-group @error('article_content') cr-invalid @enderror">
-                                <div wire:ignore class="am-editor-wrapper">
+                        @if($activeCurriculumItem['type'] === 'article')
+                            <div class="form-group @error('article_content') cr-invalid @enderror"
+                                 x-data="{ expanded: false }"
+                                 :class="expanded ? 'cr-article-editor-expanded' : 'cr-article-editor-normal'"
+                                 x-init="
+                                     $watch('expanded', v => {
+                                         if (v) {
+                                             const content = document.querySelector('.tb-subwrapper') || document.querySelector('.am-mainwrap') || document.querySelector('main');
+                                             const left = content ? Math.round(content.getBoundingClientRect().left) : 0;
+                                             $el.style.left = left + 'px';
+                                             document.body.style.overflow = 'hidden';
+                                         } else {
+                                             $el.style.left = '';
+                                             document.body.style.overflow = '';
+                                         }
+                                     });
+                                 ">
+                                <div class="cr-article-editor-topbar">
+                                    <span class="cr-article-editor-label">
+                                        <i class="am-icon-file-06" style="margin-right:5px;color:#F4A617;"></i>
+                                        Contenido del artículo
+                                    </span>
+                                    <button type="button" class="cr-article-expand-btn"
+                                            @click="expanded = !expanded"
+                                            :title="expanded ? 'Minimizar' : 'Pantalla completa'">
+                                        <svg x-show="!expanded" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+                                        <svg x-show="expanded"  xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline><line x1="10" y1="14" x2="3" y2="21"></line><line x1="21" y1="3" x2="14" y2="10"></line></svg>
+                                        <span x-text="expanded ? 'Minimizar' : 'Pantalla completa'"></span>
+                                    </button>
+                                </div>
+                                <div wire:ignore class="am-editor-wrapper cr-article-editor-body">
                                     <div class="am-custom-editor am-custom-textarea">
-                                        <textarea 
-                                            id="article_content-{{ $activeCurriculumItem['id'] }}" 
-                                            data-id="@this" data-model_id="article_content" 
+                                        <textarea
+                                            id="article_content-{{ $activeCurriculumItem['id'] }}"
+                                            data-id="@this" data-model_id="article_content"
                                             class="form-control cr-summernote"
                                             placeholder="{{ __('courses::courses.enter_content') }}"
                                             x-init="$nextTick(() => {
-                                                $('#article_content-{{ $activeCurriculumItem['id'] }}').summernote(summernoteConfigs('#article_content-{{ $activeCurriculumItem['id'] }}', '.characters-count'));
-                                                let content = `{{ $activeCurriculumItem['article_content'] }}`;
-                                                var charLength = $('<div>').html(content)?.text()?.length;
-                                                let charSelector = '.characters-count';
-                                                charLeft(charLength, charSelector)
-                                                $('#article_content-{{ $activeCurriculumItem['id'] }}').summernote('code', content);
+                                                const sel = '#article_content-{{ $activeCurriculumItem['id'] }}';
+                                                $(sel).summernote(articleEditorConfigs(sel, '{{ route('courses.editor.upload-image') }}', '{{ csrf_token() }}'));
+                                                const content = @js($activeCurriculumItem['article_content'] ?? '');
+                                                $(sel).summernote('code', content || '');
                                             });"
                                             x-data="{}"></textarea>
-                                        <span class="characters-count"></span>
                                     </div>
                                 </div>
                                 <x-input-error field_name='article_content' />
+                            </div>
+                        @elseif($activeCurriculumItem['type'] === 'assignment')
+                            @php
+                                $quizData = [];
+                                if (!empty($activeCurriculumItem['article_content'])) {
+                                    $decoded = json_decode($activeCurriculumItem['article_content'], true);
+                                    if (is_array($decoded)) $quizData = $decoded;
+                                }
+                                $quizQuestions = $quizData['questions'] ?? [];
+                                $quizNextId    = empty($quizQuestions) ? 1 : (max(array_column($quizQuestions, 'id') ?: [0]) + 1);
+                                $quizPassScore = $quizData['pass_score'] ?? 70;
+                            @endphp
+                            {{-- quizBuilderFn is defined in public/js/main.js (always available, survives Livewire morphs) --}}
+                            <div class="cr-quiz-builder" wire:ignore
+                                 x-data="quizBuilderFn(@js($quizQuestions), {{ $quizPassScore }}, {{ $quizNextId }})"
+                                <div class="cr-quiz-builder-header">
+                                    <span><i class="am-icon-check-square" style="color:#F4A617;margin-right:6px;"></i>Constructor de Test</span>
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <label style="font-size:13px;color:#585858;margin:0;">Puntaje mínimo para aprobar (%):</label>
+                                        <input type="number" x-model.number="passScore" @input="_sync()" min="0" max="100"
+                                               class="form-control" style="width:80px;padding:4px 8px;font-size:13px;">
+                                    </div>
+                                </div>
+
+                                <template x-for="(q, qi) in questions" :key="q.id">
+                                    <div class="cr-quiz-question-card">
+                                        <div class="cr-quiz-question-header">
+                                            <span class="cr-quiz-question-num" x-text="'Pregunta ' + (qi + 1)"></span>
+                                            <button type="button" @click="removeQuestion(qi)" class="cr-quiz-remove-btn" title="Eliminar pregunta">
+                                                <i class="am-icon-trash"></i>
+                                            </button>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" x-model="q.text" @input="_sync()"
+                                                   class="form-control" placeholder="Escribe la pregunta aquí...">
+                                        </div>
+                                        <div class="cr-quiz-type-row">
+                                            <label class="cr-quiz-type-opt">
+                                                <input type="radio" :name="'qtype_' + q.id" value="multiple_choice" x-model="q.type" @change="onTypeChange(q); _sync()">
+                                                <span>Opción múltiple</span>
+                                            </label>
+                                            <label class="cr-quiz-type-opt">
+                                                <input type="radio" :name="'qtype_' + q.id" value="true_false" x-model="q.type" @change="onTypeChange(q); _sync()">
+                                                <span>Verdadero / Falso</span>
+                                            </label>
+                                        </div>
+
+                                        <template x-if="q.type === 'multiple_choice'">
+                                            <div class="cr-quiz-options-list">
+                                                <p style="font-size:12px;color:#888;margin-bottom:8px;">Marca la opción correcta con el radio a la izquierda.</p>
+                                                <template x-for="(opt, oi) in q.options" :key="oi">
+                                                    <div class="cr-quiz-option-row">
+                                                        <input type="radio" :name="'correct_' + q.id" :value="oi"
+                                                               :checked="q.correct === oi"
+                                                               @change="q.correct = oi; _sync()">
+                                                        <input type="text" x-model="q.options[oi]" @input="_sync()"
+                                                               class="form-control" :placeholder="'Opción ' + (oi + 1)">
+                                                        <button type="button" x-show="q.options.length > 2"
+                                                                @click="removeOption(q, oi)" class="cr-quiz-opt-remove">
+                                                            <i class="am-icon-x-close"></i>
+                                                        </button>
+                                                    </div>
+                                                </template>
+                                                <button type="button" x-show="q.options.length < 6"
+                                                        @click="addOption(q)" class="cr-quiz-add-opt-btn">
+                                                    <i class="am-icon-plus"></i> Agregar opción
+                                                </button>
+                                            </div>
+                                        </template>
+
+                                        <template x-if="q.type === 'true_false'">
+                                            <div class="cr-quiz-tf-row">
+                                                <label class="cr-quiz-tf-opt" :class="q.correct === 0 ? 'cr-quiz-tf-selected' : ''">
+                                                    <input type="radio" :name="'tf_' + q.id" :value="0"
+                                                           :checked="q.correct === 0"
+                                                           @change="q.correct = 0; _sync()">
+                                                    <span>✓ Verdadero</span>
+                                                </label>
+                                                <label class="cr-quiz-tf-opt" :class="q.correct === 1 ? 'cr-quiz-tf-selected' : ''">
+                                                    <input type="radio" :name="'tf_' + q.id" :value="1"
+                                                           :checked="q.correct === 1"
+                                                           @change="q.correct = 1; _sync()">
+                                                    <span>✗ Falso</span>
+                                                </label>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+
+                                <button type="button" @click="addQuestion()" class="cr-quiz-add-question-btn">
+                                    <i class="am-icon-plus"></i> Agregar pregunta
+                                </button>
+                                <p x-show="questions.length === 0" class="cr-quiz-empty-hint">
+                                    Agrega preguntas para crear el test.
+                                </p>
                             </div>
                         @elseif( in_array($activeCurriculumItem['type'], ['video', 'yt_link', 'vm_link', 'genially_link']) )
                             <div class="am-upload-options" wire:key="media-options-{{ $section->id }}">
@@ -330,26 +450,28 @@
                                 </div>
                             @endif
                         @elseif($activeCurriculumItem['type'] === 'scorm')
-                            <div class="am-upload-options" wire:key="media-options-scorm-{{ $section->id }}">
-                                <h6 class="am-important">SCORM Package (.zip)</h6>
-                                <p>Upload a SCORM 1.2 or 2004 zip file.</p>
+                            <div class="cr-scorm-upload" wire:key="media-options-scorm-{{ $section->id }}">
                                 @if(empty($scorm_file) && empty($curriculumItem->media_path))
                                     <div wire:loading.remove wire:target="scorm_file" class="form-group" id="scorm-upload-section" wire:ignore.self>
                                         <label for="at_upload_scorm{{ $activeCurriculumItem['id'] }}" class="am-uploadfile">
-                                            <svg class="am-border-svg "><rect width="100%" height="100%"></rect></svg>
+                                            <svg class="am-border-svg"><rect width="100%" height="100%"></rect></svg>
+                                            <em><i class="am-icon-cloud-upload"></i></em>
                                             <input type="file" id="at_upload_scorm{{ $activeCurriculumItem['id'] }}" wire:model="scorm_file" accept=".zip">
-                                            <span class="am-dropfileshadow">
-                                                <span>Upload SCORM .zip file</span>
-                                            </span>
+                                            <span><strong>Click para subir</strong> o arrastra aquí<span><em>Paquete SCORM 1.2 o 2004 (.zip)</em></span></span>
+                                            <span class="am-dropfileshadow"><span>Suelta el .zip aquí</span></span>
                                         </label>
                                     </div>
-                                    <div wire:loading wire:target="scorm_file">
-                                        <p>Uploading SCORM...</p>
+                                    <div wire:loading wire:target="scorm_file" class="cr-scorm-uploading">
+                                        <i class="am-icon-loader-02"></i>
+                                        <span>Subiendo paquete SCORM...</span>
                                     </div>
                                 @elseif(!empty($activeCurriculumItem['media_path']))
-                                    <div class="am-uploadedfile">
-                                        <p style="color: green;">✔ SCORM file uploaded successfully</p>
-                                        <p><small>Entry point: {{ $activeCurriculumItem['media_path'] }}</small></p>
+                                    <div class="cr-scorm-done">
+                                        <i class="am-icon-check-circle"></i>
+                                        <div>
+                                            <strong>Paquete SCORM subido correctamente</strong>
+                                            <small>{{ basename($activeCurriculumItem['media_path']) }}</small>
+                                        </div>
                                     </div>
                                 @endif
                             </div>
