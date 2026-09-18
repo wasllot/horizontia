@@ -219,7 +219,7 @@
                                             onloadedmetadata="@this.set('duration', Math.round(this.duration), false);"
                                             id="video-{{ $section->id .'_'. $curriculumItem->id }}">
                                             <source
-                                                src="{{ !empty($curriculumItem->media_path) ? Storage::url($curriculumItem->media_path) : $curriculumVideo->temporaryUrl() }}"
+                                                src="{{ !empty($curriculumItem->media_path) ? Storage::url($curriculumItem->media_path) : (is_object($curriculumVideo) && method_exists($curriculumVideo, 'temporaryUrl') ? $curriculumVideo->temporaryUrl() : '') }}"
                                                 wire:key="profile-video-src-{{ $curriculumItem->id . time() }}"
                                                 type="video/mp4">
                                         </video>
