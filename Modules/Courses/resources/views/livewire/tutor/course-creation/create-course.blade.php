@@ -126,11 +126,13 @@
         color: #fff;
     }
 
-    /* ── Reduce side whitespace: let the form card fill available width ── */
+    /* ── Reduce side whitespace + remove theme gray border ── */
     .cr-course-box {
         max-width: none !important;
         flex: 1 !important;
         min-width: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
     }
     /* Keep content readable on very wide screens */
     .cr-course.cr-create-course .container {
