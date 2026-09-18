@@ -272,6 +272,7 @@ function summernoteConfigs(
             ['style', ['bold', 'italic', 'underline']],
             ['fontsize', ['fontsize']],
             ['para', ['ul', 'ol']],
+            ['view', ['codeview']],
         ],
         height: 300,
         spellCheck: true,
