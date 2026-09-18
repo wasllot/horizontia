@@ -113,16 +113,25 @@
                             tags: @entangle('tags'),
                             newTag: '',
                             addTag() {
-                                if (this.newTag.trim() !== '' && !this.tags.includes(this.newTag.trim())) {
-                                    this.tags.push(this.newTag.trim());
-                                    this.newTag = '';
-                                }
+                                this.newTag.split(',').map(t => t.trim()).filter(t => t !== '').forEach(tag => {
+                                    if (!this.tags.includes(tag)) this.tags.push(tag);
+                                });
+                                this.newTag = '';
                             },
                             removeTag(tag) {
                                 this.tags = this.tags.filter(t => t !== tag);
+                            },
+                            handlePaste(event) {
+                                event.preventDefault();
+                                this.newTag += (event.clipboardData || window.clipboardData).getData('text');
+                                this.addTag();
                             }
                         }">
-                            <input type="text" x-model="newTag" @keydown.enter.prevent="addTag" placeholder="{{ __('courses::courses.enter_course_tags') }}" @error('tags') class="cr-invalid" @enderror>
+                            <input type="text" x-model="newTag"
+                                @keydown.enter.prevent="addTag()"
+                                @keydown="if($event.key === ',') { $event.preventDefault(); addTag(); }"
+                                @paste="handlePaste($event)"
+                                placeholder="{{ __('courses::courses.enter_course_tags') }}" @error('tags') class="cr-invalid" @enderror>
                             <ul class="cr-labels">
                                 <template x-for="tag in tags" :key="tag">
                                     <li>

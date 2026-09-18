@@ -71,8 +71,24 @@
         border: 1px solid #dde3f0 !important;
     }
 
-    /* Course Card Sidebar */
-    .cr-course-sidebar { margin-top: -150px !important; }
+    /* Course Card Sidebar — sticky column, no banner overlap.
+       The theme's top:-302px (main.css:2710) violently floats the card into
+       the banner. We cancel it and use position:sticky so the purchase CTA
+       follows the user as they scroll through curriculum / FAQs. */
+    .cr-course-sidebar {
+        position: sticky !important;
+        top: 24px !important;
+        margin-top: 0 !important;
+        align-self: flex-start !important;  /* required: sticky doesn't work on a stretched flex child */
+    }
+    @media (max-width: 991px) {
+        /* main.css already sets order:-1 and max-width:100% here — just undo sticky */
+        .cr-course-sidebar {
+            position: relative !important;
+            top: auto !important;
+            align-self: stretch !important;
+        }
+    }
     .cr-course-card {
         background: #fff !important;
         border-radius: 20px !important;
