@@ -250,17 +250,22 @@
 .cr-course-body { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
 
 /* ── Section accordion (cr-faq-accordion) ───────────────────────── */
-.cr-faq-accordion { border-radius: 14px; overflow: hidden; box-shadow: 0 2px 8px rgba(20,33,61,.06); }
+/* NO overflow:hidden — dropdown menus are position:absolute and get clipped */
+.cr-faq-accordion { border-radius: 14px; box-shadow: 0 2px 8px rgba(20,33,61,.06); position: relative; }
 .cr-faq-accordion .cr-formarea.accordion { margin: 0 !important; }
-.cr-faq-accordion .accordion-item { border: 1.5px solid #e4e9f0 !important; border-radius: 14px !important; overflow: hidden; }
+.cr-faq-accordion .accordion-item { border: 1.5px solid #e4e9f0 !important; border-radius: 14px !important; overflow: visible !important; }
 
-/* Section header */
+/* Section header — fully rounded by default (collapsed) */
 .cr-faq-accordion .cr-course-item.accordion-header {
     display: flex !important; align-items: center !important;
     padding: 0 !important; cursor: pointer;
     background: linear-gradient(135deg, #14213d 0%, #1a2b52 100%) !important;
-    border-radius: 0 !important; min-height: 56px;
+    border-radius: 12px !important; min-height: 56px;
     transition: background .2s;
+}
+/* When expanded (radio checked), only top corners rounded */
+.cr-faq-accordion .accordion-checkbox:checked ~ .cr-course-item.accordion-header {
+    border-radius: 12px 12px 0 0 !important;
 }
 .cr-faq-accordion .cr-course-item.accordion-header:hover {
     background: linear-gradient(135deg, #1a2b52 0%, #1e3460 100%) !important;
