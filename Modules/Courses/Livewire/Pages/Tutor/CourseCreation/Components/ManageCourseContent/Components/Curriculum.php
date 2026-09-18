@@ -74,6 +74,7 @@ class Curriculum extends Component
     {
         $this->activeCurriculumItem = $curriculumItem;
 
+        $this->curriculumVideo = null;
         $this->yt_link = null;
         $this->vm_link = null;
         $this->genially_link = null;
