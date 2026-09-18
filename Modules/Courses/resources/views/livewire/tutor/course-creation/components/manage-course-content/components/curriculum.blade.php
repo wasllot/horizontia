@@ -117,7 +117,7 @@
                                     <figure>
                                         <i class="am-icon-book" style="font-size:24px; color:#585858;"></i>
                                     </figure>
-                                    <span>SCORM Package</span>
+                                    <span>SCORM</span>
                                 </div>
                             </li>
                             <li wire:click="updateCurriculumType('assignment')" wire:target="updateCurriculumType('assignment')" wire:loading.class="am-btn_disable" class="{{ $activeCurriculumItem['type'] === 'assignment' ? 'cr-active' : '' }}">

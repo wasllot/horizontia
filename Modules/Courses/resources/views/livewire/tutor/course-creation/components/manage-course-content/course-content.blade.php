@@ -535,6 +535,203 @@
     border-radius: 12px; object-fit: cover; background: #14213d; display: block;
 }
 
+/* ── Lesson content panel (.cr-curriculum-content) ──────────────── */
+.cr-curriculum-content {
+    padding: 20px !important;
+    background: #fff !important;
+    border: 1.5px solid #e4e9f0 !important;
+    border-top: none !important;
+    border-radius: 0 0 12px 12px !important;
+}
+.cr-curriculum-content > p {
+    font-size: .72rem !important; font-weight: 700 !important;
+    text-transform: uppercase !important; letter-spacing: .1em !important;
+    color: #94a3b8 !important; margin-bottom: 14px !important;
+}
+
+/* ── Content-type selector tabs ──────────────────────────────────── */
+.cr-curriculum-content > ul {
+    display: flex !important; flex-wrap: wrap !important;
+    gap: 8px !important; list-style: none !important;
+    padding: 0 !important; margin: 0 0 20px !important;
+}
+.cr-curriculum-content > ul > li {
+    position: relative !important;
+    display: flex !important; flex-direction: column !important;
+    align-items: center !important; justify-content: center !important;
+    padding: 12px 16px !important;
+    min-width: 88px !important;
+    border: 1.5px solid #e4e9f0 !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+    cursor: pointer !important;
+    transition: border-color .2s, background .2s !important;
+    gap: 6px !important;
+}
+.cr-curriculum-content > ul > li:hover:not([class*="cr-active"]) {
+    border-color: #c0cce0 !important;
+    background: #f8f9fc !important;
+}
+.cr-curriculum-content > ul > li.cr-active {
+    border-color: #14213d !important;
+    background: linear-gradient(135deg, #14213d 0%, #1a2b52 100%) !important;
+    box-shadow: 0 4px 14px rgba(20,33,61,.2) !important;
+}
+/* Tab icon */
+.cr-curriculum-btnconten { display: flex !important; flex-direction: column !important; align-items: center !important; gap: 6px !important; }
+.cr-curriculum-btnconten figure {
+    width: 36px !important; height: 36px !important;
+    border-radius: 8px !important;
+    background: #f0f4ff !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    margin: 0 !important; transition: background .2s !important;
+}
+.cr-curriculum-btnconten figure img { width: 20px !important; height: 20px !important; object-fit: contain !important; }
+.cr-curriculum-btnconten figure i { font-size: 18px !important; color: #3d52a4 !important; }
+.cr-curriculum-content > ul > li.cr-active .cr-curriculum-btnconten figure {
+    background: rgba(255,255,255,.15) !important;
+}
+.cr-curriculum-content > ul > li.cr-active .cr-curriculum-btnconten figure i,
+.cr-curriculum-content > ul > li.cr-active .cr-curriculum-btnconten figure img { filter: brightness(10) !important; }
+/* Tab label */
+.cr-curriculum-btnconten span {
+    font-size: .72rem !important; font-weight: 600 !important;
+    color: #3d4a63 !important; text-align: center !important; line-height: 1.2 !important;
+}
+.cr-curriculum-content > ul > li.cr-active .cr-curriculum-btnconten span { color: #fff !important; }
+/* "Próximamente" badge */
+.cr-curriculum-content > ul > li .cr-tag {
+    position: absolute !important;
+    top: -8px !important; right: -4px !important;
+    font-size: .58rem !important; font-weight: 800 !important;
+    letter-spacing: .04em !important; text-transform: uppercase !important;
+    background: #f59e0b !important; color: #fff !important;
+    padding: 2px 7px !important; border-radius: 20px !important;
+    white-space: nowrap !important;
+}
+
+/* ── Video sub-type selector ─────────────────────────────────────── */
+.am-upload-options {
+    padding: 16px !important;
+    background: #f8f9fc !important;
+    border: 1.5px solid #e4e9f0 !important;
+    border-radius: 10px !important;
+    margin-bottom: 16px !important;
+}
+.am-upload-options h6.am-important {
+    font-size: .7rem !important; font-weight: 700 !important;
+    text-transform: uppercase !important; letter-spacing: .1em !important;
+    color: #94a3b8 !important; margin: 0 0 12px !important;
+}
+.am-upload-options { display: flex !important; flex-wrap: wrap !important; align-items: center !important; gap: 8px !important; }
+.am-upload-options h6 { width: 100% !important; }
+/* Hide native radio, style label as pill */
+.am-radio { display: contents !important; }
+.am-radio input[type="radio"] { display: none !important; }
+.am-radio label {
+    display: inline-flex !important; align-items: center !important;
+    padding: 6px 14px !important; border-radius: 20px !important;
+    border: 1.5px solid #e4e9f0 !important;
+    background: #fff !important; color: #3d4a63 !important;
+    font-size: .78rem !important; font-weight: 600 !important;
+    cursor: pointer !important; transition: all .2s !important;
+    white-space: nowrap !important;
+}
+.am-radio label:hover { border-color: #c0cce0 !important; background: #f0f4ff !important; }
+.am-radio input[type="radio"]:checked + label {
+    background: #14213d !important; color: #fff !important;
+    border-color: #14213d !important;
+}
+
+/* ── Upload dropzone ─────────────────────────────────────────────── */
+.cr-curriculum-content .am-uploadfile {
+    display: flex !important; flex-direction: column !important;
+    align-items: center !important; justify-content: center !important;
+    gap: 10px !important; text-align: center !important;
+    padding: 32px 24px !important;
+    border: 2px dashed #c0cce0 !important;
+    border-radius: 12px !important;
+    background: #f8f9fc !important;
+    cursor: pointer !important; position: relative !important;
+    transition: border-color .2s, background .2s !important;
+    min-height: 160px !important;
+}
+.cr-curriculum-content .am-uploadfile:hover {
+    border-color: #14213d !important; background: #f0f4ff !important;
+}
+/* Hide the SVG dashed border rect (we draw the border with CSS) */
+.cr-curriculum-content .am-uploadfile .am-border-svg { display: none !important; }
+/* Hide the input */
+.cr-curriculum-content .am-uploadfile input[type="file"] {
+    position: absolute !important; inset: 0 !important; opacity: 0 !important;
+    width: 100% !important; height: 100% !important; cursor: pointer !important;
+    z-index: 2 !important;
+}
+/* Upload icon */
+.cr-curriculum-content .am-uploadfile em {
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    width: 52px !important; height: 52px !important; border-radius: 50% !important;
+    background: #eef2ff !important; font-style: normal !important;
+}
+.cr-curriculum-content .am-uploadfile em i {
+    font-size: 22px !important; color: #3d52a4 !important;
+    background: none !important; display: block !important;
+}
+/* Upload text */
+.cr-curriculum-content .am-uploadfile > span:not(.am-dropfileshadow) {
+    font-size: .85rem !important; color: #3d4a63 !important; font-weight: 500 !important;
+    display: block !important;
+}
+.cr-curriculum-content .am-uploadfile > span:not(.am-dropfileshadow) strong { color: #14213d !important; font-weight: 700 !important; }
+.cr-curriculum-content .am-uploadfile > span:not(.am-dropfileshadow) > span em {
+    font-size: .75rem !important; color: #94a3b8 !important; font-style: normal !important;
+    display: block !important; margin-top: 4px !important; width: auto !important;
+    height: auto !important; background: none !important; border-radius: 0 !important;
+}
+/* Drag overlay */
+.cr-curriculum-content .am-dropfileshadow {
+    position: absolute !important; inset: 0 !important;
+    background: rgba(20,33,61,.06) !important; border-radius: 12px !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    opacity: 0 !important; pointer-events: none !important; transition: opacity .2s !important;
+}
+.cr-curriculum-content .am-uploadfile.am-dragfile .am-dropfileshadow { opacity: 1 !important; }
+
+/* ── Action buttons inside lesson editor ─────────────────────────── */
+.cr-curriculum-content .cr-btns {
+    display: flex !important; align-items: center !important;
+    justify-content: space-between !important;
+    padding-top: 16px !important;
+    border-top: 1px solid #f1f5f9 !important;
+    margin-top: 16px !important; flex-wrap: wrap !important; gap: 10px !important;
+}
+.cr-curriculum-content .cr-preview {
+    display: flex !important; align-items: center !important; gap: 8px !important;
+}
+.cr-curriculum-content .cr-label {
+    font-size: .78rem !important; font-weight: 600 !important; color: #3d4a63 !important;
+}
+.cr-curriculum-content .am-white-btn {
+    padding: 9px 16px !important; border-radius: 8px !important;
+    border: 1.5px solid #e4e9f0 !important; background: #fff !important;
+    font-size: .78rem !important; font-weight: 600 !important; color: #5a6480 !important;
+    cursor: pointer !important; transition: border-color .2s !important;
+}
+.cr-curriculum-content .am-white-btn:hover { border-color: #aab3c5 !important; }
+.cr-curriculum-content .am-btn { height: 36px !important; padding: 0 16px !important; font-size: .78rem !important; border-radius: 8px !important; }
+.cr-curriculum-content .am-remove-curriculum {
+    background: #fee2e2 !important; color: #dc2626 !important;
+    box-shadow: none !important;
+}
+.cr-curriculum-content .am-remove-curriculum:hover { background: #fecaca !important; }
+
+/* ── Iframe video previews ───────────────────────────────────────── */
+.cr-curriculum-content .am-iframe-video {
+    width: 100% !important; border-radius: 10px !important;
+    margin-top: 12px !important; border: 1px solid #e4e9f0 !important;
+    aspect-ratio: 16/9 !important; height: auto !important;
+}
+
 /* ── Content-type selector tabs (inside lesson editor) ───────────── */
 .cr-course-body .am-uploadoption { max-width: 100% !important; }
 </style>
