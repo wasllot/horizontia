@@ -59,9 +59,12 @@ class CoursePricing extends Component {
     }
 
     public function toggleIsFree() {
-        $this->price        = null;
-        $this->discount     = 0;
-        $this->final_price   = null;
+        $this->isFree = !$this->isFree;
+        if ($this->isFree) {
+            $this->price       = null;
+            $this->discount    = 0;
+            $this->final_price = null;
+        }
     }
 
     public function toggleDiscountAllowed() {
