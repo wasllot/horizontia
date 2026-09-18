@@ -355,28 +355,139 @@
     font-size: 12px !important; border-radius: 7px !important;
 }
 
+/* ── Add-lesson form inside expanded section (.cr-curriculum-state) ─ */
+.cr-curriculum-state {
+    background: #fff;
+    border: 1.5px solid #e4e9f0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 12px;
+}
+.cr-curriculum-state .form-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    margin-bottom: 16px !important;
+}
+.cr-curriculum-state .form-group label {
+    font-size: .72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .08em !important;
+    color: #64748b !important;
+    margin: 0 !important;
+}
+.cr-curriculum-state .form-group .form-control:not(.cr-summernote) {
+    border: 1.5px solid #e4e9f0 !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    font-size: .875rem !important;
+    color: #14213d !important;
+    background: #fff !important;
+    transition: border-color .2s !important;
+}
+.cr-curriculum-state .form-group .form-control:focus {
+    border-color: #14213d !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+/* Summernote container */
+.cr-curriculum-state .am-custom-editor {
+    border: 1.5px solid #e4e9f0 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
+.cr-curriculum-state .note-editor.note-frame {
+    border: none !important;
+    border-radius: 0 !important;
+}
+.cr-curriculum-state .note-toolbar {
+    background: #f8f9fc !important;
+    border-bottom: 1px solid #e4e9f0 !important;
+    padding: 6px 10px !important;
+}
+.cr-curriculum-state .note-editing-area {
+    min-height: 100px !important;
+}
+.cr-curriculum-state .characters-count {
+    display: block;
+    font-size: .7rem;
+    color: #94a3b8;
+    text-align: right;
+    padding: 4px 10px 6px;
+    background: #f8f9fc;
+    border-top: 1px solid #f1f5f9;
+}
+/* Buttons row */
+.cr-curriculum-state .cr-btns {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+    margin-top: 4px !important;
+}
+.cr-curriculum-state .am-cancel-btn {
+    padding: 9px 18px !important;
+    border-radius: 8px !important;
+    border: 1.5px solid #e4e9f0 !important;
+    background: #fff !important;
+    font-size: .8rem !important;
+    font-weight: 600 !important;
+    color: #5a6480 !important;
+    cursor: pointer !important;
+    transition: border-color .2s !important;
+}
+.cr-curriculum-state .am-cancel-btn:hover { border-color: #aab3c5 !important; }
+.cr-curriculum-state .am-btn {
+    height: 38px !important;
+    padding: 0 18px !important;
+    font-size: .8rem !important;
+    border-radius: 8px !important;
+}
+
 /* ── Add lesson form (within section) ───────────────────────────── */
 .cr-curriculum-item .cr-contentbox-area > div:not(.cr-contentbox):not(.cr-actionbox) {
     padding: 0 14px 14px; border-top: 1px solid #f0f3f8; margin-top: 2px;
 }
 
-/* ── Add section form ────────────────────────────────────────────── */
+/* ── Add section form (appears at bottom of list) ────────────────── */
 .cr-course-body > .cr-formarea {
     background: #fff;
-    border: 1.5px dashed #c0cce0;
+    border: 1.5px solid #e4e9f0;
     border-radius: 14px;
     padding: 20px !important;
 }
+.cr-course-body > .cr-formarea .form-group {
+    display: flex !important; flex-direction: column !important;
+    gap: 6px !important; margin-bottom: 16px !important;
+}
+.cr-course-body > .cr-formarea .form-group label {
+    font-size: .72rem !important; font-weight: 700 !important;
+    text-transform: uppercase !important; letter-spacing: .08em !important;
+    color: #64748b !important; margin: 0 !important;
+}
+.cr-course-body > .cr-formarea .form-group .form-control:not(.cr-summernote) {
+    border: 1.5px solid #e4e9f0 !important; border-radius: 8px !important;
+    padding: 10px 14px !important; font-size: .875rem !important;
+}
+.cr-course-body > .cr-formarea .am-custom-editor {
+    border: 1.5px solid #e4e9f0 !important; border-radius: 8px !important; overflow: hidden !important;
+}
+.cr-course-body > .cr-formarea .note-editor.note-frame { border: none !important; }
+.cr-course-body > .cr-formarea .note-toolbar {
+    background: #f8f9fc !important; border-bottom: 1px solid #e4e9f0 !important; padding: 6px 10px !important;
+}
 .cr-course-body > .cr-formarea .cr-btns {
-    display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px;
+    display: flex !important; gap: 10px !important; justify-content: flex-end !important; margin-top: 16px !important;
 }
 .cr-course-body > .cr-formarea .am-cancel-btn {
-    padding: 9px 18px; border-radius: 8px; border: 1.5px solid #e4e9f0;
-    background: #fff; font-size: 13px; font-weight: 600; color: #5a6480; cursor: pointer;
-    transition: border-color .2s;
+    padding: 9px 18px !important; border-radius: 8px !important; border: 1.5px solid #e4e9f0 !important;
+    background: #fff !important; font-size: .8rem !important; font-weight: 600 !important;
+    color: #5a6480 !important; cursor: pointer !important; transition: border-color .2s !important;
 }
-.cr-course-body > .cr-formarea .am-cancel-btn:hover { border-color: #aab3c5; }
-.cr-course-body > .cr-formarea .am-btn { height: 40px !important; padding: 0 20px !important; font-size: 13px !important; }
+.cr-course-body > .cr-formarea .am-cancel-btn:hover { border-color: #aab3c5 !important; }
+.cr-course-body > .cr-formarea .am-btn {
+    height: 38px !important; padding: 0 18px !important; font-size: .8rem !important; border-radius: 8px !important;
+}
 
 /* ── Create section button ───────────────────────────────────────── */
 .cr-addbtn {
