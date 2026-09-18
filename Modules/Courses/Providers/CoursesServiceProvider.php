@@ -92,7 +92,9 @@ class CoursesServiceProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
-        // $this->commands([]);
+        $this->commands([
+            \Modules\Courses\Console\ReportMissingThumbnails::class,
+        ]);
     }
 
     /**

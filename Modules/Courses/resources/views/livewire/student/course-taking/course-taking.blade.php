@@ -64,6 +64,28 @@
     .cr-coursecontent_tabs_content .cr-stat-icon-wrapper i,
     .cr-coursecontent_tabs_content .cr-stat-icon-wrapper i::before { color: #fed304 !important; }
     .cr-coursecontent_tabs_content .cr-stat-label { color: #aab3c5 !important; }
+
+    /* main.css sets height:680px on this wrapper — sized for a video player.
+       Article and other non-video lesson types have tiny content, leaving ~650px
+       of dead white space. Set to auto; video players size themselves internally. */
+    .cr-coursedetails_body_video {
+        height: auto !important;
+        min-height: 0 !important;
+    }
+    /* main.css also fixes .cr-coursedetails_article at 579px (scrollable box
+       designed for long articles), and adds padding:50px 70px on the wrapper.
+       Both create a large blank area when the article is short. */
+    .cr-coursedetails_body_video:has(.cr-coursedetails_article) {
+        padding: 24px 40px !important;
+    }
+    .cr-coursedetails_article {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+    }
+    .cr-coursedetails_article_actions {
+        display: flex !important;
+    }
 </style>
 @endpush
 <div class="cr-coursesdetails">

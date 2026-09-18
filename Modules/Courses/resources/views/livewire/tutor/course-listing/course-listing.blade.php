@@ -197,13 +197,18 @@
                                     <td data-label="{{ __('courses::courses.course_title') }}">
                                         <div class="cr-image-and-text">
                                             <figure>
-                                                @if (!empty($course->thumbnail?->path))
-                                                    <img src="{{ url(Storage::url($course->thumbnail?->path)) }}" alt="{{ $course->title }}">
+                                                @if (!empty($course->thumbnail?->path) && Storage::disk(getStorageDisk())->exists($course->thumbnail->path))
+                                                    <img src="{{ url(Storage::url($course->thumbnail->path)) }}" alt="{{ $course->title }}">
                                                 @else
                                                     <img src="{{ asset('modules/courses/images/course.png') }}" alt="{{ $course->title }}">
                                                 @endif
                                             </figure>
-                                            {{ html_entity_decode($course->title) }}
+                                            <span>
+                                                {{ html_entity_decode($course->title) }}
+                                                @if (empty($course->thumbnail?->path) || !Storage::disk(getStorageDisk())->exists($course->thumbnail->path ?? ''))
+                                                    <span title="Este curso no tiene imagen de portada. Sube una en Editar curso → Media." style="display:inline-block;margin-left:6px;background:#fed304;color:#14213d;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;vertical-align:middle;cursor:help;">SIN IMAGEN</span>
+                                                @endif
+                                            </span>
                                         </div>
                                     </td>
                                     <td data-label="{{ __('courses::courses.category') }}">{{ $course->category?->name }}</td>

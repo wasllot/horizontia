@@ -154,12 +154,21 @@ new class extends Component
         .tb-siderbar-nav .tb-menuitm i { color: #aab3c5 !important; }
         .tb-siderbar-nav .tb-menuitm:hover { background: rgba(254,211,4,0.1) !important; color: #fff !important; }
         .tb-siderbar-nav .tb-menuitm:hover i { color: #fed304 !important; }
-        .tb-siderbar-nav li.active > .tb-menuitm,
-        .tb-siderbar-nav li.active > .tb-menuitm i { color: #14213d !important; }
+        /* Active parent: always gold background + navy text so it's readable
+           regardless of whether the theme's own rule fires or not. */
+        .tb-siderbar-nav li.active > .tb-menuitm {
+            background: #fed304 !important;
+            color: #14213d !important;
+            border-radius: 8px !important;
+        }
+        .tb-siderbar-nav li.active > .tb-menuitm i,
+        .tb-siderbar-nav li.active > .tb-menuitm span { color: #14213d !important; }
+        .tb-siderbar-nav li.active > .tb-menuitm:hover { background: #fed304 !important; color: #14213d !important; }
         .sidebar-sub-menu li a { color: #aab3c5 !important; background: transparent !important; }
         .sidebar-sub-menu li a:hover { color: #fed304 !important; }
+        /* navy-on-navy = invisible; use gold for active sub-item */
         .sidebar-sub-menu li.active a,
-        .sidebar-sub-menu li.active a:hover { color: #14213d !important; }
+        .sidebar-sub-menu li.active a:hover { color: #fed304 !important; font-weight: 600; }
         #tb-btnmenutoggle a,
         .tb-icongray { color: #aab3c5 !important; }
         .tb-haslogout {
@@ -173,6 +182,24 @@ new class extends Component
             box-shadow: none !important;
             border-radius: 0 !important;
             padding: 0 !important;
+        }
+        /* Strip the outer gray (#EAEAEA) frame — keep only one white layer */
+        .tb-db-dashboard_box .tb-db-dashboard_box_wrap_inner {
+            background: transparent !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+        }
+        /* Single white content card — no rounded corner box, no double nesting */
+        .tb-menumanagement_wrap {
+            background-color: #fff !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            padding: 24px 28px !important;
+        }
+        /* Keep the heading using brand navy instead of default black */
+        .tb-dhb-mainheading h4 {
+            color: #14213d !important;
+            font-weight: 700 !important;
         }
     </style>
     <aside id="tb-sidebarwrapper" class="tb-sidebarwrapper">
