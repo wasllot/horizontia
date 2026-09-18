@@ -244,14 +244,183 @@
     <link rel="stylesheet" href="{{ asset('modules/courses/css/main.css') }}">
     @vite(['public/summernote/summernote-lite.min.css'])
 <style>
-    /* Lesson video preview — replaces VideoJS black-box player in the curriculum editor */
-    .cr-video-preview-uploaded { display: block !important; padding: 0 !important; border: none !important; background: transparent !important; margin-top: 10px; }
-    .cr-lesson-video-preview {
-        width: 100%; max-width: 420px; height: 240px;
-        border-radius: 12px; object-fit: cover;
-        background: #14213d;
-        display: block;
-    }
+/* ── Course content builder ───────────────────────────────────────── */
+
+/* Section spacing */
+.cr-course-body { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+
+/* ── Section accordion (cr-faq-accordion) ───────────────────────── */
+.cr-faq-accordion { border-radius: 14px; overflow: hidden; box-shadow: 0 2px 8px rgba(20,33,61,.06); }
+.cr-faq-accordion .cr-formarea.accordion { margin: 0 !important; }
+.cr-faq-accordion .accordion-item { border: 1.5px solid #e4e9f0 !important; border-radius: 14px !important; overflow: hidden; }
+
+/* Section header */
+.cr-faq-accordion .cr-course-item.accordion-header {
+    display: flex !important; align-items: center !important;
+    padding: 0 !important; cursor: pointer;
+    background: linear-gradient(135deg, #14213d 0%, #1a2b52 100%) !important;
+    border-radius: 0 !important; min-height: 56px;
+    transition: background .2s;
+}
+.cr-faq-accordion .cr-course-item.accordion-header:hover {
+    background: linear-gradient(135deg, #1a2b52 0%, #1e3460 100%) !important;
+}
+
+/* Section title area */
+.cr-faq-accordion .cr-course-item.accordion-header .cr-contentbox {
+    flex: 1 !important; display: flex !important; align-items: center !important;
+    gap: 10px !important; padding: 14px 18px !important; min-width: 0;
+}
+.cr-faq-accordion .cr-course-item.accordion-header .cr-contentbox svg path { stroke: #aab3c5; }
+.cr-faq-accordion .cr-course-item.accordion-header .cr-contentbox svg { flex-shrink: 0; }
+.cr-faq-accordion .cr-course-item.accordion-header .cr-contentbox span {
+    font-size: 14px !important; font-weight: 700 !important; color: #fff !important;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* "..." dropdown in section header */
+.cr-faq-accordion .cr-course-item.accordion-header .am-itemdropdown {
+    flex-shrink: 0; padding: 0 8px;
+}
+.cr-faq-accordion .cr-course-item.accordion-header .am-itemdropdown > a {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(255,255,255,.1);
+    transition: background .2s;
+}
+.cr-faq-accordion .cr-course-item.accordion-header .am-itemdropdown > a:hover { background: rgba(254,211,4,.2); }
+.cr-faq-accordion .cr-course-item.accordion-header .am-itemdropdown > a svg path { fill: #aab3c5; }
+
+/* Chevron */
+.cr-faq-accordion .accordion-header .accordion-icon { padding: 0 18px 0 4px; }
+.cr-faq-accordion .accordion-header .accordion-icon i { color: #aab3c5 !important; font-size: 13px; }
+
+/* Accordion content panel */
+.cr-faq-accordion .accordion-content {
+    background: #f8f9fc !important;
+    border-top: 1px solid #e4e9f0;
+    padding: 16px !important;
+}
+
+/* ── Lesson items (cr-curriculum-item) ──────────────────────────── */
+.cr-curriculum-item {
+    background: #fff;
+    border: 1.5px solid #e4e9f0;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color .2s, box-shadow .2s;
+}
+.cr-curriculum-item:hover { border-color: #c0cce0; box-shadow: 0 2px 8px rgba(20,33,61,.06); }
+.cr-curriculum-item:last-child { margin-bottom: 0; }
+
+.cr-curriculum-item .cr-contentbox-area { display: flex; flex-direction: column; }
+
+/* Lesson header row */
+.cr-curriculum-item .cr-contentbox {
+    display: flex !important; align-items: center !important; gap: 10px !important;
+    padding: 12px 14px !important;
+    border-bottom: none;
+}
+/* Drag handle */
+.cr-curriculum-item .cr-drag { cursor: grab; color: #c0cce0; flex-shrink: 0; font-size: 16px; }
+.cr-curriculum-item .cr-drag:active { cursor: grabbing; }
+
+/* Lesson checkmark icon */
+.cr-curriculum-item .cr-contentbox > span:not(.cr-drag):not(.cr-contentbox_title) svg path { stroke: #14213d; }
+
+/* Lesson title */
+.cr-curriculum-item .cr-contentbox_title {
+    flex: 1 !important; font-size: 13px !important; font-weight: 600 !important;
+    color: #14213d !important; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Lesson "..." dropdown */
+.cr-curriculum-item .am-itemdropdown > a {
+    display: flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 6px;
+    background: #f0f3fa; transition: background .2s;
+}
+.cr-curriculum-item .am-itemdropdown > a:hover { background: #e4e9f0; }
+
+/* Lesson action button (edit content) */
+.cr-curriculum-item .cr-actionbox { padding: 0 14px 12px; }
+.cr-curriculum-item .cr-actionbox .am-btn {
+    height: 34px !important; padding: 0 14px !important;
+    font-size: 12px !important; border-radius: 7px !important;
+}
+
+/* ── Add lesson form (within section) ───────────────────────────── */
+.cr-curriculum-item .cr-contentbox-area > div:not(.cr-contentbox):not(.cr-actionbox) {
+    padding: 0 14px 14px; border-top: 1px solid #f0f3f8; margin-top: 2px;
+}
+
+/* ── Add section form ────────────────────────────────────────────── */
+.cr-course-body > .cr-formarea {
+    background: #fff;
+    border: 1.5px dashed #c0cce0;
+    border-radius: 14px;
+    padding: 20px !important;
+}
+.cr-course-body > .cr-formarea .cr-btns {
+    display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px;
+}
+.cr-course-body > .cr-formarea .am-cancel-btn {
+    padding: 9px 18px; border-radius: 8px; border: 1.5px solid #e4e9f0;
+    background: #fff; font-size: 13px; font-weight: 600; color: #5a6480; cursor: pointer;
+    transition: border-color .2s;
+}
+.cr-course-body > .cr-formarea .am-cancel-btn:hover { border-color: #aab3c5; }
+.cr-course-body > .cr-formarea .am-btn { height: 40px !important; padding: 0 20px !important; font-size: 13px !important; }
+
+/* ── Create section button ───────────────────────────────────────── */
+.cr-addbtn {
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    gap: 8px !important; width: 100% !important;
+    padding: 14px 20px !important;
+    background: #fff !important;
+    border: 2px dashed #c0cce0 !important;
+    border-radius: 14px !important;
+    font-size: 14px !important; font-weight: 700 !important; color: #14213d !important;
+    cursor: pointer !important;
+    transition: border-color .2s, background .2s !important;
+    position: relative !important; overflow: hidden;
+}
+.cr-addbtn:hover {
+    border-color: #fed304 !important;
+    background: #fffef5 !important;
+    color: #14213d !important;
+}
+.cr-addbtn svg { display: none !important; }
+.cr-addbtn i { color: #fed304 !important; font-size: 18px !important; }
+.cr-addbtn .am-border-svg { display: none !important; }
+
+/* ── Dropdown menus ──────────────────────────────────────────────── */
+.am-itemdropdown_list {
+    min-width: 140px !important; border-radius: 10px !important;
+    border: 1px solid #e4e9f0 !important;
+    box-shadow: 0 8px 24px rgba(20,33,61,.1) !important;
+    padding: 6px !important; overflow: hidden;
+}
+.am-itemdropdown_list li a {
+    display: flex !important; align-items: center !important; gap: 8px !important;
+    padding: 8px 12px !important; border-radius: 7px !important;
+    font-size: 13px !important; font-weight: 500 !important; color: #3d4a63 !important;
+    transition: background .15s !important; text-decoration: none !important;
+}
+.am-itemdropdown_list li a:hover { background: #f4f6fb !important; }
+.am-itemdropdown_list li:last-child a:hover { background: #fff5f5 !important; color: #dc2626 !important; }
+.am-itemdropdown_list li:last-child a:hover svg path { stroke: #dc2626 !important; }
+
+/* ── Video preview ───────────────────────────────────────────────── */
+.cr-video-preview-uploaded { display: block !important; padding: 0 !important; border: none !important; background: transparent !important; margin-top: 10px; }
+.cr-lesson-video-preview {
+    width: 100%; max-width: 420px; height: 240px;
+    border-radius: 12px; object-fit: cover; background: #14213d; display: block;
+}
+
+/* ── Content-type selector tabs (inside lesson editor) ───────────── */
+.cr-course-body .am-uploadoption { max-width: 100% !important; }
 </style>
 @endpush
 @push('scripts')

@@ -71,68 +71,204 @@
         border: 1px solid #dde3f0 !important;
     }
 
-    /* Course Card Sidebar — sticky column, no banner overlap.
-       The theme's top:-302px (main.css:2710) violently floats the card into
-       the banner. We cancel it and use position:sticky so the purchase CTA
-       follows the user as they scroll through curriculum / FAQs. */
+    /* ── Sidebar: overlap banner + stick while scrolling ───────────── */
     .cr-course-sidebar {
         position: sticky !important;
-        top: 24px !important;
-        margin-top: 0 !important;
-        align-self: flex-start !important;  /* required: sticky doesn't work on a stretched flex child */
+        top: 20px !important;
+        margin-top: -260px !important;
+        align-self: flex-start !important;
+        z-index: 20 !important;
+        width: 340px !important;
+        min-width: 300px !important;
+        flex-shrink: 0 !important;
     }
     @media (max-width: 991px) {
-        /* main.css already sets order:-1 and max-width:100% here — just undo sticky */
         .cr-course-sidebar {
             position: relative !important;
             top: auto !important;
+            margin-top: 0 !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            z-index: auto !important;
             align-self: stretch !important;
         }
     }
+
+    /* ── Purchase card ──────────────────────────────────────────────── */
     .cr-course-card {
-        background: #fff !important;
+        background: #ffffff !important;
         border-radius: 20px !important;
-        box-shadow: 0 25px 50px rgba(15,52,96,0.12) !important;
-        border: 1px solid #f0f0f0 !important;
+        box-shadow: 0 24px 72px rgba(12,26,55,.22), 0 4px 16px rgba(12,26,55,.08) !important;
+        border: none !important;
         overflow: hidden !important;
     }
-    .cr-image-wrapper { position: relative !important; width: 100% !important; border-radius: 20px 20px 0 0 !important; overflow: hidden !important; background: #14213d !important; }
-    .cr-image-wrapper img { width: 100% !important; height: 260px !important; object-fit: cover !important; }
-    /* The "no thumbnail" fallback is a tiny 44x45 icon -- stretched with
-       object-fit:cover like a real thumbnail it just blows up into a blank-
-       looking blur. Show it at a sane size, centered, on the card's own bg. */
+
+    /* Thumbnail */
+    .cr-image-wrapper {
+        position: relative !important;
+        width: 100% !important;
+        border-radius: 0 !important;
+        overflow: hidden !important;
+        background: #0d1b36 !important;
+        aspect-ratio: 16/9 !important;
+        height: auto !important;
+        display: block !important;
+    }
+    .cr-image-wrapper img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        display: block !important;
+    }
+    .cr-image-wrapper::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(160deg, rgba(12,26,55,.08) 0%, rgba(12,26,55,.55) 100%);
+        pointer-events: none;
+        z-index: 1;
+    }
     .cr-image-wrapper img.cr-background-image--placeholder {
         object-fit: none !important;
-        width: 64px !important;
-        height: 64px !important;
-        margin: 98px auto !important;
-        opacity: 0.6;
+        width: 60px !important; height: 60px !important;
+        position: absolute !important;
+        top: 50% !important; left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        margin: 0 !important;
+        opacity: 0.4;
     }
     .cr-image-wrapper figcaption {
-        position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
-        background: rgba(20,33,61,0.35) !important;
-        display: flex !important; align-items: center !important; justify-content: center !important;
+        position: absolute !important;
+        inset: 0 !important;
+        background: transparent !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 2 !important;
     }
     .cr-image-wrapper button {
-        width: 70px !important; height: 70px !important; border-radius: 50% !important;
+        width: 62px !important; height: 62px !important;
+        border-radius: 50% !important;
         background: #fed304 !important;
         border: none !important; cursor: pointer !important;
         display: flex !important; align-items: center !important; justify-content: center !important;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.25) !important;
-        transition: transform 0.3s !important;
+        box-shadow: 0 8px 28px rgba(0,0,0,.32), 0 0 0 10px rgba(254,211,4,.22) !important;
+        transition: transform .25s, box-shadow .25s !important;
+        position: relative !important; z-index: 3 !important;
     }
-    .cr-image-wrapper button:hover { transform: scale(1.08) !important; }
+    .cr-image-wrapper button:hover {
+        transform: scale(1.12) !important;
+        box-shadow: 0 12px 36px rgba(0,0,0,.38), 0 0 0 14px rgba(254,211,4,.26) !important;
+    }
 
-    .cr-action-buttons .am-btn {
-        background: #fed304 !important;
-        color: #14213d !important;
-        border: none !important; padding: 16px !important; border-radius: 12px !important;
-        font-weight: 800 !important; font-size: 1.1rem !important;
-        box-shadow: 0 10px 20px rgba(254,211,4,0.25) !important;
-        width: 100% !important;
-        transition: transform 0.2s, box-shadow 0.2s !important;
+    /* Price & details body */
+    .cr-course-details { padding: 22px 24px 6px !important; }
+    .cr-price-section { margin-bottom: 2px !important; }
+    .cr-price-wrapper {
+        display: flex !important; align-items: center !important;
+        gap: 14px !important; flex-wrap: wrap !important;
+        margin-bottom: 2px !important;
     }
-    .cr-action-buttons .am-btn:hover { transform: translateY(-3px) !important; box-shadow: 0 15px 25px rgba(254,211,4,0.35) !important; }
+    .cr-price {
+        display: flex !important; align-items: baseline !important; gap: 2px !important;
+    }
+    .cr-price .cr-currency {
+        font-size: 1.1rem !important; font-weight: 700 !important;
+        color: #14213d !important; align-self: flex-start !important; margin-top: 7px !important;
+    }
+    .cr-price .cr-amount {
+        font-size: 2.5rem !important; font-weight: 900 !important;
+        color: #14213d !important; line-height: 1 !important; letter-spacing: -1px !important;
+    }
+    /* Free label ("GRATIS") */
+    .cr-price-wrapper > .cr-amount {
+        font-size: 2.2rem !important; font-weight: 900 !important;
+        color: #14213d !important; line-height: 1 !important;
+    }
+    .cr-discount { font-size: 1rem !important; color: #94a3b8 !important; text-decoration: line-through !important; }
+    .cr-discount-label {
+        display: inline-flex !important; align-items: center !important;
+        background: #fef3c7 !important; color: #92400e !important;
+        font-size: 0.72rem !important; font-weight: 800 !important;
+        padding: 3px 10px !important; border-radius: 20px !important;
+        letter-spacing: .04em !important; margin-bottom: 10px !important;
+    }
+
+    /* Course includes */
+    .cr-course-includes { padding: 14px 24px !important; border-top: 1px solid #f1f5f9 !important; }
+    .cr-includes-title {
+        font-size: 0.68rem !important; text-transform: uppercase !important;
+        letter-spacing: .12em !important; color: #94a3b8 !important;
+        font-weight: 700 !important; margin: 0 0 12px !important;
+    }
+    .cr-includes-list {
+        list-style: none !important; padding: 0 !important; margin: 0 !important;
+        display: flex !important; flex-direction: column !important; gap: 9px !important;
+    }
+    .cr-includes-item { display: flex !important; align-items: center !important; gap: 10px !important; }
+    .cr-includes-item i {
+        width: 30px !important; height: 30px !important; border-radius: 8px !important;
+        background: #eef2ff !important; color: #3d52a4 !important;
+        display: flex !important; align-items: center !important; justify-content: center !important;
+        font-size: 13px !important; flex-shrink: 0 !important;
+    }
+    .cr-includes-text { display: flex !important; gap: 5px !important; align-items: baseline !important; }
+    .cr-includes-value { font-weight: 700 !important; color: #14213d !important; font-size: .9rem !important; }
+    .cr-includes-label { color: #64748b !important; font-size: .875rem !important; }
+
+    /* CTA button */
+    .cr-action-buttons { padding: 6px 24px 22px !important; }
+    .cr-action-buttons .am-btn {
+        background: linear-gradient(135deg, #fed304 0%, #f5c500 100%) !important;
+        color: #14213d !important; border: none !important;
+        padding: 17px !important; border-radius: 14px !important;
+        font-weight: 800 !important; font-size: 1rem !important;
+        width: 100% !important; display: block !important; text-align: center !important;
+        box-shadow: 0 8px 28px rgba(254,211,4,.32) !important;
+        transition: transform .25s, box-shadow .25s !important;
+        letter-spacing: .025em !important; text-decoration: none !important;
+        cursor: pointer !important;
+    }
+    .cr-action-buttons .am-btn:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 14px 36px rgba(254,211,4,.44) !important;
+        color: #14213d !important;
+    }
+
+    /* Instructor card */
+    .am-similar-user {
+        margin-top: 14px !important;
+        background: #fff !important; border-radius: 16px !important;
+        box-shadow: 0 8px 28px rgba(12,26,55,.08) !important;
+        overflow: hidden !important;
+    }
+    .am-tutordetail_user {
+        display: flex !important; align-items: center !important; gap: 12px !important;
+        padding: 16px !important; cursor: pointer !important;
+        transition: background .18s !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+    }
+    .am-tutordetail_user:hover { background: #f8faff !important; }
+    .am-tutorvone_img {
+        width: 50px !important; height: 50px !important; border-radius: 50% !important;
+        overflow: hidden !important; flex-shrink: 0 !important;
+        border: 2px solid #e2e8f0 !important;
+    }
+    .am-tutorvone_img img { width: 100% !important; height: 100% !important; object-fit: cover !important; }
+    .am-tutordetail_user_name h3 {
+        font-size: .93rem !important; font-weight: 700 !important; color: #14213d !important;
+        display: flex !important; align-items: center !important; gap: 5px !important;
+        margin: 0 0 3px !important;
+    }
+    .am-tutordetail_user_name h3 a { color: #14213d !important; text-decoration: none !important; }
+    .am-tutordetail_user_name > span { font-size: .78rem !important; color: #64748b !important; }
+    .am-tutorreviews-list { padding: 12px 16px !important; }
+    .am-tutorreview-item {
+        display: flex !important; align-items: center !important; gap: 6px !important;
+    }
+    .am-tutorreview-item_icon i { color: #fed304 !important; font-size: 13px !important; }
+    .am-uniqespace { font-size: .82rem !important; color: #374151 !important; font-weight: 600 !important; }
+    .am-uniqespace em { color: #94a3b8 !important; font-style: normal !important; font-weight: 400 !important; }
 
 </style>
 @endpush
