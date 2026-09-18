@@ -125,6 +125,18 @@
         background: #ff4d4f;
         color: #fff;
     }
+
+    /* ── Reduce side whitespace: let the form card fill available width ── */
+    .cr-course-box {
+        max-width: none !important;
+        flex: 1 !important;
+        min-width: 0 !important;
+    }
+    /* Keep content readable on very wide screens */
+    .cr-course.cr-create-course .container {
+        max-width: 1280px !important;
+        padding: 0 24px !important;
+    }
 </style>
 
 <div class="cr-course cr-create-course">

@@ -242,10 +242,17 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('modules/courses/css/main.css') }}">
-    @vite([
-        'public/summernote/summernote-lite.min.css', 
-        'public/css/videojs.css'
-    ])
+    @vite(['public/summernote/summernote-lite.min.css'])
+<style>
+    /* Lesson video preview — replaces VideoJS black-box player in the curriculum editor */
+    .cr-video-preview-uploaded { display: block !important; padding: 0 !important; border: none !important; background: transparent !important; margin-top: 10px; }
+    .cr-lesson-video-preview {
+        width: 100%; max-width: 420px; height: 240px;
+        border-radius: 12px; object-fit: cover;
+        background: #14213d;
+        display: block;
+    }
+</style>
 @endpush
 @push('scripts')
     <script src="https://www.youtube.com/iframe_api"></script>

@@ -211,18 +211,18 @@
                                     !empty($curriculumVideo) || 
                                     ( !empty($curriculumItem->media_path) && !empty(Storage::disk(getStorageDisk())->exists($curriculumItem->media_path))) 
                                     )
-                                    <div class="am-uploadedfile">
-                                        <figure>
-                                            <div class="cr-expert-video cr-custom-video">
-                                                <video class="video-js d-none" data-setup='{}' onloadeddata="let player = videojs(this); player.removeClass('d-none'); @this.set('duration', Math.round(this.duration), false);" preload="auto" id="video-{{ $section->id .'_'. $curriculumItem->id }}" width="320" height="240"
-                                                    controls>
-                                                    <source
-                                                        src="{{ !empty($curriculumItem->media_path) ? Storage::url($curriculumItem->media_path) : $curriculumVideo->temporaryUrl() }}"
-                                                        wire:key="profile-video-src-{{ $curriculumItem->id . time() }}"
-                                                        type="video/mp4">
-                                                </video>
-                                            </div>
-                                        </figure>
+                                    <div class="am-uploadedfile cr-video-preview-uploaded">
+                                        <video
+                                            class="cr-lesson-video-preview"
+                                            controls
+                                            preload="metadata"
+                                            onloadedmetadata="@this.set('duration', Math.round(this.duration), false);"
+                                            id="video-{{ $section->id .'_'. $curriculumItem->id }}">
+                                            <source
+                                                src="{{ !empty($curriculumItem->media_path) ? Storage::url($curriculumItem->media_path) : $curriculumVideo->temporaryUrl() }}"
+                                                wire:key="profile-video-src-{{ $curriculumItem->id . time() }}"
+                                                type="video/mp4">
+                                        </video>
                                     </div>
                                 @endif
                             @elseif($activeCurriculumItem['type'] === 'yt_link')
