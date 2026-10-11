@@ -59,10 +59,10 @@
                                                 <div class="am-comments_user">
                                                     <figure class="am-comments_img">
 
-                                                        @if (!empty($review?->profile?->image) && Storage::disk(getStorageDisk())->exists($review?->profile?->image))
+                                                        @if (!empty($review?->profile?->image) && mediaExists($review?->profile?->image))
                                                         <img src="{{ resizedImage($review->profile?->image,42,42) }}" alt="{{$review->profile?->image}}" />
                                                         @else 
-                                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 42, 42) }}" alt="{{ $review->profile?->image }}" />
+                                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 42, 42) }}" alt="{{ $review->profile?->image }}" />
                                                         @endif
                                                     </figure>
                                                     <div class="am-comments_user_name">
@@ -71,7 +71,7 @@
                                                                 <span class="flag flag-{{ strtolower($review->profile->user?->address?->country?->short_code) }}"></span>
                                                             @endif
                                                         </h4>
-                                                        <span>{{$review?->created_at?->format('M d, Y') }}</span>
+                                                        <span>{{ dateEs($review?->created_at) }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="am-comment">

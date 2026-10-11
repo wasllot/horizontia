@@ -1,6 +1,7 @@
 <?php
 
 namespace Modules\LaraPayease\Factories;
+use Modules\LaraPayease\Drivers\MercadoPago;
 use Modules\LaraPayease\Drivers\Stripe;
 use Modules\LaraPayease\Utils\CurrencyUtil;
 
@@ -13,6 +14,14 @@ class PaymentFactory {
     public function stripe(): Stripe{
         return new Stripe();
      }
+
+    /**
+     * @return \Modules\LaraPayease\Drivers\MercadoPago
+     */
+
+    public function mercadopago(): MercadoPago{
+        return new MercadoPago();
+    }
 
      /**
       * @return \Modules\LaraPayease\Utils\CurrencyUtil\supportedCurrencies
@@ -36,6 +45,20 @@ class PaymentFactory {
               'currency' => 'USD',
               'exchange_rate' => '',
               'ipn_url_type' => 'get.success'
+          ],
+          'mercadopago' => [
+              'keys' => [
+                 'mp_access_token' => '',
+                 'mp_public_key' => '',
+                 'mp_webhook_secret' => '',
+              ],
+              'status' => 'off',
+              'currency' => 'MXN',
+              'exchange_rate' => '',
+              'enable_test_mode' => '',
+              'binary_mode' => '',
+              'max_installments' => '',   // optional cap of card installments (meses sin intereses are enabled in the Mercado Pago account)
+              'ipn_url_type' => 'mercadopago.return'
           ],
         ];
      }

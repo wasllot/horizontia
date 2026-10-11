@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
+use Modules\Courses\Models\CourseSession;
+use Modules\Courses\Models\Enrollment;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -30,6 +33,9 @@ class CourseDetails extends Component
     public $viewCourse = false;
     public $role = null;
     public $backRoute = null;
+    /** The date a student picked for an in-person course (`?fecha=ID` in the URL). Always re-checked on the server before it is used. */
+    #[Url(as: 'fecha')]
+    public $sessionId = null;
     public $courseInCart = 0;
     public $cartItems = [];
 
@@ -78,6 +84,49 @@ class CourseDetails extends Component
         if (!auth()?->user()?->hasRole('admin')) {
             $this->manageViews($this->course);
         }
+
+        // In-person courses: keep only a valid, still-available date; with a single option, pick it for the student.
+        if ($this->course->isOnsite()) {
+            $this->sessionId = $this->selectedSession()?->id;
+            if (!$this->sessionId) {
+                $open = $this->dates->filter(fn ($d) => $d->isBookable());
+                $this->sessionId = $open->count() === 1 ? $open->first()->id : null;
+            }
+        }
+    }
+
+    /** Upcoming dates of an in-person course, with how many seats are already taken. */
+    #[Computed]
+    public function dates()
+    {
+        if (!$this->course->isOnsite()) {
+            return collect();
+        }
+
+        return $this->course->sessions()->upcoming()
+            ->withCount(['enrollments as taken' => fn ($q) => $q->where('status', Enrollment::STATUSES['active'])])->get();
+    }
+
+    /** The chosen date, resolved from the database (the id in the URL/component is never trusted). */
+    protected function selectedSession(): ?CourseSession
+    {
+        if (!$this->sessionId || !$this->course->isOnsite()) {
+            return null;
+        }
+        $s = $this->dates->firstWhere('id', (int) $this->sessionId);
+
+        return $s && $s->isBookable() ? $s : null;
+    }
+
+    public function selectSession($id): void
+    {
+        $s = $this->dates->firstWhere('id', (int) $id);
+        if (!$s || !$s->isBookable()) {
+            $this->dispatch('showAlertMessage', type: 'error', message: 'Esa fecha ya no está disponible. Elige otra.');
+
+            return;
+        }
+        $this->sessionId = $s->id;
     }
 
     #[Computed(persist: true)]
@@ -105,7 +154,7 @@ class CourseDetails extends Component
                 'sections' => function($query) {
                     $query->withWhereHas('curriculums', function($subQuery) {
                         $subQuery->orderBy('sort_order', 'asc');
-                        $subQuery->whereNotNull('media_path')->orWhereNotNull('article_content');
+                        $subQuery->withContent();
                     });
                 },
                 'ratings.student.profile',
@@ -166,7 +215,7 @@ class CourseDetails extends Component
         $og_tags = [
             'og:title' => $this->course->title,
             'og:description' => $this->course->description,
-            'og:image' => $this->course->thumbnail?->path ? Storage::url($this->course->thumbnail?->path) : asset('modules/courses/images/logo.svg'),
+            'og:image' => $this->course->thumbnail?->path ? mediaUrl($this->course->thumbnail?->path) : asset('modules/courses/images/logo.svg'),
             'og:url' =>  route('courses.course-detail', ['slug' => $this->course->slug]),
             'og:type' => 'website',
             'og:site_name' => setting('_general.site_name'),
@@ -178,11 +227,25 @@ class CourseDetails extends Component
             'twitter:card' => 'summary_large_image',
             'twitter:title' => $this->course->title,
             'twitter:description' => $this->course->description,
-            'twitter:image' => $this->course->thumbnail?->path ? Storage::url($this->course->thumbnail?->path) : asset('modules/courses/images/logo.svg'),
+            'twitter:image' => $this->course->thumbnail?->path ? mediaUrl($this->course->thumbnail?->path) : asset('modules/courses/images/logo.svg'),
             'twitter:site' => '@' . setting('_general.site_name'),
             'twitter:creator' => '@' . $this->course->instructor->profile->full_name
         ];
-        return view('courses::livewire.course.course-detail', compact('course', 'totalArticles', 'totalVideos', 'courseInCart'))->extends('layouts.frontend-app', ['pageTitle' => $course->title, 'pageDescription' => $course->description, 'metaImage' => $this->course->thumbnail?->path ? Storage::url($this->course->thumbnail?->path) : asset('module/courses/images/logo.svg'), 'og_tags' => $og_tags]);
+        $selectedSession = $this->selectedSession();
+        $eventSchema = $course->isOnsite() ? ['@context' => 'https://schema.org', '@graph' => app(\App\Services\Pages\EventsCatalog::class)->eventSchema($course, $this->dates)] : null;
+
+        // "También en un paquete": the best-saving published bundle that contains this (online) course, unless the student already owns it.
+        $courseBundle = null;
+        if (!$course->isOnsite() && !$this->viewCourse) {
+            $service = app(\Modules\Courses\Services\BundleService::class);
+            $courseBundle = \Modules\Courses\Models\Bundle::active()->whereHas('courses', fn ($q) => $q->where($q->getModel()->getTable() . '.id', $course->id))
+                ->with('courses.pricing')->get()->filter(fn ($b) => $service->isSellable($b))->sortByDesc(fn ($b) => $service->savingsPercent($b))->first();
+            if ($courseBundle) {
+                $courseBundle->percent = $service->savingsPercent($courseBundle);
+            }
+        }
+
+        return view('courses::livewire.course.course-detail', compact('course', 'totalArticles', 'totalVideos', 'courseInCart', 'selectedSession', 'eventSchema', 'courseBundle'))->extends('layouts.frontend-app', ['pageTitle' => $course->title, 'pageDescription' => $course->description, 'metaImage' => $this->course->thumbnail?->path ? mediaUrl($this->course->thumbnail?->path) : asset('module/courses/images/logo.svg'), 'og_tags' => $og_tags]);
     }
 
     public function toggleDescription()
@@ -194,9 +257,9 @@ class CourseDetails extends Component
     {
         $courseSessionKey = 'course_viewed_' . $course->id;
 
-        if (!request()->session()->has($courseSessionKey)) {
+        if (!session()->has($courseSessionKey)) {
             $course->increment('views_count');
-            request()->session()->put($courseSessionKey, true, 1440);
+            session()->put($courseSessionKey, true);
         }
     }
 
@@ -242,22 +305,47 @@ class CourseDetails extends Component
 
     public function addToCart()
     {
+        if ($this->putCourseInCart()) {
+            $this->dispatch('cart-updated', cart_data: Cart::content(), discount: formatAmount(Cart::discount(), true), total: formatAmount(Cart::total(), true), subTotal: formatAmount(Cart::subtotal(), true), toggle_cart: 'open');
+        }
+    }
+
+    /** One click: put the course in the cart and go straight to the one-page checkout. */
+    public function buyNow()
+    {
+        if (!auth()->check()) {
+            // Come back to this course after signing in; the visitor then presses "Comprar ahora" again.
+            session(['url.intended' => route('courses.course-detail', ['slug' => $this->course->slug])]);
+
+            return redirect()->route('login');
+        }
+
+        if ($this->putCourseInCart()) {
+            return redirect()->route('checkout');
+        }
+    }
+
+    /** Adds the course to the server-side cart (once). Returns false after telling the user why it could not. */
+    protected function putCourseInCart(): bool
+    {
         if (!auth()?->check()) {
-            $this->dispatch(
-                'showAlertMessage',
-                type: 'error',
-                message: __('courses::courses.login_required')
-            );
-            return;
+            $this->dispatch('showAlertMessage', type: 'error', message: __('courses::courses.login_required'));
+            return false;
         }
 
         if (!auth()?->user()?->hasRole('student')) {
-            $this->dispatch(
-                'showAlertMessage',
-                type: 'error',
-                message: __('courses::courses.only_student_can_add_to_cart')
-            );
-            return;
+            $this->dispatch('showAlertMessage', type: 'error', message: __('courses::courses.only_student_can_add_to_cart'));
+            return false;
+        }
+
+        $session = null;
+        if ($this->course->isOnsite()) {
+            $session = $this->selectedSession();
+            if (!$session) {
+                $this->dispatch('showAlertMessage', type: 'error', message: $this->dates->isEmpty() ? 'Este curso aún no tiene fechas disponibles.' : 'Elige primero la fecha a la que quieres asistir.');
+
+                return false;
+            }
         }
 
         $data = [
@@ -269,6 +357,11 @@ class CourseDetails extends Component
             'slug' => $this->course->slug,
             'image' => $this->course->thumbnail?->path,
         ];
+        if ($session) {
+            // One date per course in the cart: choosing another date replaces the previous one.
+            $data += ['session_id' => $session->id, 'session_label' => $session->whenLabel() . ' · ' . $session->city];
+            Cart::remove($data['id'], Course::class);
+        }
         Cart::add(
             cartableId: $data['id'],
             cartableType: Course::class,
@@ -277,7 +370,8 @@ class CourseDetails extends Component
             price: $this->course?->pricing?->final_price ?? 0,
             options: $data
         );
-        $this->dispatch('cart-updated', cart_data: Cart::content(), discount: formatAmount(Cart::discount(), true), total: formatAmount(Cart::total(), true), subTotal: formatAmount(Cart::subtotal(), true), toggle_cart: 'open');
+
+        return true;
     }
 
 

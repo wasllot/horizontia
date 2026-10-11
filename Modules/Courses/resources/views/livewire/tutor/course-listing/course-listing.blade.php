@@ -197,15 +197,15 @@
                                     <td data-label="{{ __('courses::courses.course_title') }}">
                                         <div class="cr-image-and-text">
                                             <figure>
-                                                @if (!empty($course->thumbnail?->path) && Storage::disk(getStorageDisk())->exists($course->thumbnail->path))
-                                                    <img src="{{ url(Storage::url($course->thumbnail->path)) }}" alt="{{ $course->title }}">
+                                                @if (!empty($course->thumbnail?->path) && mediaExists($course->thumbnail->path))
+                                                    <img loading="lazy" decoding="async" src="{{ mediaThumb($course->thumbnail->path, 160) }}" alt="{{ $course->title }}">
                                                 @else
                                                     <img src="{{ asset('modules/courses/images/course.png') }}" alt="{{ $course->title }}">
                                                 @endif
                                             </figure>
                                             <span>
                                                 {{ html_entity_decode($course->title) }}
-                                                @if (empty($course->thumbnail?->path) || !Storage::disk(getStorageDisk())->exists($course->thumbnail->path ?? ''))
+                                                @if (empty($course->thumbnail?->path) || !mediaExists($course->thumbnail->path ?? ''))
                                                     <span title="Este curso no tiene imagen de portada. Sube una en Editar curso → Media." style="display:inline-block;margin-left:6px;background:#fed304;color:#14213d;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;vertical-align:middle;cursor:help;">SIN IMAGEN</span>
                                                 @endif
                                             </span>
@@ -218,10 +218,10 @@
                                             @if(!empty($course->enrollments) && $course->enrollments->isNotEmpty())
                                                 <div class="cr-avatar-group">
                                                     @foreach ($course->enrollments->take(5) as $enrollment)
-                                                        @if (!empty($enrollment->student?->image) && Storage::disk(getStorageDisk())->exists($enrollment->student?->image))
+                                                        @if (!empty($enrollment->student?->image) && mediaExists($enrollment->student?->image))
                                                             <img class="cr-avatar" src="{{ resizedImage($enrollment->student?->image, 26, 26) }}" alt="{{$enrollment->student?->image}}" />
                                                         @else
-                                                            <img class="cr-avatar" src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 50, 50) }}" alt="{{ $enrollment->student?->image }}" />
+                                                            <img class="cr-avatar" src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 50, 50) }}" alt="{{ $enrollment->student?->image }}" />
                                                         @endif
                                                     @endforeach
                                                 </div>
@@ -266,6 +266,12 @@
                                                         <a href="{{ route('courses.course-taking', ['slug' => $course->slug]) }}" target="_blank">
                                                             <i class="am-icon-book-1"></i>
                                                             {{ __('courses::courses.course_page') }}
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="{{ $course->enrolleesUrl() }}" data-testid="enrollees-link">
+                                                            <i class="am-icon-user-05"></i>
+                                                            Inscritos
                                                         </a>
                                                     </li>
                                                     <li>
@@ -429,7 +435,7 @@
 
         function initPriceRange() {
             slider = document.getElementById('sliderrange');
-            if (slider) {
+            if (slider && !slider.noUiSlider) {
                 noUiSlider.create(slider, {
                     start: [0, 1000],
                     connect: true,

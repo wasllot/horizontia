@@ -1,7 +1,7 @@
 <div class="am-banner-seven">
     <div class="am-banner-potential am-banner-content-seven">
         @if(!empty(pagesetting('bg_img')))
-            <img class="am-banner-img" src="{{url(Storage::url(pagesetting('bg_img')[0]['path']))}}" alt="Banner image"> 
+            <img class="am-banner-img" src="{{url(mediaUrl(pagesetting('bg_img')[0]['path']))}}" alt="Banner image"> 
         @endif
         <div class="container">
             <div class="row">
@@ -45,7 +45,7 @@
                                     @foreach(pagesetting('banner_repeater') as $option)
                                         @if(!empty($option['banner_image']))
                                             @if(!empty($option['banner_image'][0]['path']))
-                                                <li><figure><img src="{{url(Storage::url($option['banner_image'][0]['path']))}}" alt="Company logo"></figure></li>
+                                                <li><figure><img src="{{url(mediaUrl($option['banner_image'][0]['path']))}}" alt="Company logo"></figure></li>
                                             @endif
                                         @endif
                                     @endforeach

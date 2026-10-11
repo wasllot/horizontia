@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\SettingsController;
 use Larabuild\Optionbuilder\Http\Controllers\OptionBuilderController;
 
 $routes = Route::controller(OptionBuilderController::class);
@@ -14,8 +15,9 @@ if (!empty(config('optionbuilder.route_middleware'))) {
 }
 
 $routes->group(function () {
-    Route::get('option-builder',  'index')->name('optionbuilder');
-    Route::post('option-builder/update-section-settings',  'updateSettings')->name('optionbuilder.update-section-settings');
-    Route::post('option-builder/reset-section-settings',    'resetSettings')->name('optionbuilder.reset-section-settings');
-    Route::post('option-builder/upload-files',              'uploadFiles')->name('optionbuilder.upload-files');
+    // Pantalla de ajustes propia de la academia (en español, solo lo necesario); el selector de archivos del tema se conserva.
+    Route::get('ajustes', [SettingsController::class, 'index'])->name('optionbuilder');
+    Route::post('ajustes/guardar', [SettingsController::class, 'update'])->name('optionbuilder.update-section-settings');
+    Route::post('ajustes/restablecer', [SettingsController::class, 'reset'])->name('optionbuilder.reset-section-settings');
+    Route::post('option-builder/upload-files', 'uploadFiles')->name('optionbuilder.upload-files');
 });

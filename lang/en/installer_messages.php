@@ -7,7 +7,7 @@ return [
      * Shared translations.
      *
      */
-    'title' => 'Lernen Installer',
+    'title' => 'Horizontia Installer',
     'next' => 'Next Step',
     'finish' => 'Install',
 
@@ -18,7 +18,7 @@ return [
      *
      */
     'welcome' => [
-        'title'   => 'Welcome to the Lernen Installer',
+        'title'   => 'Welcome to the Horizontia Installer',
         'message' => 'Welcome to the setup wizard.',
     ],
 
@@ -41,7 +41,7 @@ return [
      */
     'permissions' => [
         'title' => 'Permissions',
-        'message' => 'Please ensure that Lernen has the necessary permissions <br /> to access the following folders in order to continue.',
+        'message' => 'Please ensure that Horizontia has the necessary permissions <br /> to access the following folders in order to continue.',
     ],
 
     /**
@@ -52,7 +52,7 @@ return [
     'seeders' => [
         'title' => 'Migrate & Import Demo Content',
         'migrate_title' => 'Database Migration',
-        'migrate_desc' => 'Migrate the database schema and structure for Lernen.',
+        'migrate_desc' => 'Migrate the database schema and structure for Horizontia.',
         'general_title' => 'Site Settings Import',
         'general_desc' => 'Imports basic settings and configurations for your site.',
         'pages_title' => 'Pages & Layouts Import',

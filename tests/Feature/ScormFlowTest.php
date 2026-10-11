@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Modules\Courses\Http\Controllers\ScormController;
-use Modules\Courses\Livewire\Pages\Tutor\CourseCreation\Components\ManageCourseContent\Components\Curriculum as CurriculumComponent;
+use Modules\Courses\Livewire\Pages\Tutor\CourseCreation\Components\ManageCourseContent\CourseBuilder;
 use Modules\Courses\Models\Curriculum;
 use Modules\Courses\Models\ScormProgress;
 use Tests\Feature\Support\SeedsPlatformData;
@@ -126,10 +126,11 @@ class ScormFlowTest extends TestCase
         $upload = UploadedFile::fake()->createWithContent('qa-scorm-package.zip', $this->buildScormZip());
 
         Livewire::actingAs($tutor)
-            ->test(CurriculumComponent::class, ['section' => $section])
-            ->set('activeCurriculumItem', $curriculum->toArray())
-            ->set('scorm_file', $upload)
-            ->call('updateCurriculumContent')
+            ->test(CourseBuilder::class, ['id' => $curriculum->section->course_id])
+            ->call('selectLesson', $curriculum->id)
+            ->call('setGroup', 'scorm')
+            ->set('scormUpload', $upload)
+            ->call('saveLesson')
             ->assertHasNoErrors();
 
         $curriculum->refresh();
@@ -156,12 +157,12 @@ class ScormFlowTest extends TestCase
         $upload = UploadedFile::fake()->createWithContent('qa-invalid-package.zip', $this->buildScormZip(withManifest: false, withFallbackIndex: false));
 
         Livewire::actingAs($tutor)
-            ->test(CurriculumComponent::class, ['section' => $section])
-            ->set('activeCurriculumItem', $curriculum->toArray())
-            ->set('scorm_file', $upload)
-            ->call('updateCurriculumContent')
-            ->assertHasNoErrors() // file passed 'file|mimes:zip' validation fine
-            ->assertDispatched('showAlertMessage', type: 'error');
+            ->test(CourseBuilder::class, ['id' => $curriculum->section->course_id])
+            ->call('selectLesson', $curriculum->id)
+            ->call('setGroup', 'scorm')
+            ->set('scormUpload', $upload)
+            ->call('saveLesson')
+            ->assertHasErrors('content.scorm'); // a readable .zip without an entry point is rejected with a message
 
         $curriculum->refresh();
         $this->assertNull($curriculum->media_path, 'media_path must stay unset when no entry point could be resolved.');
@@ -178,10 +179,11 @@ class ScormFlowTest extends TestCase
         $upload = UploadedFile::fake()->createWithContent('qa-fallback-package.zip', $this->buildScormZip(withManifest: false, withFallbackIndex: true));
 
         Livewire::actingAs($tutor)
-            ->test(CurriculumComponent::class, ['section' => $section])
-            ->set('activeCurriculumItem', $curriculum->toArray())
-            ->set('scorm_file', $upload)
-            ->call('updateCurriculumContent')
+            ->test(CourseBuilder::class, ['id' => $curriculum->section->course_id])
+            ->call('selectLesson', $curriculum->id)
+            ->call('setGroup', 'scorm')
+            ->set('scormUpload', $upload)
+            ->call('saveLesson')
             ->assertHasNoErrors();
 
         $curriculum->refresh();
@@ -197,11 +199,12 @@ class ScormFlowTest extends TestCase
         $upload = UploadedFile::fake()->create('not-a-scorm.pdf', 10, 'application/pdf');
 
         Livewire::actingAs($tutor)
-            ->test(CurriculumComponent::class, ['section' => $section])
-            ->set('activeCurriculumItem', $curriculum->toArray())
-            ->set('scorm_file', $upload)
-            ->call('updateCurriculumContent')
-            ->assertHasErrors(['scorm_file']);
+            ->test(CourseBuilder::class, ['id' => $curriculum->section->course_id])
+            ->call('selectLesson', $curriculum->id)
+            ->call('setGroup', 'scorm')
+            ->set('scormUpload', $upload)
+            ->call('saveLesson')
+            ->assertHasErrors(['content.files.scorm']);
     }
 
     public function test_student_can_save_and_fetch_scorm_progress_via_api(): void

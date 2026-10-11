@@ -5,15 +5,15 @@
                 @if($singleTutor?->profile?->verified_at !== null)
                     <li class="splide__slide">
                         <div class="am-tutor-feature">
-                            @if(!empty($singleTutor?->profile?->intro_video) && Storage::disk(getStorageDisk())->exists($singleTutor?->profile?->intro_video))
-                                <video class="video-js" src="{{ url(Storage::url($singleTutor?->profile?->intro_video)) }}" controls></video>
+                            @if(!empty($singleTutor?->profile?->intro_video) && mediaExists($singleTutor?->profile?->intro_video))
+                                <video class="video-js" src="{{ url(mediaUrl($singleTutor?->profile?->intro_video)) }}" controls></video>
                             @endif 
                             <div class="am-tutorsearch_user">
                                 <figure class="am-tutorvone_img">
                                     @if($singleTutor?->profile?->image)
-                                        <img src="{{ url(Storage::url($singleTutor?->profile?->image)) }}" alt="profile image">
+                                        <img src="{{ url(mediaUrl($singleTutor?->profile?->image)) }}" alt="profile image">
                                     @else
-                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="profile image" />
+                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="profile image" />
                                     @endif
                                     <span class="am-userstaus am-userstaus_online"></span>
                                 </figure>

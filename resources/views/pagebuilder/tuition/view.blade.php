@@ -30,7 +30,7 @@
                             @endif
                             @if(!empty(pagesetting('become_student_image')[0]['path']))
                                 <figure class="am-tuition_content_image" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="800">
-                                    <img src="{{url(Storage::url(pagesetting('become_student_image')[0]['path']))}}" alt="Learning community image">
+                                    <img src="{{url(mediaUrl(pagesetting('become_student_image')[0]['path']))}}" alt="Learning community image">
                                 </figure>
                             @endif
                             <img class="am-postion-img" src="{{ asset('demo-content/home-v2/community-element1.png') }}" alt="">
@@ -55,7 +55,7 @@
                             @endif
                             @if(!empty(pagesetting('become_tutor_image')[0]['path']))
                                 <figure class="am-tuition_content_image" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="2000">
-                                    <img src="{{url(Storage::url(pagesetting('become_tutor_image')[0]['path']))}}" alt="Join as a tutor image">
+                                    <img src="{{url(mediaUrl(pagesetting('become_tutor_image')[0]['path']))}}" alt="Join as a tutor image">
                                 </figure>
                             @endif
                             <img class="am-postion-img2" src="{{ asset('demo-content/home-v2/community-element2.png') }}" alt="">

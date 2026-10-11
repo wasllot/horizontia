@@ -108,7 +108,7 @@ class SiteController extends Controller
                     $orderDetail   = $orderServices->getOrderDetail($paymentData['data']['order_id']);
                     $status = $orderServices->updateOrder($orderDetail ,['status'=>'complete','transaction_id'=>$paymentData['data']['transaction_id']]);
                     if($status){
-                        dispatch(new CompletePurchaseJob($orderDetail));
+                        dispatch_sync(new CompletePurchaseJob($orderDetail));
                         $request->session()->forget('payment_data');
                         Cart::clear();
                         session()->forget('order_id');
@@ -158,7 +158,7 @@ class SiteController extends Controller
 
     public function logout(Logout $logout){
         $logout();
-        return redirect('/login');
+        return redirect()->route('login');
     }
 
     public function preparePayment($id){
@@ -171,9 +171,9 @@ class SiteController extends Controller
         }
         $ipnUrl = PaymentDriver::getIpnUrl($orderDetail->payment_method);
         session(['payment_data' =>  [
-            'amount'        => $orderDetail->amount - $orderDetail->used_wallet_balance,
-            'title'         => 'Lernen Purchase',
-            'description'   => 'Lernen Purchase Order Confirmation for reference #'.$orderDetail->id,
+            'amount'        => $orderDetail->amount - $orderDetail->used_wallet_amt,
+            'title'         => config('app.name') . ' - Compra',
+            'description'   => 'Confirmación de compra, referencia #'.$orderDetail->id,
             'ipn_url'       => !empty($ipnUrl) ? route($ipnUrl, ['payment_method' => $orderDetail->payment_method,'upi' => $orderDetail->unique_payment_id, 'source' => request()->get('source') ?? 'web']) : url('/'),
             'order_id'      => $orderDetail->id,
             'track'         => $orderDetail->unique_payment_id,

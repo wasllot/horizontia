@@ -2,11 +2,12 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @if( !empty(setting('_general.enable_rtl')) || !empty(session()->get('rtl')) ) dir="rtl" @endif>
 
 <head>
+    <x-gtm-head />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
-    <x-meta-content :pageTitle="$pageTitle ?? null" :page="$page ?? null" :pageDescription="$pageDescription ?? null" :pageKeywords="$pageKeywords ?? null" :metaImage="$metaImage ?? null"/>
+    <x-meta-content :pageTitle="$pageTitle ?? null" :page="$page ?? null" :pageDescription="$pageDescription ?? null" :pageKeywords="$pageKeywords ?? null" :metaImage="$metaImage ?? null" :type="$ogType ?? 'website'"/>
     
     @vite([
             'public/css/bootstrap.min.css',
@@ -34,6 +35,10 @@
         <link rel="stylesheet" type="text/css" href="{{ asset('css/colors-variation/home-nine.css') }}">
     @endif
     <x-favicon />
+    <x-pwa />
+    <x-typography />
+    <x-frontend-ux />
+    <x-pwa-scripts />
     @if( !empty(setting('_general.enable_rtl')) || !empty(session()->get('rtl')) )
         <link rel="stylesheet" type="text/css" href="{{ asset('css/rtl.css') }}">
     @endif
@@ -43,6 +48,7 @@
     @endif
 
     @stack('styles')
+    <x-ui-styles />
 
     @if( !empty(setting('_scripts_styles.custom_styles')) )
         <style>{!! setting('_scripts_styles.custom_styles') !!}</style>
@@ -51,12 +57,18 @@
 </head>
 
 <body class="am-bodywrap @if( !empty(setting('_general.enable_rtl')) || !empty(session()->get('rtl')) ) am-rtl @endif">
+    <x-gtm-body />
+    <a class="ht-skip" href="#main-content">Saltar al contenido</a>
     <x-front.header :page="$page?? null"/>
-    <main class="am-main">
+    <main class="am-main" id="main-content" tabindex="-1">
+        @isset($htCourse)
+            <x-front.course-subnav :course="$htCourse" :links="$htCourseLinks" />
+        @endisset
         @yield('content')
         {{ $slot ?? '' }}
     </main>
     <x-popups />
+        <x-front.cookie-banner />
     <x-front.footer :page="$page?? null" />
     @if(session('impersonated_name'))
         <div class="am-impersonation-bar">
@@ -115,6 +127,7 @@
             {!! setting('_scripts_styles.footer_scripts') !!}
         @endif
    
+    <x-whatsapp-button />
 </body>
 
 </html>

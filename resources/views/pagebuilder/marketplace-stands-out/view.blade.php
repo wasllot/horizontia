@@ -41,7 +41,7 @@
                                         @if(!empty(pagesetting('section1_video')))
                                             <div class="am-card am-card-video" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="800">
                                                 <video class="video-js" data-setup='{}' preload="auto" id="vision-video" width="940" height="737" controls >
-                                                    <source src="{{ url(Storage::url(pagesetting('section1_video')[0]['path'])) }}#t=0.1" type="video/mp4" >
+                                                    <source src="{{ url(mediaUrl(pagesetting('section1_video')[0]['path'])) }}#t=0.1" type="video/mp4" >
                                                 </video>
                                                 <div class="am-card_status"><span>Online</span></div>
                                             </div>
@@ -51,7 +51,7 @@
                                 @if(!empty(pagesetting('section2_heading')) || !empty(pagesetting('section2_paragraph')) || !empty(pagesetting('section2_image')))
                                     <div class="am-column am-tall-card">
                                         <figure class="am-card am-card-image-container" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="400">
-                                            @if(!empty(pagesetting('section2_image')))<img src="{{url(Storage::url(pagesetting('section2_image')[0]['path']))}}" alt="Seamless learning image" /> @endif
+                                            @if(!empty(pagesetting('section2_image')))<img src="{{url(mediaUrl(pagesetting('section2_image')[0]['path']))}}" alt="Seamless learning image" /> @endif
                                             @if(!empty(pagesetting('section2_heading')) || !empty(pagesetting('section2_paragraph')))
                                                 <figcaption>
                                                     @if(!empty(pagesetting('section2_heading')))<h2>{!! pagesetting('section2_heading') !!}</h2>@endif
@@ -65,7 +65,7 @@
                                     <div class="am-column">
                                         @if(!empty(pagesetting('section3_image')))
                                             <div class="am-card am-card-image" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="600">
-                                                <img class="card-image-thumbnail" src="{{url(Storage::url(pagesetting('section3_image')[0]['path']))}}" alt="Marketplace image" /> 
+                                                <img class="card-image-thumbnail" src="{{url(mediaUrl(pagesetting('section3_image')[0]['path']))}}" alt="Marketplace image" /> 
                                             </div>
                                         @endif
                                         @if(!empty(pagesetting('section3_heading')) || !empty(pagesetting('section3_paragraph')))

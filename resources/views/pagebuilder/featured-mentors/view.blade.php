@@ -29,12 +29,12 @@
     </div>
     @if(!empty(pagesetting('left_shape_image')))
         @if(!empty(pagesetting('left_shape_image')[0]['path']))
-            <img src="{{url(Storage::url(pagesetting('left_shape_image')[0]['path']))}}" class="am-bgimg1" alt="Background shape image">
+            <img src="{{url(mediaUrl(pagesetting('left_shape_image')[0]['path']))}}" class="am-bgimg1" alt="Background shape image">
         @endif
     @endif
     @if(!empty(pagesetting('right_shape_image')))
         @if(!empty(pagesetting('right_shape_image')[0]['path']))
-            <img src="{{url(Storage::url(pagesetting('right_shape_image')[0]['path']))}}" class="am-bgimg2" alt="Background shape image">
+            <img src="{{url(mediaUrl(pagesetting('right_shape_image')[0]['path']))}}" class="am-bgimg2" alt="Background shape image">
         @endif
     @endif
 </div>

@@ -7,8 +7,11 @@ use Modules\Courses\Services\CurriculumService;
 use Modules\Assignments\Services\AssignemntsService;
 use Modules\Quiz\Services\QuizService;
 use Illuminate\Support\Facades\Auth;
+use App\Services\CourseCertificateService;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
+use Modules\Courses\Services\CourseAccessService;
 use App\Jobs\SendNotificationJob;
 use App\Jobs\SendDbNotificationJob;
 use Illuminate\Support\Str;
@@ -16,6 +19,9 @@ use Modules\Assignments\Models\Assignment;
 use Modules\Quiz\Models\Quiz;
 use App\Models\User;
 use Livewire\Component;
+use Modules\Courses\Models\Curriculum as CurriculumModel;
+use Modules\Courses\Services\LiveSessionService;
+use Modules\Courses\Services\Lessons\QuizService as LessonQuizService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Livewire\Attributes\On;
@@ -28,6 +34,7 @@ class CourseTaking extends Component
     use WithFileUploads;
 
     public $logo;
+    #[Locked]
     public $activeCurriculum;
     public $instructorCoursesCount;
     public $slug;
@@ -35,6 +42,7 @@ class CourseTaking extends Component
     public $description;
     public $isLoading = true;
     public $progress;
+    public ?string $certificateUrl = null;
     public $studentRating;
     public $role;
     public $backRoute = null;
@@ -56,6 +64,10 @@ class CourseTaking extends Component
     #[Url]
     public $redirect = 'courses-list';
 
+    /** ?leccion=ID opens that lesson; without it a student resumes at the first lesson they have not completed. */
+    #[Url(as: 'leccion')]
+    public $startLesson = null;
+
     public function mount()
     {
         $this->slug = request()->route('slug');
@@ -64,7 +76,7 @@ class CourseTaking extends Component
         // the base theme's stock demo logo (never replaced with a real branded
         // asset), so it's not trustworthy here. Use the same real, dark-background-
         // ready Horizontia asset login.blade.php already relies on instead.
-        $this->logo = asset('images/nuevo/Logo-Horizontia-footer.png');
+        $this->logo = webpAsset('images/nuevo/Logo-Horizontia-footer.png');
 
         if (!$this->course) {
             abort(404);
@@ -74,13 +86,7 @@ class CourseTaking extends Component
             return $this->redirect(route('courses.course-detail', ['slug' => $this->course->slug]));
         }
 
-        $courseAddedToStudent = (new CourseService())->getStudentCourse(
-            courseId: $this->course->id,
-            studentId: Auth::id(),
-            tutorId: $this->course->instructor_id
-        );
-
-        if ($this->role == 'student' && !$courseAddedToStudent) {
+        if ($this->role == 'student' && !app(CourseAccessService::class)->canAccessCourse(Auth::user(), $this->course)) {
             return $this->redirect(route('courses.search-courses'));
         }
 
@@ -88,10 +94,18 @@ class CourseTaking extends Component
             $progress = floor(($this->course->course_watchtime_sum_duration / $this->course->content_length) * 100);
             $this->progress = $progress >= 99 ? 100 : $progress;
         }
+        $this->syncCertificate();
 
         $firstCurriculum = $this->course?->sections?->first()?->curriculums?->first();
+        // Resume point: an explicit lesson of this course, else (students) the first one not completed yet.
+        $allLessons = $this->course?->sections?->flatMap(fn ($section) => $section->curriculums) ?? collect();
+        if (!empty($this->startLesson) && ($wanted = $allLessons->firstWhere('id', (int) $this->startLesson))) {
+            $firstCurriculum = $wanted;
+        } elseif ($this->role == 'student' && ($resume = app(\Modules\Courses\Services\ResumeService::class)->resume(Auth::user(), $this->course))) {
+            $firstCurriculum = $allLessons->firstWhere('id', $resume['lesson']->id) ?? $firstCurriculum;
+        }
         if ($firstCurriculum) {
-            $this->activeCurriculum = $firstCurriculum->toArray();
+            $this->activeCurriculum = $this->activeFrom($firstCurriculum);
             $this->setActiveCurriculmPath();
         }
 
@@ -156,8 +170,8 @@ class CourseTaking extends Component
                 },
                 'sections' => function ($query) {
                     $query->withWhereHas('curriculums', function ($subQuery) {
-                        $subQuery->whereNotNull('media_path')->orWhereNotNull('article_content');
-                        $subQuery->with('watchtime');
+                        $subQuery->withContent();
+                        $subQuery->with(['watchtime', 'liveStream']);
                         $subQuery->orderBy('sort_order', 'asc');
                     });
                 },
@@ -214,7 +228,12 @@ class CourseTaking extends Component
         $totalVideos = $this->totalVideos;
         $this->instructorCoursesCount       = (new CourseService())->getInstructorCoursesCount($this->course->instructor_id);
 
-        return view('courses::livewire.student.course-taking.course-taking', ['course' => $this->course, 'totalArticles' => $this->totalArticles, 'totalVideos' => $totalVideos])->extends('courses::layouts.app');
+        // The date of an in-person course that this student bought (staff see no personal date).
+        $myDate = $this->course->isOnsite() && $this->role == 'student'
+            ? \Modules\Courses\Models\Enrollment::where('student_id', Auth::id())->where('course_id', $this->course->id)->with('session')->first()?->session
+            : null;
+
+        return view('courses::livewire.student.course-taking.course-taking', ['course' => $this->course, 'totalArticles' => $this->totalArticles, 'totalVideos' => $totalVideos, 'myDate' => $myDate])->extends('courses::layouts.app', ['title' => html_entity_decode((string) $this->course->title)]);
     }
 
     public function loadData()
@@ -222,20 +241,33 @@ class CourseTaking extends Component
         $this->isLoading = false;
     }
 
+    /**
+     * The browser only tells us WHICH lesson to open; the lesson itself is always loaded
+     * from this course so a tampered payload can't expose files of other courses.
+     */
     public function setActiveCurriculum($curriculum)
     {
-        $this->activeCurriculum = $curriculum;
-        $this->setActiveCurriculmPath();
+        $id = is_array($curriculum) ? ($curriculum['id'] ?? 0) : $curriculum;
+        $this->openCurriculum((int) $id);
     }
 
     public function nextCurriculum($id)
     {
-        $nextCurriculum = (new CourseService())->getCurriculumById($id);
+        $this->openCurriculum((int) $id);
+    }
 
-        if ($nextCurriculum) {
-            $this->activeCurriculum = $nextCurriculum->toArray();
-            $this->setActiveCurriculmPath();
+    private function openCurriculum(int $id): void
+    {
+        $curriculum = $this->course->sections
+            ->flatMap(fn ($section) => $section->curriculums)
+            ->firstWhere('id', $id);
+
+        if (!$curriculum) {
+            return;
         }
+
+        $this->activeCurriculum = $this->activeFrom($curriculum);
+        $this->setActiveCurriculmPath();
     }
 
     public function markAsCompleted()
@@ -254,6 +286,7 @@ class CourseTaking extends Component
         } else {
             (new CurriculumService())->addWatchtime((int) $this->course?->id, (int) $curriculumId, (int) $sectionId, (int) $totalDuration);
         }
+        app(\Modules\Courses\Services\LiveRecordingService::class)->creditLiveLesson(Auth::user(), $curriculumId);   // terminar la grabación cumple la sesión en vivo
 
         $courseDuration = (new CourseService())->getCourse(
             courseId: $this->course->id,
@@ -268,6 +301,7 @@ class CourseTaking extends Component
 
         $this->activeCurriculum['watchtime']['duration'] = $totalDuration;
 
+        $this->syncCertificate();
         $this->dispatch('updated-progress', progress: $this->progress);
     }
 
@@ -305,6 +339,9 @@ class CourseTaking extends Component
 
             (new CurriculumService())->addWatchtime((int) $this->course?->id, (int) $curriculumId, (int) $sectionId, (int) $updateDuration);
         }
+        if ($isCompleted) {
+            app(\Modules\Courses\Services\LiveRecordingService::class)->creditLiveLesson(Auth::user(), $curriculumId);   // terminar la grabación cumple la sesión en vivo
+        }
         // Refresh course data to get updated watchtime values
         $courseDuration = (new CourseService())->getCourse(
             courseId: $this->course->id,
@@ -317,6 +354,7 @@ class CourseTaking extends Component
             $this->progress = floor(($courseDuration->course_watchtime_sum_duration / $this->course->content_length) * 100);
         }
 
+        $this->syncCertificate();
         if ($this->progress >= 100) {
 
             if (isActiveModule('upcertify')  && !empty($this->course?->certificate_id)) {
@@ -419,6 +457,19 @@ class CourseTaking extends Component
         return $isAssigned;
     }
 
+    /** Al completar el curso se emite el certificado verificable (una sola vez) y se avisa a la pantalla. */
+    protected function syncCertificate(): void
+    {
+        if ($this->role !== 'student' || (float) $this->progress < 99 || !CourseCertificateService::enabled()) {
+            return;
+        }
+        $cert = app(CourseCertificateService::class)->issueIfComplete(Auth::user(), $this->course);
+        if ($cert && $this->certificateUrl !== $cert->url()) {
+            $this->certificateUrl = $cert->url();
+            $this->dispatch('certificate-ready', url: $this->certificateUrl);
+        }
+    }
+
     public function generateCertificate()
     {
 
@@ -491,7 +542,7 @@ class CourseTaking extends Component
 
         $filePath = null;
         if ($this->assignment_file) {
-            $filePath = $this->assignment_file->store('assignments', getStorageDisk());
+            $filePath = $this->assignment_file->store('assignments', getPrivateDisk());
         }
 
         AssignmentSubmission::updateOrCreate(
@@ -512,43 +563,135 @@ class CourseTaking extends Component
         $this->dispatch('showAlertMessage', type: 'success', title: 'Éxito', message: 'Tarea enviada correctamente');
     }
 
-    public function submitQuiz(array $answers, int $score)
+    /**
+     * The lesson as the browser may see it. `activeCurriculum` is a public Livewire property (it travels in the page and in
+     * every request), so quiz answers never go in it, and a live lesson only carries what the current phase allows.
+     */
+    private function activeFrom(CurriculumModel $curriculum): array
+    {
+        $data = $curriculum->toArray();
+        unset($data['live_stream']);   // the raw session (with the meeting link) must never travel; see livePayload()
+        if ($curriculum->type === 'assignment') {
+            $quizzes = new LessonQuizService();
+            $data['article_content'] = json_encode($quizzes->forStudent($quizzes->load($curriculum->article_content)), JSON_UNESCAPED_UNICODE);
+        }
+        if ($curriculum->type === 'live') {
+            $data['live'] = $this->livePayload($curriculum);
+        }
+
+        return $data;
+    }
+
+    private function livePayload(CurriculumModel $curriculum): ?array
+    {
+        $stream = $curriculum->liveStream;
+        if (!$stream) {
+            return null;
+        }
+        $phase = LiveSessionService::phase($stream);
+
+        return [
+            'id' => $stream->id,
+            'title' => $stream->title,
+            'description' => $stream->description,
+            'starts_at' => $stream->date_time->toIso8601String(),
+            'ends_at' => $stream->date_time->copy()->addMinutes($stream->duration_minutes ?: 60)->toIso8601String(),
+            'join_from' => $stream->date_time->copy()->subMinutes(LiveSessionService::JOIN_WINDOW_MINUTES)->toIso8601String(),
+            'duration_minutes' => $stream->duration_minutes,
+            'phase' => $phase,
+            'provider' => $stream->provider,
+            // The meeting link is only handed out when the join window is open.
+            'join_url' => in_array($phase, ['soon', 'live'], true) ? $stream->meeting_link : null,
+            'recording_url' => $phase === 'ended' ? $stream->recording_url : null,
+            'ics_url' => route('courses.live.ics', ['stream' => $stream->id]),
+        ];
+    }
+
+    /** Called by the player when the countdown reaches the join window (or the end) to fetch the up-to-date state. */
+    public function refreshLive(): void
+    {
+        $lesson = $this->currentLesson();
+        if ($lesson && $lesson->type === 'live') {
+            $lesson->unsetRelation('liveStream');
+            $this->activeCurriculum['live'] = $this->livePayload($lesson);
+        }
+    }
+
+    /** The student pressed "Unirme": the lesson counts as attended. */
+    public function markAttended(): void
+    {
+        $lesson = $this->currentLesson();
+        if ($lesson && $lesson->type === 'live') {
+            $this->markAsCompleted();
+        }
+    }
+
+    private function currentLesson(): ?CurriculumModel
+    {
+        return $this->course->sections->flatMap(fn ($section) => $section->curriculums)->firstWhere('id', $this->activeCurriculum['id'] ?? 0);
+    }
+
+    /**
+     * Grades the answers on the server (the browser only ever receives the questions) and, with the right quiz settings,
+     * returns the review. Returns the result so the player can show it without another round trip.
+     *
+     * @param array<int|string, int|array<int>> $answers keyed by question id
+     */
+    public function submitQuiz(array $answers = []): array
     {
         if (isDemoSite()) {
             $this->dispatch('showAlertMessage', type: 'error', title: __('general.demosite_res_title'), message: __('general.demosite_res_txt'));
-            return;
+            return ['error' => 'demo'];
         }
 
-        AssignmentSubmission::updateOrCreate(
-            ['curriculum_id' => $this->activeCurriculum['id'], 'user_id' => auth()->id()],
-            [
-                'student_comment' => json_encode($answers),
-                'score'           => $score,
-                'status'          => 'graded',
-            ]
-        );
+        $curriculum = $this->currentLesson();
+        if (!$curriculum || $curriculum->type !== 'assignment' || $this->role !== 'student') {
+            return ['error' => 'invalid'];
+        }
 
-        $this->dispatch('showAlertMessage', type: 'success', title: 'Test enviado', message: "Puntaje: {$score}%");
-    }
+        $quizzes = new LessonQuizService();
+        $quiz = $quizzes->load($curriculum->article_content);
+        $submission = AssignmentSubmission::firstOrNew(['curriculum_id' => $curriculum->id, 'user_id' => auth()->id()]);
+        $used = (int) $submission->attempts;
+        if ($quiz['max_attempts'] > 0 && $used >= $quiz['max_attempts']) {
+            return ['error' => 'attempts', 'attempts' => $used, 'max_attempts' => $quiz['max_attempts']];
+        }
 
-    private function getCourseSingedUrl($path) {
-        $finalPath = Str::replace(['courses/', 'curriculum_videos/'], '', $path);
-        return URL::signedRoute('courses.secure.video', [
-            'path' => $finalPath, 
-            'type' => base64_encode(Str::contains($path, 'curriculum_videos') ? 'curriculum_videos' : 'courses')
+        $graded = $quizzes->grade($quiz, $answers);
+        $submission->fill([
+            'student_comment' => json_encode($answers),
+            'score' => $graded['score'],
+            'status' => 'graded',
+            'attempts' => $used + 1,
         ]);
+        if ($graded['passed'] && !$submission->passed_at) {
+            $submission->passed_at = now();
+        }
+        $submission->save();
+
+        if ($graded['passed']) {
+            $this->markAsCompleted();   // passing the test completes the lesson (and moves the course progress)
+        }
+
+        $results = [];
+        foreach ($graded['results'] as $id => $r) {
+            $results[$id] = $quiz['show_answers']
+                ? ['correct' => $r['correct'], 'correct_answer' => $r['correct_answer'], 'explanation' => $r['explanation']]
+                : ['correct' => $r['correct']];
+        }
+
+        return [
+            'score' => $graded['score'], 'passed' => $graded['passed'], 'correct' => $graded['correct'], 'total' => $graded['total'],
+            'attempts' => $used + 1, 'max_attempts' => $quiz['max_attempts'], 'pass_score' => $quiz['pass_score'], 'results' => $results,
+        ];
     }
 
     private function setActiveCurriculmPath()
     {
         if(!empty($this->activeCurriculum['media_path'])) {
             if (isset($this->activeCurriculum['type']) && $this->activeCurriculum['type'] === 'video') {
-                if(getStorageDisk() !== 's3') {
-                    // $this->activeCurriculum['media_path'] = $this->getCourseSingedUrl($this->activeCurriculum['media_path'], $this->activeCurriculum['content_length']);
-                    $this->activeCurriculum['media_path'] = Storage::url($this->activeCurriculum['media_path']);
-                }else {
-                    $this->activeCurriculum['media_path'] = Storage::url($this->activeCurriculum['media_path']);
-                }
+                // Short-lived signed/presigned URL; only reached by users who passed the enrollment check in mount().
+                $this->activeCurriculum['media_path'] = lessonMediaUrl($this->activeCurriculum['media_path']);
             }
         } else{
             $this->activeCurriculum['media_path'] = null;

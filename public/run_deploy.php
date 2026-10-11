@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . "/_guard.php";
 
 /**
  * Script de despliegue para correr comandos Artisan desde el navegador.

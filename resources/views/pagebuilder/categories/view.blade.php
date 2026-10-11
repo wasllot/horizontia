@@ -33,7 +33,7 @@
                                             @if(!empty($option['category_image']))
                                                 <div class="am-icon am-web-dev">
                                                     @if(!empty($option['category_image'][0]['path']))
-                                                        <img src="{{url(Storage::url($option['category_image'][0]['path']))}}" alt="Category image">
+                                                        <img src="{{url(mediaUrl($option['category_image'][0]['path']))}}" alt="Category image">
                                                     @endif
                                                 </div>
                                             @endif
@@ -42,7 +42,7 @@
                                             @if(!empty($option['category_image']))
                                                 <div class="am-sunburst-icon" style="margin-right: 15px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
                                                     @if(!empty($option['category_image'][0]['path']))
-                                                        <img src="{{url(Storage::url($option['category_image'][0]['path']))}}" alt="Icon" style="max-width: 100%; max-height: 100%;">
+                                                        <img src="{{url(mediaUrl($option['category_image'][0]['path']))}}" alt="Icon" style="max-width: 100%; max-height: 100%;">
                                                     @endif
                                                 </div>
                                             @endif
@@ -54,7 +54,7 @@
                                                 <div class="am-icon am-web-dev">
                                                     @if(!empty($option['category_image'][0]['path']))
                                                         <a href="@if(!empty($option['explore_more_btn_url'])) {{ $option['explore_more_btn_url'] }} @endif">
-                                                            <img src="{{url(Storage::url($option['category_image'][0]['path']))}}" alt="Category image">
+                                                            <img src="{{url(mediaUrl($option['category_image'][0]['path']))}}" alt="Category image">
                                                         </a>
                                                     @endif
                                                 </div>

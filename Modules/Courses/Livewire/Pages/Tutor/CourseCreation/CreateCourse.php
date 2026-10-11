@@ -21,7 +21,12 @@ class CreateCourse extends Component
     {
         $this->tab = $tab;
         $this->id = $id;
+        if ($id) {
+            \Modules\Courses\Services\CourseAccess::course($id); // 403 for foreign courses, 404 when it does not exist
+        }
         $pricing = Pricing::whereCourseId($this->id)->first();
+        $delivery = $id ? (string) \Modules\Courses\Models\Course::whereKey($id)->value('delivery') : 'online';
+        $onsite = in_array($delivery, ['in_person', 'hybrid'], true);
         $tabList = [
             'details' => [
                 'title' => __('courses::courses.basic_details'),
@@ -35,6 +40,12 @@ class CreateCourse extends Component
                 'enable' => true,
                 'required' => true
             ],
+            'sessions' => [
+                'title' => 'Fechas y sede',
+                'icon' => 'am-icon-calender',
+                'enable' => $onsite,
+                'required' => true
+            ],
             'pricing' => [
                 'title' => __('courses::courses.pricing'),
                 'icon' => 'am-icon-dollar',
@@ -42,10 +53,10 @@ class CreateCourse extends Component
                 'required' => true
             ], 
             'content' => [
-                'title' => __('courses::courses.course_content'),
+                'title' => $onsite ? 'Material en línea (opcional)' : __('courses::courses.course_content'),
                 'icon' => 'am-icon-list-01',
                 'enable' => true,
-                'required' => true
+                'required' => !$onsite   // an event/ticket (in-person or hybrid) needs no online lessons
             ], 
             'faqs' => [
                 'title' => __('courses::courses.prerequisites_and_faqs'),

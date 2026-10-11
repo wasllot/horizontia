@@ -1,0 +1,25 @@
+/* Banner de páginas estáticas: sin imagen es la portada clara de siempre; con imagen, foto a todo el ancho con texto blanco. */
+.hz-banner { background: #f4f5f8; border-bottom: 1px solid #e3e6ee; padding: 56px 0 48px; }
+.hz-banner__in { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+.hz-banner h1 { margin: 0 0 10px; font-size: clamp(1.9rem, 4.6vw, 3rem); line-height: 1.15; color: #14213d; }
+.hz-banner p { margin: 0; max-width: 62ch; font-size: 1.12rem; color: #3c465c; }
+.hz-banner__crumbs { margin-top: 18px; font-size: .92rem; color: #5b6478; }
+.hz-banner__crumbs a { color: inherit; text-decoration: none; }
+.hz-banner__crumbs a:hover { text-decoration: underline; }
+.hz-banner__crumbs strong { color: #8a6d00; }
+
+.hz-banner--image { position: relative; display: flex; align-items: center; min-height: clamp(260px, 34vw, 400px); padding: 64px 0; border: 0;
+    background: #14213d var(--hz-banner-img) center / cover no-repeat; }
+.hz-banner--image::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(20, 33, 61, var(--hz-banner-overlay, .55)) 0%, rgba(20, 33, 61, calc(var(--hz-banner-overlay, .55) * .55)) 100%); }
+.hz-banner--image .hz-banner__in { position: relative; width: 100%; }
+.hz-banner--image h1, .hz-banner--image p, .hz-banner--image .hz-banner__crumbs, .hz-banner--image .hz-banner__crumbs strong { color: #fff; text-shadow: 0 1px 12px rgba(0, 0, 0, .35); }
+.hz-banner--image p { color: #eef1f8; }
+.hz-banner--center .hz-banner__in { text-align: center; }
+.hz-banner--center p { margin-left: auto; margin-right: auto; }
+
+/* Entrada del banner: texto escalonado y foto que se asienta */
+.hz-banner__in > * { opacity: 0; transform: translateY(18px); animation: hz-banner-in .75s cubic-bezier(.2, .8, .2, 1) forwards; }
+.hz-banner__in > :nth-child(1) { animation-delay: .05s; } .hz-banner__in > :nth-child(2) { animation-delay: .17s; } .hz-banner__in > :nth-child(3) { animation-delay: .29s; }
+@keyframes hz-banner-in { to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .hz-banner__in > * { animation: none !important; opacity: 1 !important; transform: none !important; } }
+.hz-pb__preview .hz-banner__in > * { animation: none; opacity: 1; transform: none; }

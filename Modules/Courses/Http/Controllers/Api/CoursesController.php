@@ -169,7 +169,7 @@ class CoursesController extends Controller
                 'sections' => function($query) {
                     $query->withWhereHas('curriculums', function($subQuery) {
                         $subQuery->orderBy('sort_order', 'asc');
-                        $subQuery->whereNotNull('media_path')->orWhereNotNull('article_content');
+                        $subQuery->withContent();
                     });
                 },
                 'ratings.student.profile',
@@ -252,7 +252,7 @@ class CoursesController extends Controller
                 'noticeboards',
                 'sections' => function ($query) {
                     $query->withWhereHas('curriculums', function ($subQuery) {
-                        $subQuery->whereNotNull('media_path')->orWhereNotNull('article_content');
+                        $subQuery->withContent();
                         $subQuery->with('watchtime');
                         $subQuery->orderBy('sort_order', 'asc');
                     });
@@ -286,13 +286,7 @@ class CoursesController extends Controller
             return $this->error(message: __('courses::courses.unauthorized_access'), code: Response::HTTP_FORBIDDEN);
         }
 
-        $courseAddedToStudent = (new CourseService())->getStudentCourse(
-            courseId: $course->id,
-            studentId: Auth::id(),
-            tutorId: $course->instructor_id
-        );
-
-        if (auth()->user()?->hasRole('student') && !$courseAddedToStudent) {
+        if (auth()->user()?->hasRole('student') && !app(\Modules\Courses\Services\CourseAccessService::class)->canAccessCourse(auth()->user(), $course)) {
             return $this->error(message: __('courses::courses.unauthorized_access'), code: Response::HTTP_FORBIDDEN);
         }
 
@@ -325,7 +319,7 @@ class CoursesController extends Controller
                 'sections' => function ($query) use ($request) {
                     $query->withWhereHas('curriculums', function ($subQuery) use ($request) {
                         $subQuery->where('id', $request->curriculum_id);
-                        $subQuery->whereNotNull('media_path')->orWhereNotNull('article_content');
+                        $subQuery->withContent();
                         $subQuery->with('watchtime');
                         $subQuery->orderBy('sort_order', 'asc');
                     });
@@ -335,6 +329,10 @@ class CoursesController extends Controller
    
         if (empty($course)) {
             return $this->error(message: __('courses::courses.course_not_found'), code: Response::HTTP_NOT_FOUND);
+        }
+
+        if (!app(\Modules\Courses\Services\CourseAccessService::class)->canAccessCourse(auth()->user(), $course)) {
+            return $this->error(message: __('courses::courses.unauthorized_access'), code: Response::HTTP_FORBIDDEN);
         }
        
         $firstCurriculum = $course?->sections?->first()?->curriculums?->first();

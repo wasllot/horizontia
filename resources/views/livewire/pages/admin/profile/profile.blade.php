@@ -10,9 +10,9 @@
                         @if (!empty($cropImageUrl))
                             <img src="{{ $cropImageUrl }}">
                         @elseif(!empty($old_image))
-                            <img src="{{ url(Storage::url($old_image))  }}" alt="">
+                            <img src="{{ url(mediaUrl($old_image))  }}" alt="">
                         @else
-                            <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 132, 132) }}" alt="">
+                            <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 132, 132) }}" alt="">
                         @endif
                         <div class="tb-adminprofo">
                             <h4>{{ __('admin/general.upload_profile_photo') }}</h4>

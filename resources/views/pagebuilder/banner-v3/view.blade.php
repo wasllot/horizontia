@@ -43,7 +43,7 @@
                                 @foreach(pagesetting('banner_repeater') as $option)
                                     @if(!empty($option['banner_image']))
                                         @if(!empty($option['banner_image'][0]['path']))
-                                            <li><figure><img src="{{url(Storage::url($option['banner_image'][0]['path']))}}" alt="Company logo"></figure></li>
+                                            <li><figure><img src="{{url(mediaUrl($option['banner_image'][0]['path']))}}" alt="Company logo"></figure></li>
                                         @endif
                                     @endif
                                 @endforeach
@@ -58,16 +58,16 @@
                                         <div class="am-revolutionize_video am-shimmer">
                                             @if(!empty(pagesetting('video')[0]['path']))
                                                 <video class="  video-js" data-setup='{}' preload="auto" id="vision-video" width="940" height="737" controls >
-                                                    <source src="{{ url(Storage::url(pagesetting('video')[0]['path'])) }}#t=0.1" wire:key="auth-video-src" type="video/mp4" >
+                                                    <source src="{{ url(mediaUrl(pagesetting('video')[0]['path'])) }}#t=0.1" wire:key="auth-video-src" type="video/mp4" >
                                                 </video>
                                             @endif
                                         </div>
                                     @endif
                                     @if(!empty(pagesetting('left_image')) || !empty(pagesetting('wright_image')) || !empty(pagesetting('allen_image')))
                                         <figcaption>
-                                            @if(!empty(pagesetting('left_image')))<img class="am-banner-img-one" src="{{url(Storage::url(pagesetting('left_image')[0]['path']))}}" alt="First banner image" /> @endif
-                                            @if(!empty(pagesetting('wright_image')))<img class="am-banner-img-two" data-aos="fade-up" src="{{url(Storage::url(pagesetting('wright_image')[0]['path']))}}" alt="Second banner image" /> @endif
-                                            @if(!empty(pagesetting('allen_image')))<img class="am-banner-img-three"  data-aos="fade-up" src="{{url(Storage::url(pagesetting('allen_image')[0]['path']))}}" alt="Cursor image" /> @endif
+                                            @if(!empty(pagesetting('left_image')))<img class="am-banner-img-one" src="{{url(mediaUrl(pagesetting('left_image')[0]['path']))}}" alt="First banner image" /> @endif
+                                            @if(!empty(pagesetting('wright_image')))<img class="am-banner-img-two" data-aos="fade-up" src="{{url(mediaUrl(pagesetting('wright_image')[0]['path']))}}" alt="Second banner image" /> @endif
+                                            @if(!empty(pagesetting('allen_image')))<img class="am-banner-img-three"  data-aos="fade-up" src="{{url(mediaUrl(pagesetting('allen_image')[0]['path']))}}" alt="Cursor image" /> @endif
                                         </figcaption>
                                     @endif
                                 </figure>

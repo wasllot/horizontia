@@ -54,11 +54,11 @@ new #[Layout('layouts.app')] class extends Component
         $this->tutorInfo['name'] = $tutor->profile->full_name;
         $this->tutorInfo['tagline'] = $tutor->profile->tagline;
         $this->tutorInfo['id'] = $tutor?->id;
-        if (!empty($tutor->profile->image) && Storage::disk(getStorageDisk())->exists($tutor->profile->image)) {
+        if (!empty($tutor->profile->image) && mediaExists($tutor->profile->image)) {
             $this->tutorInfo['image'] = resizedImage($tutor->profile->image, 36, 36);
         } else {
             // $this->tutorInfo['image'] = resizedImage('placeholder.png', 36, 36);
-            $this->tutorInfo['image'] = setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 36, 36);
+            $this->tutorInfo['image'] = setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 36, 36);
         }
     }
 

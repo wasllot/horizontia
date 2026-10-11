@@ -34,6 +34,18 @@ class Blog extends Model
         );
     }
 
+    /** Minutes needed to read the post (about 200 words per minute, never less than 1). */
+    protected function readingMinutes(): Attribute
+    {
+        return Attribute::get(fn () => max(1, (int) ceil(str_word_count(strip_tags(html_entity_decode((string) $this->description))) / 200)));
+    }
+
+    /** Plain-text summary for cards and meta description. */
+    public function excerpt(int $words = 30): string
+    {
+        return \Illuminate\Support\Str::words(trim(preg_replace('/\s+/', ' ', strip_tags(html_entity_decode((string) $this->description)))), $words, '…');
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(BlogCategory::class);

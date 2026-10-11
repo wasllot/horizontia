@@ -16,7 +16,7 @@ class OptionResource extends JsonResource
     {
         return [
             'id'                    => $this['id'],
-            'image'                 => !empty($this['image']) ? url(Storage::url($this['image'])) : url(Storage::url('placeholder.png')),
+            'image'                 => !empty($this['image']) ? url(mediaUrl($this['image'])) : url(mediaUrl('placeholder.png')),
             'price'                 => !empty($this['price']) ? formatAmount($this['price']) : null,
             'slot_id'               => $this['slot_id'] ?? null ,
             'subject'               => $this['subject'] ?? null,

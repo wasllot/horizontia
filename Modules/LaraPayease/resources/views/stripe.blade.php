@@ -8,9 +8,8 @@
     <div class="srtipe-payment-inner-wrapper">
         <input type="hidden" name="order_id" id="order_id_input" value="{{$stripe_data['order_id']}}"/>
         <form id="stripe_form">
-            @foreach($stripe_data as $field_name => $value)
-                <input type="hidden" name="{{$field_name}}"  value="{{$value}}"/>
-            @endforeach
+            <input type="hidden" name="order_id" value="{{$stripe_data['order_id']}}"/>
+            <input type="hidden" name="cancel_url" value="{{$stripe_data['cancel_url']}}"/>
         </form>
         <div class="btn-wrapper">
             <button id="payment_submit_btn"></button>
@@ -32,14 +31,11 @@
 
 
         submitBtn.addEventListener('click', function () {
-            console.log("{{ route('payease.stripe') }}", 'actions');
             // Create a new Checkout Session using the server-side endpoint you
             submitBtn.innerText = "{{__('Redirecting..')}}"
             submitBtn.disabled = true;
             var form = document.getElementById('stripe_form');
             var formData = new FormData(form);
-            console.log(formData,'formData');
-            console.log('{{csrf_token()}}','csrf_token');
             // created in step 3.
             fetch("{{route('payease.stripe')}}", {
                 headers: {
@@ -51,7 +47,6 @@
                 body: formData
             })
                 .then(function (response) {
-                    console.log(response,'ttt');
                     return response.json();
                 })
                 .then(function (session) {

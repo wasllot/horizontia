@@ -1,4 +1,12 @@
 <main class="tb-main am-dispute-system am-invoice-system">
+    <style>
+        .am-invoice-system .inv-item { max-width: 250px; }
+        .am-invoice-system .inv-item strong { display: block; font-weight: 600; color: #14213d; line-height: 1.3; overflow-wrap: anywhere; }
+        .am-invoice-system .inv-item small, .am-invoice-system .inv-muted { color: #7a8296; }
+        .am-invoice-system .inv-free { display: inline-block; padding: 2px 10px; border-radius: 99px; background: #e3f6ea; color: #14703b; font-style: normal; font-weight: 700; font-size: .85rem; }
+        .am-invoice-system .inv-meta { display: flex; flex-wrap: wrap; gap: 8px 24px; padding: 0 0 16px; margin-bottom: 16px; border-bottom: 1px solid #e6eaf2; color: #5b6478; font-size: .9rem; }
+        .am-invoice-system .inv-meta b { color: #14213d; margin-right: 4px; }
+    </style>
     <div class ="row">
         <div class="col-lg-12 col-md-12">
             <div class="tb-dhb-mainheading">
@@ -58,52 +66,66 @@
                                     @endphp
                                     <tr>
                                         <td data-label="{{ __('booking.id') }}"><span>{{ $order?->id }}</span></td>
-                                        <td data-label="{{ __('booking.transaction_id') }}"><span>{{ !empty($order?->transaction_id) ? $order->transaction_id : '-' }}</span></td>
+                                        <td data-label="{{ __('booking.transaction_id') }}"><span>{{ !empty($order?->transaction_id) ? $order->transaction_id : '—' }}</span></td>
                                         <td data-label="{{ __('booking.items' )}}">
-                                            <div class="tb-varification_userinfo">
-                                                <strong class="tb-adminhead__img">
-                                                    @if(!empty($order?->slot_bookings_count))
-                                                        {{ $order?->slot_bookings_count == 1 ? __('booking.session_count', ['count' => $order?->slot_bookings_count]) : __('booking.sessions_count', ['count' => $order?->slot_bookings_count]) }}
-                                                    @endif
-                                                    @if(\Nwidart\Modules\Facades\Module::has('courses') && \Nwidart\Modules\Facades\Module::isEnabled('courses') && !empty($order?->courses_count) )
-                                                        @if(!empty($order?->slot_bookings_count)) | @endif
-                                                        {{ $order?->courses_count == 1 ? __('booking.course_count', ['count' => $order?->courses_count]) : __('booking.courses_count', ['count' => $order?->courses_count]) }}
-                                                    @endif
-                                                    @if(\Nwidart\Modules\Facades\Module::has('subscriptions') && \Nwidart\Modules\Facades\Module::isEnabled('subscriptions') && !empty($order?->subscriptions_count))
-                                                        @if(!empty($order?->slot_bookings_count) || !empty($order?->courses_count)) | @endif
-                                                        {{ $order?->subscriptions_count == 1 ? __('booking.subscription_count', ['count' => $order?->subscriptions_count]) : __('booking.subscriptions_count', ['count' => $order?->subscriptions_count]) }}
-                                                    @endif
-                                                </strong>
-                                            </div>
+                                            @php
+                                                $first = $order->items->first();
+                                                $more = $order->items->count() - 1;
+                                                $kinds = ['Course' => 'Curso', 'SlotBooking' => 'Sesión', 'Subscription' => 'Suscripción'];
+                                                $kind = $first ? ($kinds[class_basename($first->orderable_type)] ?? 'Artículo') : '';
+                                            @endphp
+                                            @if ($first)
+                                                <div class="inv-item" title="{{ $order->items->pluck('title')->map(fn ($t) => html_entity_decode($t))->implode(' · ') }}">
+                                                    <strong>{{ \Illuminate\Support\Str::limit(html_entity_decode($first->title), 60) }}</strong>
+                                                    <small>{{ $kind }}@if ($more > 0) · +{{ $more }} {{ $more === 1 ? 'más' : 'más' }}@endif</small>
+                                                </div>
+                                            @else
+                                                <span class="inv-muted">—</span>
+                                            @endif
                                         </td>
                                         <td data-label="{{ __('booking.student_name' )}}">
                                             <div class="tb-varification_userinfo">
                                                 <strong class="tb-adminhead__img">
-                                                    @if (!empty($order?->userProfile?->image) && Storage::disk(getStorageDisk())->exists($order?->userProfile?->image))
+                                                    @if (!empty($order?->userProfile?->image) && mediaExists($order?->userProfile?->image))
                                                     <img src="{{ resizedImage($order?->userProfile?->image,34,34) }}" alt="{{$order?->userProfile?->image}}" />
                                                     @else
-                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $order?->orderable?->student?->image }}" />
+                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $order?->orderable?->student?->image }}" />
                                                     @endif
                                                 </strong>
                                                 <span>{{ $order?->userProfile?->full_name }}</span>
                                             </div>
                                         </td>
                                         <td data-label="{{ __('booking.payment_method' )}}">
-                                            <span>{{ __("settings." .$order?->payment_method. "_title")  }}</span>
+                                            @if ((float) $order?->amount <= 0)
+                                                <span class="inv-muted">Sin pago</span>
+                                            @else
+                                                <span>{{ __("settings." .$order?->payment_method. "_title")  }}</span>
+                                            @endif
                                         </td>
                                         <td data-label="{{ __('booking.amount') }}">
-                                            <span>{!! formatAmount($order?->amount) !!}</span>
+                                            @if ((float) $order?->amount <= 0)
+                                                <em class="inv-free">Gratis</em>
+                                            @else
+                                                <span>{!! formatAmount($order?->amount) !!}</span>
+                                                @if ((float) $order?->discount_amount > 0)
+                                                    <small class="inv-muted d-block">Cupón {{ $order->coupon_code }} −{!! formatAmount($order->discount_amount) !!}</small>
+                                                @endif
+                                            @endif
                                         </td>
                                         <td data-label="{{ __('booking.admin_commission') }}">
-                                            <span>{!! empty($order?->subscription_id) ? formatAmount($order?->admin_commission) : formatAmount(0) !!}</span>
+                                            @if ((float) $order?->amount <= 0)
+                                                <span class="inv-muted">—</span>
+                                            @else
+                                                <span>{!! empty($order?->subscription_id) ? formatAmount($order?->admin_commission) : formatAmount(0) !!}</span>
+                                            @endif
                                         </td>
                                         <td data-label="{{ __('booking.status' )}}">
                                             <div class="am-status-tag">
-                                                <em class="tk-project-tag {{ $order?->status == 'complete' ? 'tk-hourly-tag' : 'tk-fixed-tag' }}">{{ $order?->status}}</em>
+                                                <em class="tk-project-tag {{ $order?->status == 'complete' ? 'tk-hourly-tag' : 'tk-fixed-tag' }}">{{ statusLabel($order?->status) }}</em>
                                             </div>
                                         </td>
                                         <td data-label="{{ __('general.actions') }}">
-                                            <button class="am-btn" wire:click.prevent="viewInvoice({{ $order?->id }})">Preview</button>
+                                            <button class="am-btn" wire:click.prevent="viewInvoice({{ $order?->id }})">Ver detalle</button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -137,6 +159,12 @@
                     <div class="modal-body">
                         <div class="tb-invoice-container">
                             <!-- Invoice Header -->
+                            <div class="inv-meta">
+                                <span><b>Folio</b> #{{ $invoice->id }}</span>
+                                <span><b>Fecha</b> {{ dateEs($invoice->created_at) }}</span>
+                                <span><b>Pago</b> {{ (float) $invoice->amount > 0 ? __("settings." . $invoice->payment_method . "_title") : 'Sin pago (curso gratis)' }}</span>
+                                <span><b>Estado</b> {{ statusLabel($invoice->status) }}</span>
+                            </div>
                             <div class="tb-invoice-head">
                                 <h2>{{ __('invoices.invoice_bill_to') }}:</h2>
                                 <div class="tb-customer-details">
@@ -147,7 +175,7 @@
                                     <div class="tb-detail-row">
                                         <span class="tb-label">{{ __('invoices.invoice_address') }}:</span>
                                         <span class="tb-value">
-                                            {{ $invoice?->city }}, {{ $invoice?->countryDetails?->name ?? '' }}, {{ $invoice?->state }}
+                                            {{ collect([$invoice?->city, $invoice?->state, !empty($invoice?->country) ? $invoice?->countryDetails?->name : null])->filter()->implode(', ') ?: '—' }}
                                         </span>
                                     </div>
                                     <div class="tb-detail-row">
@@ -172,9 +200,9 @@
                                         @foreach($invoice?->items as $item)
                                             <div class="tb-item-row">
                                                 <div class="tb-col tb-col-id" data-label="ID">{{ $item->id }}</div>
-                                                <div class="tb-col tb-col-title" data-label="Title">{{ $item->title }}</div>
+                                                <div class="tb-col tb-col-title" data-label="Título">{{ $item->title }}</div>
                                                 <div class="tb-col tb-col-qty" data-label="Qty.">{{ $item->quantity }}</div>
-                                                <div class="tb-col tb-col-discount" data-label="Qty.">
+                                                <div class="tb-col tb-col-discount" data-label="Código">
                                                     @if(!empty($item?->options['discount_code']))
                                                         {{ 
                                                             $item?->options['discount_code'] 
@@ -184,10 +212,10 @@
                                                     @endif
                                                 </div>
 
-                                                <div class="tb-col tb-col-discount" data-label="Discount">
-                                                    {{ $item?->discount_amount ?? 0 }}
+                                                <div class="tb-col tb-col-discount" data-label="Descuento">
+                                                    {!! formatAmount($item?->discount_amount ?? 0) !!}
                                                 </div>
-                                                <div class="tb-col tb-col-price" data-label="Price">{{ ( $item?->price - $item?->discount_amount ?? 0) }}</div>
+                                                <div class="tb-col tb-col-price" data-label="Precio">{!! formatAmount($item?->price - ($item?->discount_amount ?? 0)) !!}</div>
                                             </div>
                                         @endforeach
                                     </div>
@@ -196,21 +224,26 @@
                             <!-- Invoice Summary -->
                             <div class="tb-invoice-summary">
                                 @php
-                                    $subTotal   = 0;
-                                    $grossTotal = 0;
-                                    foreach($invoice->items as $item) {
-                                        $subTotal += ( $item?->price - $item?->discount_amount ?? 0) * $item->quantity;
+                                    $subTotal = 0;
+                                    foreach ($invoice->items as $item) {
+                                        $subTotal += ($item?->price - ($item?->discount_amount ?? 0)) * $item->quantity;
                                     }
-                                    $grossTotal = $subTotal;
+                                    $couponOff = (float) $invoice->discount_amount;
+                                    $grandTotal = (float) $invoice->amount;
                                 @endphp
                                 <div class="tb-summary-row">
                                     <span class="tb-label" data-label="Subtotal">{{ __('invoices.invoice_subtotal') }}:</span>
-                                    <span class="tb-value">${{ number_format($subTotal, 2) }}</span>
+                                    <span class="tb-value">{!! formatAmount($subTotal) !!}</span>
                                 </div>
-
+                                @if ($couponOff > 0)
+                                    <div class="tb-summary-row">
+                                        <span class="tb-label">Cupón {{ $invoice->coupon_code }}:</span>
+                                        <span class="tb-value">−{!! formatAmount($couponOff) !!}</span>
+                                    </div>
+                                @endif
                                 <div class="tb-summary-row tb-total">
                                     <span class="tb-label" data-label="Total">{{ __('invoices.invoice_total') }}:</span>
-                                    <span class="tb-value">${{ number_format($grossTotal, 2) }}</span>
+                                    <span class="tb-value">{!! $grandTotal > 0 ? formatAmount($grandTotal) : 'Gratis' !!}</span>
                                 </div>
                             </div>
                         </div>

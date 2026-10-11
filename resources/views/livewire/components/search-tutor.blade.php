@@ -31,10 +31,10 @@
                         @php
                             $tutorInfo['name'] = $tutor->profile->full_name;
                             $tutorInfo['id'] = $tutor?->id;
-                            if (!empty($tutor->profile->image) && Storage::disk(getStorageDisk())->exists($tutor->profile->image)) {
+                            if (!empty($tutor->profile->image) && mediaExists($tutor->profile->image)) {
                                 $tutorInfo['image'] = resizedImage($tutor->profile->image, 36, 36);
                             } else {
-                                $tutorInfo['image'] = setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 36, 36);
+                                $tutorInfo['image'] = setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 36, 36);
                             }
                         @endphp
                         @if(!empty($tutor?->profile?->intro_video))
@@ -42,7 +42,7 @@
                                 <div class="am-tutorsearch_video">
                                     @if(!empty($tutor->profile->intro_video))
                                         <video class="video-js" data-setup='{}' preload="auto" wire:key="profile-video-{{ $tutor->id }}" id="profile-video-{{ $tutor->id }}" width="320" height="240" controls >
-                                            <source src="{{ url(Storage::url($tutor->profile->intro_video)).'?key=profile-video'. $tutor->id }}#t=0.1" wire:key="profile-video-src-{{ $tutor->id }}" type="video/mp4" >
+                                            <source src="{{ url(mediaUrl($tutor->profile->intro_video)).'?key=profile-video'. $tutor->id }}#t=0.1" wire:key="profile-video-src-{{ $tutor->id }}" type="video/mp4" >
                                         </video>
                                     @endif
                                     <div class="am-tutorsearch_btns">
@@ -62,10 +62,10 @@
                                     <div class="am-tutorsearch_head">
                                         <div class="am-tutorsearch_user">
                                             <figure class="am-tutorvone_img">
-                                                @if(!empty($tutor->profile->image) && Storage::disk(getStorageDisk())->exists($tutor->profile->image))
+                                                @if(!empty($tutor->profile->image) && mediaExists($tutor->profile->image))
                                                     <img src="{{ resizedImage($tutor->profile->image, 100, 100) }}" class="am-user_image" alt="{{$tutor->profile->full_name}}" />
                                                 @else 
-                                                    <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 100, 100) }}" alt="{{ $tutor->profile->full_name }}" />
+                                                    <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 100, 100) }}" alt="{{ $tutor->profile->full_name }}" />
                                                 @endif
                                                 <span @class(['am-userstaus', 'am-userstaus_online' => $tutor->is_online])></span>
                                             </figure>
@@ -159,10 +159,10 @@
                                         <div class="am-tutorsearch_head">
                                             <div class="am-tutorsearch_user">
                                                 <figure class="am-tutorvone_img">
-                                                    @if(!empty($tutor->profile->image) && Storage::disk(getStorageDisk())->exists($tutor->profile->image))
+                                                    @if(!empty($tutor->profile->image) && mediaExists($tutor->profile->image))
                                                         <img src="{{ resizedImage($tutor->profile->image, 50, 50) }}" class="am-user_image" alt="{{$tutor->profile->full_name}}" />
                                                     @else 
-                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 50, 50) }}" alt="{{ $tutor->profile->full_name }}" />
+                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 50, 50) }}" alt="{{ $tutor->profile->full_name }}" />
                                                     @endif
                                                     <span @class(['am-userstaus', 'am-userstaus_online' => $tutor->is_online])></span>
                                                 </figure>

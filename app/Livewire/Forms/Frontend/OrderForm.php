@@ -19,6 +19,7 @@ class OrderForm extends Form
     public string $company          = '';
     public string $email            = '';
     public string $phone            = '';
+    public bool $whatsappOptin      = false;
     public string $state            = '';
     public string $address          = '';
     public string $country          = '';
@@ -46,7 +47,22 @@ class OrderForm extends Form
     public function rules(): array
     {
 
-        return $this->OrderRequest->rules();
+        // `amount` belongs to the API request; the form's amount is always derived server-side from the cart.
+        $rules = collect($this->OrderRequest->rules())->except('amount');
+
+        // A digital-only academy needs no postal address: name, e-mail and payment method are enough.
+        if (isPrivateAcademy()) {
+            $rules = $rules->merge([
+                'phone'   => ($this->whatsappOptin ? 'required|' : 'nullable|') . 'string|max:30',
+                'whatsappOptin' => 'boolean',
+                'country' => 'nullable|string|max:150',
+                'state'   => 'nullable|string|max:255',
+                'city'    => 'nullable|string|max:150',
+                'zipcode' => 'nullable|string|max:10',
+            ]);
+        }
+
+        return $rules->all();
     }
 
     public function messages(): array

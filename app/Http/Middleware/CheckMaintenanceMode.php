@@ -15,8 +15,13 @@ class CheckMaintenanceMode
             return $next($request);
         }
 
+        // Los administradores ven el sitio normal para poder revisar los cambios.
+        if ($request->user()?->hasRole('admin')) {
+            return $next($request);
+        }
+
         if ($this->isUnderMaintenance() &&  $request->route()->getName() == 'pagebuilder.page' && $request->get('preview') != 'yes') {
-            return response()->view('errors.503');
+            return response()->view('errors.503', [], 503)->header('Retry-After', '3600');
         }
 
         $excludedRoutes = [
@@ -33,7 +38,7 @@ class CheckMaintenanceMode
             return $next($request);
         }
 
-        return response()->view('errors.503');
+        return response()->view('errors.503', [], 503)->header('Retry-After', '3600');
     }
 
     protected function isUnderMaintenance()

@@ -2,6 +2,7 @@
 
 namespace Modules\Courses\Services;
 
+use Modules\Courses\Models\Pricing;
 use Modules\Courses\Models\Course;
 use Modules\Courses\Models\Curriculum;
 use Modules\Courses\Models\DiscussionForum;
@@ -83,8 +84,8 @@ class CourseService
 
     public function getAllEnrolledCourses($studentId,  $withSum = [], $keyword = null, $perPage = 10)
     {
-        $dataQuery = Enrollment::where('student_id', $studentId)->with('courseProgress')->withWhereHas('course', function($query) use ($keyword) {
-            $query->select('id', 'title', 'slug', 'instructor_id', 'category_id', 'sub_category_id', 'content_length');
+        $dataQuery = Enrollment::where('student_id', $studentId)->with(['courseProgress', 'session'])->withWhereHas('course', function($query) use ($keyword) {
+            $query->select('id', 'title', 'slug', 'instructor_id', 'category_id', 'sub_category_id', 'content_length', 'delivery', 'certificate_id');
             $query->with([
                 'category',
                 'promotionalVideo',
@@ -150,13 +151,14 @@ class CourseService
      */
     public function updateCourseNoticeboard(array $data)
     {
-        $noticeboard = Noticeboard::updateOrCreate(['id' => $data['id']], $data);
+        // An id only matches inside the same course: a posted id can never overwrite another course's notice.
+        $noticeboard = Noticeboard::updateOrCreate(['id' => $data['id'] ?? null, 'course_id' => $data['course_id']], $data);
         return $noticeboard;
     }
 
-    public function deleteNoticeboard($noticeboardId)
+    public function deleteNoticeboard($noticeboardId, ?int $courseId = null)
     {
-        $noticeboard = Noticeboard::find($noticeboardId);
+        $noticeboard = Noticeboard::when($courseId, fn ($q) => $q->where('course_id', $courseId))->find($noticeboardId);
         if ($noticeboard) {
             return $noticeboard->delete();
         }
@@ -375,9 +377,35 @@ class CourseService
      * @param array $withAvg
      * @return \Illuminate\Database\Eloquent\Builder
      */
+    /**
+     * Catalog sorting. `asc`/`desc` keep their historical meaning (creation date); the rest are the catalog's sort menu.
+     * Ties always fall back to newest first so pagination stays stable.
+     */
+    protected function applySort($query, $sort, bool $hasRatingAvg): void
+    {
+        $price = Pricing::query()->select('final_price')->whereColumn((new Pricing())->getTable() . '.course_id', (new Course())->getTable() . '.id')->limit(1);
+
+        match ($sort) {
+            'asc' => $query->orderBy('created_at', 'asc'),
+            'popular' => $query->withCount('enrollments')->orderByDesc('enrollments_count'),
+            'rating' => $hasRatingAvg ? $query->orderByRaw('ratings_avg_rating IS NULL')->orderByDesc('ratings_avg_rating') : null,
+            'price_asc' => $query->orderBy($price, 'asc'),
+            'price_desc' => $query->orderBy($price, 'desc'),
+            default => null,
+        };
+
+        if ($sort !== 'asc') {
+            $query->orderBy('created_at', 'desc');
+        }
+        $query->orderBy('id', 'desc');
+    }
+
     protected function buildCourseQuery(int $instructorId = null, $with = [], $filters = [], $withCount = [], $withAvg = [])
     {
     
+        // Búsqueda por relevancia (sin acentos, plurales y errores de tecleo): ver CourseSearchService.
+        $rankedIds = !empty($filters['keyword']) ? app(CourseSearchService::class)->rank((string) $filters['keyword']) : [];
+
         $query = Course::query()
             ->whereNull('deleted_at')
             // Filter by instructor ID if provided
@@ -385,12 +413,14 @@ class CourseService
             
             // Apply various filters
             ->when(!empty($filters['featured']), fn($query) => $query->where('featured', 1))
-            ->when(!empty($filters['keyword']), fn($query) => $query->where('title', 'like', '%' . $filters['keyword'] . '%'))
+            ->when(!empty($filters['keyword']), fn($query) => $query->whereIn('id', $rankedIds ?: [0]))
             ->when(!empty($filters['category_id']), fn($query) => $query->where('category_id', $filters['category_id']))
             ->when(!empty($filters['categories']), fn($query) => $query->whereIn('category_id', $filters['categories']))
             ->when(!empty($filters['levels']), fn($query) => 
                 $query->whereIn('level', array_map(fn($level) => Course::LEVEL[$level], $filters['levels']))
             )
+            ->when(!empty($filters['delivery']), fn($query) => $query->whereIn('delivery', (array) $filters['delivery']))
+            ->when(!empty($filters['exclude_delivery']), fn($query) => $query->whereNotIn('delivery', (array) $filters['exclude_delivery']))
             ->when(!empty($filters['status']), fn($query) => $query->where('status', Course::STATUSES[$filters['status']]))
             ->when(!empty($filters['statuses']), fn($query) => 
                 $query->whereIn('status', array_map(fn($status) => Course::STATUSES[$status], $filters['statuses']))
@@ -462,12 +492,15 @@ class CourseService
                 }
             })
             
-            // Apply sorting
-            ->when(!empty($filters['sort']), function ($query) use ($filters) {
-                $query->orderBy('created_at', $filters['sort']);
-            }, function ($query) {
-                $query->orderBy('created_at', 'desc');
-            });
+            ->when(!empty($filters['pricing_type']) && $filters['pricing_type'] === 'free', fn($query) =>
+                $query->whereDoesntHave('pricing', fn($q) => $q->where('final_price', '>', 0))
+            );
+
+        // Con texto de búsqueda y sin otro orden pedido, lo más relevante va primero.
+        if ($rankedIds && in_array($filters['sort'] ?? null, [null, 'relevance'], true)) {
+            $query->orderByRaw('FIELD(id, ' . implode(',', array_map('intval', $rankedIds)) . ')');
+        }
+        $this->applySort($query, $filters['sort'] ?? null, !empty($withAvg));
 
         // Apply average rating filter using having on the aggregated average
         if (!empty($filters['avg_rating']) && is_array($filters['avg_rating'])) {
@@ -681,7 +714,7 @@ class CourseService
     public function getCourseEnrollments($search, $status, $sortby)
     {
         $orders = OrderItem::withWhereHas('orders', function($query) use ($status) {
-            $query->select('id', 'status', 'transaction_id', 'user_id')->with('userProfile');
+            $query->select('id', 'status', 'transaction_id', 'user_id', 'payment_method')->with('userProfile');
             if (isset(OrderStatusCast::$statuses[$status])) {
                 $query->whereStatus(OrderStatusCast::$statuses[$status]);
             }

@@ -5,6 +5,8 @@ namespace Modules\Courses\Livewire\Pages\Tutor\CourseCreation\Components;
 
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Livewire\Attributes\Locked;
+use Modules\Courses\Livewire\Traits\GuardsCourseAccess;
 use Modules\Courses\Models\Course;
 use Modules\Courses\Services\CourseService;
 use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
@@ -12,6 +14,8 @@ use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
 class CourseDiscussionForum extends Component
 {
     use AdminAwareCourseRouting;
+    use GuardsCourseAccess;
+    #[Locked]
     public $courseId;
     public $course;
     public $enableDiscussionForum = false;
@@ -21,7 +25,7 @@ class CourseDiscussionForum extends Component
     public function mount()
     {
         $this->courseId         = request()->route('id');
-        $this->course           = Course::findOrFail($this->courseId);
+        $this->course           = $this->guardedCourse($this->courseId);
         $this->enableDiscussionForum = $this->course->discussion_forum;
         if(!\Nwidart\Modules\Facades\Module::has('forumwise') || !\Nwidart\Modules\Facades\Module::isEnabled('forumwise')){
             abort(404);
@@ -56,19 +60,7 @@ class CourseDiscussionForum extends Component
             $this->dispatch('showAlertMessage', type: 'error', title:  __('general.demosite_res_title') , message: __('general.demosite_res_txt'));
             return;
         }
-        if($this->course->status != 'draft' && $this->course->status != 'need_revision') {
-            return redirect($this->courseListingRoute());
-        }
-
-        DB::beginTransaction();
-
-        try {
-            (new CourseService())->updateOrCreateCourse($this->courseId, ['status' => 'under_review']);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $this->dispatch('showAlertMessage', type: 'error', title: __('courses::courses.error'), message: __('courses::courses.discussion_forum_update_failed'));
-        }
+        $this->guardedCourse($this->courseId);
 
         return redirect($this->editCourseRoute('publish', $this->courseId));
     }

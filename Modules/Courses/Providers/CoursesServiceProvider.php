@@ -28,8 +28,6 @@ use Modules\Courses\Livewire\Pages\Tutor\CourseCreation\Components\CoursePublish
 
 use Modules\Courses\Livewire\Pages\Tutor\CourseCreation\Components\CourseSidebar;
 
-use Modules\Courses\Livewire\Pages\Tutor\CourseCreation\Components\ManageCourseContent\Components\Curriculum;
-use Modules\Courses\Livewire\Pages\Tutor\CourseCreation\Components\ManageCourseContent\CourseContent;
 use Modules\Courses\Livewire\Pages\Tutor\CourseListing\CourseListing;
 
 class CoursesServiceProvider extends ServiceProvider
@@ -54,8 +52,12 @@ class CoursesServiceProvider extends ServiceProvider
 
         Livewire::component('courses::course-sidebar',                               CourseSidebar::class);
         Livewire::component('courses::course-details',                               CourseBasicDetails::class);
+        Livewire::component('courses::course-sessions',                              \Modules\Courses\Livewire\Pages\Tutor\CourseCreation\Components\CourseSessions::class);
+        Livewire::component('courses::admin-bundles', \Modules\Courses\Livewire\Pages\Admin\Bundles::class);
+        Livewire::component('courses::bundle-details', \Modules\Courses\Livewire\Pages\Bundle\BundleDetails::class);
+        Livewire::component('courses::course-enrollees',                            \Modules\Courses\Livewire\Pages\Common\CourseEnrollees::class);
         Livewire::component('courses::course-media',                                 CourseMedia::class);
-        Livewire::component('courses::course-content',                               CourseContent::class);
+        Livewire::component('courses::course-content',                               \Modules\Courses\Livewire\Pages\Tutor\CourseCreation\Components\ManageCourseContent\CourseBuilder::class);
         Livewire::component('courses::course-pricing',                               CoursePricing::class);
         Livewire::component('courses::schedule-live-stream',                         \Modules\Courses\Livewire\Pages\Tutor\LiveStreams\ScheduleLiveStream::class);
         Livewire::component('courses::manage-live-streams',                          \Modules\Courses\Livewire\Pages\Tutor\LiveStreams\ManageLiveStreams::class);
@@ -64,7 +66,6 @@ class CoursesServiceProvider extends ServiceProvider
         Livewire::component('courses::course-discussion-forum',                      CourseDiscussionForum::class);
         Livewire::component('courses::course-noticeboard',                           CourseNoticeboard::class);
         Livewire::component('courses::course-publish',                               CoursePublish::class);
-        Livewire::component('courses::manage-course-content.components.curriculum',  Curriculum::class);
         Livewire::component('courses::course-listing',                               CourseListing::class);
         Livewire::component('courses::search-courses',                               SearchCourses::class);
         Livewire::component('courses::course-detail',                                CourseDetails::class);

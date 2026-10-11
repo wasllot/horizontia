@@ -535,7 +535,7 @@ return [
     'subjects'                                    => 'Materias',
     'email_settings'                              => 'Configuraciones de correo electrónico',
     'manage_menus'                                => 'Gestionar menús',
-    'global_settings'                             => 'Configuraciones globales',
+    'global_settings'                             => 'Ajustes',
     'phone_number'                                => 'Número de teléfono',
     'enter_phone_number'                          => 'Ingrese el número de teléfono',
     'site_pages'                                  => 'Páginas del sitio',
@@ -561,6 +561,11 @@ return [
     'mark_as_read'                                  => 'Marcar como leído',
     'mark_all_as_read'                              => 'Marcar todo como leído',
     'no_notification_desc'                          => 'No hay notificaciones no leídas disponibles para mostrar en este momento.',
-    'unable_to_create_dispute'                      => 'No se puede crear la disputa'
+    'unable_to_create_dispute'                      => 'No se puede crear la disputa',
+    'error_message' => 'No se pudo completar la acción. Inténtalo de nuevo.',
+    'booking_not_found' => 'No se encontró el pedido.',
+    'something_went_wrong' => 'Algo salió mal. Inténtalo de nuevo.',
+    'alert_error_title' => 'Error',
+    'user' => 'Usuario',
 ];
     

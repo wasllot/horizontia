@@ -9,13 +9,17 @@ use Modules\Courses\Http\Requests\CoursePrerequisitesRequest;
 use Modules\Courses\Models\Course;
 use Modules\Courses\Services\CourseService;
 use Livewire\Component;
+use Livewire\Attributes\Locked;
+use Modules\Courses\Livewire\Traits\GuardsCourseAccess;
 use Livewire\Attributes\On;
 use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
 
 class CourseFaqs extends Component {
 
     use AdminAwareCourseRouting;
+    use GuardsCourseAccess;
 
+    #[Locked]
     public $courseId;
     public $course;
 
@@ -29,6 +33,7 @@ class CourseFaqs extends Component {
 
     public function mount() {
         $this->courseId         = request()->route('id');
+        $this->guardedCourse($this->courseId);
         $this->course           = Course::with(['faqs', 'pricing:id,course_id,final_price'])->findOrFail($this->courseId);
         if (\Nwidart\Modules\Facades\Module::has('kupondeal') && \Nwidart\Modules\Facades\Module::isEnabled('kupondeal') && !empty(intval($this->course?->pricing?->final_price ?? 0))) {
             $this->enablePromotion = true;
@@ -101,6 +106,7 @@ class CourseFaqs extends Component {
             return;
         }
         $validatedPrerequisites = $this->validate((new CoursePrerequisitesRequest())->rules());
+        $this->guardedCourse($this->courseId);
         $coursePrerequisites = (new CourseService())->updatePrerequisites($this->courseId, $validatedPrerequisites['prerequisites']);
 
         $tab = 'noticeboard';

@@ -36,10 +36,10 @@
             <span>{{ __('dispute.tutor') }}</span>
             <div class="am-dispute-user">
               <figure>
-                @if (!empty($dispute?->responsibleBy?->profile?->image) && Storage::disk(getStorageDisk())->exists($dispute?->responsibleBy?->profile?->image))
+                @if (!empty($dispute?->responsibleBy?->profile?->image) && mediaExists($dispute?->responsibleBy?->profile?->image))
                 <img src="{{ resizedImage($dispute?->responsibleBy?->profile?->image,34,34) }}" alt="{{$dispute?->responsibleBy?->profile?->image}}" />
                 @else
-                    <img src="{{ setting('_general.default_avatar_for_user') ? Storage::url(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $dispute?->responsibleBy?->profile?->image }}" />
+                    <img src="{{ setting('_general.default_avatar_for_user') ? mediaUrl(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $dispute?->responsibleBy?->profile?->image }}" />
                 @endif
               </figure>
               <div>
@@ -52,10 +52,10 @@
             <span>{{ __('dispute.student') }}</span>
             <div class="am-dispute-user">
               <figure>
-                @if (!empty($dispute?->creatorBy?->profile?->image) && Storage::disk(getStorageDisk())->exists($dispute?->creatorBy?->profile?->image))
+                @if (!empty($dispute?->creatorBy?->profile?->image) && mediaExists($dispute?->creatorBy?->profile?->image))
                 <img src="{{ resizedImage($dispute?->creatorBy?->profile?->image,34,34) }}" alt="{{$dispute?->creatorBy?->profile?->image}}" />
                 @else
-                    <img src="{{ setting('_general.default_avatar_for_user') ? Storage::url(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $dispute?->creatorBy?->profile?->image }}" />
+                    <img src="{{ setting('_general.default_avatar_for_user') ? mediaUrl(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $dispute?->creatorBy?->profile?->image }}" />
                 @endif
               </figure>
               <div>
@@ -75,10 +75,10 @@
         <!-- Left side single user -->
         <div class="am-user-card">
           <div class="am-user-avatar">
-            @if (!empty($admin?->profile?->image) && Storage::disk(getStorageDisk())->exists($admin?->profile?->image))
+            @if (!empty($admin?->profile?->image) && mediaExists($admin?->profile?->image))
                 <img src="{{ resizedImage($admin?->profile?->image,34,34) }}" alt="{{$admin?->profile?->image}}" />
             @else
-                <img src="{{ setting('_general.default_avatar_for_user') ? Storage::url(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $admin?->profile?->image }}" />
+                <img src="{{ setting('_general.default_avatar_for_user') ? mediaUrl(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $admin?->profile?->image }}" />
             @endif
           </div>
           <div class="am-user-info">
@@ -94,10 +94,10 @@
         @foreach($userChat as $chat)
         <div class="am-message {{ $chat->user_id == $user->id ? 'am-reply-message' : '' }}">
           <div class="am-message-avatar">
-            @if (!empty($chat->user?->profile?->image) && Storage::disk(getStorageDisk())->exists($chat->user?->profile?->image))
+            @if (!empty($chat->user?->profile?->image) && mediaExists($chat->user?->profile?->image))
                 <img src="{{ resizedImage($chat->user?->profile?->image,34,34) }}" alt="{{$chat->user?->profile?->image}}" />
             @else
-                <img src="{{ setting('_general.default_avatar_for_user') ? Storage::url(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $chat->user?->profile?->image }}" />
+                <img src="{{ setting('_general.default_avatar_for_user') ? mediaUrl(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $chat->user?->profile?->image }}" />
             @endif
           </div>
           <div class="am-message-content-wrapper">

@@ -55,7 +55,7 @@ class TutorSlotResource extends JsonResource
             'bookings_count'                    => $this->whenHas('bookings_count'),
             'description'                       => $this->whenHas('description'),
             'image'                             => $this->when($this->subjectGroupSubjects ,
-                 fn () => !empty($this->subjectGroupSubjects->image) ? url(Storage::url($this->subjectGroupSubjects->image)) : url(Storage::url('placeholder.png'))),
+                 fn () => !empty($this->subjectGroupSubjects->image) ? url(mediaUrl($this->subjectGroupSubjects->image)) : url(mediaUrl('placeholder.png'))),
             'subject'                           => $this->when(
                 $this->subjectGroupSubjects && $this->subjectGroupSubjects->subject,
                 fn () => $this->subjectGroupSubjects->subject

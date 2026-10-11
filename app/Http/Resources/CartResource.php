@@ -23,7 +23,7 @@ class CartResource extends JsonResource
             "session_time"      => $this['options']['session_time'] ?? null,
             "subject_group"     => $this['options']['subject_group'] ?? null,
             "currency_symbol"   => $this['options']['currency_symbol'] ?? null,
-            "image"             => $this['options']['image'] ? url(Storage::url($this['options']['image'])) : url(Storage::url('placeholder.png')),
+            "image"             => $this['options']['image'] ? url(mediaUrl($this['options']['image'])) : url(mediaUrl('placeholder.png')),
         ];
     }
 }

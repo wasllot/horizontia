@@ -51,22 +51,22 @@
                         <div class="am-tracklearning_images">
                             @if(!empty(pagesetting('subject_image')[0]['path']))
                                 <figure class="am-subject-img">
-                                    <img src="{{url(Storage::url(pagesetting('subject_image')[0]['path']))}}" alt="Subject statistics image">
+                                    <img src="{{url(mediaUrl(pagesetting('subject_image')[0]['path']))}}" alt="Subject statistics image">
                                 </figure>
                             @endif
                             @if(!empty(pagesetting('summary_image')[0]['path']))
                                 <figure class="am-summary-img">
-                                    <img src="{{url(Storage::url(pagesetting('summary_image')[0]['path']))}}" alt="Order summary image">
+                                    <img src="{{url(mediaUrl(pagesetting('summary_image')[0]['path']))}}" alt="Order summary image">
                                 </figure>
                             @endif
                             @if(!empty(pagesetting('student_image')[0]['path']))
                                 <figure class="am-student-img">
-                                    <img src="{{url(Storage::url(pagesetting('student_image')[0]['path']))}}" alt="Student statistics image">
+                                    <img src="{{url(mediaUrl(pagesetting('student_image')[0]['path']))}}" alt="Student statistics image">
                                 </figure>
                             @endif
                             @if(!empty(pagesetting('calander_image')[0]['path']))
                                 <figure class="am-calander-logo">
-                                    <img src="{{url(Storage::url(pagesetting('calander_image')[0]['path']))}}" alt="Calander image">
+                                    <img src="{{url(mediaUrl(pagesetting('calander_image')[0]['path']))}}" alt="Calander image">
                                 </figure>
                             @endif
                         </div>

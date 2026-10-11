@@ -18,7 +18,7 @@ class CertificationResource extends JsonResource
             'id'                    => $this->whenHas('id'),
             'title'                 => $this->whenHas('title'),
             'user_id'               => $this->whenHas('user_id'),
-            'image'                 => !empty($this->image) ? url(Storage::url($this->image)) : url(Storage::url('placeholder.png')),
+            'image'                 => !empty($this->image) ? url(mediaUrl($this->image)) : url(mediaUrl('placeholder.png')),
             'institute_name'        => $this->whenHas('institute_name'),
             'issue_date'            => $this->whenHas('issue_date', function () {
                 return \Carbon\Carbon::parse($this->issue_date)->format('M d, Y');

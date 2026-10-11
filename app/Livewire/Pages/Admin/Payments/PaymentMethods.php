@@ -91,7 +91,7 @@ class PaymentMethods extends Component
     {
         $validations = [];
         foreach($this->methods[$this->edit_method] as $key => $value){
-            if( in_array($key, ['status','webhook_url','enable_test_mode', 'exchange_rate' ]))
+            if( in_array($key, ['status','webhook_url','enable_test_mode', 'binary_mode', 'exchange_rate', 'max_installments' ]))
                 continue;
             $validations['methods.'.$this->edit_method.'.'.$key] = 'required';
         }

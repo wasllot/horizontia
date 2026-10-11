@@ -20,8 +20,8 @@
                                         <div class="am-easysetup_list_item @if(!empty($option['image_verient'])) {{ $option['image_verient'] }} @endif">
                                             @if(!empty($option['step_image'][0]['path']) || !empty($option['scnd_step_image'][0]['path']))
                                                 <span class="am-setup-signup">
-                                                    @if(!empty($option['step_image'][0]['path']))<img class="am-step-gif" src="{{url(Storage::url($option['step_image'][0]['path']))}}" alt="Easy steps image">@endif
-                                                    @if(!empty($option['scnd_step_image'][0]['path']))<img class="am-step-img" src="{{url(Storage::url($option['scnd_step_image'][0]['path']))}}" alt="Easy steps image">@endif
+                                                    @if(!empty($option['step_image'][0]['path']))<img class="am-step-gif" src="{{url(mediaUrl($option['step_image'][0]['path']))}}" alt="Easy steps image">@endif
+                                                    @if(!empty($option['scnd_step_image'][0]['path']))<img class="am-step-img" src="{{url(mediaUrl($option['scnd_step_image'][0]['path']))}}" alt="Easy steps image">@endif
                                                 </span>
                                             @endif
                                             @if(!empty($option['step_heading']))<h4>{!! $option['step_heading'] !!}</h4>@endif
@@ -43,6 +43,6 @@
         </div>
     </div>
     @if(!empty(pagesetting('shape_image')))
-        <img class="am-guide-pattranimg" src="{{url(Storage::url(pagesetting('shape_image')[0]['path']))}}" alt="Background shape image"> 
+        <img class="am-guide-pattranimg" src="{{url(mediaUrl(pagesetting('shape_image')[0]['path']))}}" alt="Background shape image"> 
     @endif
 </div>

@@ -28,12 +28,12 @@
                                 @if(!empty(pagesetting('section1_heading')))<h3>{{ pagesetting('section1_heading') }}</h3>@endif
                                 @if (!empty(pagesetting('section1_image')))
                                     @if(!empty(pagesetting('section1_image')[0]['path']))
-                                        <img src="{{url(Storage::url(pagesetting('section1_image')[0]['path']))}}" class="am-feature-image" alt="Schedule image" />
+                                        <img src="{{url(mediaUrl(pagesetting('section1_image')[0]['path']))}}" class="am-feature-image" alt="Schedule image" />
                                     @endif
                                 @endif
                                 @if (!empty(pagesetting('section1_2nd_image')))
                                     @if(!empty(pagesetting('section1_2nd_image')[0]['path']))
-                                        <img src="{{url(Storage::url(pagesetting('section1_2nd_image')[0]['path']))}}" class="am-feature-icon" alt="Bell icon image" />
+                                        <img src="{{url(mediaUrl(pagesetting('section1_2nd_image')[0]['path']))}}" class="am-feature-icon" alt="Bell icon image" />
                                     @endif
                                 @endif
                             </div>
@@ -46,17 +46,17 @@
                                     <div class="am-images-group">
                                         @if (!empty(pagesetting('section2_image')))
                                             @if(!empty(pagesetting('section2_image')[0]['path']))
-                                                <img src="{{url(Storage::url(pagesetting('section2_image')[0]['path']))}}" class="am-progress-image1" alt="Background shape image" />
+                                                <img src="{{url(mediaUrl(pagesetting('section2_image')[0]['path']))}}" class="am-progress-image1" alt="Background shape image" />
                                             @endif
                                         @endif
                                         @if (!empty(pagesetting('section2_2nd_image')))
                                             @if(!empty(pagesetting('section2_2nd_image')[0]['path']))
-                                                <img src="{{url(Storage::url(pagesetting('section2_2nd_image')[0]['path']))}}" class="am-progress-image2" alt="Subject statistics image" />
+                                                <img src="{{url(mediaUrl(pagesetting('section2_2nd_image')[0]['path']))}}" class="am-progress-image2" alt="Subject statistics image" />
                                             @endif
                                         @endif
                                         @if (!empty(pagesetting('section2_3rd_image')))
                                             @if(!empty(pagesetting('section2_3rd_image')[0]['path']))
-                                                <img src="{{url(Storage::url(pagesetting('section2_3rd_image')[0]['path']))}}" class="am-progress-image3" alt="Order summary image" />
+                                                <img src="{{url(mediaUrl(pagesetting('section2_3rd_image')[0]['path']))}}" class="am-progress-image3" alt="Order summary image" />
                                             @endif
                                         @endif
                                     </div>
@@ -65,7 +65,7 @@
                                     @if(!empty(pagesetting('section2_heading')))<h3>{{ pagesetting('section2_heading') }}</h3>@endif
                                     @if (!empty(pagesetting('section2_4th_image')))
                                         @if(!empty(pagesetting('section2_4th_image')[0]['path']))
-                                            <img src="{{url(Storage::url(pagesetting('section2_4th_image')[0]['path']))}}" class="am-progress-image4" alt="image description" />
+                                            <img src="{{url(mediaUrl(pagesetting('section2_4th_image')[0]['path']))}}" class="am-progress-image4" alt="image description" />
                                         @endif
                                     @endif
                                 @endif
@@ -86,19 +86,19 @@
                                     <div class="am-tutor-img">
                                         @if (!empty(pagesetting('section3_image')))
                                             @if(!empty(pagesetting('section3_image')[0]['path']))
-                                                <img src="{{url(Storage::url(pagesetting('section3_image')[0]['path']))}}" class="am-tutor-img-three" alt="Book image" />
+                                                <img src="{{url(mediaUrl(pagesetting('section3_image')[0]['path']))}}" class="am-tutor-img-three" alt="Book image" />
                                             @endif
                                         @endif
                                         @if (!empty(pagesetting('section3_2nd_image')))
                                             @if(!empty(pagesetting('section3_2nd_image')[0]['path']))
-                                                <img src="{{url(Storage::url(pagesetting('section3_2nd_image')[0]['path']))}}" class="am-tutor-img-four" alt="User image" />
+                                                <img src="{{url(mediaUrl(pagesetting('section3_2nd_image')[0]['path']))}}" class="am-tutor-img-four" alt="User image" />
                                             @endif
                                         @endif
                                     </div>
                                 @endif
                                 @if (!empty(pagesetting('section3_3rd_image')))
                                     @if(!empty(pagesetting('section3_3rd_image')[0]['path']))
-                                        <img src="{{url(Storage::url(pagesetting('section3_3rd_image')[0]['path']))}}" class="am-tutor-img-five" alt="Students image" />
+                                        <img src="{{url(mediaUrl(pagesetting('section3_3rd_image')[0]['path']))}}" class="am-tutor-img-five" alt="Students image" />
                                     @endif
                                 @endif
                             </div>
@@ -110,12 +110,12 @@
                                     <div class="am-personalize-img">
                                         @if (!empty(pagesetting('section4_image')))
                                             @if(!empty(pagesetting('section4_image')[0]['path']))
-                                                <img src="{{url(Storage::url(pagesetting('section4_image')[0]['path']))}}" class="am-feature-image-two" alt="Session progress image" />
+                                                <img src="{{url(mediaUrl(pagesetting('section4_image')[0]['path']))}}" class="am-feature-image-two" alt="Session progress image" />
                                             @endif
                                         @endif
                                         @if (!empty(pagesetting('section4_2nd_image')))
                                             @if(!empty(pagesetting('section4_2nd_image')[0]['path']))
-                                                <img src="{{url(Storage::url(pagesetting('section4_2nd_image')[0]['path']))}}" class="am-feature-image-one" alt="Start session image" />
+                                                <img src="{{url(mediaUrl(pagesetting('section4_2nd_image')[0]['path']))}}" class="am-feature-image-one" alt="Start session image" />
                                             @endif
                                         @endif
                                     </div>

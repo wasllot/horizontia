@@ -23,10 +23,10 @@
                             $name = $emailFor == 'student' ? $booking['tutorName'] : $booking['studentName'];
                         @endphp
                         <td style="display: flex; align-items:center; gap: 10px; padding: 10px 20px;">
-                            @if (!empty($img) && Storage::disk(getStorageDisk())->exists($img))
+                            @if (!empty($img) && mediaExists($img))
                                 <img style="width: 36px; height: 36px; border-radius: 50%;"  src="{{ resizedImage($img, 40, 40) }}" alt="{{ $name }}">
                             @else 
-                                <img style="width: 36px; height: 36px; border-radius: 50%;"  src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 40, 40) }}" alt="{{ $name }}">
+                                <img style="width: 36px; height: 36px; border-radius: 50%;"  src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 40, 40) }}" alt="{{ $name }}">
                             @endif
                             <h6 style="font-size: 14px; font-weight: 400; color: #585858; line-height: 20px; margin: 0;">{{ $name }}</h6>
                         </td>
@@ -57,10 +57,10 @@
                             $name = $emailFor == 'student' ? $course['tutorName'] : $course['studentName'];
                         @endphp
                         <td style="display: flex; align-items:center; gap: 10px; padding: 10px 20px;">
-                            @if (!empty($img) && Storage::disk(getStorageDisk())->exists($img))
+                            @if (!empty($img) && mediaExists($img))
                                 <img style="width: 36px; height: 36px; border-radius: 50%;"  src="{{ resizedImage($img, 40, 40) }}" alt="{{ $name }}">
                             @else 
-                                <img style="width: 36px; height: 36px; border-radius: 50%;"  src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 40, 40) }}" alt="{{ $name }}">
+                                <img style="width: 36px; height: 36px; border-radius: 50%;"  src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 40, 40) }}" alt="{{ $name }}">
                             @endif
                             <h6 style="font-size: 14px; font-weight: 400; color: #585858; line-height: 20px; margin: 0;">{{ $name }}</h6>
                         </td>

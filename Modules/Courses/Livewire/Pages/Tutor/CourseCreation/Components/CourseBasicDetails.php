@@ -10,12 +10,16 @@ use Modules\Courses\Models\Category;
 use Modules\Courses\Models\Course;
 use Modules\Courses\Services\CourseService;
 use Livewire\Component;
+use Livewire\Attributes\Locked;
+use Modules\Courses\Livewire\Traits\GuardsCourseAccess;
 use App\Jobs\GenerateCertificateJob;
 use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
 class CourseBasicDetails extends Component
 {
     use PrepareForValidation;
     use AdminAwareCourseRouting;
+    use GuardsCourseAccess;
+    #[Locked]
     public $courseId = null;
     public $course;
     public $title;
@@ -25,6 +29,7 @@ class CourseBasicDetails extends Component
     public $sub_category_id;
     public $tags = [];
     public $type;
+    public $delivery = 'online';
     public $level;
     public $language_id;
     public $categories;
@@ -39,6 +44,9 @@ class CourseBasicDetails extends Component
     public function mount()
     {
         $this->courseId = request()->route('id');
+        if ($this->courseId) {
+            $this->guardedCourse($this->courseId);
+        }
    
         $this->categories   = Category::whereParentId(null)->whereNull('deleted_at')->get();
         $this->languages    = Language::all();
@@ -81,6 +89,7 @@ class CourseBasicDetails extends Component
         $this->sub_category_id          = $course->sub_category_id;
         $this->tags                     = $course->tags;
         $this->type                     = $course->type;
+        $this->delivery                 = $course->delivery ?: 'online';
         $this->level                    = $course->level;
         $this->language_id              = $course->language_id;
         $this->template_id              = $course?->certificate_id ?? '';
@@ -119,6 +128,14 @@ class CourseBasicDetails extends Component
             $this->tags             = SanitizeArray($this->tags);
             $validatedData['tags']  = array_filter($this->tags, fn($tag) => !empty($tag));
 
+            if ($this->courseId) {
+                $existing = $this->guardedCourse($this->courseId);
+                // Going back to "online" would orphan the dates people already paid for.
+                if ($validatedData['delivery'] === 'online' && $existing->isOnsite() && $existing->sessions()->whereHas('enrollments')->exists()) {
+                    $this->addError('delivery', 'Este curso ya tiene inscritos en alguna fecha: no puedes pasarlo a «En línea». Cancela o mueve las inscripciones primero.');
+                    return;
+                }
+            }
             // Preserve the original instructor when admin creates/edits; use own ID for tutors
             if (!$this->courseId) {
                 // New course: set instructor to current user (admin or tutor)
@@ -130,7 +147,7 @@ class CourseBasicDetails extends Component
             }
 
             $course = (new CourseService())->updateOrCreateCourse($this->courseId, $validatedData);
-            return redirect($this->editCourseRoute('media', $course->id));
+            return redirect($this->editCourseRoute('media', $course->id));   // the dates step follows media for in-person courses
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->dispatch('loadPageJs');
             throw $e;

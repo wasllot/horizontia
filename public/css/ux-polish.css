@@ -1,0 +1,151 @@
+/* ==========================================================================
+   Pulido de UX (se carga al final, después de horizontia-ui.css).
+   Secciones: 1 tokens · 2 aviso de cookies · 3 encabezado del sitio · 4 acceso (login/registro)
+              5 títulos · 6 tamaños táctiles y texto · 7 accesibilidad
+   ========================================================================== */
+
+/* 1. Tokens de accesibilidad: texto de enlace con contraste AA sobre blanco */
+:root { --ux-link: #1b4fc4; --ux-navy: #14213d; --ux-yellow: #fed304; --ux-focus: #1b4fc4; }
+
+/* 2. Aviso de cookies: barra compacta, no tapa el contenido en móvil */
+.ht-cookie { position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 1040; max-width: 720px; margin: 0 auto; display: flex; gap: 14px 18px; align-items: center; flex-wrap: wrap; padding: 14px 18px; border-radius: 14px; background: var(--ux-navy); color: #e5e7eb; box-shadow: 0 12px 40px rgba(0, 0, 0, .35); }
+.ht-cookie__text { margin: 0; flex: 1 1 280px; font-size: 14px; line-height: 1.5; }
+.ht-cookie__text a { color: var(--ux-yellow); text-decoration: underline; }
+.ht-cookie__short { display: none; }
+.ht-cookie__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.ht-cookie__btn { min-height: 40px; padding: 8px 18px; border: 2px solid var(--ux-yellow); border-radius: 10px; background: var(--ux-yellow); color: var(--ux-navy); font-weight: 700; cursor: pointer; }
+.ht-cookie__btn--ghost { background: transparent; color: var(--ux-yellow); }
+@media (max-width: 640px) {
+    .ht-cookie { left: 8px; right: 8px; bottom: 8px; padding: 10px 12px; gap: 8px 12px; flex-wrap: nowrap; }
+    .ht-cookie__long { display: none; }
+    .ht-cookie__short { display: inline; }
+    .ht-cookie__text { flex: 1 1 auto; font-size: 12.5px; line-height: 1.4; }
+    .ht-cookie__actions { flex: 0 0 auto; flex-direction: column; gap: 6px; }
+    .ht-cookie__btn { min-height: 38px; padding: 6px 14px; font-size: 13px; }
+}
+
+/* 3. Encabezado del sitio en móvil: una sola fila (logo · entrar · menú) */
+@media (max-width: 1199px) {
+    .am-header_two_wrap { flex-wrap: nowrap !important; align-items: center; gap: 10px; padding-top: 6px; padding-bottom: 6px; }
+    .am-header_two_wrap .am-logo { flex: 1 1 auto; min-width: 0; margin: 0; }
+    .am-header_two_wrap .am-logo img, .am-header_two_wrap .am-logo svg { max-height: 44px; width: auto; max-width: 100%; }
+    .am-header_two_wrap .am-loginbtns { order: 2; flex: 0 0 auto; width: auto !important; margin: 0; }
+    .am-header_two_wrap .am-loginbtns .am-btn { min-height: 40px; padding: 8px 16px; font-size: 14px; white-space: nowrap; width: auto; }
+    .am-header_two_wrap .am-navigation { order: 3; flex: 0 0 auto; }
+    .am-header_two_wrap .am-header_user { order: 2; }
+}
+
+/* 4. Acceso: botón y enlaces legibles (el tema los pintaba en dorado pálido) */
+.am-login-form .am-btn, .am-login-form button[type=submit], .am-register-form .am-btn, form.am-login-form button { background: var(--ux-yellow) !important; color: var(--ux-navy) !important; font-weight: 700; min-height: 48px; }
+.am-login-form .am-btn:hover, .am-login-form button[type=submit]:hover { filter: brightness(.96); }
+.am-login-form .am-btn:disabled, .am-login-form button:disabled { opacity: .6; cursor: wait; }
+.am-lost-password a, .am-login-form a:not(.am-btn), .am-login-options a, .am-register-form a:not(.am-btn) { color: var(--ux-link) !important; text-decoration: underline; text-underline-offset: 2px; font-weight: 600; }
+
+/* 5. Título del curso: completo, hasta 3 líneas, también en móvil */
+.cr-course-details-page .am-searchhead_title .cr-title-box h1,
+.cr-course-details-banner .cr-title-box h1 { display: block !important; overflow: visible !important; -webkit-line-clamp: unset !important; text-overflow: clip !important; white-space: normal; overflow-wrap: anywhere; margin: 0 0 8px; letter-spacing: normal; }
+@media (max-width: 767px) { .cr-course-details-banner .cr-title-box h1 { font-size: 1.9rem !important; line-height: 1.2 !important; } }
+
+/* 4b. Encabezado de acceso (ahora h1): mismo aspecto que el h2 del tema */
+.am-login-right_title h1 { margin-bottom: 0; letter-spacing: 1.5px; line-height: 1.2; }
+@media (max-width: 767px) { .am-login-right_title h1 { font-size: 30px !important; } }
+
+/* 3b. Botones principales del sitio público: amarillo de marca con texto navy (el tema los traía en dorado pálido) */
+body:not(.hz) .am-btn:not(.am-btn_disable):not(:disabled):not(.am-white-btn):not(.am-btn-light) { background: var(--ux-yellow); color: var(--ux-navy); }
+body:not(.hz) .am-btn:not(.am-btn_disable):not(:disabled):hover { filter: brightness(.96); }
+
+/* 3c. Migas de pan: nunca salen de la pantalla */
+.am-breadcrumb, .cr-breadcrumb, .cr-course-details-banner .breadcrumb, .cr-course-details-banner nav[aria-label=breadcrumb] ol { flex-wrap: wrap; row-gap: 2px; max-width: 100%; overflow-wrap: anywhere; }
+
+/* 6. Sin desplazamiento horizontal en el sitio público; texto mínimo legible */
+body.am-bodywrap:not(.hz) { overflow-x: clip; }
+@media (max-width: 767px) {
+    body:not(.hz) .am-main { overflow-x: clip; }
+}
+
+/* 5b. Encabezados principales (h1) en pantallas donde el tema usaba h2 */
+.cr-allcourses_title h1 { margin: 0; opacity: .9; color: #000; font: 600 1.5rem/1.3333em "Roboto", serif; }
+body.hz .cr-allcourses_title h1 { margin: 0; }
+.cr-sidebar_title h1 { margin: 0; overflow: hidden; color: #fff; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font: 500 1rem/1.5em "Roboto", serif; }
+
+/* 6b. Tamaños táctiles: objetivos de al menos 40-44 px en pantallas táctiles/pequeñas */
+@media (max-width: 991px), (pointer: coarse) {
+    footer a, .am-footer a { display: inline-flex; align-items: center; min-height: 40px; padding-top: 6px; padding-bottom: 6px; }
+    .am-breadcrumb a, .am-breadcrumb li span { display: inline-flex; align-items: center; min-height: 32px; }
+    .ht-ccard__cat, .ht-chip, .ht-filter-chip { min-height: 40px; }
+    .ht-check { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+    .ht-check input[type=checkbox], .ht-check input[type=radio] { width: 22px; height: 22px; flex: 0 0 auto; }
+    .share-icon, .more-options, .cr-share-btn { min-width: 40px; min-height: 40px; }
+    .cr-allcourses_list .cr-instructor-name, .cr-allcourses_list .cr-course-title, .cr-allcourses_list .cr-category-link { display: inline-flex; align-items: center; min-height: 36px; }
+    .ht-nav__item > a, .navbar-nav .nav-link { min-height: 44px; display: flex; align-items: center; }
+    .am-pagination ul li a, .am-pagination ul li span { min-width: 40px; min-height: 40px; }
+}
+@media (max-width: 991px), (pointer: coarse) {
+    h3 > a, h2 > a { display: inline-block; padding: 6px 0; }
+    .ht-cookie__text a { display: inline-block; padding: 8px 4px; }
+    .am-step-card a, .am-hero-content a:not(.am-btn), .ht-bundle-hint a, .ht-cat__crumbs a { display: inline-flex; align-items: center; min-height: 40px; }
+    .cr-allcourses_list .cr-instructor-name, .cr-allcourses_list .cr-course-title, .cr-allcourses_list .cr-category-link { min-height: 36px !important; padding-top: 4px; padding-bottom: 4px; }
+}
+
+/* 3d. Menú móvil: se despliega a todo el ancho debajo del encabezado, sin desplazar nada */
+@media (max-width: 1199px) {
+    .am-header_two { position: relative; }
+    .am-header_two_wrap { position: relative; }
+    .am-header_two_wrap .am-navigation { position: static; }
+    .am-header_two_wrap .am-navigation .navbar-collapse { position: absolute; top: 100%; left: 0; right: 0; z-index: 1030; margin: 0; padding: 8px 16px 16px; background: #fff; border-top: 1px solid #e5e7eb; box-shadow: 0 18px 30px rgba(20, 33, 61, .12); max-height: calc(100vh - 80px); overflow-y: auto; }
+    .am-header_two_wrap .navbar-nav { flex-direction: column; align-items: stretch; gap: 0; margin: 0; padding: 0; }
+    .am-header_two_wrap .navbar-nav .nav-link { padding: 12px 8px; border-bottom: 1px solid #f0f2f7; }
+    .ht-nav__dropdown { position: static !important; box-shadow: none; border: 0; padding-left: 14px; }
+}
+
+/* 3e. Encabezado con sesión iniciada en móvil: los iconos caben junto al logo */
+@media (max-width: 1199px) {
+    .am-header_two_wrap .am-header_user { width: auto !important; flex: 0 1 auto !important; margin-left: auto; gap: 6px; flex-wrap: nowrap; }
+    .am-header_two_wrap .am-logo { min-width: 96px; flex: 0 1 auto; }
+}
+@media (max-width: 520px) {
+    .am-header_two_wrap .am-header_user .am-language-select, .am-header_two_wrap .am-header_user .am-lang { display: none !important; }
+}
+
+/* Aula: "Siguiente lección" con cuenta regresiva y opción de quedarse */
+.cr-next-curriculum .ht-next-cancel { display: inline-block; margin-top: 12px; padding: 8px 4px; color: #fff; text-decoration: underline; font-size: .9rem; }
+
+/* Ficha del curso: barra de compra fija (móvil), nota de pago y prueba social honesta */
+.ht-buybar { display: none; }
+@media (max-width: 991px) {
+    .ht-buybar { display: flex; align-items: center; justify-content: space-between; gap: 12px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 1030; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: #fff; border-top: 1px solid #e5e7eb; box-shadow: 0 -8px 24px rgba(20, 33, 61, .12); }
+    .ht-buybar[style*="display: none"] { display: none !important; }
+    .ht-buybar__price { display: grid; line-height: 1.15; }
+    .ht-buybar__price strong { font-size: 1.25rem; color: var(--ux-navy); }
+    .ht-buybar__price s { color: #8a93a8; font-size: .85rem; }
+    .ht-buybar__cta { flex: 1 1 auto; max-width: 62%; min-height: 46px; display: inline-flex; align-items: center; justify-content: center; text-align: center; }
+    .ht-cookie { bottom: 72px; }
+}
+.ht-paynote { margin: 14px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; color: #4a546d; font-size: .88rem; }
+.ht-paynote li::before { content: "✓ "; color: #1a9a5b; font-weight: 700; }
+.ht-new-course { display: inline-block; padding: 3px 10px; border-radius: 999px; background: rgba(254, 211, 4, .16); color: #f3d65a; font-size: .85rem; font-weight: 600; }
+.cr-course-details-banner .ht-new-course { color: #fed304; }
+
+/* 7. Accesibilidad: contraste AA (4.5:1) en textos secundarios, foco visible y enlace "saltar al contenido" */
+s, del, .ht-ccard s, .bn-list { color: #667086 !important; }
+em { --ux-em: #5c6580; }
+.cr-course-details-page .am-tabitem, .cr-course-details-page .cr-label, .cr-course-details-page .cr-p, .cr-course-details-page span:not([class]), .cr-course-details-page em { color: #4a4a4a; }
+.cr-course-details-page .cr-label-preview { color: #a84b00 !important; }
+.am-lang-anchor { color: #5f5f5f !important; }
+.cr-sidebar em, .cr-sidebar_accordion em { color: rgba(255, 255, 255, .7) !important; }
+:focus-visible { outline: 3px solid var(--ux-focus); outline-offset: 2px; border-radius: 4px; }
+.cr-coursedetails :focus-visible, .cr-sidebar :focus-visible, .ht-cookie :focus-visible, footer :focus-visible, .am-footer :focus-visible { outline-color: #fed304; }
+.ht-skip { position: absolute; left: 8px; top: -60px; z-index: 2000; padding: 10px 16px; border-radius: 8px; background: var(--ux-navy); color: #fff; font-weight: 700; text-decoration: none; transition: top .15s; }
+.ht-skip:focus { top: 8px; }
+.ht-check em, .ht-ccard em, .ht-cat em, .ht-results em, .ht-toolbar em, .ht-filters em, aside em { color: #5c6580 !important; }
+.cr-discount, del.cr-discount { color: #667086 !important; }
+.cr-course-details-page .am-tabitem, .am-aboutuser_tab li a, .cr-course-details-page .cr-label, .cr-course-details-page .cr-p, .cr-course-details-page p, .cr-course-details-page em, .cr-course-details-page .cr-overview-course span { color: #4a4a4a !important; }
+.cr-course-details-page .am-aboutuser_tab li.active a, .cr-course-details-page .am-aboutuser_tab li a:hover { color: var(--ux-navy) !important; }
+.cr-course-details-banner p, .cr-course-details-banner span, .cr-course-details-banner em { color: inherit; }
+.cr-coursedetails .nav-link, .cr-coursedetails_content .nav-link, .cr-coursedetails em { color: #4a4a4a; }
+
+/* Nota de pago de la tarjeta de compra: dentro del relleno de la tarjeta y sin viñetas dobles */
+ul.ht-paynote { margin: 0 !important; padding: 4px 22px 22px !important; list-style: none !important; display: grid; gap: 6px; }
+ul.ht-paynote li { list-style: none !important; padding-left: 20px; position: relative; line-height: 1.4; }
+ul.ht-paynote li::marker { content: none; }
+ul.ht-paynote li::before { content: "✓" !important; position: absolute; left: 0; top: 0; color: #1a9a5b; font-weight: 700; }

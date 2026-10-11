@@ -472,12 +472,9 @@ class NotificationService
             $info .= '<b>' . trans('identity.parent_email') . '</b> :' . $identityInfo['identityInfo']['parent_email'] . "<br>";
         if (!empty($identityInfo['identityInfo']['parent_phone']))
             $info .= '<b>' . trans('identity.parent_phone') . '</b> :' . $identityInfo['identityInfo']['parent_phone'] . "<br>";
-        if ($identityInfo['identityInfo']['personal_photo'])
-            $info .= '<b>' . trans('identity.other_info') . '</b> <br /><img src="' . url(Storage::url($identityInfo['identityInfo']['personal_photo'])) . '"/> <br>';
-        if ($identityInfo['identityInfo']['attachments'])
-            $info .= '<b>' . trans('identity.other_attachment') . '</b> <br /><img src="' . url(Storage::url($identityInfo['identityInfo']['attachments'])) . '"/> <br>';
-        if ($identityInfo['identityInfo']['transcript'])
-            $info .= '<b>' . trans('identity.transcript') . '</b> <br /><img src="' . url(Storage::url($identityInfo['identityInfo']['transcript'])) . '"/> <br>';
+        // The documents are private: the e-mail never embeds or links the files, admins open them from the panel.
+        if (!empty($identityInfo['identityInfo']['personal_photo']) || !empty($identityInfo['identityInfo']['attachments']) || !empty($identityInfo['identityInfo']['transcript']))
+            $info .= '<b>' . trans('identity.other_attachment') . '</b> <a href="' . route('admin.identity-verification') . '">' . e(trans('general.identity_verification')) . '</a><br>';
         return $info;
     }
 

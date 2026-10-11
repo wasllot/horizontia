@@ -1,0 +1,18 @@
+.rec { max-width: 1160px; margin: 44px auto 48px; padding: 0; box-sizing: border-box; }
+@media (max-width: 1200px) { .rec { padding: 0 20px; } }
+.rec h2 { margin: 0 0 14px; font-size: 1.3rem; color: #14213d; }
+.rec__grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.rec__card { display: flex; flex-direction: column; background: #fff; border: 1px solid #e3e6ee; border-radius: 14px; overflow: hidden; text-decoration: none; color: inherit; transition: box-shadow .15s, transform .15s; }
+.rec__card:hover { box-shadow: 0 8px 24px rgba(20, 33, 61, .12); transform: translateY(-2px); }
+.rec__card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #eef0f6; }
+.rec__body { display: grid; gap: 4px; padding: 12px 14px 14px; }
+.rec__body small { color: #8a6d00; font-weight: 700; font-size: .78rem; }
+.rec__body strong { color: #14213d; line-height: 1.3; }
+.rec__body span { color: #5b6478; font-weight: 600; }
+.cr-allcourses > .rec { margin-top: 40px; padding-top: 24px; border-top: 1px solid #e3e6ee; }
+.cr-allcourses > .rec .rec__grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.rec h2 { margin: 0 0 18px !important; }
+.cr-allcourses > .rec .rec__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 900px) { .cr-allcourses > .rec .rec__grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); } }
+
+.cr-allcourses > .rec { max-width: none; padding: 24px 0 0; margin: 40px 0 0; }

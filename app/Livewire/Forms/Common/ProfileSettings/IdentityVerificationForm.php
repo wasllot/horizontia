@@ -66,18 +66,15 @@ class IdentityVerificationForm extends Form
         $this->validate($rules);
 
         if (!empty($this->image)) {
-            $imageName               = $this->image->getClientOriginalName();
-            $personalPhoto           = $this->image->storeAs('identity_photo', $imageName, getStorageDisk());
+            $personalPhoto = $this->image->storeAs('identity_photo', identityFileName($this->image), identityDisk());   // private disk: never a public URL
         }
 
         if (!empty($this->identificationCard)) {
-            $imageName               = $this->identificationCard->getClientOriginalName();
-            $identificationCard      = $this->identificationCard->storeAs('identity_photo', $imageName, getStorageDisk());
+            $identificationCard = $this->identificationCard->storeAs('identity_photo', identityFileName($this->identificationCard), identityDisk());   // private disk: never a public URL
         }
 
         if (!empty($this->transcript)) {
-            $imageName               = $this->transcript->getClientOriginalName();
-            $transcript              = $this->transcript->storeAs('identity_photo', $imageName, getStorageDisk());
+            $transcript = $this->transcript->storeAs('identity_photo', identityFileName($this->transcript), identityDisk());   // private disk: never a public URL
         }
 
         try {

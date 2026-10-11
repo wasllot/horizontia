@@ -12,9 +12,10 @@ class Curriculum extends Model
 
     protected $table;
 
-    public function __construct()
+    public function __construct(array $attributes = [])
     {
         $this->table = (config('courses.db_prefix') ?? 'courses_') . 'curriculums';
+        parent::__construct($attributes);   // boots traits and global scopes (SoftDeletes) and fills the attributes
     }
 
     protected $fillable = [
@@ -41,6 +42,25 @@ class Curriculum extends Model
     public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class);
+    }
+
+    /**
+     * Lessons a student can actually open: they carry media or text, or (live lessons) a scheduled session.
+     * Grouped on purpose so it can be combined with other constraints without the OR leaking out.
+     */
+    public function scopeWithContent($query)
+    {
+        return $query->where(function ($q) {
+            $q->whereNotNull('media_path')
+                ->orWhereNotNull('article_content')
+                ->orWhere(fn ($live) => $live->where('type', 'live')->whereHas('liveStream'));
+        });
+    }
+
+    /** The scheduled session of a "live" lesson. */
+    public function liveStream(): HasOne
+    {
+        return $this->hasOne(CourseLiveStream::class, 'curriculum_id');
     }
 
     public function watchtime(): HasOne

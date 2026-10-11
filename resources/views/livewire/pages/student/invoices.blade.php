@@ -51,12 +51,12 @@
                                 @endphp
                                 <tr>
                                     <td data-label="{{ __('booking.id') }}"><span>{{ $order?->order_id }}</span></td>
-                                    <td data-label="{{ __('booking.date') }}"><span>{{ $order?->created_at->format('F j, Y') }}</span></td>
+                                    <td data-label="{{ __('booking.date') }}"><span>{{ $order?->created_at->translatedFormat('d M Y') }}</span></td>
                                     <td data-label="{{ __('booking.transaction_id') }}"><span>{{ !empty($order?->orders?->transaction_id) ? $order?->orders?->transaction_id : '-' }}</span></td>
                                     <td data-label="{{ __('general.item' )}}">
                                         <div class="tb-varification_userinfo">
                                             <strong class="tb-adminhead__img">
-                                                @if (!empty($image) && Storage::disk(getStorageDisk())->exists($image))
+                                                @if (!empty($image) && mediaExists($image))
                                                     <img src="{{ resizedImage($image,34,34) }}" alt="{{$image}}" />
                                                 @else
                                                     <img src="{{ resizedImage('placeholder.png',34,34) }}" alt="{{ $image }}" />
@@ -76,19 +76,19 @@
                                             <div class="tb-varification_userinfo">
                                                 @if($order?->orderable_type == \Modules\Courses\Models\Course::class)
                                                     <strong class="tb-adminhead__img">
-                                                        @if (!empty($order?->orderable?->instructor?->profile?->image) && Storage::disk(getStorageDisk())->exists($order?->orderable?->instructor?->profile?->image))
+                                                        @if (!empty($order?->orderable?->instructor?->profile?->image) && mediaExists($order?->orderable?->instructor?->profile?->image))
                                                         <img src="{{ resizedImage($order?->orderable?->instructor?->profile?->image,34,34) }}" alt="{{$order?->orderable?->instructor?->profile?->image}}" />
                                                         @else
-                                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $order?->orderable?->instructor?->profile?->image }}" />
+                                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $order?->orderable?->instructor?->profile?->image }}" />
                                                         @endif
                                                     </strong>
                                                     <span>{{ $order?->orderable?->instructor?->profile?->first_name }}</span>
                                                 @elseif($order?->orderable_type == App\Models\SlotBooking::class)
                                                     <strong class="tb-adminhead__img">
-                                                        @if (!empty($order?->orderable?->tutor?->image) && Storage::disk(getStorageDisk())->exists($order?->orderable?->tutor?->image))
+                                                        @if (!empty($order?->orderable?->tutor?->image) && mediaExists($order?->orderable?->tutor?->image))
                                                         <img src="{{ resizedImage($order?->orderable?->tutor?->image,34,34) }}" alt="{{$order?->orderable?->tutor?->image}}" />
                                                         @else
-                                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $order?->orderable?->tutor?->image }}" />
+                                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $order?->orderable?->tutor?->image }}" />
                                                         @endif
                                                     </strong>
                                                     <span>{{ $order?->orderable?->tutor?->first_name }}</span>
@@ -105,10 +105,10 @@
                                             <div class="tb-varification_userinfo">
                                                 @if($order->orderable_type != 'Modules\Subscriptions\Models\Subscription')
                                                     <strong class="tb-adminhead__img">
-                                                        @if (!empty($order?->orders?->userProfile?->image) && Storage::disk(getStorageDisk())->exists($order?->orders?->userProfile?->image))
+                                                        @if (!empty($order?->orders?->userProfile?->image) && mediaExists($order?->orders?->userProfile?->image))
                                                         <img src="{{ resizedImage($order?->orders?->userProfile?->image,34,34) }}" alt="{{$order?->orders?->userProfile?->image}}" />
                                                         @else
-                                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $order?->orderable?->student?->image }}" />
+                                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $order?->orderable?->student?->image }}" />
                                                         @endif
                                                     </strong>
                                                     <span>{{ $order?->orders?->userProfile?->first_name }}</span>
@@ -130,7 +130,7 @@
                                     @endrole
                                     <td data-label="{{ __('booking.status' )}}">
                                         <div class="am-status-tag">
-                                            <em class="tk-project-tag-two {{ $order?->orders?->status == 'complete' ? 'tk-hourly-tag' : 'tk-fixed-tag' }}">{{ $order?->orders?->status}}</em>
+                                            <em class="tk-project-tag-two {{ $order?->orders?->status == 'complete' ? 'tk-hourly-tag' : 'tk-fixed-tag' }}">{{ statusLabel($order?->orders?->status) }}</em>
                                         </div>
                                     </td>
 

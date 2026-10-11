@@ -18,7 +18,11 @@ class AssignmentSubmission extends Model
         'score',
         'tutor_feedback',
         'status',
+        'attempts',
+        'passed_at',
     ];
+
+    protected $casts = ['passed_at' => 'datetime'];
 
     public function __construct(array $attributes = [])
     {

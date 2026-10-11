@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . "/_guard.php";
 
 /**
  * Script puntual para diagnosticar y arreglar el botón "Agregar Curso" que no aparece

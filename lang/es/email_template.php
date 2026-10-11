@@ -50,21 +50,21 @@ return [
     'variables_used'                                    => 'Variables utilizadas en el correo',
     'subject'                                           => 'Asunto',
 
-    'welcome_student_subject'                           => '¡Bienvenido a Lernen, {userName}!',
-    'welcome_tutor_subject'                             => '¡Bienvenido a Lernen, {userName}!',
+    'welcome_student_subject'                           => '¡Bienvenido a Horizontia, {userName}!',
+    'welcome_tutor_subject'                             => '¡Bienvenido a Horizontia, {userName}!',
 
     'welcome_student_content'                           => 'Estamos encantados de tenerte en nuestra vibrante comunidad de aprendizaje. Ya sea que busques mejorar tus habilidades, explorar nuevas materias o alcanzar tus metas académicas, estamos aquí para apoyarte en cada paso del camino.',
     'welcome_tutor_content'                             => 'Estamos emocionados de tenerte en nuestra comunidad de educadores apasionados. Ya sea que estés aquí para compartir tu experiencia, inspirar estudiantes o hacer crecer tu carrera docente, estamos comprometidos a proporcionarte las herramientas y el apoyo que necesitas para tener éxito.',
     
-    'registration_student_subject'                      => '¡Bienvenido a Lernen, {userName}!',
-    'registration_tutor_subject'                        => '¡Bienvenido a Lernen, {userName}!',
+    'registration_student_subject'                      => '¡Bienvenido a Horizontia, {userName}!',
+    'registration_tutor_subject'                        => '¡Bienvenido a Horizontia, {userName}!',
     'registration_admin_subject'                        => 'Notificación de Registro de Nuevo Usuario',
     
     'greeting'                                          => 'Estimado :userName,',
     'greeting_admin'                                    => 'Estimado Administrador,',
     
-    'registration_student_content'                      => '¡Estamos emocionados de tenerte en la comunidad Lernen, :userName! Por favor verifica tu dirección de correo electrónico haciendo clic en el siguiente enlace: :verificationLink Esperamos verte prosperar y alcanzar tus metas de aprendizaje.',
-    'registration_tutor_content'                        => '¡Estamos encantados de darte la bienvenida como tutor en Lernen, :userName! Para completar tu registro, por favor verifica tu dirección de correo electrónico haciendo clic en el siguiente enlace: :verificationLink Estamos emocionados de ver el impacto positivo que tendrás en los viajes de aprendizaje de tus estudiantes.',
+    'registration_student_content'                      => '¡Estamos emocionados de tenerte en la comunidad Horizontia, :userName! Por favor verifica tu dirección de correo electrónico haciendo clic en el siguiente enlace: :verificationLink Esperamos verte prosperar y alcanzar tus metas de aprendizaje.',
+    'registration_tutor_content'                        => '¡Estamos encantados de darte la bienvenida como tutor en Horizontia, :userName! Para completar tu registro, por favor verifica tu dirección de correo electrónico haciendo clic en el siguiente enlace: :verificationLink Estamos emocionados de ver el impacto positivo que tendrás en los viajes de aprendizaje de tus estudiantes.',
     
     'registration_admin_content'                        => ':userName se ha registrado con el correo :userEmail. Por favor verifica sus detalles y asegúrate de que tengan una gran experiencia en nuestra plataforma.',
 
@@ -75,9 +75,9 @@ return [
     'password_reset_content'                            => 'Recibimos una solicitud para restablecer tu contraseña. Si hiciste esta solicitud, por favor haz clic en el siguiente enlace para restablecer tu contraseña: :resetLink Si no solicitaste un restablecimiento de contraseña, por favor ignora este correo.',
 
     'identity_verification_request_subject'             => 'Verificación de Identidad Requerida',
-    'identity_verification_request_content'             => 'Gracias por enviar tu solicitud de verificación de identidad en la plataforma Lernen. Nuestro equipo administrativo revisará tu información en breve.<br> Nombre: {userName} <br> Rol: {userRole} <br> Correo: {userEmail} <br> Fecha de Solicitud: {requestDate} <br> Recibirás un correo de confirmación una vez que tu identidad sea verificada. Si necesitamos detalles adicionales, nos pondremos en contacto contigo directamente.',
+    'identity_verification_request_content'             => 'Gracias por enviar tu solicitud de verificación de identidad en la plataforma Horizontia. Nuestro equipo administrativo revisará tu información en breve.<br> Nombre: {userName} <br> Rol: {userRole} <br> Correo: {userEmail} <br> Fecha de Solicitud: {requestDate} <br> Recibirás un correo de confirmación una vez que tu identidad sea verificada. Si necesitamos detalles adicionales, nos pondremos en contacto contigo directamente.',
     'identity_verification_request_admin_subject'       => 'Nueva Solicitud de Verificación de Identidad',
-    'identity_verification_request_admin_content'       => 'Se ha enviado una nueva solicitud de verificación de identidad en la plataforma Lernen. Por favor encuentra los detalles del usuario a continuación: <br> Nombre: {userName} <br> Rol: {userRole} <br> Correo: {userEmail} <br> Fecha de Solicitud: {requestDate} <br> Por favor procede con los pasos necesarios para verificar la identidad de este usuario.',
+    'identity_verification_request_admin_content'       => 'Se ha enviado una nueva solicitud de verificación de identidad en la plataforma Horizontia. Por favor encuentra los detalles del usuario a continuación: <br> Nombre: {userName} <br> Rol: {userRole} <br> Correo: {userEmail} <br> Fecha de Solicitud: {requestDate} <br> Por favor procede con los pasos necesarios para verificar la identidad de este usuario.',
 
     'identity_verification_approved_subject'            => 'Verificación de Identidad Aprobada',
     'identity_verification_approved_content'            => '¡Felicidades, :userName! Tu identidad ha sido verificada exitosamente. Ahora puedes disfrutar completamente de todos los beneficios de nuestra plataforma. Gracias por tu cooperación.',
@@ -85,10 +85,10 @@ return [
     'identity_verification_rejected_subject'            => 'Verificación de Identidad Rechazada',
     'identity_verification_rejected_content'            => 'Lamentamos informarte, :userName, que tu verificación de identidad ha sido rechazada. Razón: :rejectionReason. Por favor proporciona los documentos requeridos e intenta nuevamente. Si tienes alguna pregunta, no dudes en contactar a nuestro equipo de soporte.',
 
-    'session_booking_student_subject'                   => '¡Gracias por reservar con Lernen!',
-    'session_booking_student_content'                   => 'Estamos emocionados de confirmar tus próximas sesiones. Aquí están los detalles de cada una de tus reservas <br> :bookingDetails <br> ¡Gracias por elegir Lernen! Estamos aquí para ayudarte a alcanzar tus metas de aprendizaje.',
-    'session_booking_tutor_subject'                     => '¡Gracias por reservar con Lernen!',
-    'session_booking_tutor_content'                     => 'Estamos emocionados de confirmar tus próximas sesiones. Aquí están los detalles de cada una de tus reservas <br> :bookingDetails <br> ¡Gracias por elegir Lernen! Estamos aquí para ayudarte a alcanzar tus metas de aprendizaje.',
+    'session_booking_student_subject'                   => '¡Gracias por reservar con Horizontia!',
+    'session_booking_student_content'                   => 'Estamos emocionados de confirmar tus próximas sesiones. Aquí están los detalles de cada una de tus reservas <br> :bookingDetails <br> ¡Gracias por elegir Horizontia! Estamos aquí para ayudarte a alcanzar tus metas de aprendizaje.',
+    'session_booking_tutor_subject'                     => '¡Gracias por reservar con Horizontia!',
+    'session_booking_tutor_content'                     => 'Estamos emocionados de confirmar tus próximas sesiones. Aquí están los detalles de cada una de tus reservas <br> :bookingDetails <br> ¡Gracias por elegir Horizontia! Estamos aquí para ayudarte a alcanzar tus metas de aprendizaje.',
 
     'booking_rescheduled_subject'                       => 'Tu Sesión Ha Sido Reprogramada',
     'booking_rescheduled_content'                       => 'Queríamos informarte que tu sesión con :tutorName ha sido reprogramada para :newSessionDate debido a la siguiente razón: <br /> :reason. Puedes ver más detalles haciendo clic en el siguiente enlace :viewLink Nos disculpamos por cualquier inconveniente y agradecemos tu comprensión.',
@@ -97,7 +97,7 @@ return [
     'withdraw_wallet_amount_request_content'            => ':userName ha solicitado retirar :withdrawAmount de su billetera. Por favor revisa y procesa la solicitud a tu conveniencia.',
 
     'accepted_withdraw_request_subject'                 => 'Tu Solicitud de Retiro Ha Sido Aprobada',
-    'accepted_withdraw_request_content'                 => '¡Buenas noticias, :userName! Tu solicitud para retirar :withdrawAmount de tu billetera ha sido aprobada. El monto será acreditado a tu cuenta en breve. Gracias por ser un miembro valioso de la comunidad Lernen.',
+    'accepted_withdraw_request_content'                 => '¡Buenas noticias, :userName! Tu solicitud para retirar :withdrawAmount de tu billetera ha sido aprobada. El monto será acreditado a tu cuenta en breve. Gracias por ser un miembro valioso de la comunidad Horizontia.',
 
     'new_message_subject'                               => 'Nuevo Mensaje de :messageSender',
     'new_message_content'                               => 'Has recibido un nuevo mensaje de :messageSender. Por favor inicia sesión en tu cuenta para responder.',
@@ -158,20 +158,20 @@ return [
 
     'dispute_tutor_variables'                           => '{tutorName} - Para Nombre del Tutor <br> {studentName} - Para Nombre del Estudiante <br> {disputeReason} - Para Razón de la Disputa',
     'dispute_tutor_subject'                             => 'Confirmación de Razón de Disputa para Reserva con {studentName}',
-    'dispute_tutor_content'                             => 'Una disputa ha sido levantada por {studentName} con respecto a tu sesión reciente. Hemos puesto el pago en espera mientras revisamos el problema.<br><br>Razón de la Disputa:<br>{disputeReason}<br><br>Por favor inicia sesión en tu panel para ver más detalles y proporcionar tu respuesta si es necesario.<br><br>Saludos cordiales,<br>El Equipo Lernen',
+    'dispute_tutor_content'                             => 'Una disputa ha sido levantada por {studentName} con respecto a tu sesión reciente. Hemos puesto el pago en espera mientras revisamos el problema.<br><br>Razón de la Disputa:<br>{disputeReason}<br><br>Por favor inicia sesión en tu panel para ver más detalles y proporcionar tu respuesta si es necesario.<br><br>Saludos cordiales,<br>El Equipo Horizontia',
     
     'admin_dispute_tutor_subject'                       => 'Nueva Disputa Enviada para Sesión con {studentName} y {tutorName}',
     'admin_dispute_tutor_variables'                     => '{studentName} - Para Nombre del Estudiante <br> {tutorName} - Para Nombre del Tutor <br> {sessionDateTime} - Para Fecha y Hora de la Sesión <br> {disputeReason} - Para Razón de la Disputa',
-    'admin_dispute_tutor_content'                       => 'Una nueva disputa ha sido enviada para la sesión entre {studentName} y {tutorName}. A continuación están los detalles de la disputa:<br><br>Detalles de la Sesión:<br>Tutor: {tutorName}<br>Estudiante: {studentName}<br>Fecha y Hora: {sessionDateTime}<br>Razón de la Disputa: {disputeReason}<br><br>Por favor revisa el caso y toma las medidas apropiadas.<br><br>Saludos cordiales,<br>El Equipo Lernen',
+    'admin_dispute_tutor_content'                       => 'Una nueva disputa ha sido enviada para la sesión entre {studentName} y {tutorName}. A continuación están los detalles de la disputa:<br><br>Detalles de la Sesión:<br>Tutor: {tutorName}<br>Estudiante: {studentName}<br>Fecha y Hora: {sessionDateTime}<br>Razón de la Disputa: {disputeReason}<br><br>Por favor revisa el caso y toma las medidas apropiadas.<br><br>Saludos cordiales,<br>El Equipo Horizontia',
     
     'dispute_resolution_title'                          => 'Notificación de Resolución de Disputa',
 
     'dispute_resolved_student_subject'                  => 'Disputa Resuelta – Reembolso Emitido para Tu Sesión con :tutorName',
-    'dispute_resolved_student_content'                  => "Estimado :studentName,<br>Tu disputa para la sesión con :tutorName ha sido resuelta a tu favor. Un reembolso de :refundAmount ha sido emitido a tu método de pago original.<br>Detalles de la Sesión: <br>Mensaje: :disputeReason <br> Tutor: :tutorName<br>Fecha y Hora: :sessionDateTime<br>Reembolso Emitido: :refundAmount<br><br>Gracias por tu paciencia.<br><br>Saludos cordiales,<br>El Equipo Lernen",
+    'dispute_resolved_student_content'                  => "Estimado :studentName,<br>Tu disputa para la sesión con :tutorName ha sido resuelta a tu favor. Un reembolso de :refundAmount ha sido emitido a tu método de pago original.<br>Detalles de la Sesión: <br>Mensaje: :disputeReason <br> Tutor: :tutorName<br>Fecha y Hora: :sessionDateTime<br>Reembolso Emitido: :refundAmount<br><br>Gracias por tu paciencia.<br><br>Saludos cordiales,<br>El Equipo Horizontia",
     'dispute_resolve_student_variables'                 => 'Nombres de Variables Posibles: {{studentName}}, {{tutorName}}, {{sessionDateTime}}, {{refundAmount}}, {{disputeReason}}',
 
     'dispute_resolved_tutor_subject'                    => 'Disputa Resuelta – Pago Liberado para Sesión con :studentName',
-    'dispute_resolved_tutor_content'                    => "Estimado :tutorName,<br>La disputa levantada para la sesión con :studentName ha sido resuelta a tu favor. El pago por la sesión ha sido liberado a tu billetera.<br>Detalles de la Sesión: <br>Mensaje: :disputeReason <br>Estudiante: :studentName<br>Fecha y Hora: :sessionDateTime<br>Pago Liberado: :paymentAmount<br><br>Gracias por tu paciencia durante el proceso de revisión.<br><br>Saludos cordiales,<br>El Equipo Lernen",
+    'dispute_resolved_tutor_content'                    => "Estimado :tutorName,<br>La disputa levantada para la sesión con :studentName ha sido resuelta a tu favor. El pago por la sesión ha sido liberado a tu billetera.<br>Detalles de la Sesión: <br>Mensaje: :disputeReason <br>Estudiante: :studentName<br>Fecha y Hora: :sessionDateTime<br>Pago Liberado: :paymentAmount<br><br>Gracias por tu paciencia durante el proceso de revisión.<br><br>Saludos cordiales,<br>El Equipo Horizontia",
     'dispute_resolve_tutor_variables'                   => 'Nombres de Variables Posibles: {{tutorName}}, {{studentName}}, {{sessionDateTime}}, {{paymentAmount}}, {{disputeReason}}',
 
     'quiz_title'                                        => 'Notificación de Quiz',

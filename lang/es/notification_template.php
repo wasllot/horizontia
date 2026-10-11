@@ -50,8 +50,8 @@ return [
 
     'identity_verification_approved_subject'            => 'Verificación de Identidad Aprobada',
     'identity_verification_rejected_subject'            => 'Verificación de Identidad Rechazada',
-    'session_booking_student_subject'                   => '¡Gracias por reservar con Lernen!',
-    'session_booking_tutor_subject'                     => '¡Gracias por reservar con Lernen!',
+    'session_booking_student_subject'                   => '¡Gracias por reservar con Horizontia!',
+    'session_booking_tutor_subject'                     => '¡Gracias por reservar con Horizontia!',
     'booking_rescheduled_subject'                       => 'Tu Sesión Ha Sido Reprogramada',
     'withdraw_wallet_amount_request_subject'            => 'Solicitud de Retiro de Monto de Billetera',
     'accepted_withdraw_request_subject'                 => 'Tu Solicitud de Retiro Ha Sido Aprobada',

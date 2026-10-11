@@ -52,6 +52,9 @@ class CompletePurchaseJob implements ShouldQueue
             }
             $tutorBookings = $tutorFunds = [];
 
+            app(\App\Services\CouponService::class)->redeem($this->order);
+            app(\App\Services\WhatsAppService::class)->purchaseConfirmed($this->order);
+
             DB::beginTransaction();
             if (!empty($this->order->items)) {
                 foreach($this->order->items as $item) {
@@ -155,9 +158,22 @@ class CompletePurchaseJob implements ShouldQueue
                                 'course_discount'   => $item->orderable?->pricing?->discount,
                                 'status'            => 'active',
                             ];
+                            // In-person course: remember the date the student bought (a manipulated/foreign id is ignored).
+                            $seats = new \Modules\Courses\Services\OnsiteSeatsService();
+                            $date = $seats->sessionForEnrollment($item->orderable, $item->options['session_id'] ?? null);
+                            if ($date) {
+                                $courseData['session_id'] = $date->id;
+                            }
+                            $alreadyEnrolled = \Modules\Courses\Models\Enrollment::where('student_id', $courseData['student_id'])->where('course_id', $courseData['course_id'])->exists();
                             (new \Modules\Courses\Services\CourseService())->addStudentCourse($courseData);
+                            if ($date && !$alreadyEnrolled) {   // payment webhooks can repeat: confirm only once
+                                \Modules\Courses\Services\OnsiteNotifier::enrolled($this->order, $item->orderable, $date, $seats->isOversold($date));
+                            }
                             $completeCourseDelay = Carbon::parse(now())->addDays((int)setting('_lernen.clear_course_amount_after_days') ?? 3);
-                            dispatch(new \Modules\Courses\Jobs\ClearCourseFundsJob($item->orderable?->instructor_id, $tutorEarning, $this->order->id))->delay($completeCourseDelay);
+                            // A free course moves no money: there is nothing to release to the instructor later.
+                            if ($tutorEarning > 0) {
+                                dispatch(new \Modules\Courses\Jobs\ClearCourseFundsJob($item->orderable?->instructor_id, $tutorEarning, $this->order->id))->delay($completeCourseDelay);
+                            }
                         }
                     } elseif(Module::has('subscriptions') && Module::isEnabled('subscriptions') && $item->orderable instanceof \Modules\Subscriptions\Models\Subscription) {
                         if ($item->orderable?->role_id == getRoleByName('tutor')) {
@@ -269,7 +285,10 @@ class CompletePurchaseJob implements ShouldQueue
                     }
                 }
                 
-                if (!empty($emailData['subscriptions']) || !empty($emailData['courses']) || !empty($emailData['bookings'])) {
+                if (isPrivateAcademy()) {
+                    // The academy has no "bookings": the buyer gets a Spanish receipt with the way in (once per order).
+                    $this->sendPurchaseReceipt();
+                } elseif (!empty($emailData['subscriptions']) || !empty($emailData['courses']) || !empty($emailData['bookings'])) {
                     dispatch(new SendNotificationJob('sessionBooking', $this->order?->orderBy, $emailData));
                     dispatch(new SendDbNotificationJob('sessionBooking', $this->order?->orderBy, ['bookingLink' => route('student.bookings')]));
                 }
@@ -295,5 +314,32 @@ class CompletePurchaseJob implements ShouldQueue
             DB::rollBack();
         }
 
+    }
+
+    /** Receipt for the course lines of the order. In-person dates also get their own e-mail (see OnsiteNotifier). */
+    private function sendPurchaseReceipt(): void
+    {
+        $student = $this->order?->orderBy;
+        if (!$student?->email || !\Illuminate\Support\Facades\Cache::add('purchase-receipt:' . $this->order->id, 1, now()->addDays(30))) {
+            return;
+        }
+
+        $courses = [];
+        foreach ($this->order->items()->where('orderable_type', \Modules\Courses\Models\Course::class)->get() as $item) {
+            $date = null;
+            if (!empty($item->options['session_label'])) {
+                $date = $item->options['session_label'];
+            }
+            $courses[] = ['title' => (string) $item->title, 'date' => $date];
+        }
+        if ($courses === []) {
+            return;
+        }
+
+        try {
+            \Illuminate\Support\Facades\Mail::to($student->email)->queue(new \App\Mail\PurchaseConfirmedEmail($this->order, $student->profile?->first_name ?: 'estudiante', $courses));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('No se pudo enviar el recibo de compra: ' . $e->getMessage(), ['order_id' => $this->order->id]);
+        }
     }
 }

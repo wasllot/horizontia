@@ -42,7 +42,7 @@
                                         @endif
                                         @if(!empty($step['step_image']))
                                             <figure>
-                                                <img src="{{ url(Storage::url($step['step_image'][0]['path'])) }}" alt="image">
+                                                <img src="{{ url(mediaUrl($step['step_image'][0]['path'])) }}" alt="image">
                                             </figure>
                                         @endif
                                         @if(!empty($step['step_heading']))

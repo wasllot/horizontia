@@ -65,10 +65,10 @@
             @endif
             @if(!empty(pagesetting('first_shape_image')) || !empty(pagesetting('second_shape_image')))
                 @if(!empty(pagesetting('first_shape_image')[0]['path']))
-                    <img class="am-stepbgimg-1" src="{{url(Storage::url(pagesetting('first_shape_image')[0]['path']))}}" alt="Background shape image">
+                    <img class="am-stepbgimg-1" src="{{url(mediaUrl(pagesetting('first_shape_image')[0]['path']))}}" alt="Background shape image">
                 @endif
                 @if(!empty(pagesetting('second_shape_image')[0]['path']))
-                    <img class="am-stepbgimg-2" src="{{url(Storage::url(pagesetting('second_shape_image')[0]['path']))}}" alt="Background shape image">
+                    <img class="am-stepbgimg-2" src="{{url(mediaUrl(pagesetting('second_shape_image')[0]['path']))}}" alt="Background shape image">
                 @endif
             @endif
         </div>
@@ -76,7 +76,7 @@
     @if(!empty(pagesetting('main_image')))
         <div class="am-guidesteps_bookingsection" data-aos="fade-left" data-aos-easing="ease" data-aos-delay="200">
             <figure>
-                <img src="{{url(Storage::url(pagesetting('main_image')[0]['path']))}}" alt="Guide steps image">
+                <img src="{{url(mediaUrl(pagesetting('main_image')[0]['path']))}}" alt="Guide steps image">
             </figure>
         </div>
     @endif

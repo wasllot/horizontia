@@ -41,7 +41,7 @@
                                                     @if(!empty($option['step_image']))
                                                         <figure>
                                                             @if(!empty($option['step_image'][0]['path']))
-                                                                <img src="{{url(Storage::url($option['step_image'][0]['path']))}}" alt="{{ $option['step_heading'] }} image">
+                                                                <img src="{{url(mediaUrl($option['step_image'][0]['path']))}}" alt="{{ $option['step_heading'] }} image">
                                                             @endif
                                                         </figure>
                                                     @endif

@@ -91,10 +91,10 @@
                                         <td data-label="{{ __('booking.subject' )}}">
                                             <div class="tb-varification_userinfo">
                                                 <strong class="tb-adminhead__img">
-                                                    @if (!empty($image) && Storage::disk(getStorageDisk())->exists($image))
+                                                    @if (!empty($image) && mediaExists($image))
                                                     <img src="{{ resizedImage($image,34,34) }}" alt="{{$image}}" />
                                                     @else 
-                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png',34,34) }}" alt="{{ $image }}" />
+                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png',34,34) }}" alt="{{ $image }}" />
                                                     @endif
                                                 </strong>
                                                 <span>{{ $subject }}<br><small>{{ $subjectGroup }}</small></span>
@@ -103,10 +103,10 @@
                                         <td data-label="{{ __('booking.student_name' )}}">
                                             <div class="tb-varification_userinfo">
                                                 <strong class="tb-adminhead__img">
-                                                    @if (!empty($order?->orderable?->student?->image) && Storage::disk(getStorageDisk())->exists($order?->orderable?->student?->image))
+                                                    @if (!empty($order?->orderable?->student?->image) && mediaExists($order?->orderable?->student?->image))
                                                     <img src="{{ resizedImage($order?->orderable?->student?->image,34,34) }}" alt="{{$order?->orderable?->student?->image}}" />
                                                     @else
-                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $order?->orderable?->student?->image }}" />
+                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $order?->orderable?->student?->image }}" />
                                                     @endif
                                                 </strong>
                                                 <span>{{ $order?->orderable?->student?->first_name . ' ' . $order->orderable?->student?->last_name  }}</span>
@@ -115,10 +115,10 @@
                                         <td data-label="{{ __('booking.tutor_name' )}}">
                                             <div class="tb-varification_userinfo">
                                                 <strong class="tb-adminhead__img">
-                                                    @if (!empty($order?->orderable?->tutor?->image) && Storage::disk(getStorageDisk())->exists($order?->orderable?->tutor?->image))
+                                                    @if (!empty($order?->orderable?->tutor?->image) && mediaExists($order?->orderable?->tutor?->image))
                                                     <img src="{{ resizedImage($order?->orderable?->tutor?->image,34,34) }}" alt="{{$order?->orderable?->tutor?->image}}" />
                                                     @else 
-                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png',34,34) }}" alt="{{ $order?->orderable?->tutor?->image }}" />
+                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png',34,34) }}" alt="{{ $order?->orderable?->tutor?->image }}" />
                                                     @endif
                                                 </strong>
                                                 <span>{{ $order?->orderable?->tutor?->first_name }}</span>

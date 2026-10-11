@@ -62,7 +62,7 @@
                                 <figure>
                                     @if(!empty(pagesetting('mission_frame_image')))
                                         @if(!empty(pagesetting('mission_frame_image')[0]['path']))
-                                            <img src="{{url(Storage::url(pagesetting('mission_frame_image')[0]['path']))}}" alt="Empowering learners image">
+                                            <img src="{{url(mediaUrl(pagesetting('mission_frame_image')[0]['path']))}}" alt="Empowering learners image">
                                         @endif
                                     @endif
                                     @if(!empty(pagesetting('user_one_image')) 
@@ -73,12 +73,12 @@
                                         <figcaption>
                                             @if(!empty(pagesetting('user_one_image')))
                                                 @if(!empty(pagesetting('user_one_image')[0]['path']))
-                                                    <img src="{{url(Storage::url(pagesetting('user_one_image')[0]['path']))}}" alt="User image">
+                                                    <img src="{{url(mediaUrl(pagesetting('user_one_image')[0]['path']))}}" alt="User image">
                                                 @endif
                                             @endif
                                             @if(!empty(pagesetting('handshake_image')))
                                                 @if(!empty(pagesetting('handshake_image')[0]['path']))
-                                                    <img src="{{url(Storage::url(pagesetting('handshake_image')[0]['path']))}}" class="am-mission-handshake-img" alt="Handshake image">
+                                                    <img src="{{url(mediaUrl(pagesetting('handshake_image')[0]['path']))}}" class="am-mission-handshake-img" alt="Handshake image">
                                                 @endif
                                             @endif
                                             @if(!empty(pagesetting('user_two_image')) || !empty(pagesetting('image_heading')))
@@ -87,7 +87,7 @@
                                                         @if(!empty(pagesetting('user_two_image')))
                                                             <figure>
                                                                 @if(!empty(pagesetting('user_two_image')[0]['path']))
-                                                                    <img src="{{url(Storage::url(pagesetting('user_two_image')[0]['path']))}}" alt="User image">
+                                                                    <img src="{{url(mediaUrl(pagesetting('user_two_image')[0]['path']))}}" alt="User image">
                                                                 @endif
                                                             </figure>
                                                         @endif

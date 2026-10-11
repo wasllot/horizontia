@@ -129,7 +129,7 @@
                                     <td data-label="{{__('general.description')}}"><span>{!! $single->description !!}</span></td>
                                     <td data-label="{{__('general.status')}}">
                                         <div class="am-status-tag">
-                                            <em class="tk-project-tag tk-{{ $single->status == 'active' ? 'active' : 'disabled' }}">{{ $single->status }}</em>
+                                            <em class="tk-project-tag tk-{{ $single->status == 'active' ? 'active' : 'disabled' }}">{{ __(ucfirst($single->status)) }}</em>
                                         </div>
                                     </td>
                                     <td data-label="{{__('general.actions')}}">

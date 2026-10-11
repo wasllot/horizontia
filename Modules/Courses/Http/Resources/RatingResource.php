@@ -31,7 +31,7 @@ class RatingResource extends JsonResource
                     'name'          => $this->student?->profile?->full_name ?? null,
                     'short_code'    => $this->student?->address?->country?->short_code,
                     'country_name'  => $this->student?->address?->country?->name,
-                    'image'         => $this->student?->profile?->image ? url(Storage::url($this->student?->profile?->image)) : url(Storage::url('placeholder.png')),
+                    'image'         => $this->student?->profile?->image ? url(mediaUrl($this->student?->profile?->image)) : url(mediaUrl('placeholder.png')),
                 ];
             }),
         ];

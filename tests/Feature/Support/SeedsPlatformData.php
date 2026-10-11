@@ -33,6 +33,20 @@ use Modules\Courses\Models\Section;
  */
 trait SeedsPlatformData
 {
+    /**
+     * Cached values are not covered by DatabaseTransactions: after a test rolls back, a cache entry would still describe
+     * rows that no longer exist (settings, menus, SEO overrides, a student's cart). Drop them so tests stay independent.
+     */
+    protected function tearDownSeedsPlatformData(): void
+    {
+        foreach (['optionbuilder__settings', \App\Services\MenuService::CACHE_KEY, \App\Models\SeoEntry::CACHE_KEY] as $key) {
+            \Illuminate\Support\Facades\Cache::forget($key);
+        }
+        foreach (User::pluck('id') as $id) {
+            \Illuminate\Support\Facades\Cache::forget('cart_items_' . $id);
+        }
+    }
+
     protected function ensurePlatformFixtures(): void
     {
         if (Blog::query()->doesntExist() || User::where('email', 'tutor@amentotech.com')->doesntExist()) {
@@ -40,6 +54,16 @@ trait SeedsPlatformData
         }
         if (Course::where('slug', 'qa-test-course')->doesntExist() || User::where('email', 'qa-admin@horizontia.test')->doesntExist()) {
             (new TestingSeeder())->run();
+        }
+        // Legal/info pages and menus live in the database now (page builder + menu builder).
+        if (\Larabuild\Pagebuilder\Models\Page::where('slug', 'terminos-y-condiciones')->doesntExist()) {
+            \Illuminate\Support\Facades\Artisan::call('academy:pages');
+        }
+        if (\App\Models\SitePage::where('slug', 'terminos-y-condiciones')->whereNull('gjs_html')->exists()) {
+            \Illuminate\Support\Facades\Artisan::call('pages:to-editor');   // seeded pages are visual-editor pages
+        }
+        if (\App\Models\Menu::where('name', 'Ayuda y legal')->doesntExist()) {
+            \Illuminate\Support\Facades\Artisan::call('academy:menus', ['--force' => true]);
         }
     }
 

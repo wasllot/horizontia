@@ -7,10 +7,17 @@ use Modules\Courses\Models\CourseLiveStream;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Locked;
+use Modules\Courses\Livewire\Traits\GuardsCourseAccess;
+use Modules\Courses\Services\CourseAccess;
+use Modules\Courses\Services\LiveSessionService;
 
 class ManageLiveStreams extends Component
 {
+    use GuardsCourseAccess;
+
     public $liveStreams = [];
+    #[Locked]
     public $editingId = null;
 
     // Edit form fields
@@ -38,7 +45,7 @@ class ManageLiveStreams extends Component
 
     public function mount()
     {
-        $this->courses = Course::where('instructor_id', auth()->id())
+        $this->courses = Course::when(!CourseAccess::isAdmin(), fn ($q) => $q->where('instructor_id', auth()->id()))
             ->orderBy('title')->get()
             ->unique(fn($c) => mb_strtolower(trim($c->title)));
 
@@ -47,7 +54,7 @@ class ManageLiveStreams extends Component
 
     public function loadList()
     {
-        $tutorCourseIds = Course::where('instructor_id', auth()->id())->pluck('id');
+        $tutorCourseIds = Course::when(!CourseAccess::isAdmin(), fn ($q) => $q->where('instructor_id', auth()->id()))->pluck('id');
         $this->liveStreams = CourseLiveStream::with('course')
             ->whereIn('course_id', $tutorCourseIds)
             ->orderByDesc('date_time')
@@ -64,7 +71,7 @@ class ManageLiveStreams extends Component
 
     public function startEdit(int $id)
     {
-        $stream = CourseLiveStream::findOrFail($id);
+        $stream = $this->guardedStream($id);
         $this->editingId              = $stream->id;
         $this->edit_course_id         = $stream->course_id;
         $this->edit_title             = $stream->title;
@@ -74,6 +81,14 @@ class ManageLiveStreams extends Component
         $this->edit_duration_minutes  = $stream->duration_minutes;
         $this->edit_notify_hours_before = $stream->notify_hours_before;
         $this->edit_status            = $stream->status;
+    }
+
+    private function guardedStream($id): CourseLiveStream
+    {
+        $stream = CourseLiveStream::findOrFail((int) $id);
+        $this->guardedCourse($stream->course_id);
+
+        return $stream;
     }
 
     public function cancelEdit()
@@ -90,7 +105,8 @@ class ManageLiveStreams extends Component
     {
         $this->validate();
 
-        $stream = CourseLiveStream::findOrFail($this->editingId);
+        $stream = $this->guardedStream($this->editingId);
+        $this->guardedCourse($this->edit_course_id);
         $stream->update([
             'course_id'           => $this->edit_course_id,
             'title'               => $this->edit_title,
@@ -109,7 +125,7 @@ class ManageLiveStreams extends Component
 
     public function delete(int $id)
     {
-        CourseLiveStream::findOrFail($id)->delete();
+        $this->guardedStream($id)->delete();
         $this->loadList();
         $this->dispatch('showAlertMessage', type: 'success', title: 'Eliminado', message: 'La sesión en vivo fue eliminada.');
     }

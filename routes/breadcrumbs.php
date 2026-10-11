@@ -128,7 +128,7 @@ Breadcrumbs::for($role.'.manage-dispute', function (BreadcrumbTrail $trail) use 
 });
 
 Breadcrumbs::for('admin.insights', function (BreadcrumbTrail $trail) {
-    $trail->push(__('general.insights'), route('admin.insights'));
+    $trail->push(__('sidebar.insights'), route('admin.insights'));
 });
 
 Breadcrumbs::for('admin.manage-menus', function (BreadcrumbTrail $trail) {
@@ -136,14 +136,79 @@ Breadcrumbs::for('admin.manage-menus', function (BreadcrumbTrail $trail) {
     $trail->push(__('general.manage_menus'), route('admin.manage-menus'));
 });
 
+Breadcrumbs::for('admin.seo', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.insights');
+    $trail->push('SEO', route('admin.seo'));
+});
+
+Breadcrumbs::for('admin.config-transfer', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.insights');
+    $trail->push('Exportar / importar', route('admin.config-transfer'));
+});
+
+Breadcrumbs::for('admin.learning-paths', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.insights');
+    $trail->push('Rutas de aprendizaje', route('admin.learning-paths'));
+});
+
+Breadcrumbs::for('admin.certificates', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.insights');
+    $trail->push('Certificados', route('admin.certificates'));
+});
+
+Breadcrumbs::for('admin.reports', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.insights');
+    $trail->push('Reportes', route('admin.reports'));
+});
+
+Breadcrumbs::for('admin.content-studio', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.insights');
+    $trail->push('Estudio de contenido', route('admin.content-studio'));
+});
+
+Breadcrumbs::for('admin.community', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.insights');
+    $trail->push('Comunidad', route('admin.community'));
+});
+
+Breadcrumbs::for('admin.page-banners', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.insights');
+    $trail->push('Banners de páginas', route('admin.page-banners'));
+});
+
+Breadcrumbs::for('admin.access-requests', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.insights');
+    $trail->push('Solicitudes de acceso', route('admin.access-requests'));
+});
+
+Breadcrumbs::for('admin.coupons', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.insights');
+    $trail->push('Cupones', route('admin.coupons'));
+});
+
+Breadcrumbs::for('admin.system-status', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.insights');
+    $trail->push('Estado del sistema', route('admin.system-status'));
+});
+
+Breadcrumbs::for('admin.course-pages', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.insights');
+    $trail->push('Páginas de curso', route('admin.course-pages'));
+});
+
+Breadcrumbs::for('admin.pages.editor', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.pages');
+    $trail->push('Editor');
+});
+
 Breadcrumbs::for('optionbuilder', function (BreadcrumbTrail $trail) {
     $trail->parent('admin.insights');
     $trail->push(__('general.global_settings'), route('optionbuilder'));
 });
 
-Breadcrumbs::for('pagebuilder', function (BreadcrumbTrail $trail) {
+Breadcrumbs::for('admin.pages', function (BreadcrumbTrail $trail) {
     $trail->parent('admin.insights');
-    $trail->push(__('general.site_pages'), route('pagebuilder'));
+    $trail->push(__('general.site_pages'), route('admin.pages'));
 });
 
 Breadcrumbs::for('admin.email-settings', function (BreadcrumbTrail $trail) {

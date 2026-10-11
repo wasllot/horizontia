@@ -36,4 +36,5 @@ return [
         'add_menu_items'                => 'Please add menu items before saving',
         'select_menu_err'               => 'Please select menu',
         'menu_arrange'                  => 'Drag the items into the order you prefer. Click the arrow on the right of the item to reveal additional configuration options.',
+    'platform_links' => 'Platform links',
 ];

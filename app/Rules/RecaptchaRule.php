@@ -26,23 +26,26 @@ class RecaptchaRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        // If reCAPTCHA is disabled in settings, always pass.
-        if (setting('_general.enable_recaptcha') != '1') {
+        // If reCAPTCHA is disabled (or has no keys) the forms do not ask for it, so there is nothing to verify.
+        if (!recaptchaEnabled()) {
             return true;
         }
 
-        $secret = setting('_general.recaptcha_secret_key');
-        
-        if (empty($secret) || empty($value)) {
+        if (empty($value)) {
             return false;
         }
 
-        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => $secret,
-            'response' => $value,
-        ]);
+        try {
+            $response = Http::asForm()->timeout(8)->post('https://www.google.com/recaptcha/api/siteverify', [
+                'secret' => recaptchaSecret(),
+                'response' => $value,
+                'remoteip' => request()->ip(),
+            ]);
+        } catch (\Throwable) {
+            return false;   // Google unreachable: fail closed, the visitor can retry
+        }
 
-        return $response->json('success');
+        return (bool) $response->json('success');
     }
 
     /**

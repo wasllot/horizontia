@@ -59,7 +59,7 @@
                                                     <div class="am-works_info_user">
                                                         @if(!empty($option['student_image']))
                                                             @if(!empty($option['student_image'][0]['path']))
-                                                                <figure><img src="{{url(Storage::url($option['student_image'][0]['path']))}}" alt="Student image"></figure>
+                                                                <figure><img src="{{url(mediaUrl($option['student_image'][0]['path']))}}" alt="Student image"></figure>
                                                             @endif
                                                         @endif
                                                     </div>
@@ -69,7 +69,7 @@
                                                     <div class="am-works_info_user">
                                                         @if(!empty($option['student_image']))
                                                             @if(!empty($option['student_image'][0]['path']))
-                                                                <figure><img src="{{url(Storage::url($option['student_image'][0]['path']))}}" alt="Tutor image"></figure>
+                                                                <figure><img src="{{url(mediaUrl($option['student_image'][0]['path']))}}" alt="Tutor image"></figure>
                                                             @endif
                                                         @endif
                                                     </div>
@@ -122,7 +122,7 @@
                                                     <div class="am-works_info_user">
                                                         @if(!empty($option['tutor_image']))
                                                             @if(!empty($option['tutor_image'][0]['path']))
-                                                                <figure><img src="{{url(Storage::url($option['tutor_image'][0]['path']))}}" alt="Tutor image"></figure>
+                                                                <figure><img src="{{url(mediaUrl($option['tutor_image'][0]['path']))}}" alt="Tutor image"></figure>
                                                             @endif
                                                         @endif
                                                     </div>
@@ -132,7 +132,7 @@
                                                     <div class="am-works_info_user">
                                                         @if(!empty($option['tutor_image']))
                                                             @if(!empty($option['tutor_image'][0]['path']))
-                                                                <figure><img src="{{url(Storage::url($option['tutor_image'][0]['path']))}}" alt="Tutor image"></figure>
+                                                                <figure><img src="{{url(mediaUrl($option['tutor_image'][0]['path']))}}" alt="Tutor image"></figure>
                                                             @endif
                                                         @endif
                                                     </div>

@@ -9,10 +9,10 @@
         <p>{!! __('calendar.booking_rescheduled_desc', ['tutor' => $booking->tutor->full_name]) !!}</p>
         <div class="am-reschudle-reason">
             <div class="am-user-detail">
-                @if(!empty($booking?->tutor?->image) && Storage::disk(getStorageDisk())->exists($booking?->tutor?->image))
+                @if(!empty($booking?->tutor?->image) && mediaExists($booking?->tutor?->image))
                     <img src="{{ resizedImage($booking?->tutor?->image, 30, 30) }}" alt="{{ $booking?->tutor?->full_name }}">
                 @else
-                    <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 30, 30) }}" alt="{{ $booking?->tutor?->full_name }}">
+                    <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 30, 30) }}" alt="{{ $booking?->tutor?->full_name }}">
                 @endif
                 <div class="am-user-description">
                     <h3>{{ __('calendar.reschedule_reason') }}</h3>

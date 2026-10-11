@@ -125,7 +125,7 @@
                                 <div class="am-userinfomore_card" wire:key="{{ $key.'-'.time() }}" id="certificate-{{ $key }}">
                                     @if(!empty($certificate->image))
                                         <figure class="am-userinfomore_card_img">
-                                            <img src="{{ url(Storage::url($certificate->image)) }}" alt="image">
+                                            <img src="{{ url(mediaUrl($certificate->image)) }}" alt="image">
                                         </figure>
                                     @endif
                                     <div class="am-userinfomore_card_info">

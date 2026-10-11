@@ -133,8 +133,8 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPasswordC
         return Attribute::make(
             get: fn() => match ($this->role) {
                 'admin'     => route('admin.insights', absolute: false),
-                'tutor'     => route('tutor.dashboard', absolute: false),
-                'student'   => route('student.bookings', absolute: false),
+                'tutor'     => isPrivateAcademy() ? route('courses.tutor.courses', absolute: false) : route('tutor.dashboard', absolute: false),
+                'student'   => isPrivateAcademy() ? route('courses.course-list', absolute: false) : route('student.bookings', absolute: false),
                 default     => url('/')
             },
         );

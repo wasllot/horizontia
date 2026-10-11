@@ -77,13 +77,13 @@ class PlatformEndToEndTest extends TestCase
     {
         $course = $this->course();
 
-        $response = $this->get('/search-courses');
+        $response = $this->get('/cursos');
         $response->assertOk();
 
-        $response = $this->get('/search-courses?keyword=' . urlencode('QA'));
+        $response = $this->get('/cursos?keyword=' . urlencode('QA'));
         $this->assertLessThan(500, $response->getStatusCode());
 
-        $response = $this->get('/course/' . $course->slug);
+        $response = $this->get('/curso/' . $course->slug);
         $response->assertOk();
         $response->assertSee($course->title);
     }
@@ -129,7 +129,7 @@ class PlatformEndToEndTest extends TestCase
             ->assertOk();
 
         // 1) The web checkout page itself must render for an authenticated student.
-        $page = $this->actingAs($student)->get('/checkout');
+        $page = $this->actingAs($student)->get('/finalizar-compra');
         $this->assertLessThan(500, $page->getStatusCode());
 
         // 2) Submitting checkout details via the API must not blow up even
@@ -198,7 +198,7 @@ class PlatformEndToEndTest extends TestCase
         $this->assertInstanceOf(Curriculum::class, $curriculum);
 
         // The tutor's own course-edit wizard page must render for this brand-new course.
-        $response = $this->actingAs($tutor)->get("/course/edit/details/{$course->id}");
+        $response = $this->actingAs($tutor)->get("/curso/editar/details/{$course->id}");
         $this->assertLessThan(500, $response->getStatusCode());
     }
 
@@ -207,7 +207,7 @@ class PlatformEndToEndTest extends TestCase
         $student = $this->student();
         $course = $this->course(); // qa-student is enrolled in this course via TestingSeeder.
 
-        $response = $this->actingAs($student)->get("/course-taking/{$course->slug}");
+        $response = $this->actingAs($student)->get("/aula/{$course->slug}");
         $response->assertOk();
     }
 
@@ -230,12 +230,12 @@ class PlatformEndToEndTest extends TestCase
         $admin = $this->admin();
 
         foreach ([
-            '/admin/users',
-            '/admin/courses',
-            '/admin/blogs',
-            '/admin/blog-categories',
-            '/admin/email-settings',
-            '/admin/payment-methods',
+            '/admin/usuarios',
+            '/admin/cursos',
+            '/admin/blog',
+            '/admin/blog/categorias',
+            '/admin/ajustes-de-correo',
+            '/admin/metodos-de-pago',
         ] as $uri) {
             $response = $this->actingAs($admin)->get($uri);
             $this->assertLessThan(500, $response->getStatusCode(), "{$uri} returned {$response->getStatusCode()}");

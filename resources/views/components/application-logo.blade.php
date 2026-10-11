@@ -1,26 +1,11 @@
 @props(['variation' => 'default'])
 @php
-    if ($variation == 'default') {
-        $logo    = setting('_general.logo_default');
-        $logoImg = !empty($logo[0]['path']) ? url(Storage::url($logo[0]['path'])) : asset('demo-content/logo-default.svg');
-    } elseif($variation == 'blue') {
-        $logoImg  = asset('images/blue-logo.svg');
-    } elseif($variation == 'purple') {  
-        $logoImg  = asset('images/purple-logo.svg'); 
-    } elseif($variation == 'green') {  
-        $logoImg  = asset('images/green-logo.svg'); 
-    } elseif($variation == 'black') {  
-        $logoImg  = asset ('demo-content/home-v6/logo-black.svg'); 
-    } elseif($variation == 'sky-blue') {  
-        $logoImg  = asset ('images/sky-blue.svg'); 
-    } else {
-        $logo    = setting('_general.logo_white');
-        $logoImg = !empty($logo[0]['path']) ? url(Storage::url($logo[0]['path'])) : asset('demo-content/logo-white.svg');
-    }
-    
-    // Override logo with Horizontia's logo
-    $logoImg = 'https://horizontia.com/storage/optionbuilder/uploads/683205-07-2025_1205pmlogo-horizontia.png';
+    // Logos are bundled locally (the old code hot-linked horizontia.com on every page view).
+    // 'white' = for dark backgrounds (sidebars, footer); anything else = the dark wordmark for light backgrounds.
+    $logoPath = in_array($variation, ['white', 'light'], true) ? 'images/nuevo/Logo-Horizontia-footer.png' : 'images/nuevo/logo-horizontia.png';
+    $logoImg = logoAsset($logoPath);
+    $logoSize = @getimagesize(public_path($logoPath)) ?: null;   // original ratio, so the box is reserved before the image loads
 @endphp
 <a href="{{ url('/') }}">
-    <img src="{{ $logoImg }}" alt="{{ setting('_general.site_name') ?? config('app.name', __('general.app_name')) }}" {{ $attributes }}>
+    <img src="{{ $logoImg }}" alt="{{ setting('_general.site_name') ?? config('app.name', __('general.app_name')) }}" @if($logoSize) width="{{ $logoSize[0] }}" height="{{ $logoSize[1] }}" @endif decoding="async" {{ $attributes }}>
 </a>

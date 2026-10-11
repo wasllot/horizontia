@@ -1,71 +1,62 @@
-<div class="am-sidebar">
-    <div class="am-sidebar_logo">
-        <strong class="am-logo">
-            <x-application-logo />
-        </strong>
-        <div class="am-sidebar_toggle">
-            <a href="javascript:void(0);">
-                <i class="am-icon-dashbard"></i>
+<div class="hz-sidebar-host">
+    <aside class="hz-sidebar" id="hz-sidebar" aria-label="{{ __('Navegación principal') }}">
+        <div class="hz-sidebar__brand">
+            <a href="{{ url('/') }}" class="hz-brand" aria-label="{{ setting('_general.site_name') ?: config('app.name') }}">
+                <x-application-logo-img variation="white" />
             </a>
+            <button type="button" class="hz-iconbtn hz-sidebar__collapse" data-hz-collapse aria-pressed="false" aria-label="Contraer menú lateral">
+                <x-panel.icon name="collapse" />
+            </button>
         </div>
-    </div>
-    <nav class="am-navigation">
-        <ul>
-            @foreach ( $menuItems as $item)
-                @if(in_array($role, $item['accessibility']))
-                <li @class([
-                    'am-active-nav' => in_array($activeRoute, $item['onActiveRoute']),
-                    'sidebar-sub-menu' => !empty($item['children'])
-                ])>
-                    @if (!empty($item['route']))
-                        <a href="{{ route($item['route']) }}" {{ empty($item['disableNavigate'])  ? 'wire:navigate.remove' : '' }}>
-                            {!! $item['icon'] !!}
-                            {{ $item['title'] }}
-                        </a>
-                    @else
-                        <a href="#" {{ empty($item['disableNavigate'])  ? 'wire:navigate.remove' : '' }}>
-                            {!! $item['icon'] !!}
-                            {{ $item['title'] }}
-                        </a>
+
+        <nav class="hz-nav" aria-label="{{ __('Menú principal') }}">
+            <ul class="hz-nav__list">
+                @php $lastGroup = null; @endphp
+                @foreach ($menuItems as $item)
+                    @continue(!in_array($role, $item['accessibility']))
+                    @if (($item['group'] ?? null) !== $lastGroup)
+                        @php $lastGroup = $item['group'] ?? null; @endphp
+                        <li class="hz-nav__heading" role="presentation">{{ $lastGroup === 'learning' ? ($role === 'tutor' ? __('sidebar.group_teaching') : __('sidebar.group_learning')) : __('sidebar.group_account') }}</li>
                     @endif
-                    
-                    @if (!empty($item['children']))
-                        <ul class="am-submenu">
-                            @foreach ($item['children'] as $child) 
-                                <li @if(Route::currentRouteName() == $child['route']) class="am-active" @endif>
-                                    <a href="{{ route($child['route']) }}" {{ empty($child['disableNavigate'])  ? 'wire:navigate.remove' : '' }}>
-                                        {{ $child['title'] }}
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </li>
-                @endif
-            @endforeach
-        </ul>
-    </nav>
-    <div class="am-navigation_footer">
-        <div class="am-wallet">
-            <div class="am-wallet_title">
-                <span class="am-wallet_title_icon">
-                    <i class="am-icon-invoices-01-5"></i>
-                </span>
-                <div class="am-wallet_balance">
-                    <strong>{!! formatAmount($balance, true) !!}<span>{{ __('general.wallet_balance') }}</span></strong>
+                    @php($active = in_array($activeRoute, $item['onActiveRoute']))
+                    <li @class(['hz-nav__item', 'is-active' => $active, 'is-open' => $active && !empty($item['children'])])>
+                        <a class="hz-nav__link" href="{{ !empty($item['route']) ? route($item['route']) : '#' }}" data-tip="{{ $item['title'] }}"
+                           @if (empty($item['disableNavigate'])) wire:navigate.remove @endif @if ($active) aria-current="page" @endif>
+                            <span class="hz-nav__icon">{!! $item['icon'] !!}</span>
+                            <span class="hz-nav__label">{{ $item['title'] }}</span>
+                        </a>
+                        @if (!empty($item['children']))
+                            <div class="hz-nav__subwrap">
+                                <ul class="hz-nav__sub">
+                                    @foreach ($item['children'] as $child)
+                                        <li @class(['hz-nav__item', 'is-active' => Route::currentRouteName() == $child['route']])>
+                                            <a class="hz-nav__link" href="{{ route($child['route']) }}" @if (empty($child['disableNavigate'])) wire:navigate.remove @endif>
+                                                <span class="hz-nav__label">{{ $child['title'] }}</span>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
+        </nav>
+
+        <div class="hz-sidebar__foot">
+            @unless (isPrivateAcademy())
+                <div class="hz-wallet">
+                    <strong>{!! formatAmount($balance, true) !!}</strong>
+                    <span>{{ __('general.wallet_balance') }}</span>
+                    <button type="button" class="hz-btn hz-btn--primary hz-btn--sm" wire:click="openModel">{{ __('general.withdraw_now') }}</button>
                 </div>
-            </div>
-            <a href="javascript:void(0);" wire:click="openModel"  class="am-wallet_withdraw">
-                {{ __('general.withdraw_now') }}
-            </a>
+            @endunless
+            <button type="button" class="hz-nav__link hz-nav__link--logout" wire:click="logout" data-tip="{{ __('general.sign_out') }}">
+                <span class="hz-nav__icon"><x-panel.icon name="logout" /></span>
+                <span class="hz-nav__label">{{ __('general.sign_out') }}</span>
+            </button>
         </div>
-        <div class="am-signout" wire:click="logout">
-            <a href="javascript:void(0);" class="am-signout_nav">
-                <i class="am-icon-sign-out-02"></i>
-                {{ __('general.sign_out') }}
-            </a>
-        </div>
-    </div>
+    </aside>
     <div wire:ignore.self class="modal fade am-setuppayoneerpopup" id="amount" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -110,14 +101,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", (event) => {
-        jQuery(document).on('click', '.am-sidebar_toggle', function() {
-           jQuery('.am-sidebar').toggleClass('am-togglesidebar');
-        });
-        jQuery(document).on('click', '.am-sidebar_toggle', function() {
-           jQuery('.am-mainwrap').toggleClass('am-mainwrap_fullwidth');
-        });
-    });
-</script>

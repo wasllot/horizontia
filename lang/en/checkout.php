@@ -57,4 +57,13 @@ return [
     'need_help_desc'                            => "We'll help you find the perfect tutor to meet your educational needs.",
     'contact_us_now'                            => 'Contact Us Now',
 
+    'select_courses' => 'Choose your courses',
+    'ph_first_name' => 'First name',
+    'ph_last_name' => 'Last name',
+    'ph_company' => 'Company (optional)',
+    'ph_email' => 'Email',
+    'ph_phone' => 'Phone number',
+    'ph_city' => 'Town / city',
+    'ph_state' => 'State / country',
+    'ph_zip' => 'Postcode / zip',
 ];

@@ -12,10 +12,10 @@
                             <div class="am-similar-user">
                                 <div class="am-tutordetail_user">
                                     <figure class="am-tutorvone_img">
-                                        @if (!empty($item->profile?->image) && Storage::disk(getStorageDisk())->exists($item->profile?->image))
+                                        @if (!empty($item->profile?->image) && mediaExists($item->profile?->image))
                                         <img src="{{ resizedImage($item->profile?->image,40,40) }}" alt="{{$item->profile?->image}}" />
                                         @else 
-                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 40, 40) }}" alt="{{ $item->profile?->image }}" />
+                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 40, 40) }}" alt="{{ $item->profile?->image }}" />
                                         @endif
                                     </figure>
                                     <div class="am-tutordetail_user_name">
@@ -108,7 +108,7 @@
                         @endforeach
                     </ul>
                     <div class="am-similaruser-btn">
-                        <a href="{{ url('find-tutors') }}">
+                        <a href="{{ route('find-tutors') }}">
                             <button class="am-white-btn">{{ __('tutor.view_all_tutors') }}</button>
                         </a>
                     </div>

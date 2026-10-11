@@ -17,7 +17,7 @@ class Newsletter extends Component
             'email' => 'required|email|unique:subscribers,email',
         ];
 
-        if (setting('_general.enable_recaptcha') == '1') {
+        if (recaptchaEnabled('newsletter')) {
             $rules['recaptchaToken'] = ['required', new \App\Rules\RecaptchaRule];
         }
 

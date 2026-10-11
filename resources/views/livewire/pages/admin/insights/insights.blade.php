@@ -7,7 +7,7 @@
                     <p>{{ __('admin/general.track_manage_income') }}</p>
                 </div>
                 <div class="am-insights_actions">
-                    <em>Filter by:</em>
+                    <em>Filtrar por:</em>
                     <span class="tb-select">
                         <input type="text" id="revenue-date-range" class="form-control">
                     </span>
@@ -26,6 +26,35 @@
                             </div>
                         </div>
                     </li>
+                    @if (isPrivateAcademy())
+                    <li>
+                        <div class="am-payment_item">
+                            <div class="am-payment_item_icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z"/><path d="M8 7h7"/></svg></div>
+                            <div class="am-payment_item_info">
+                                <h3>{{ formatAmount($this->academySales) }}</h3>
+                                <span>Ventas del periodo</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="am-payment_item">
+                            <div class="am-payment_item_icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.2a3 3 0 0 1 0 5.6M18 14.4c1.8.8 3 2.6 3 4.6"/></svg></div>
+                            <div class="am-payment_item_info">
+                                <h3>{{ number_format($this->academyOrders) }}</h3>
+                                <span>Compras completadas</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="am-payment_item">
+                            <div class="am-payment_item_icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5-9-5z"/><path d="m3 13 9 5 9-5"/></svg></div>
+                            <div class="am-payment_item_info">
+                                <h3>{{ number_format($this->academyEnrollments) }}</h3>
+                                <span>Inscripciones nuevas</span>
+                            </div>
+                        </div>
+                    </li>
+                    @else
                     <li>
                         <div class="am-payment_item">
                             <div class="am-payment_item_icon">
@@ -59,9 +88,11 @@
                             </div>
                         </div>
                     </li>
+                    @endif
                 </ul>
             </div>
         </div>
+        @unless (isPrivateAcademy())
         <div class="am-insights_section am-engagement">
             <div class="am-insights_header">
                 <div class="am-insights_title">
@@ -69,7 +100,7 @@
                     <p>{{ __('admin/general.track_manage_income') }}</p>
                 </div>
                 <div class="am-insights_actions">
-                    <em>Filter by:</em>
+                    <em>Filtrar por:</em>
                     <span class="tb-select">
                         {{-- <span wire:click="clearSession">clear filters x</span> --}}
                         <input type="text" id="session-date-range" class="form-control">
@@ -114,6 +145,7 @@
                 </ul>
             </div>
         </div>    
+        @endunless
         <div class="am-insights_section am-activity">
             <div class="am-insights_header">
                 <div class="am-insights_title">
@@ -131,8 +163,8 @@
                         @if ($this->users->isNotEmpty())
                         <figure class="am-activity_user_img">
                             @foreach ($this->users as $user)
-                                @if (!empty($user->profile?->image) && Storage::disk(getStorageDisk())->exists($user->profile?->image))
-                                    <img src="{{ url(Storage::url($user->profile?->image)) }}" alt="{{ $user->profile?->image }}">
+                                @if (!empty($user->profile?->image) && mediaExists($user->profile?->image))
+                                    <img src="{{ url(mediaUrl($user->profile?->image)) }}" alt="{{ $user->profile?->image }}">
                                 @else
                                     <img src="{{ resizedImage('placeholder.png',34,34) }}" alt="{{ $user->profile?->image }}" />
                                 @endif
@@ -154,8 +186,8 @@
                             <div class="am-activity_data_user_img">
                                 <figure>
                                     @foreach ($this->tutors as $tutor)
-                                        @if (!empty($tutor->profile?->image) && Storage::disk(getStorageDisk())->exists($tutor->profile?->image))
-                                            <img src="{{ url(Storage::url($tutor->profile?->image)) }}" alt="{{ $tutor->profile?->image }}">
+                                        @if (!empty($tutor->profile?->image) && mediaExists($tutor->profile?->image))
+                                            <img src="{{ url(mediaUrl($tutor->profile?->image)) }}" alt="{{ $tutor->profile?->image }}">
                                         @else
                                             <img src="{{ resizedImage('placeholder.png',34,34) }}" alt="{{ $tutor->profile?->image }}" />
                                         @endif
@@ -179,8 +211,8 @@
                             <div class="am-activity_data_user_img">
                                 <figure>
                                     @foreach ($this->students as $student)
-                                        @if (!empty($student->profile?->image) && Storage::disk(getStorageDisk())->exists($student->profile?->image))
-                                            <img src="{{ url(Storage::url($student->profile?->image)) }}" alt="{{ $student->profile?->image }}">
+                                        @if (!empty($student->profile?->image) && mediaExists($student->profile?->image))
+                                            <img src="{{ url(mediaUrl($student->profile?->image)) }}" alt="{{ $student->profile?->image }}">
                                         @else
                                             <img src="{{ resizedImage('placeholder.png',34,34) }}" alt="{{ $student->profile?->image }}" />
                                         @endif

@@ -53,7 +53,7 @@ class CourseListing extends Component
     #[Layout('layouts.admin-app')]
     public function render()
     {
-        $with = ['category:id,name', 'subCategory:id,name', 'language:id,name', 'instructor.profile:id,user_id,first_name,last_name'];
+        $with = ['category:id,name', 'subCategory:id,name', 'language:id,name', 'thumbnail', 'instructor.profile:id,user_id,first_name,last_name,image'];
 
 
         $courses = $this->courseService->getCourses(with: $with, filters: $this->filters);
@@ -65,7 +65,7 @@ class CourseListing extends Component
 
     public function updated($propertyName)
     {
-        if (in_array($propertyName, ['status', 'search', 'sortby'])) {
+        if (in_array($propertyName, ['status', 'search', 'sortby']) || str_starts_with($propertyName, 'filters.')) {
             $this->resetPage();
         }
     }

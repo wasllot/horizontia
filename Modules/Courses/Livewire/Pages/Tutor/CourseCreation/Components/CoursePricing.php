@@ -7,13 +7,17 @@ use Illuminate\Support\Facades\Log;
 use Modules\Courses\Http\Requests\CoursePriceRequest;
 use Modules\Courses\Models\Course;
 use Livewire\Component;
+use Livewire\Attributes\Locked;
+use Modules\Courses\Livewire\Traits\GuardsCourseAccess;
 use Modules\Courses\Services\CourseService;
 use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
 
 class CoursePricing extends Component {
 
     use AdminAwareCourseRouting;
+    use GuardsCourseAccess;
 
+    #[Locked]
     public $courseId;
     public $course;
 
@@ -30,6 +34,7 @@ class CoursePricing extends Component {
 
     public function mount() {
         $this->courseId     = request()->route('id');
+        $this->guardedCourse($this->courseId);
         $this->course       = Course::with('pricing')->findOrFail($this->courseId);
 
         if (!empty($this->course->pricing)) {
@@ -142,8 +147,11 @@ class CoursePricing extends Component {
 
             (new CourseService())->updateCoursePricing($this->course, $data);
             return redirect($this->editCourseRoute('content', $this->courseId));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
         } catch (\Throwable $th) {
-            Log::info($th->getMessage());
+            Log::error('Course pricing could not be saved: ' . $th->getMessage());
+            $this->dispatch('showAlertMessage', type: 'error', title: __('courses::courses.error_title'), message: __('No se pudo guardar el precio. Inténtalo de nuevo.'));
         }
     }
 }

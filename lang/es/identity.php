@@ -67,4 +67,5 @@ return [
     'reject'                  => 'Rechazar',
     'status'                  => 'Estado',
     'action'                  => 'Acción',
+    'transcript' => 'Certificado de estudios',
 ];

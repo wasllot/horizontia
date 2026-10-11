@@ -6,6 +6,8 @@ namespace Modules\Courses\Livewire\Pages\Tutor\CourseCreation\Components;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Livewire\Attributes\Locked;
+use Modules\Courses\Livewire\Traits\GuardsCourseAccess;
 use Illuminate\Validation\ValidationException;
 use Modules\Courses\Http\Requests\CoursePromotionRequest;
 use Modules\Courses\Models\Course;
@@ -16,6 +18,8 @@ use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
 class CourseNoticeboard extends Component
 {
     use AdminAwareCourseRouting;
+    use GuardsCourseAccess;
+    #[Locked]
     public $courseId;
     public $course;
     public $content;
@@ -27,6 +31,7 @@ class CourseNoticeboard extends Component
         
 
         $this->courseId         = request()->route('id');
+        $this->guardedCourse($this->courseId);
     }
 
     public function render()
@@ -79,7 +84,8 @@ class CourseNoticeboard extends Component
             $this->dispatch('showAlertMessage', type: 'error', title:  __('general.demosite_res_title') , message: __('general.demosite_res_txt'));
             return;
         }
-        $deleted = (new CourseService())->deleteNoticeboard($params['id']);
+        $this->guardedCourse($this->courseId);
+        $deleted = (new CourseService())->deleteNoticeboard($params['id'], (int) $this->courseId);
         if ($deleted) {
             $this->dispatch('showAlertMessage', type: 'success', title: __('courses::courses.noticeboard_deleted'), message: __('courses::courses.noticeboard_deleted_success'));
             $this->dispatch('toggleModel', id: 'create-promotion', action: 'hide');
@@ -107,21 +113,7 @@ class CourseNoticeboard extends Component
             return redirect($this->editCourseRoute('discussion-forum', $this->courseId));
         }
 
-        $course = Course::find($this->courseId);
-        if($course->status != 'draft' && $course->status != 'need_revision') {
-            $this->dispatch('showAlertMessage', type: 'success', title: __('courses::courses.course_updated'), message: __('courses::courses.course_updated_successfully'));
-            return redirect($this->courseListingRoute());
-        }
-
-        DB::beginTransaction();
-
-        try {
-            (new CourseService())->updateOrCreateCourse($this->courseId, ['status' => 'under_review']);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $this->dispatch('showAlertMessage', type: 'error', title: __('courses::courses.error'), message: __('courses::courses.discussion_forum_update_failed'));
-        }
+        $this->guardedCourse($this->courseId);
 
         return redirect($this->editCourseRoute('publish', $this->courseId));
 

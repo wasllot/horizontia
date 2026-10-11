@@ -1,0 +1,10 @@
+/* Botón flotante de WhatsApp (Ajustes › Integraciones › WhatsApp). */
+.hz-wa { position: fixed; right: 20px; bottom: 20px; z-index: 1040; display: inline-flex; align-items: center; gap: 10px; height: 56px; min-width: 56px; padding: 0 16px; justify-content: center; border-radius: 999px; background: #25d366; color: #fff; font: 600 15px/1 Inter, system-ui, sans-serif; text-decoration: none; box-shadow: 0 10px 24px -8px rgba(18, 140, 70, .55), 0 2px 6px rgba(0, 0, 0, .15); transition: transform .18s ease, box-shadow .18s ease; }
+.hz-wa:hover, .hz-wa:focus-visible { color: #fff; transform: translateY(-2px); box-shadow: 0 14px 28px -8px rgba(18, 140, 70, .6), 0 3px 8px rgba(0, 0, 0, .18); }
+.hz-wa:focus-visible { outline: 3px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 5px #128c46; }
+.hz-wa--left { right: auto; left: 20px; }
+.hz-wa--raised { bottom: 88px; }
+.hz-wa svg { flex: 0 0 28px; }
+/* En móvil queda solo el icono para no tapar contenido. */
+@media (max-width: 640px) { .hz-wa { padding: 0; width: 52px; height: 52px; right: 14px; bottom: 14px; } .hz-wa--left { left: 14px; right: auto; } .hz-wa--raised { bottom: 78px; } .hz-wa__label { display: none; } }
+@media (prefers-reduced-motion: reduce) { .hz-wa { transition: none; } .hz-wa:hover { transform: none; } }

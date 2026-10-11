@@ -7,7 +7,25 @@
     <form class="am-themeform">
         <fieldset>
             <div class="am-themeform__wrap">
-                <div class="form-group-wrap">
+                <div class="form-group-wrap cr-cols">
+                    <div class="cr-col cr-col--main">
+                    <div class="form-group @error('delivery') cr-invalid @enderror">
+                        <x-input-label class="am-important">Modalidad</x-input-label>
+                        <div class="cr-choice" role="radiogroup" aria-label="Modalidad del curso">
+                            @foreach ([
+                                'online' => ['En línea', 'Lecciones, videos y evaluaciones; se cursa a cualquier hora.'],
+                                'in_person' => ['Presencial', 'Se imparte en una sede en fechas concretas; el alumno elige una fecha al comprar.'],
+                                'hybrid' => ['Híbrido', 'Fechas presenciales más lecciones en línea de apoyo.'],
+                            ] as $value => [$label, $hint])
+                                <label class="cr-choice__opt {{ $delivery === $value ? 'is-on' : '' }}">
+                                    <input type="radio" name="delivery" value="{{ $value }}" wire:model.live="delivery">
+                                    <strong>{{ $label }}</strong>
+                                    <small>{{ $hint }}</small>
+                                </label>
+                            @endforeach
+                        </div>
+                        <x-input-error field_name='delivery' />
+                    </div>
                     <div class="form-group @error('title') cr-invalid @enderror">
                         <x-input-label class="am-important" for="course-title">{{ __('courses::courses.course_title') }}</x-input-label>
                         <x-text-input class="form-control" type="text" wire:model='title' id="course-title" placeholder="{{ __('courses::courses.enter_course_title') }}" />
@@ -18,6 +36,49 @@
                         <x-text-input class="form-control" type="text" wire:model='subtitle' id="course-subtitle" placeholder="{{ __('courses::courses.enter_course_subtitle') }}" />
                         <x-input-error field_name='subtitle' />
                     </div>
+                    <div class="form-group @error('description') cr-invalid @enderror">
+                        <x-input-label class="am-important" for="description">{{ __('courses::courses.course_description') }}</x-input-label>
+                        <div class="am-editor-wrapper" wire:ignore>
+                            <div class="am-custom-editor am-custom-textarea">
+                                <textarea class="form-control summernote" placeholder="{{ __('courses::courses.add_description') }}" id="description">{{ $description }}</textarea>
+                                <span class="characters-count"></span>
+                            </div>
+                        </div>
+                        <x-input-error field_name='description' />
+                    </div>
+                    <div class="form-group" wire:sortable="updateLearningObjectivePosition">
+                        <div class="cr-titlewrap">
+                            <x-input-label>{{ __('courses::courses.learning_objectives') }}</x-input-label>
+                            <span wire:click='addLearningObjective'>+ {{ __('courses::courses.add_more') }}</span>
+                        </div>
+                        @if (!empty($learning_objectives))
+                            @foreach ($learning_objectives as $objective)
+                                <div class="cr-grap-input" wire:sortable.item="{{ $loop->index }}" wire:key="objective-{{ $loop->index }}">
+                                    
+                                    <span wire:sortable.handle>
+                                        <i class="am-icon-youtube-1"></i>
+                                    </span>
+                                    
+                                    <div class="am-inputfield">
+                                        <x-text-input wire:model.live='learning_objectives.{{ $loop->index }}' placeholder="{{ __('courses::courses.add_learning_objective') }}" />
+                                        <span class="am-inputfield_icon" wire:click='removeLearningObjective({{ $loop->index }})'>
+                                            @if (count($learning_objectives) > 1)
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                                                <g opacity="0.5">
+                                                    <path d="M4 12.19L12 4.19M4 4.19L12 12.19" stroke="#585858" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </g>
+                                            </svg>
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+                    </div>
+                    <div class="cr-col cr-col--side">
+                        <div class="cr-sidecard">
+                            <h3 class="cr-sidecard__title">{{ __('Clasificación') }}</h3>
                     <div class="form-group">
                         <div class="form-group-two-wrap">
                             <div class="form-contro_wrap @error('category_id') cr-invalid @enderror">
@@ -48,102 +109,6 @@
                                 </span>
                                 <x-input-error field_name='sub_category_id' />
                             </div>
-                        </div>
-                    </div>
-                    @if(\Nwidart\Modules\Facades\Module::has('upcertify') && \Nwidart\Modules\Facades\Module::isEnabled('upcertify'))
-                        <div @class(['am-certificate-template', 'form-group', 'form-group-half', 'am-invalid' => $errors->has('template_id')])>
-                            <label class="am-label">
-                                {{ __('calendar.certificate_template') }}
-                                <a href="javascript:void(0);" class="am-custom-tooltip">
-                                    <i class="am-icon-exclamation-01"></i>
-                                    <span class="am-tooltip-text">
-                                        {{ __('calendar.certificate_info') }}
-                                    </span>
-                                </a>
-                            </label>
-                            <span class="am-select" wire:ignore>
-                                <select data-componentid="@this" data-wiremodel="template_id" class="am-select2" data-parent=".am-certificate-template" data-searchable="true" data-placeholder="{{ __('calendar.certificate_template_placeholder') }}">
-                                    <option label="{{ __('calendar.certificate_template_placeholder') }}"></option>
-                                    @foreach ($templates as $template)
-                                        <option value="{{ $template->id }}" @if($template_id == $template->id) selected @endif>{{ $template->title }}</option>
-                                    @endforeach
-                                </select>
-                            </span>
-                            <x-input-error field_name="template_id" />
-                        </div>
-                    @endif
-
-                    @if(isActiveModule('upcertify') && isActiveModule('quiz'))
-                        <div @class(['am-certificate-quiz', 'form-group', 'form-group-half', 'am-invalid' => $errors->has('assign_quiz_certificate')])>
-                            <label class="am-label">
-                                {{ __('calendar.assign_certificate') }}
-                                <a href="javascript:void(0);" class="am-custom-tooltip">
-                                    <i class="am-icon-exclamation-01"></i>
-                                    <span class="am-tooltip-text">
-                                        {{ __('calendar.assign_certificate_info') }}
-                                    </span>
-                                </a>
-                            </label>
-                            <span class="am-select" wire:ignore>
-                                <select data-componentid="@this" data-wiremodel="assign_quiz_certificate" class="am-select2" data-parent=".am-certificate-quiz" data-searchable="true" data-placeholder="{{ __('calendar.certificate_template_placeholder') }}">
-                                    <option label="{{ __('calendar.certificate_template_placeholder') }}"></option>
-                                        <option value="any" @if($assign_quiz_certificate == 'any') selected @endif>{{ __('calendar.any_quizzes') }}</option>
-                                        <option value="all" @if($assign_quiz_certificate == 'all') selected @endif>{{ __('calendar.all_quizzes') }}</option>
-                                        <option value="none" @if($assign_quiz_certificate == 'none') selected @endif>{{ __('calendar.no_quizzes') }}</option>
-                                </select>
-                            </span>
-                            <x-input-error field_name="assign_quiz_certificate" />
-                        </div>
-                    @endif
-                
-                    <div class="form-group @error('description') cr-invalid @enderror">
-                        <x-input-label class="am-important" for="description">{{ __('courses::courses.course_description') }}</x-input-label>
-                        <div class="am-editor-wrapper" wire:ignore>
-                            <div class="am-custom-editor am-custom-textarea">
-                                <textarea class="form-control summernote" placeholder="{{ __('courses::courses.add_description') }}" id="description">{{ $description }}</textarea>
-                                <span class="characters-count"></span>
-                            </div>
-                        </div>
-                        <x-input-error field_name='description' />
-                    </div>
-                    <!-- Other form fields -->
-                    <div class="form-group">
-                        <x-input-label for="course-tags">{{ __('courses::courses.course_tags') }}</x-input-label>
-                        <div x-data="{
-                            tags: @entangle('tags'),
-                            newTag: '',
-                            addTag() {
-                                this.newTag.split(',').map(t => t.trim()).filter(t => t !== '').forEach(tag => {
-                                    if (!this.tags.includes(tag)) this.tags.push(tag);
-                                });
-                                this.newTag = '';
-                            },
-                            removeTag(tag) {
-                                this.tags = this.tags.filter(t => t !== tag);
-                            },
-                            handlePaste(event) {
-                                event.preventDefault();
-                                this.newTag += (event.clipboardData || window.clipboardData).getData('text');
-                                this.addTag();
-                            }
-                        }">
-                            <input type="text" x-model="newTag"
-                                @keydown.enter.prevent="addTag()"
-                                @keydown="if($event.key === ',') { $event.preventDefault(); addTag(); }"
-                                @paste="handlePaste($event)"
-                                placeholder="{{ __('courses::courses.enter_course_tags') }}" @error('tags') class="cr-invalid" @enderror>
-                            <ul class="cr-labels">
-                                <template x-for="tag in tags" :key="tag">
-                                    <li>
-                                        <span x-html="tag"></span>
-                                        <a href="javascript:void(0);" @click="removeTag(tag)">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="14" viewBox="0 0 13 14" fill="none">
-                                                <path d="M3.25 10.44L9.75 3.94M3.25 3.94L9.75 10.44" stroke="#585858" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-                                        </a>
-                                    </li>
-                                </template>
-                            </ul>
                         </div>
                     </div>
                     <div class="form-group">
@@ -192,34 +157,95 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group" wire:sortable="updateLearningObjectivePosition">
-                        <div class="cr-titlewrap">
-                            <x-input-label>{{ __('courses::courses.learning_objectives') }}</x-input-label>
-                            <span wire:click='addLearningObjective'>+ {{ __('courses::courses.add_more') }}</span>
                         </div>
-                        @if (!empty($learning_objectives))
-                            @foreach ($learning_objectives as $objective)
-                                <div class="cr-grap-input" wire:sortable.item="{{ $loop->index }}" wire:key="objective-{{ $loop->index }}">
-                                    
-                                    <span wire:sortable.handle>
-                                        <i class="am-icon-youtube-1"></i>
-                                    </span>
-                                    
-                                    <div class="am-inputfield">
-                                        <x-text-input wire:model.live='learning_objectives.{{ $loop->index }}' placeholder="{{ __('courses::courses.add_learning_objective') }}" />
-                                        <span class="am-inputfield_icon" wire:click='removeLearningObjective({{ $loop->index }})'>
-                                            @if (count($learning_objectives) > 1)
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
-                                                <g opacity="0.5">
-                                                    <path d="M4 12.19L12 4.19M4 4.19L12 12.19" stroke="#585858" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </g>
+                        <div class="cr-sidecard">
+                            <h3 class="cr-sidecard__title">{{ __('Etiquetas y certificado') }}</h3>
+                    <div class="form-group">
+                        <x-input-label for="course-tags">{{ __('courses::courses.course_tags') }}</x-input-label>
+                        <div x-data="{
+                            tags: @entangle('tags'),
+                            newTag: '',
+                            addTag() {
+                                this.newTag.split(',').map(t => t.trim()).filter(t => t !== '').forEach(tag => {
+                                    if (!this.tags.includes(tag)) this.tags.push(tag);
+                                });
+                                this.newTag = '';
+                            },
+                            removeTag(tag) {
+                                this.tags = this.tags.filter(t => t !== tag);
+                            },
+                            handlePaste(event) {
+                                event.preventDefault();
+                                this.newTag += (event.clipboardData || window.clipboardData).getData('text');
+                                this.addTag();
+                            }
+                        }">
+                            <input type="text" x-model="newTag"
+                                @keydown.enter.prevent="addTag()"
+                                @keydown="if($event.key === ',') { $event.preventDefault(); addTag(); }"
+                                @paste="handlePaste($event)"
+                                placeholder="{{ __('courses::courses.enter_course_tags') }}" @error('tags') class="cr-invalid" @enderror>
+                            <ul class="cr-labels">
+                                <template x-for="tag in tags" :key="tag">
+                                    <li>
+                                        <span x-html="tag"></span>
+                                        <a href="javascript:void(0);" @click="removeTag(tag)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="14" viewBox="0 0 13 14" fill="none">
+                                                <path d="M3.25 10.44L9.75 3.94M3.25 3.94L9.75 10.44" stroke="#585858" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
-                                            @endif
-                                        </span>
-                                    </div>
-                                </div>
-                            @endforeach
-                        @endif
+                                        </a>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+                    </div>
+                    @if(\Nwidart\Modules\Facades\Module::has('upcertify') && \Nwidart\Modules\Facades\Module::isEnabled('upcertify'))
+                        <div @class(['am-certificate-template', 'form-group', 'form-group-half', 'am-invalid' => $errors->has('template_id')])>
+                            <label class="am-label">
+                                {{ __('calendar.certificate_template') }}
+                                <a href="javascript:void(0);" class="am-custom-tooltip">
+                                    <i class="am-icon-exclamation-01"></i>
+                                    <span class="am-tooltip-text">
+                                        {{ __('calendar.certificate_info') }}
+                                    </span>
+                                </a>
+                            </label>
+                            <span class="am-select" wire:ignore>
+                                <select data-componentid="@this" data-wiremodel="template_id" class="am-select2" data-parent=".am-certificate-template" data-searchable="true" data-placeholder="{{ __('calendar.certificate_template_placeholder') }}">
+                                    <option label="{{ __('calendar.certificate_template_placeholder') }}"></option>
+                                    @foreach ($templates as $template)
+                                        <option value="{{ $template->id }}" @if($template_id == $template->id) selected @endif>{{ $template->title }}</option>
+                                    @endforeach
+                                </select>
+                            </span>
+                            <x-input-error field_name="template_id" />
+                        </div>
+                    @endif
+
+                    @if(isActiveModule('upcertify') && isActiveModule('quiz'))
+                        <div @class(['am-certificate-quiz', 'form-group', 'form-group-half', 'am-invalid' => $errors->has('assign_quiz_certificate')])>
+                            <label class="am-label">
+                                {{ __('calendar.assign_certificate') }}
+                                <a href="javascript:void(0);" class="am-custom-tooltip">
+                                    <i class="am-icon-exclamation-01"></i>
+                                    <span class="am-tooltip-text">
+                                        {{ __('calendar.assign_certificate_info') }}
+                                    </span>
+                                </a>
+                            </label>
+                            <span class="am-select" wire:ignore>
+                                <select data-componentid="@this" data-wiremodel="assign_quiz_certificate" class="am-select2" data-parent=".am-certificate-quiz" data-searchable="true" data-placeholder="{{ __('calendar.certificate_template_placeholder') }}">
+                                    <option label="{{ __('calendar.certificate_template_placeholder') }}"></option>
+                                        <option value="any" @if($assign_quiz_certificate == 'any') selected @endif>{{ __('calendar.any_quizzes') }}</option>
+                                        <option value="all" @if($assign_quiz_certificate == 'all') selected @endif>{{ __('calendar.all_quizzes') }}</option>
+                                        <option value="none" @if($assign_quiz_certificate == 'none') selected @endif>{{ __('calendar.no_quizzes') }}</option>
+                                </select>
+                            </span>
+                            <x-input-error field_name="assign_quiz_certificate" />
+                        </div>
+                    @endif
+                
+                        </div>
                     </div>
                 </div>
             </div>

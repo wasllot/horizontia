@@ -1,0 +1,55 @@
+/* UX y animaciones del sitio público (compartidas por todas las páginas). Se desactivan con «reducir movimiento». */
+html { scroll-behavior: smooth; }
+[id] { scroll-margin-top: 96px; }
+
+/* Entrada suave de la página */
+body:not(.hz) { animation: ht-page-in .5s ease-out both; }
+@keyframes ht-page-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Barra de progreso de lectura */
+#ht-progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 2147482000; background: linear-gradient(90deg, #F4C430, #fed304); box-shadow: 0 0 8px rgba(244, 196, 48, .6); pointer-events: none; transition: width .12s linear; }
+
+/* Encabezado fijo que gana sombra al bajar */
+body:not(.hz) .am-header_two { position: sticky; top: 0; z-index: 1000; background: #fff; transition: box-shadow .3s ease, background .3s ease; }
+body:not(.hz).ht-scrolled .am-header_two { box-shadow: 0 6px 24px rgba(20, 33, 61, .10); }
+
+/* Aparición al hacer scroll (la usa el JS y el marcado a mano) */
+.ht-reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s ease var(--d, 0s), transform .7s cubic-bezier(.2, .8, .2, 1) var(--d, 0s); }
+.ht-reveal.is-in { opacity: 1; transform: none; }
+/* Entrada solo con CSS: segura dentro de Livewire (el morph no vuelve a dispararla). */
+@keyframes ht-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+.ht-rise { animation: ht-rise .7s cubic-bezier(.2, .8, .2, 1) var(--d, 0s) both; }
+
+/* Tarjetas: se elevan al pasar el mouse */
+.ht-ccard, .ev-card, .bn-card, .rec__card, .lp-step, .cr-card { transition: transform .3s cubic-bezier(.2, .8, .2, 1), box-shadow .3s ease; }
+.ht-ccard:hover, .bn-card:hover, .rec__card:hover, .lp-step:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(20, 33, 61, .14); }
+.ht-ccard img, .ev-card__media img, .bn-card__covers img, .rec__card img { transition: transform .6s ease; }
+.ht-ccard:hover img, .ev-card:hover .ev-card__media img, .bn-card:hover .bn-card__covers img, .rec__card:hover img { transform: scale(1.05); }
+
+/* Botones: se levantan y se hunden al pulsar */
+body:not(.hz) :is(.am-btn, .ev-btn, .ht-btn-ghost, .ht-co__pay, .lp-btn, .cr-start-course) { transition: transform .2s ease, box-shadow .2s ease, filter .2s ease, background-color .2s ease; }
+body:not(.hz) :is(.am-btn, .ev-btn, .ht-btn-ghost, .ht-co__pay, .lp-btn):hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(20, 33, 61, .18); }
+body:not(.hz) :is(.am-btn, .ev-btn, .ht-btn-ghost, .ht-co__pay, .lp-btn):active { transform: translateY(0) scale(.98); box-shadow: none; }
+
+/* Foco visible y campos de formulario consistentes */
+body:not(.hz) :is(a, button, summary, [role=button], [tabindex]):focus-visible { outline: 3px solid #F4C430; outline-offset: 3px; border-radius: 6px; }
+body:not(.hz) :is(.form-control, input[type=text], input[type=email], input[type=search], input[type=tel], input[type=url], textarea, select):focus { outline: 0; border-color: #14213d !important; box-shadow: 0 0 0 3px rgba(244, 196, 48, .35) !important; }
+
+/* Imágenes que aparecen con fundido al terminar de cargar */
+img.ht-fade { opacity: 0; transition: opacity .5s ease; }
+img.ht-fade.is-loaded { opacity: 1; }
+
+/* FAQ / acordeones nativos con apertura suave */
+details > summary { transition: color .2s; }
+details[open] > summary ~ * { animation: ht-details-in .35s ease; }
+@keyframes ht-details-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    body:not(.hz) { animation: none; }
+    .ht-rise { animation: none !important; }
+    .ht-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+    img.ht-fade { opacity: 1 !important; transition: none !important; }
+    #ht-progress { transition: none; }
+    * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
+}

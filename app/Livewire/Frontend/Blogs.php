@@ -2,85 +2,90 @@
 
 namespace App\Livewire\Frontend;
 
-use Livewire\Component;
 use App\Models\Blog;
 use App\Models\BlogCategory;
+use Livewire\Attributes\Url;
+use Livewire\Component;
 use Livewire\WithPagination;
 
+/**
+ * Public blog index: search, category chips, "load more". Server-rendered on first paint (good for SEO).
+ */
 class Blogs extends Component
 {
     use WithPagination;
 
-    public $keyword = '';
-    public $searchDescription = '';
-    public $category_id = '';
-    public $orderBy = 'desc';
-    public $perPage;
-    public $categories;
+    public const PER_PAGE = 9;
 
+    #[Url(as: 'q')]
+    public $keyword = '';
+    #[Url(as: 'category')]
+    public $categorySlug = '';
+    public $orderBy = 'desc';
+    public $perPage = self::PER_PAGE;
+    public $searchDescription = '';
 
     public function mount()
     {
-        $this->perPage = setting('_front_page_settings.per_page') ?? 9;
-        $this->categories = BlogCategory::orderBy('name', 'asc')->get();
+        $this->perPage = self::PER_PAGE;
+    }
+
+    public function setCategory(string $slug = ''): void
+    {
+        $this->categorySlug = $slug;
+        $this->resetList();
+    }
+
+    public function loadMore(): void
+    {
+        $this->perPage = min($this->perPage + self::PER_PAGE, 90);
+    }
+
+    public function updatedKeyword(): void
+    {
+        $this->resetList();
+    }
+
+    public function clearFilters(): void
+    {
+        $this->keyword = '';
+        $this->categorySlug = '';
+        $this->resetList();
+    }
+
+    private function resetList(): void
+    {
+        $this->perPage = self::PER_PAGE;
+        $this->resetPage();
     }
 
     public function render()
     {
-        $categorySlug = request()->query('category');
-        if ($categorySlug) {
-            $category = BlogCategory::where('slug', $categorySlug)->first();
-            if ($category) {
-                $this->category_id = $category->id;
-            }
-        }
+        $categories = BlogCategory::query()
+            ->whereHas('blogs', fn ($q) => $q->where('status', Blog::STATUSES['published']))
+            ->withCount(['blogs as posts_count' => fn ($q) => $q->where('status', Blog::STATUSES['published'])])
+            ->orderBy('name')->get();
+        $category = $this->categorySlug ? $categories->firstWhere('slug', $this->categorySlug) : null;
+        $keyword = trim((string) $this->keyword);
 
         $blogs = Blog::query()
             ->where('status', Blog::STATUSES['published'])
-            ->when($this->keyword, function ($query) {
-                $query->whereAny(['title', 'description'], 'LIKE', "%$this->keyword%");
-            })
-            ->when($this->category_id, function ($query) {
-                $query->whereHas('categories', function ($query) {
-                    $query->where('blog_category_id', $this->category_id);
-                });
-            })
-            ->with(['categories', 'tags'])
-            ->orderBy('id', $this->orderBy ?? 'desc')
+            ->when($keyword !== '', fn ($q) => $q->where(fn ($w) => $w->where('title', 'like', "%{$keyword}%")->orWhere('description', 'like', "%{$keyword}%")))
+            ->when($category, fn ($q) => $q->whereHas('categories', fn ($c) => $c->where('blog_category_id', $category->id)))
+            ->with(['categories', 'author.profile'])
+            ->orderBy('id', 'desc')
             ->paginate($this->perPage);
 
-        return view('livewire.pages.blogs', ['blogs' => $blogs])->extends('layouts.frontend-app', ['pageTitle' => (setting('_front_page_settings.blog_title') ?? 'Blogs')]);
-    }
+        $title = setting('_front_page_settings.blog_title') ?: 'Blog';
 
-    public function updatedKeyword()
-    {
-        $this->resetPage();
-    }
-
-    public function updatedPerPage()
-    {
-        $this->resetPage();
-    }
-
-    public function updatedCategoryId()
-    {
-        $this->resetPage();
-    }
-
-    public function updatedOrderBy()
-    {
-        $this->resetPage();
-    }
-
-    public function clearFilters()
-    {
-        $this->keyword = '';
-        $this->category_id = '';
-        $this->orderBy = 'desc';
-        $this->perPage = setting('_front_page_settings.per_page') ?? 9;
-
-        $this->resetPage();
-
-        $this->dispatch('clear_filters');
+        return view('livewire.pages.blogs', [
+            'blogs' => $blogs,
+            'categories' => $categories,
+            'activeCategory' => $category,
+            'filtered' => $keyword !== '' || $category !== null,
+        ])->extends('layouts.frontend-app', [
+            'pageTitle' => $category ? "{$category->name} · {$title}" : $title,
+            'pageDescription' => 'Artículos, guías y consejos para aprender mejor. Explora por categoría y descubre contenido de nuestros instructores.',
+        ]);
     }
 }

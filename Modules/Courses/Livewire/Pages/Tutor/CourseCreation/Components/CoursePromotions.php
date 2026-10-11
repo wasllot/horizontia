@@ -16,11 +16,15 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\Attributes\Locked;
+use Modules\Courses\Livewire\Traits\GuardsCourseAccess;
 use Modules\Courses\Livewire\Traits\AdminAwareCourseRouting;
 
 class CoursePromotions extends Component
 {
     use AdminAwareCourseRouting;
+    use GuardsCourseAccess;
+    #[Locked]
     public $courseId;
     public $course;
     public $form = [
@@ -46,6 +50,7 @@ class CoursePromotions extends Component
     public function mount()
     {
         $this->courseId         = request()->route('id');
+        $this->guardedCourse($this->courseId);
         $this->course           = Course::select('id', 'title')->findOrFail($this->courseId);
     }
 
@@ -229,15 +234,7 @@ class CoursePromotions extends Component
             $this->dispatch('showAlertMessage', type: 'error', title:  __('general.demosite_res_title') , message: __('general.demosite_res_txt'));
             return;
         }
-        DB::beginTransaction();
-
-        try {
-            (new CourseService())->updateOrCreateCourse($this->courseId, ['status' => 'under_review']);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $this->dispatch('showAlertMessage', type: 'error', title: __('courses::courses.error'), message: __('courses::courses.course_promotion_failed'));
-        }
+        $this->guardedCourse($this->courseId);
 
         return redirect($this->editCourseRoute('noticeboard', $this->courseId));
     }

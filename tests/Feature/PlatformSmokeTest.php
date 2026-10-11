@@ -58,8 +58,10 @@ class PlatformSmokeTest extends TestCase
         'livewire.preview-file' => 'Requires a real, previously-uploaded temporary Livewire upload filename.',
         'livewire/livewire.js, livewire/livewire.min.js.map' => 'Static framework asset files, not application code.',
         'verification.verify' => 'Requires a valid Laravel signed URL (id+hash) generated at send-time; cannot be forged in a black-box crawl.',
+        'admin.pages.restore' => 'Needs an existing revision id; exercised by PageEditorTest.',
         'sanctum.csrf-cookie' => 'Trivial framework route; covered implicitly by every stateful request in the E2E tests.',
         'api/{fallbackPlaceholder}' => 'Deliberate API 404 catch-all.',
+        'courses.bundles.show' => 'Needs an existing bundle slug; a 404 thrown while mounting a Livewire page leaves the shared test process with a Livewire redirector. Exercised by BundlesTest.',
     ];
 
     protected function actorFor(array $middleware, string $uri): ?User
@@ -100,31 +102,31 @@ class PlatformSmokeTest extends TestCase
         $blog = $this->blog();
 
         $map = [
-            'admin.update-blog' => "admin/blogs/update/{$blog->id}",
-            'courses.admin.edit-course' => "admin/course/edit/details/{$course->id}",
-            'courses.tutor.edit-course' => "course/edit/details/{$course->id}",
-            'admin.manage-dispute' => 'admin/manage-dispute/1',
-            'pagebuilder.build' => 'admin/pages/' . ($this->pageId('about-us') ?? 1) . '/build',
-            'page.edit' => 'admin/pages/' . ($this->pageId('about-us') ?? 1) . '/edit',
-            'admin.approve-user-identity' => 'admin/users/approve-identity/' . $this->student()->id,
+            'admin.update-blog' => "admin/blog/editar/{$blog->id}",
+            'courses.admin.edit-course' => "admin/curso/editar/details/{$course->id}",
+            'courses.tutor.edit-course' => "curso/editar/details/{$course->id}",
+            'admin.manage-dispute' => 'admin/gestionar-disputa/1',
+            'admin.pages.editor' => 'admin/paginas/' . ($this->pageId('nosotros') ?? 1) . '/editor',
+            'admin.pages.project' => 'admin/paginas/' . ($this->pageId('nosotros') ?? 1) . '/proyecto',
+            'admin.pages.revisions' => 'admin/paginas/' . ($this->pageId('nosotros') ?? 1) . '/historial',
+            'admin.approve-user-identity' => 'admin/usuarios/aprobar-identidad/' . $this->student()->id,
             'course-detail' => "api/course-detail/{$course->slug}",
             'course-taking' => "api/course-taking/{$course->slug}",
             'blog-details' => "blog/{$blog->slug}",
-            'courses.course-taking' => "course-taking/{$course->slug}",
-            'courses.course-detail' => "course/{$course->slug}",
-            'pagebuilder.iframe' => 'pages/' . ($this->pageId('about-us') ?? 1) . '/iframe',
-            'pay' => 'pay/1',
-            'password.reset' => 'reset-password/dummy-token-for-smoke-test',
+            'courses.course-taking' => "aula/{$course->slug}",
+            'courses.course-detail' => "curso/{$course->slug}",
+            'pay' => 'pagar/1',
+            'password.reset' => 'restablecer-contrasena/dummy-token-for-smoke-test',
             'courses.scorm.get-progress' => 'scorm/progress/' . $this->curriculum()->id,
-            'courses.secure.video' => 'secure-video/courses/dummy.mp4',
-            'student.complete-booking' => 'student/complete-booking/1',
-            'student.manage-dispute' => 'student/manage-dispute/1',
-            'student.reschedule-session' => 'student/reschedule-session/1',
-            'thank-you' => 'thank-you/1',
-            'tutor.bookings.session-detail' => 'tutor/bookings/session-detail/' . now()->format('Y-m-d'),
-            'tutor.manage-dispute' => 'tutor/manage-dispute/1',
+            'courses.secure.video' => 'video-seguro/courses/dummy.mp4',
+            'student.complete-booking' => 'estudiante/completar-reserva/1',
+            'student.manage-dispute' => 'estudiante/gestionar-disputa/1',
+            'student.reschedule-session' => 'estudiante/reprogramar-sesion/1',
+            'thank-you' => 'gracias/1',
+            'tutor.bookings.session-detail' => 'tutor/reservas/detalle-sesion/' . now()->format('Y-m-d'),
+            'tutor.manage-dispute' => 'tutor/gestionar-disputa/1',
             'tutor-detail' => "tutor/{$tutorProfileSlug}",
-            'confirm-identity' => 'user/identity-confirmation/' . $this->student()->id,
+            'confirm-identity' => 'usuario/confirmar-identidad/' . $this->student()->id,
             'ltu.translation.index' => 'admin/translations',
         ];
 
@@ -202,6 +204,11 @@ class PlatformSmokeTest extends TestCase
     protected function isSkipped(?string $name, string $uri): bool
     {
         if ($name === null) {
+            // Legacy English URLs are 301 redirects, covered by LegacyUrlRedirectTest.
+            if (array_key_exists($uri, require base_path('routes/legacy.php'))) {
+                return true;
+            }
+
             return in_array($uri, [
                 'google/callback',
                 'broadcasting/auth',
@@ -216,6 +223,9 @@ class PlatformSmokeTest extends TestCase
         }
         if ($name === 'payment.process') {
             return true;
+        }
+        if ($name === 'courses.bundles.show') {
+            return true;   // needs a real bundle slug; see SKIPPED_ROUTES and BundlesTest
         }
         if ($name === 'payease.stripe' || $name === 'payfast.webhook') {
             return true;

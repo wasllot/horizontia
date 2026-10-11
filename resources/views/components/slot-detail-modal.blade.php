@@ -76,10 +76,10 @@
                     <li>
                         <div class="am-session-duration_title">
                             <figure>
-                                @if(!empty($user?->profile->image) && Storage::disk(getStorageDisk())->exists($user?->profile?->image))
+                                @if(!empty($user?->profile->image) && mediaExists($user?->profile?->image))
                                     <img src="{{ resizedImage($user?->profile?->image, 24, 24) }}" alt="{{ $user?->profile?->full_name }}">
                                 @else 
-                                    <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 24, 24) }}" alt="{{ $user?->profile?->full_name }}">
+                                    <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 24, 24) }}" alt="{{ $user?->profile?->full_name }}">
                                 @endif
                             </figure>
                             <span><em>{{ __('calendar.session_tutor') }}</em></span>
@@ -102,7 +102,7 @@
                 @endrole
             </div>
             <div class="am-session-detail-modal_body">
-                @if(!empty($currentSlot?->subjectGroupSubjects?->image) && Storage::disk(getStorageDisk())->exists($currentSlot?->subjectGroupSubjects?->image))
+                @if(!empty($currentSlot?->subjectGroupSubjects?->image) && mediaExists($currentSlot?->subjectGroupSubjects?->image))
                 <figure>
                     <img src="{{ resizedImage($currentSlot?->subjectGroupSubjects?->image, 700, 360) }}" alt="{{ $currentSlot?->subjectGroupSubjects?->subject?->name }}">
                 </figure>

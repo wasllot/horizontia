@@ -56,6 +56,9 @@ class WalletService
                 ->where('type', WalletDetailCast::$withdrawnTypes['pending_available'])
                 ->where('order_id', $orderId)
                 ->first();
+            if (!$pendingAvailableFunds) {
+                return $wallet;   // nothing was held for this order (e.g. free), or it was already released
+            }
             $pendingAvailableFunds->amount = $pendingAvailableFunds->amount - $amount;
             $pendingAvailableFunds->save();
 

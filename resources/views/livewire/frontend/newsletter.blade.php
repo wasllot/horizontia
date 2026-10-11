@@ -6,7 +6,7 @@
     
     <div class="am-newsletter-form" style="flex: 1; min-width: 300px; max-width: 500px;">
         <form wire:submit.prevent="subscribe" style="display: flex; gap: 10px; width: 100%; position: relative;">
-            <input type="email" wire:model="email" class="form-control" placeholder="Tu correo electrónico" required 
+            <input type="email" wire:model="email" class="form-control" aria-label="Tu correo electrónico" autocomplete="email" placeholder="Tu correo electrónico" required 
                    style="border-radius: 50px; padding: 15px 25px; width: 100%; border: none; font-size: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); outline: none;">
             
             <button type="submit" class="am-btn" wire:loading.attr="disabled"
@@ -16,10 +16,10 @@
             </button>
         </form>
         
-        @if(setting('_general.enable_recaptcha') == '1')
+        @if(recaptchaEnabled('newsletter'))
             <div style="margin-top: 15px;" wire:ignore>
                 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-                <div class="g-recaptcha" data-sitekey="{{ setting('_general.recaptcha_site_key') }}" data-callback="onNewsletterRecaptchaComplete"></div>
+                <div class="g-recaptcha" data-sitekey="{{ recaptchaSiteKey() }}" data-callback="onNewsletterRecaptchaComplete"></div>
                 <script>
                     function onNewsletterRecaptchaComplete(response) {
                         @this.set('recaptchaToken', response);

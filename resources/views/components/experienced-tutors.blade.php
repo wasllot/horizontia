@@ -4,9 +4,9 @@
             <div class="am-experience-tutor-card">
                 <div class="am-experience-tutor-img">
                     @if ($singleTutor?->profile?->image)    
-                        <img src="{{ url(Storage::url($singleTutor?->profile?->image)) }}" alt="image-description">
+                        <img src="{{ url(mediaUrl($singleTutor?->profile?->image)) }}" alt="image-description">
                     @else
-                        <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="profile image" />
+                        <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="profile image" />
                     @endif
                     @guest
                         <span>

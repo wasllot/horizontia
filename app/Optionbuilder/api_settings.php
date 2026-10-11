@@ -1,14 +1,16 @@
 <?php
 
 use Modules\MeetFusion\Facades\MeetFusion;
-function rearrangeArray($array) {
-    return array_map(function($details) {
-        if (isset($details['keys'])) {
-            $details = array_merge($details, $details['keys']);
-            unset($details['keys']);
-        }
-        return $details;
-    }, $array);
+if (!function_exists('rearrangeArray')) {
+    function rearrangeArray($array) {
+        return array_map(function($details) {
+            if (isset($details['keys'])) {
+                $details = array_merge($details, $details['keys']);
+                unset($details['keys']);
+            }
+            return $details;
+        }, $array);
+    }
 }
 
 $gateways = rearrangeArray(MeetFusion::supportedConferences());
@@ -66,6 +68,67 @@ $settings_fields =
             'class'         => '',
             'label_title'   => __('settings.enter_openai_key'),
             'placeholder'   => __('settings.add_openai_key'),
+        ],
+        [
+            'id'            => 'gemini_info',
+            'type'          => 'info',
+            'tab_id'        => 'gemini_tutor',
+            'tab_title'     => __('settings.gemini_tutor'),
+            'label_title'   => __('settings.gemini_info_title'),
+            'label_desc'    => __('settings.gemini_info_desc'),
+        ],
+        [
+            'id'            => 'gemini_tutor_enabled',
+            'type'          => 'switch',
+            'tab_id'        => 'gemini_tutor',
+            'tab_title'     => __('settings.gemini_tutor'),
+            'class'         => '',
+            'label_title'   => __('settings.gemini_tutor_enabled'),
+            'field_desc'    => __('settings.gemini_tutor_enabled_desc'),
+            'value'         => '0',
+        ],
+        [
+            'id'            => 'gemini_api_key',
+            'type'          => 'text',
+            'tab_id'        => 'gemini_tutor',
+            'tab_title'     => __('settings.gemini_tutor'),
+            'value'         => '',
+            'class'         => '',
+            'label_title'   => __('settings.gemini_api_key'),
+            'placeholder'   => __('settings.gemini_api_key_placeholder'),
+            'field_desc'    => __('settings.gemini_api_key_desc'),
+        ],
+        [
+            'id'            => 'gemini_model',
+            'type'          => 'text',
+            'tab_id'        => 'gemini_tutor',
+            'tab_title'     => __('settings.gemini_tutor'),
+            'value'         => 'gemini-3.5-flash-lite',
+            'class'         => '',
+            'label_title'   => __('settings.gemini_model'),
+            'placeholder'   => 'gemini-3.5-flash-lite',
+            'field_desc'    => __('settings.gemini_model_desc'),
+        ],
+        [
+            'id'            => 'gemini_daily_limit',
+            'type'          => 'text',
+            'tab_id'        => 'gemini_tutor',
+            'tab_title'     => __('settings.gemini_tutor'),
+            'value'         => '30',
+            'class'         => '',
+            'label_title'   => __('settings.gemini_daily_limit'),
+            'placeholder'   => '30',
+            'field_desc'    => __('settings.gemini_daily_limit_desc'),
+        ],
+        [
+            'id'            => 'gemini_extra_instructions',
+            'type'          => 'textarea',
+            'tab_id'        => 'gemini_tutor',
+            'tab_title'     => __('settings.gemini_tutor'),
+            'value'         => '',
+            'class'         => '',
+            'label_title'   => __('settings.gemini_extra_instructions'),
+            'placeholder'   => __('settings.gemini_extra_instructions_placeholder'),
         ],
         [
             'id'            => 'enable_social_login',

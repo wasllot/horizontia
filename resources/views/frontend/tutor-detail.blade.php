@@ -17,10 +17,10 @@
                             <div class="am-tutordetail_user">
                                 <figure class="am-tutorvone_img">
                                     @if (!empty($tutor?->profile?->image) &&
-                                    Storage::disk(getStorageDisk())->exists($tutor?->profile?->image))
+                                    mediaExists($tutor?->profile?->image))
                                         <img src="{{ resizedImage($tutor?->profile?->image,80,80) }}" alt="{{$tutor?->profile?->full_name}}" />
                                     @else 
-                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 80, 80) }}" alt="{{ $tutor->profile?->full_name }}" />
+                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 80, 80) }}" alt="{{ $tutor->profile?->full_name }}" />
                                     @endif
                                     <span @class(['am-userstaus','am-userstaus_online'=> $tutor?->is_online])></span>
                                 </figure>
@@ -181,10 +181,10 @@
                                                     </span>
                                                     <figure class="am-shimmer">
                                                     @if (!empty($badge?->image) &&
-                                                        Storage::disk(getStorageDisk())->exists($badge?->image))
+                                                        mediaExists($badge?->image))
                                                         <img src="{{ resizedImage($badge?->image,80,80) }}" alt="{{$badge?->name}}" />
                                                     @else 
-                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 80, 80) }}" alt="{{ $tutor->profile?->full_name }}" />
+                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 80, 80) }}" alt="{{ $tutor->profile?->full_name }}" />
                                                     @endif
                                                     </figure>
                                                 </div>
@@ -207,7 +207,7 @@
                             <video class="video-js" data-setup='{}' preload="auto" wire:key="profile-video-{{ $tutor->id }}"
                                 id="profile-video-{{ $tutor->id }}" width="320" height="240" controls>
                                 <source
-                                    src="{{ url(Storage::url($tutor?->profile?->intro_video)).'?key=short-video' }}#t=0.1"
+                                    src="{{ url(mediaUrl($tutor?->profile?->intro_video)).'?key=short-video' }}#t=0.1"
                                     wire:key="profile-video-src-{{ $tutor->id }}" type="video/mp4">
                             </video>
                         </div>
@@ -315,7 +315,7 @@
             <div class="am-howtobook_popup">
                 @if (!empty(setting('_lernen.tips_for_booking_image')[0]['path']))
                 <figure class="am-howtobook_img">
-                    <img src="{{ url(Storage::url(setting('_lernen.tips_for_booking_image')[0]['path'])) }}"
+                    <img src="{{ url(mediaUrl(setting('_lernen.tips_for_booking_image')[0]['path'])) }}"
                         alt="img description">
                     <a href="javascript:void(0);" class="am-howtobook_close">
                         <i class="am-icon-multiply-02"></i>
@@ -373,7 +373,7 @@
                                                         class="cr-image-wrapper" 
                                                         x-data="{ 
                                                             isOpen: false, 
-                                                            videoUrl: '{{ url(Storage::url($course?->promotionalVideo?->path)) }}',
+                                                            videoUrl: '{{ url(mediaUrl($course?->promotionalVideo?->path)) }}',
                                                             courseId: '{{ $course->id }}',
                                                             playVideo: function() {
                                                                 this.isOpen = true;
@@ -404,9 +404,9 @@
                                                             </div>
                                                         </template>
                                                         <template x-if="!isOpen">
-                                                            <img height="200" width="360" src="{{ !empty($course->thumbnail->path) ? url(Storage::url($course->thumbnail->path)) : asset('vendor/courses/images/course.png') }}" alt="{{ $course->title }}" class="cr-background-image" />
+                                                            <img loading="lazy" decoding="async" height="200" width="360" src="{{ !empty($course->thumbnail->path) ? mediaThumb($course->thumbnail->path, 640) : asset('vendor/courses/images/course.png') }}" alt="{{ $course->title }}" class="cr-background-image" />
                                                         </template>
-                                                        @if(!empty($course?->promotionalVideo?->path) && Storage::disk(getStorageDisk())->exists($course?->promotionalVideo?->path) )
+                                                        @if(!empty($course?->promotionalVideo?->path) && mediaExists($course?->promotionalVideo?->path) )
                                                             <template x-if="!isOpen">
                                                                 <figcaption>
                                                                     @if (!empty($course->pricing?->discount))
@@ -427,7 +427,7 @@
                                                             <div class="cr-instructor-info">
                                                                 <div class="cr-instructor-details">
                                                                     <a href="{{ route('tutor-detail',['slug' => $course->instructor?->profile?->slug]) }}" target="_blank" class="cr-instructor-name">
-                                                                        <img src="{{ Storage::url($course->instructor?->profile?->image) }}" alt="{{ $course->instructor?->profile?->short_name }}" class="cr-instructor-avatar" />
+                                                                        <img src="{{ mediaUrl($course->instructor?->profile?->image) }}" alt="{{ $course->instructor?->profile?->short_name }}" class="cr-instructor-avatar" />
                                                                         {{ $course->instructor?->profile?->short_name }}
                                                                     </a>
                                                                 </div>

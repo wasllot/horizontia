@@ -361,7 +361,7 @@ class PageBuilderService {
                         'step_image'            => '',
                         'scnd_step_image'       => [uploadObMedia('demo-content/home-v2/banner/image-07.webp')],
                         'image_verient'         => '',
-                        'step_heading'          => 'Signup Lernen',
+                        'step_heading'          => 'Signup Horizontia',
                         'step_paragraph'        => 'Easily create an account by providing basic details to unlock access to a world of learning opportunities.',
                         'learn_more_btn_url'    => route('register'),
                         'learn_more_btn_txt'    => 'Learn more'
@@ -398,8 +398,8 @@ class PageBuilderService {
                         'step_image'            => [uploadObMedia('demo-content/gif/signup.gif')],
                         'scnd_step_image'       => [uploadObMedia('demo-content/gif/signup.png')],
                         'image_verient'         => 'am-step-warning',
-                        'step_heading'          => 'Signup Lernen at no cost & verify your account',
-                        'step_paragraph'        => 'Sign up for Lernen free, verify your account, and unlock full access to start your learning journey.',
+                        'step_heading'          => 'Signup Horizontia at no cost & verify your account',
+                        'step_paragraph'        => 'Sign up for Horizontia free, verify your account, and unlock full access to start your learning journey.',
                         'learn_more_btn_url'    => route('register'),
                         'learn_more_btn_txt'    => 'Learn more'
                     ],
@@ -451,7 +451,7 @@ class PageBuilderService {
             'main_image'         => ['value' => [uploadObMedia('demo-content/home-v6/stepguide-img.png')], 'is_array' => 0],
             'steps_data'     => ['value' => [
                 $this->uniqueId() => [
-                    'step_heading'   => 'Signup Lernen',
+                    'step_heading'   => 'Signup Horizontia',
                     'step_paragraph' => 'Easily create an account by providing basic details to unlock access to a world of learning opportunities.',
                     'step_icon'      => 'am-icon-bar-chart-01',
                 ],
@@ -626,8 +626,8 @@ class PageBuilderService {
         return [
             'select_verient'    => ['value' => $selectVerient, 'is_array' => 0],
             'pre_heading'       => ['value' => $page->slug == 'home-nine' ? '' : 'Coming Soon', 'is_array' => 0],
-            'heading'           => ['value' => 'Lernen Mobile App <em>Available!</em>', 'is_array' => 0],
-            'paragraph'         => ['value' => 'Take your learning on the go with the Lernen mobile app. Access all your courses, connect with tutors & track your progress.', 'is_array' => 0],
+            'heading'           => ['value' => 'Horizontia Mobile App <em>Available!</em>', 'is_array' => 0],
+            'paragraph'         => ['value' => 'Take your learning on the go with the Horizontia mobile app. Access all your courses, connect with tutors & track your progress.', 'is_array' => 0],
             'app_store_image'   => ['value' => $appStoreImage, 'is_array' => '1'],
             'google_image'      => ['value' => $googleImage, 'is_array' => '1'],
             'mobile_image'      => ['value' => [uploadObMedia('demo-content/home-v2/mobile-app.png')], 'is_array' => '1'],
@@ -1231,7 +1231,7 @@ class PageBuilderService {
         // } elseif($page->slug == '/') {
         //     $preHeading     = 'Experienced tutors';
         //     $heading        = 'Meet Our Top Educators';
-        //     $paragraph      = 'Discover how Lernen is making a difference in the lives of students and educational institutions. Hear from our satisfied users:';
+        //     $paragraph      = 'Discover how Horizontia is making a difference in the lives of students and educational institutions. Hear from our satisfied users:';
         // }
         if ($page->slug == 'home-four') {
             return [
@@ -1276,7 +1276,7 @@ class PageBuilderService {
                 'select_tutor'          => ['value' => 4, 'is_array' => 0],
                 'pre_heading'           => ['value' => 'Experienced tutors', 'is_array' => 0],
                 'heading'               => ['value' => 'Meet Our Top Educators', 'is_array' => 0],
-                'paragraph'             => ['value' => 'Discover how Lernen is making a difference in the lives of students and educational institutions. Hear from our satisfied users:', 'is_array' => 0],
+                'paragraph'             => ['value' => 'Discover how Horizontia is making a difference in the lives of students and educational institutions. Hear from our satisfied users:', 'is_array' => 0],
                 'view_tutor_btn_url'    => ['value' => 'find-tutors', 'is_array' => 0],
                 'view_tutor_btn_text'   => ['value' => 'View profile', 'is_array' => 0],
                 'select_verient'        => ['value' => 'am-tutors-varient-one', 'is_array' => 0],
@@ -1392,13 +1392,13 @@ class PageBuilderService {
         $preHeading = $paragraph = $feedbackVerient = $sectionTitleVariation = '';
         if ($page->slug == 'home-eight' || $page->slug == 'home-six' || $page->slug == 'home-five' || $page->slug == 'home-four') {
             $preHeading = 'Testimonials';
-            $paragraph  =  'Learn how Lernen impacts students and educational institutions through testimonials from our satisfied users';
+            $paragraph  =  'Learn how Horizontia impacts students and educational institutions through testimonials from our satisfied users';
         } elseif($page->slug == 'home-nine'){
             $preHeading = 'Testimonials';
-            $paragraph  = 'Discover how Lernen is making a difference in the lives of students and educational institutions.';
+            $paragraph  = 'Discover how Horizontia is making a difference in the lives of students and educational institutions.';
         } else{
             $preHeading = 'Real Feedback from Our Clients';
-            $paragraph  = 'Discover how Lernen is making a difference in the lives of students and educational institutions. Hear from our satisfied users';
+            $paragraph  = 'Discover how Horizontia is making a difference in the lives of students and educational institutions. Hear from our satisfied users';
         }
 
         if ($page->slug == 'home-four') {
@@ -1433,7 +1433,7 @@ class PageBuilderService {
             'enable_slider'        => ['value' => in_array($page->slug, ['home-two', 'home-four', 'home-five', 'home-six']) ? 'yes' : 'no', 'is_array' => 0],
             'feedback_repeater'    => ['value' =>  [
                 $this->uniqueId() => [
-                    'feedback_paragraph'    => 'We have tried several tutoring platforms, but none compare to Lernen. The tutors are top-notch, and the booking process is incredibly.',
+                    'feedback_paragraph'    => 'We have tried several tutoring platforms, but none compare to Horizontia. The tutors are top-notch, and the booking process is incredibly.',
                     'tutor_rating'          => 4,
                     'tutor_image'           => [$encodeMedia ? json_encode(uploadObMedia('demo-content/home-page/customer-01.png')) : uploadObMedia('demo-content/home-page/customer-01.png')],
                     'tutor_name'            => 'Arlene M',
@@ -1441,7 +1441,7 @@ class PageBuilderService {
                     'student_image'         => [$encodeMedia ? json_encode(uploadObMedia('demo-content/feedback-user/logo-1.png')) : uploadObMedia('demo-content/feedback-user/logo-1.png')],
                 ],
                 $this->uniqueId() => [
-                    'feedback_paragraph'    => 'Lernen is a dependable and effective tool for our agency, offering knowledgeable and dedicated tutors.',
+                    'feedback_paragraph'    => 'Horizontia is a dependable and effective tool for our agency, offering knowledgeable and dedicated tutors.',
                     'tutor_rating'          => 4,
                     'tutor_image'           => [$encodeMedia ? json_encode(uploadObMedia('demo-content/home-page/customer-02.png')) : uploadObMedia('demo-content/home-page/customer-02.png')],
                     'tutor_name'            => 'Ronald R',
@@ -1449,7 +1449,7 @@ class PageBuilderService {
                     'student_image'         => [$encodeMedia ? json_encode(uploadObMedia('demo-content/feedback-user/logo-2.png')) : uploadObMedia('demo-content/feedback-user/logo-2.png')],
                 ],
                 $this->uniqueId() => [
-                    'feedback_paragraph'    => "Lernen has been a game-changer for our students. The variety of tutors and the ease of booking  sessions make it a breeze for parents and students alike. Our students' grades have improved Our students' grades have improved significantly since we started using this platform.",
+                    'feedback_paragraph'    => "Horizontia has been a game-changer for our students. The variety of tutors and the ease of booking  sessions make it a breeze for parents and students alike. Our students' grades have improved Our students' grades have improved significantly since we started using this platform.",
                     'tutor_rating'          => 5,
                     'tutor_image'           => [$encodeMedia ? json_encode(uploadObMedia('demo-content/home-page/customer-03.png')) : uploadObMedia('demo-content/home-page/customer-03.png')],
                     'tutor_name'            => 'Marvin M',
@@ -1457,7 +1457,7 @@ class PageBuilderService {
                     'student_image'         => [$encodeMedia ? json_encode(uploadObMedia('demo-content/feedback-user/logo-3.png')) : uploadObMedia('demo-content/feedback-user/logo-3.png')],
                 ],
                 $this->uniqueId() => [
-                    'feedback_paragraph'    => 'We’re delighted with Lernen its top-notch tutors and user-friendly platform have greatly boosted our students.',
+                    'feedback_paragraph'    => 'We’re delighted with Horizontia its top-notch tutors and user-friendly platform have greatly boosted our students.',
                     'tutor_rating'          => 5,
                     'tutor_image'           => [$encodeMedia ? json_encode(uploadObMedia('demo-content/home-page/customer-01.png')) : uploadObMedia('demo-content/home-page/customer-01.png')],
                     'tutor_name'            => 'Courtney H',
@@ -1465,7 +1465,7 @@ class PageBuilderService {
                     'student_image'         => [$encodeMedia ? json_encode(uploadObMedia('demo-content/feedback-user/logo-4.png')) : uploadObMedia('demo-content/feedback-user/logo-4.png')],
                 ],
                 $this->uniqueId() => [
-                    'feedback_paragraph'    => 'Lernen is a fantastic resource for our students. The diverse range of tutors ensures that we can find the perfect match for each student\'s.',
+                    'feedback_paragraph'    => 'Horizontia is a fantastic resource for our students. The diverse range of tutors ensures that we can find the perfect match for each student\'s.',
                     'tutor_rating'          => 4,
                     'tutor_image'           => [$encodeMedia ? json_encode(uploadObMedia('demo-content/home-page/customer-02.png')) : uploadObMedia('demo-content/home-page/customer-02.png')],
                     'tutor_name'            => 'Devon L',
@@ -1473,7 +1473,7 @@ class PageBuilderService {
                     'student_image'         => [$encodeMedia ? json_encode(uploadObMedia('demo-content/feedback-user/logo-5.png')) : uploadObMedia('demo-content/feedback-user/logo-5.png')],
                 ],
                 $this->uniqueId() => [
-                    'feedback_paragraph'    => 'Our experience with Lernen has been outstanding. The platform is user-friendly, & the tutors are highly qualified.',
+                    'feedback_paragraph'    => 'Our experience with Horizontia has been outstanding. The platform is user-friendly, & the tutors are highly qualified.',
                     'tutor_rating'          => 5,
                     'tutor_image'           => [$encodeMedia ? json_encode(uploadObMedia('demo-content/home-page/customer-03.png')) : uploadObMedia('demo-content/home-page/customer-03.png')],
                     'tutor_name'            => 'Darlene R',
@@ -1615,7 +1615,7 @@ class PageBuilderService {
                     'category_image'       => [uploadObMedia('demo-content/home-v5/category-img03.png')],
                     'category_heading'     => 'Content Writing',
                     'category_paragraph'   => 'Build responsive websites with expert guidance.',
-                    'explore_more_btn_url' => url('find-tutors'),
+                    'explore_more_btn_url' => route('find-tutors'),
                     'explore_more_btn_txt' => 'Explore more'
                 ],
                 $this->uniqueId() => [
@@ -1686,12 +1686,12 @@ class PageBuilderService {
                 $this->uniqueId() => [
                     'category_image'       => [uploadObMedia('demo-content/home-v5/category-img03.png')],
                     'category_heading'     => 'Content Writing',
-                    'explore_more_btn_url' => url('find-tutors'),
+                    'explore_more_btn_url' => route('find-tutors'),
                 ],
                 $this->uniqueId() => [
                     'category_image'       => [uploadObMedia('demo-content/home-v5/category-img07.png')],
                     'category_heading'     => 'Finance',
-                    'explore_more_btn_url' => url('find-tutors'),
+                    'explore_more_btn_url' => route('find-tutors'),
                 ],
                 $this->uniqueId() => [
                     'category_image'       => [uploadObMedia('demo-content/home-v5/category-img08.png')],
@@ -1706,17 +1706,17 @@ class PageBuilderService {
                 $this->uniqueId() => [
                     'category_image'       => [uploadObMedia('demo-content/home-v5/category-img10.png')],
                     'category_heading'     => 'Communication',
-                    'explore_more_btn_url' => url('find-tutors'),
+                    'explore_more_btn_url' => route('find-tutors'),
                 ],
                 $this->uniqueId() => [
                     'category_image'       => [uploadObMedia('demo-content/home-v5/category-img11.png')],
                     'category_heading'     => 'Blogging',
-                    'explore_more_btn_url' => url('blogs'),
+                    'explore_more_btn_url' => route('blogs'),
                 ],
                 $this->uniqueId() => [
                     'category_image'       => [uploadObMedia('demo-content/home-v5/category-img12.png')],
                     'category_heading'     => 'Graphic Design',
-                    'explore_more_btn_url' => url('find-tutors'),
+                    'explore_more_btn_url' => route('find-tutors'),
                 ]
             ], 'is_array' => '1']
         ];

@@ -98,14 +98,14 @@ class PaymentWebhookTest extends TestCase
         // because Order::latest()->first() was null. Now guarded.
         Order::query()->delete();
 
-        $get = $this->get('/payment/success?payment_method=payfast');
+        $get = $this->get('/pago/exito?payment_method=payfast');
         $this->assertLessThan(500, $get->getStatusCode(), $get->getContent());
 
-        $post = $this->post('/payment/success', ['payment_method' => 'payfast']);
+        $post = $this->post('/pago/exito', ['payment_method' => 'payfast']);
         $this->assertLessThan(500, $post->getStatusCode(), $post->getContent());
 
         // api/upi variant returns JSON instead of a redirect.
-        $apiGet = $this->getJson('/payment/success?payment_method=payfast&source=api&upi=1');
+        $apiGet = $this->getJson('/pago/exito?payment_method=payfast&source=api&upi=1');
         $apiGet->assertOk();
     }
 
@@ -116,10 +116,10 @@ class PaymentWebhookTest extends TestCase
         foreach (['stripe', 'unknown-gateway-xyz', null] as $method) {
             $params = $method !== null ? ['payment_method' => $method] : [];
 
-            $get = $this->get('/payment/success?' . http_build_query($params));
+            $get = $this->get('/pago/exito?' . http_build_query($params));
             $this->assertLessThan(500, $get->getStatusCode(), "GET payment/success?payment_method={$method} crashed: " . $get->getContent());
 
-            $post = $this->post('/payment/success', $params);
+            $post = $this->post('/pago/exito', $params);
             $this->assertLessThan(500, $post->getStatusCode(), "POST payment/success (payment_method={$method}) crashed: " . $post->getContent());
         }
 
@@ -151,12 +151,12 @@ class PaymentWebhookTest extends TestCase
             'ipn_url' => url('/'),
             'order_id' => 1,
             'track' => 'track-123',
-            'cancel_url' => url('/checkout'),
+            'cancel_url' => url('/finalizar-compra'),
             'success_url' => url('/'),
             'email' => 'qa-student@horizontia.test',
             'name' => 'QA',
             'payment_type' => 'stripe',
-        ]])->get('/stripe/process/payment');
+        ]])->get('/stripe/procesar-pago');
 
         // Stripe keys are blank in this environment, so chargeCustomer()
         // must fail gracefully (redirect back to checkout with an error)

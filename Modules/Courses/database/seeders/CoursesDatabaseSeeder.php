@@ -2125,7 +2125,7 @@ class CoursesDatabaseSeeder extends Seeder
                     'menu_id'   => $menu->id,
                     'parent_id' => null,
                     'label'     => 'Courses',
-                    'route'     => url('search-courses'),
+                    'route'     => route('courses.search-courses'),
                     'type'      => 'page',
                     'sort'      => '2',
                     'class'     => '',

@@ -43,15 +43,21 @@ return Application::configure(basePath: dirname(__DIR__))
             'locale' => \App\Http\Middleware\CheckLocale::class,
             'maintenance' => \App\Http\Middleware\CheckMaintenanceMode::class,
             'enabled' => \App\Http\Middleware\CheckModuleEnabled::class,
+            'marketplace' => \App\Http\Middleware\MarketplaceOnly::class,
         ]);
         $middleware->web(append: [
             \App\Http\Middleware\AddVaryCookieHeader::class,
         ]);
         $middleware->validateCsrfTokens(except: [
             'payfast/webhook',
+            'mercadopago/webhook',
+            'zoom/webhook',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        $exceptions->report(function (\Throwable $e) {
+            \App\Services\ErrorAlert::report($e);
+        });
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             if($request->expectsJson()) {
                 return response()->json(

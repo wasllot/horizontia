@@ -14,104 +14,98 @@ new class extends Component
     {
         $this->totalCommission = (new OrderService())->getTotalCommission();
         $this->activeRoute = Route::currentRouteName();
-        $this->menuItems = [
-            [
-                'title' =>  __('sidebar.insights'),
-                'icon'  => 'icon-layers',
-                'routes' => [
-                    'admin.insights' => __('sidebar.insights'),
-                ],
-            ],
-            [
-                'title' =>  'Leads & Contactos',
-                'icon'  => 'icon-inbox',
-                'routes' => [
-                    'admin.leads' => 'Ver Mensajes'
-                ],
-            ],
-            [
-                'title' =>  'Usuarios y Perfiles',
-                'icon'  => 'icon-users',
-                'routes' => [
-                    'admin.users' => __('admin/sidebar.users'),
-                    'admin.identity-verification' => __('admin/general.identity_verification')
-                ],
-            ],
-            [
-                'title' =>  'Finanzas y Pagos',
-                'icon'  => 'icon-dollar-sign',
-                'routes' => [
-                    'admin.bookings' => __('admin/sidebar.bookings'),
-                    'admin.invoices' => __('admin/sidebar.invoices'),
-                    'admin.withdraw-requests' => __('sidebar.withdraw_requests'),
-                    'admin.payment-methods' => __('sidebar.payment_methods'),
-                    'admin.commission-settings' => __('sidebar.commission_settings'),
-                    'admin.disputes' => __('sidebar.disputes'),
-                ],
-            ],
-            [
-                'title' =>  'Sistema y Plataforma',
-                'icon'  => 'icon-layout',
-                'routes' => [
-                    'admin.manage-menus' => __('sidebar.menu'),
-                    'pagebuilder' => __('sidebar.sitepages'),
-                    'admin.taxonomy.subjects' => __('sidebar.subjects'),
-                    'admin.taxonomy.subject-groups' => __('sidebar.subject_groups'),
-                    'admin.taxonomy.languages' => __('sidebar.languages'),
-                ],
-            ],
-            [
-                'title' =>  'Ajustes Generales',
-                'icon'  => 'icon-settings',
-                'routes' => [
-                    'optionbuilder' => 'Ajustes Generales',
-                    'admin.email-settings' => __('sidebar.email_settings'),
-                    'admin.notification-settings' => __('sidebar.notification_settings'),
-                ],
-            ]
+
+        // Cada ítem pertenece a un grupo; el menú se pinta agrupado y con el orden de $groups.
+        $items = [
+            ['group' => 'general', 'title' => __('sidebar.insights'), 'icon' => 'icon-layers', 'routes' => ['admin.insights' => __('sidebar.insights')]],
+            ['group' => 'general', 'title' => 'Reportes', 'icon' => 'icon-bar-chart-2', 'routes' => ['admin.reports' => 'Reportes']],
+            ['group' => 'academy', 'title' => __('sidebar.users'), 'icon' => 'icon-users', 'routes' => [
+                'admin.users' => __('admin/sidebar.users'),
+                'admin.access-requests' => 'Solicitudes de acceso',
+                'admin.identity-verification' => __('admin/general.identity_verification'),
+            ]],
+            ['group' => 'academy', 'title' => 'Rutas de aprendizaje', 'icon' => 'icon-git-branch', 'routes' => ['admin.learning-paths' => 'Rutas de aprendizaje']],
+            ['group' => 'academy', 'title' => 'Estudio de contenido', 'icon' => 'icon-cpu', 'routes' => ['admin.content-studio' => 'Estudio de contenido']],
+            ['group' => 'academy', 'title' => 'Comunidad', 'icon' => 'icon-message-circle', 'routes' => ['admin.community' => 'Comunidad']],
+            ['group' => 'academy', 'title' => 'Certificados', 'icon' => 'icon-award', 'routes' => ['admin.certificates' => 'Certificados']],
+            ['group' => 'academy', 'title' => __('sidebar.contacts'), 'icon' => 'icon-inbox', 'routes' => ['admin.leads' => __('sidebar.contacts')]],
+            ['group' => 'content', 'title' => __('sidebar.blog'), 'icon' => 'icon-edit-3', 'routes' => [
+                'admin.blog-listing' => __('blogs.blog_listing'),
+                'admin.create-blog' => __('blogs.create_blog'),
+                'admin.blog-categories' => __('blogs.blog_categories'),
+            ]],
+            ['group' => 'content', 'title' => __('sidebar.sitepages'), 'icon' => 'icon-file-text', 'routes' => [
+                'admin.pages' => __('sidebar.site_pages'),
+                'admin.course-pages' => __('sidebar.course_pages'),
+                'admin.page-banners' => 'Banners de páginas',
+            ]],
+            ['group' => 'content', 'title' => __('sidebar.menu'), 'icon' => 'icon-menu', 'routes' => ['admin.manage-menus' => __('sidebar.menu')]],
+            ['group' => 'content', 'title' => 'SEO', 'icon' => 'icon-search', 'routes' => ['admin.seo' => 'SEO']],
+            ['group' => 'business', 'title' => __('sidebar.finance'), 'icon' => 'icon-credit-card', 'routes' => [
+                'admin.invoices' => __('admin/sidebar.invoices'),
+                'admin.bookings' => __('admin/sidebar.bookings'),
+                'admin.withdraw-requests' => __('sidebar.withdraw_requests'),
+                'admin.payment-methods' => __('sidebar.payment_methods'),
+                'admin.coupons' => 'Cupones',
+                'admin.commission-settings' => __('sidebar.commission_settings'),
+                'admin.disputes' => __('sidebar.disputes'),
+            ]],
+            ['group' => 'system', 'title' => __('sidebar.nav_settings'), 'icon' => 'icon-settings', 'routes' => [
+                'optionbuilder' => __('sidebar.general_settings'),
+                'admin.email-settings' => __('sidebar.email_settings'),
+                'admin.notification-settings' => __('sidebar.notification_settings'),
+                'admin.config-transfer' => 'Exportar / importar',
+            ]],
+            ['group' => 'system', 'title' => 'Estado del sistema', 'icon' => 'icon-activity', 'routes' => ['admin.system-status' => 'Estado del sistema']],
+            ['group' => 'system', 'title' => __('sidebar.languages'), 'icon' => 'icon-globe', 'routes' => [
+                'admin.taxonomy.languages' => __('sidebar.languages'),
+                'admin.taxonomy.subjects' => __('sidebar.subjects'),
+                'admin.taxonomy.subject-groups' => __('sidebar.subject_groups'),
+            ]],
         ];
-        if (\Nwidart\Modules\Facades\Module::has('subscriptions') && \Nwidart\Modules\Facades\Module::isEnabled('subscriptions')){
-            $this->menuItems[] = [
-                'title' =>  __('sidebar.manage_subscriptions'),
-                'icon'  => 'icon-repeat',
-                'routes' => [
-                    'admin.subscriptions.index' => __('sidebar.subscriptions_list'),
-                    'admin.subscriptions.purchased' => __('sidebar.purchased_subscriptions'),
-                ],
-            ];
+
+        if (\Nwidart\Modules\Facades\Module::has('subscriptions') && \Nwidart\Modules\Facades\Module::isEnabled('subscriptions')) {
+            $items[] = ['group' => 'business', 'title' => __('sidebar.manage_subscriptions'), 'icon' => 'icon-repeat', 'routes' => [
+                'admin.subscriptions.index' => __('sidebar.subscriptions_list'),
+                'admin.subscriptions.purchased' => __('sidebar.purchased_subscriptions'),
+            ]];
         }
-        $this->menuItems[] = [
-                                    'title' =>  __('blogs.manage_blogs'),
-                                    'icon'  => 'icon-bold',
-                                    'routes' => [
-                                        'admin.create-blog'             => __('blogs.create_blog'),
-                                        'admin.blog-listing'            => __('blogs.blog_listing'),
-                                        'admin.blog-categories'         => __('blogs.blog_categories'),
-                                    ],
-                            ];
 
         if (\Nwidart\Modules\Facades\Module::has('forumwise') && \Nwidart\Modules\Facades\Module::isEnabled('forumwise')) {
-            $this->menuItems[] = [
-                'title' =>  __('sidebar.forums'),
-                'icon'  => 'icon-message-square',
-                'routes' => [
-                    'categories' => __('sidebar.categories'),
-                    'forums' => __('sidebar.forums'),
-                ],
-            ];
-        }
-      
-        if (\Nwidart\Modules\Facades\Module::has('courses') && \Nwidart\Modules\Facades\Module::isEnabled('courses') && function_exists('courseMenuOptions')) {         
-            $this->menuItems = array_merge($this->menuItems, courseMenuOptions('admin'));
+            $items[] = ['group' => 'academy', 'title' => __('sidebar.forums'), 'icon' => 'icon-message-square', 'routes' => [
+                'categories' => __('sidebar.categories'),
+                'forums' => __('sidebar.forums'),
+            ]];
         }
 
-        if (\Nwidart\Modules\Facades\Module::has('starup') && \Nwidart\Modules\Facades\Module::isEnabled('starup') && function_exists('badgeMenuOptions')) {         
-            $this->menuItems = array_merge($this->menuItems, badgeMenuOptions());
+        if (\Nwidart\Modules\Facades\Module::has('courses') && \Nwidart\Modules\Facades\Module::isEnabled('courses') && function_exists('courseMenuOptions')) {
+            foreach (courseMenuOptions('admin') as $courseItem) {
+                $items[] = ['group' => 'academy', 'first' => true] + $courseItem;
+            }
         }
+
+        if (\Nwidart\Modules\Facades\Module::has('starup') && \Nwidart\Modules\Facades\Module::isEnabled('starup') && function_exists('badgeMenuOptions')) {
+            foreach (badgeMenuOptions() as $badgeItem) {
+                $items[] = ['group' => 'academy'] + $badgeItem;
+            }
+        }
+
+        if (isPrivateAcademy()) {
+            $marketplaceRoutes = array_flip(['admin.bookings', 'admin.withdraw-requests', 'admin.commission-settings', 'admin.disputes', 'admin.taxonomy.subjects', 'admin.taxonomy.subject-groups']);
+            foreach ($items as $index => $item) {
+                $items[$index]['routes'] = array_diff_key($item['routes'] ?? [], $marketplaceRoutes);
+            }
+        }
+
+        // Orden estable: por grupo; los cursos abren el grupo "Academia".
+        $order = array_flip(['general', 'academy', 'content', 'business', 'system']);
+        $indexed = [];
+        foreach ($items as $position => $item) {
+            $indexed[] = [$order[$item['group']] ?? 99, empty($item['first']) ? 1 : 0, $position, $item];
+        }
+        usort($indexed, fn ($a, $b) => [$a[0], $a[1], $a[2]] <=> [$b[0], $b[1], $b[2]]);
+        $this->menuItems = array_map(fn ($row) => $row[3], $indexed);
     }
-
-
-
 
     /**
      * Log the current user out of the application.
@@ -120,145 +114,77 @@ new class extends Component
     {
         $logout();
 
-        $this->redirect('/login', navigate: false);
+        $this->redirect(route('login'), navigate: false);
     }
 }; ?>
-@php
-    $info       = Auth::user();
-@endphp
-<div class="tb-sidebarwrapperholder">
-    {{--
-        NOTE: intentionally an inline <style> here, not @push('styles').
-        This component is included directly from layouts/admin-app.blade.php
-        (in the <body>), AFTER that layout's own @stack('styles') in the
-        <head> has already rendered -- a @push from here registers too late
-        to reach it. A plain <style> tag works identically wherever it sits
-        in the document, so this renders correctly regardless of order.
-    --}}
-    <style>
-        /* Brand the admin sidebar to match the rest of the redesigned platform
-           (navy + gold) instead of the theme's plain white. */
-        .tb-sidebarwrapperholder,
-        .tb-sidebarwrapper {
-            background: #14213d !important;
-            height: auto !important;
-            min-height: 100% !important;
-        }
-        /* <x-application-logo /> always resolves to the dark wordmark
-           regardless of variation (see components/application-logo.blade.php --
-           it hardcodes a single logo URL, ignoring the prop entirely), so it's
-           unreadable on this dark sidebar. Force it white, same technique
-           already used in resources/views/livewire/pages/auth/login.blade.php. */
-        .tb-sidebartop img { filter: brightness(0) invert(1); }
-        .tb-siderbar-nav .tb-menuitm { color: #aab3c5 !important; }
-        .tb-siderbar-nav .tb-menuitm i { color: #aab3c5 !important; }
-        .tb-siderbar-nav .tb-menuitm:hover { background: rgba(254,211,4,0.1) !important; color: #fff !important; }
-        .tb-siderbar-nav .tb-menuitm:hover i { color: #fed304 !important; }
-        /* Active parent: always gold background + navy text so it's readable
-           regardless of whether the theme's own rule fires or not. */
-        .tb-siderbar-nav li.active > .tb-menuitm {
-            background: #fed304 !important;
-            color: #14213d !important;
-            border-radius: 8px !important;
-        }
-        .tb-siderbar-nav li.active > .tb-menuitm i,
-        .tb-siderbar-nav li.active > .tb-menuitm span { color: #14213d !important; }
-        .tb-siderbar-nav li.active > .tb-menuitm:hover { background: #fed304 !important; color: #14213d !important; }
-        .sidebar-sub-menu li a { color: #aab3c5 !important; background: transparent !important; }
-        .sidebar-sub-menu li a:hover { color: #fed304 !important; }
-        /* navy-on-navy = invisible; use gold for active sub-item */
-        .sidebar-sub-menu li.active a,
-        .sidebar-sub-menu li.active a:hover { color: #fed304 !important; font-weight: 600; }
-        #tb-btnmenutoggle a,
-        .tb-icongray { color: #aab3c5 !important; }
-        .tb-haslogout {
-            background: transparent !important;
-            color: #aab3c5 !important;
-            padding: 7px 12px !important;
-        }
-        .tb-haslogout:hover { background: rgba(234,12,12,0.1) !important; color: #ff8a8a !important; }
-        .tb-db-dashboard_box {
-            background: transparent !important;
-            box-shadow: none !important;
-            border-radius: 0 !important;
-            padding: 0 !important;
-        }
-        /* Strip the outer gray (#EAEAEA) frame — keep only one white layer */
-        .tb-db-dashboard_box .tb-db-dashboard_box_wrap_inner {
-            background: transparent !important;
-            padding: 0 !important;
-            border-radius: 0 !important;
-        }
-        /* Single white content card — no rounded corner box, no double nesting */
-        .tb-menumanagement_wrap {
-            background-color: #fff !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-            padding: 24px 28px !important;
-        }
-        /* Keep the heading using brand navy instead of default black */
-        .tb-dhb-mainheading h4 {
-            color: #14213d !important;
-            font-weight: 700 !important;
-        }
-    </style>
-    <aside id="tb-sidebarwrapper" class="tb-sidebarwrapper">
-        <div id="tb-btnmenutoggle" class="tb-btnmenutoggle">
-            <a href="javascript:void(0);"><i class="ti-pin2"></i></a>
-        </div>
-        <div class="tb-sidebartop">
-            <strong class="am-logo">
-                <x-application-logo />
-            </strong>
-            <a class="tb-icongray" href="javascript:void(0)"><i class="icon-layout"></i></a>
-        </div>
-        <nav id="tb-navdashboard" class="tb-navdashboard">
-            <ul class="tb-siderbar-nav ">
-                @foreach ($menuItems as $item)
-                    <li @class([ 'menu-has-children' => count($item['routes']) > 1, 'active' => array_key_exists($activeRoute, $item['routes']), 'tb-openmenu' => array_key_exists($activeRoute, $item['routes']) && count($item['routes']) > 1 ])>
-                        <a href="{{ count($item['routes']) > 1 ? 'javascript:void(0);' : route( array_key_first($item['routes'])) }}" class="tb-menuitm">
-                            <i class="{{ $item['icon'] }}"></i><span class="tb-navdashboard__title">{{ $item['title']}}</span>
-                        </a>
-                        @if(count($item['routes']) > 1)
-                            <ul class="sidebar-sub-menu" style="display:{{array_key_exists($activeRoute, $item['routes']) ? 'block': ''}}">
-                                @foreach ( $item['routes'] as $route => $label)
-                                    <li class="{{ request()->routeIs($route) ? 'active' : '' }}">
-                                        <a href="{{route($route)}}">
-                                            <span class="tb-navdashboard__title">{{ $label }}</span>
+<aside class="hz-sidebar" id="hz-sidebar" aria-label="{{ __('Navegación principal') }}">
+    <div class="hz-sidebar__brand">
+        <a href="{{ route('admin.insights') }}" class="hz-brand" aria-label="{{ setting('_general.site_name') ?: config('app.name') }}">
+            <x-application-logo-img variation="white" />
+        </a>
+        <button type="button" class="hz-iconbtn hz-sidebar__collapse" data-hz-collapse aria-pressed="false" aria-label="Contraer menú lateral">
+            <x-panel.icon name="collapse" />
+        </button>
+    </div>
+
+    <nav class="hz-nav" aria-label="{{ __('Menú de administración') }}">
+        <ul class="hz-nav__list">
+            @php $lastGroup = null; @endphp
+            @foreach ($menuItems as $index => $item)
+                @php
+                    $count  = count($item['routes']);
+                    $isOpen = array_key_exists($activeRoute, $item['routes']);
+                    $first  = array_key_first($item['routes']);
+                @endphp
+                @continue($count === 0)
+                @if (($item['group'] ?? null) !== $lastGroup)
+                    @php $lastGroup = $item['group'] ?? null; @endphp
+                    @if ($lastGroup !== 'general')
+                        <li class="hz-nav__heading" role="presentation">{{ __('sidebar.group_' . $lastGroup) }}</li>
+                    @endif
+                @endif
+                <li @class(['hz-nav__item', 'is-active' => $isOpen, 'is-open' => $isOpen && $count > 1])>
+                    @if ($count > 1)
+                        <button type="button" class="hz-nav__link" data-hz-toggle data-tip="{{ $item['title'] }}" aria-expanded="{{ $isOpen ? 'true' : 'false' }}" aria-controls="hz-sub-{{ $index }}">
+                            <span class="hz-nav__icon"><i class="{{ $item['icon'] }}" aria-hidden="true"></i></span>
+                            <span class="hz-nav__label">{{ $item['title'] }}</span>
+                            <x-panel.icon name="chevron-down" class="hz-nav__chev" />
+                        </button>
+                        <div class="hz-nav__subwrap" id="hz-sub-{{ $index }}">
+                            <ul class="hz-nav__sub">
+                                @foreach ($item['routes'] as $route => $label)
+                                    <li @class(['hz-nav__item', 'is-active' => request()->routeIs($route)])>
+                                        <a class="hz-nav__link" href="{{ route($route) }}" @if (request()->routeIs($route)) aria-current="page" @endif>
+                                            <span class="hz-nav__label">{{ $label }}</span>
                                         </a>
                                     </li>
                                 @endforeach
                             </ul>
-                        @endif
-                    </li>
-                @endforeach
-            </ul>
-            <div class="admin-sidebar-footer">
-                <!-- <div class="am-wallet">
-                    <div class="am-wallet_title">
-                        <span class="am-wallet_title_icon">
-                            <i class="icon-dollar-sign"></i>
-                        </span>
-                        <div class="am-wallet_balance">
-                            <strong>{!! formatAmount($totalCommission, true) !!}<span>{{ __('general.total_commission') }}</span></strong>
                         </div>
-                    </div>
-                </div> -->
-                <div class="am-signout">
-                    <a href="javascript:void(0)" wire:click="logout" class="tb-haslogout tb-menuitm">
-                        <i class="ti-power-off"></i><span class="tb-navdashboard__title"> {{ __('sidebar.logout') }}</span>
-                    </a>
-                </div>
-            </div>
-        </nav>
-    </aside>
-</div>
+                    @else
+                        <a class="hz-nav__link" href="{{ route($first) }}" data-tip="{{ $item['title'] }}" @if ($isOpen) aria-current="page" @endif>
+                            <span class="hz-nav__icon"><i class="{{ $item['icon'] }}" aria-hidden="true"></i></span>
+                            <span class="hz-nav__label">{{ $item['title'] }}</span>
+                        </a>
+                    @endif
+                </li>
+            @endforeach
+        </ul>
+    </nav>
+
+    <div class="hz-sidebar__foot">
+        <button type="button" class="hz-nav__link hz-nav__link--logout" wire:click="logout" data-tip="{{ __('sidebar.logout') }}">
+            <span class="hz-nav__icon"><x-panel.icon name="logout" /></span>
+            <span class="hz-nav__label">{{ __('sidebar.logout') }}</span>
+        </button>
+    </div>
+</aside>
 @push('scripts')
 <script>
-    document.addEventListener('livewire:initialized', function() {
-        document.addEventListener('update_image', (event) => {
-            $('#adminImage img').attr('src', event.detail.image);
+    document.addEventListener('livewire:initialized', function () {
+        document.addEventListener('update_image', function (event) {
+            document.querySelectorAll('[data-hz-avatar] img').forEach(function (img) { img.src = event.detail.image; });
         });
-     })
+    });
 </script>
 @endpush

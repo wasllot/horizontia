@@ -10,10 +10,10 @@
         ])>
         <div class="am-reminder-tooltip_title am-titleblur">
             <figure>
-                @if (!empty($booking->slot->subjectGroupSubjects?->image) && Storage::disk(getStorageDisk())->exists($booking->slot->subjectGroupSubjects?->image))
+                @if (!empty($booking->slot->subjectGroupSubjects?->image) && mediaExists($booking->slot->subjectGroupSubjects?->image))
                     <img src="{{ resizedImage($booking->slot->subjectGroupSubjects?->image, 40, 40) }}" alt="{{ $subject }}">
                 @else 
-                    <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 40, 40) }}" alt="{{ $subject }}">
+                    <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 40, 40) }}" alt="{{ $subject }}">
                 @endif
             </figure>
             <h2>
@@ -38,10 +38,10 @@
                     @php
                         $tutorInfo['name'] = $booking->tutor->full_name;
                         if (!empty($booking?->tutor?->image) &&
-                            Storage::disk(getStorageDisk())->exists($booking?->tutor?->image)) {
+                            mediaExists($booking?->tutor?->image)) {
                             $tutorInfo['image'] = resizedImage($booking?->tutor?->image, 36, 36);
                         } else {
-                            $tutorInfo['image'] = setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 36, 36);
+                            $tutorInfo['image'] = setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 36, 36);
                         }
                     @endphp
                     <a href="#"
@@ -78,10 +78,10 @@
                             <ul class="am-reminder-enrollment-list">
                                 @foreach ($booking->slot->students as $student)
                                     <li>
-                                        @if (!empty($student->image) && Storage::disk(getStorageDisk())->exists($student->image))
+                                        @if (!empty($student->image) && mediaExists($student->image))
                                             <img src="{{ resizedImage($student->image, 40, 40) }}" alt="profile-img">
                                         @else 
-                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 40, 40) }}" alt="profile-img">
+                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 40, 40) }}" alt="profile-img">
                                         @endif
                                     </li>
                                 @endforeach

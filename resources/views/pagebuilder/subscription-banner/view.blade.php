@@ -40,11 +40,11 @@
                             <div class="am-learning_video">
                                 <figure class="am-learning_video_img">
                                     @if(!empty(pagesetting('banner_image')))
-                                        <img src="{{url(Storage::url(pagesetting('banner_image')[0]['path']))}}" alt="Banner image">
+                                        <img src="{{url(mediaUrl(pagesetting('banner_image')[0]['path']))}}" alt="Banner image">
                                     @endif
                                     @if(!empty(pagesetting('cursor_image')))
                                         <figcaption>
-                                            <img class="am-rendom-floating" src="{{ url(Storage::url(pagesetting('cursor_image')[0]['path'])) }}" alt="Cursor image">
+                                            <img class="am-rendom-floating" src="{{ url(mediaUrl(pagesetting('cursor_image')[0]['path'])) }}" alt="Cursor image">
                                         </figcaption>
                                     @endif
                                 </figure>

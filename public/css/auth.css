@@ -1,0 +1,90 @@
+/* Pantallas de acceso (iniciar sesión, recuperar contraseña, etc.): panel de marca + formulario. Ámbito: .ht-auth */
+.ht-auth { --a-navy: #14213d; --a-gold: #fed304; --a-line: #d9deea; --a-muted: #5b6478;
+    display: grid; grid-template-columns: minmax(0, 1.04fr) minmax(0, 1fr); min-height: 100vh; width: 100%; background: #fff; }
+
+/* ---- Panel de marca ---- */
+.ht-auth__aside { position: relative; margin: 20px 0 20px 20px; border-radius: 26px; overflow: hidden; color: #fff;
+    display: flex; flex-direction: column; justify-content: space-between; gap: 28px;
+    padding: clamp(26px, 3.6vw, 56px); min-height: calc(100vh - 40px);
+    background: linear-gradient(180deg, rgba(20, 33, 61, .08) 0%, rgba(20, 33, 61, .18) 38%, rgba(20, 33, 61, .82) 100%), var(--ht-auth-img) center / cover no-repeat; }
+.ht-auth__aside::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 70% at 0% 100%, rgba(254, 211, 4, .30), transparent 60%); pointer-events: none; }
+.ht-auth__aside > * { position: relative; z-index: 1; }
+.ht-auth__aside-top img { max-height: 76px; width: auto; }
+.ht-auth__aside-bottom { display: grid; gap: 26px; }
+.ht-auth__title h2 { color: #fff; font-size: clamp(2rem, 3.2vw, 3rem); line-height: 1.08; letter-spacing: 0; margin: 0 0 12px; text-shadow: 0 2px 18px rgba(0, 0, 0, .25); }
+.ht-auth__title span { display: block; font-size: clamp(1rem, 1.3vw, 1.2rem); color: rgba(255, 255, 255, .92); }
+
+/* Simulación decorativa del avance de un curso */
+.ht-auth__mock { position: relative; max-width: 420px; padding: 18px 20px 16px; border-radius: 18px; background: rgba(255, 255, 255, .16);
+    border: 1px solid rgba(255, 255, 255, .34); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 24px 50px rgba(8, 14, 30, .32);
+    animation: ht-auth-float 6s ease-in-out infinite; }
+.ht-auth__mock-head { display: flex; align-items: center; gap: 8px; font-size: .8rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: rgba(255, 255, 255, .9); margin-bottom: 14px; }
+.ht-auth__mock-head i { width: 8px; height: 8px; border-radius: 50%; background: var(--a-gold); box-shadow: 0 0 0 4px rgba(254, 211, 4, .28); }
+.ht-auth__mock-course { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.ht-auth__mock-thumb { flex: 0 0 48px; height: 48px; border-radius: 12px; background: var(--a-gold); display: flex; align-items: center; justify-content: center; }
+.ht-auth__mock-course strong { display: block; font-size: 1.02rem; }
+.ht-auth__mock-course small { color: rgba(255, 255, 255, .85); font-size: .86rem; }
+.ht-auth__mock-bar { height: 8px; border-radius: 99px; background: rgba(255, 255, 255, .25); overflow: hidden; }
+.ht-auth__mock-bar i { display: block; height: 100%; width: 68%; border-radius: inherit; background: linear-gradient(90deg, #ffe45c, var(--a-gold)); transform-origin: left; animation: ht-auth-fill 1.6s .5s cubic-bezier(.2, .8, .2, 1) both; }
+.ht-auth__mock-meta { display: flex; justify-content: space-between; gap: 10px; margin-top: 9px; font-size: .8rem; color: rgba(255, 255, 255, .88); }
+.ht-auth__mock-chip { position: absolute; right: -10px; top: -16px; display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 99px; background: #fff; color: var(--a-navy);
+    font-size: .78rem; font-weight: 700; box-shadow: 0 10px 24px rgba(8, 14, 30, .28); }
+.ht-auth__mock-chip svg { color: #1a8a4a; }
+@keyframes ht-auth-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes ht-auth-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* ---- Formulario ---- */
+.ht-auth__main { width: auto !important; max-width: none !important; background: #fff !important; padding: 26px clamp(22px, 5vw, 80px) 24px !important; display: flex; flex-direction: column; align-items: stretch; justify-content: space-between; min-height: 100vh; }
+.ht-auth__bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.ht-auth__back, .ht-auth__help { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: .94rem; color: var(--a-muted) !important; text-decoration: none !important; padding: 8px 12px; margin: 0 -12px; border-radius: 10px; transition: color .2s, background .2s; }
+.ht-auth__back:hover, .ht-auth__help:hover { color: var(--a-navy) !important; background: #f4f6fb; }
+.ht-auth__back svg { transition: transform .2s; }
+.ht-auth__back:hover svg { transform: translateX(-3px); }
+.ht-auth__body { width: 100%; max-width: 440px; margin: 0 auto; padding: 28px 0; }
+.ht-auth__legal { text-align: center; margin: 0; font-size: .84rem; color: #7a8296; }
+.ht-auth__legal a { color: var(--a-muted); text-decoration: underline; text-underline-offset: 2px; }
+
+.ht-auth .am-login-right_title { text-align: left; margin-bottom: 26px; }
+.ht-auth .am-login-right_title h1, .ht-auth .am-login-right_title h2 { font-size: clamp(2rem, 3vw, 2.6rem) !important; line-height: 1.1; letter-spacing: 0; color: var(--a-navy) !important; margin: 0 0 10px !important; }
+.ht-auth .am-login-right_title h3 { font-size: 1.04rem !important; line-height: 1.55; letter-spacing: 0; color: var(--a-muted) !important; font-weight: 400 !important; margin: 0; font-family: inherit; }
+.ht-auth__eyebrow { display: inline-block; margin-bottom: 14px; padding: 5px 12px; border-radius: 99px; background: #fff7cc; color: #6b5300; font-size: .78rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.ht-auth .am-mobile-logo { display: none; }
+
+.ht-auth .form-group { margin-bottom: 18px; }
+.ht-auth .am-themeform .form-group label, .ht-auth label { font-weight: 600; color: var(--a-navy); margin-bottom: 8px; font-size: .95rem; }
+.ht-auth .form-control, .ht-auth .am-themeform input[type=text], .ht-auth .am-themeform input[type=password], .ht-auth .am-themeform input[type=email] {
+    min-height: 52px; height: auto; padding: 13px 16px !important; border: 1.5px solid var(--a-line) !important; border-radius: 12px !important; background: #fff; font-size: 1rem; transition: border-color .2s, box-shadow .2s; }
+.ht-auth .form-control:hover { border-color: #b9c1d6 !important; }
+.ht-auth .form-control:focus { border-color: var(--a-gold) !important; box-shadow: 0 0 0 4px rgba(254, 211, 4, .28) !important; outline: 0; }
+.ht-auth .am-invalid .form-control { border-color: #d92d20 !important; }
+.ht-auth .am-passwordfield { position: relative; }
+.ht-auth .am-passwordfield .form-control { padding-right: 48px !important; }
+.ht-auth .am-passwordfield i { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--a-muted); font-size: 1.15rem; }
+.ht-auth .am-passwordfield i:hover { color: var(--a-navy); }
+
+.ht-auth .am-lost-password { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin: -4px 0 22px; }
+.ht-auth .am-lost-password a { font-size: .92rem; }
+
+.ht-auth button[type=submit], .ht-auth .ht-auth__submit { width: 100%; min-height: 54px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 24px !important; border: 0 !important; border-radius: 12px !important;
+    background: var(--a-gold) !important; color: var(--a-navy) !important; font-size: 1.05rem; font-weight: 700; box-shadow: 0 10px 22px rgba(254, 211, 4, .32); transition: transform .2s, box-shadow .2s, filter .2s; }
+.ht-auth button[type=submit]:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(254, 211, 4, .42); filter: none; }
+.ht-auth button[type=submit]:active { transform: translateY(0); }
+.ht-auth button[type=submit] .icon { transition: transform .2s; }
+.ht-auth button[type=submit]:hover .icon { transform: translateX(4px); }
+.ht-auth button[type=submit].am-btn_disable { opacity: .75; pointer-events: none; }
+.ht-auth .am-already-account { text-align: center; margin: 22px 0 0; color: var(--a-muted); }
+.ht-auth .am-signinoption { margin-top: 20px; }
+
+@media (max-width: 991px) {
+    .ht-auth { grid-template-columns: 1fr; }
+    .ht-auth__aside { margin: 12px 12px 0; min-height: 0; border-radius: 20px; padding: 22px; gap: 14px; }
+    .ht-auth__aside-top img { max-height: 54px; }
+    .ht-auth__mock, .ht-auth__title span { display: none; }
+    .ht-auth__title h2 { font-size: 1.55rem; margin: 0; }
+    .ht-auth__main { min-height: 0; }
+    .ht-auth__bar { margin-bottom: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .ht-auth__mock { animation: none; }
+    .ht-auth__mock-bar i { animation: none; }
+}

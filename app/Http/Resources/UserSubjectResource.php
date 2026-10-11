@@ -23,7 +23,7 @@ class UserSubjectResource extends JsonResource
                 return formatAmount($hour_rate);
             }),
             'description'               => $this->whenHas('description'),
-            'image'                     => !empty($this->image) ? url(Storage::url($this->image)) : url(Storage::url('placeholder.png')),
+            'image'                     => !empty($this->image) ? url(mediaUrl($this->image)) : url(mediaUrl('placeholder.png')),
             'sessions'                  => $this->whenHas('sessions'),
             'laravel_through_key'       => $this->whenHas('laravel_through_key'),
             'sort_order'                => $this->whenHas('sort_order'),

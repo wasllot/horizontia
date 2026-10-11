@@ -60,10 +60,10 @@
                                             <td data-label="{{ __('dispute.session') }}">
                                                 <div class="am-list-wrap">
                                                     <figure class="am-img-rounded">
-                                                        @if (!empty($dispute?->booking?->slot?->subjectGroupSubjects?->image) && Storage::disk(getStorageDisk())->exists($dispute?->booking?->slot?->subjectGroupSubjects?->image))
+                                                        @if (!empty($dispute?->booking?->slot?->subjectGroupSubjects?->image) && mediaExists($dispute?->booking?->slot?->subjectGroupSubjects?->image))
                                                         <img src="{{ resizedImage($dispute?->booking?->slot?->subjectGroupSubjects?->image,34,34) }}" alt="{{$dispute?->booking?->slot?->subjectGroupSubjects?->image}}" />
                                                         @else 
-                                                            <img src="{{ setting('_general.default_avatar_for_user') ? Storage::url(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png',34,34) }}" alt="{{ $dispute?->booking?->slot?->subjectGroupSubjects?->image }}" />
+                                                            <img src="{{ setting('_general.default_avatar_for_user') ? mediaUrl(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png',34,34) }}" alt="{{ $dispute?->booking?->slot?->subjectGroupSubjects?->image }}" />
                                                         @endif
                                                     </figure>
                                                     <span>{{ $dispute?->booking?->slot?->subjectGroupSubjects?->subject?->name  }}<br>
@@ -80,10 +80,10 @@
                                             <td data-label="{{ __('dispute.student' )}}">
                                                 <div class="am-list-wrap">
                                                     <figure>
-                                                        @if (!empty($dispute?->booking?->student?->image) && Storage::disk(getStorageDisk())->exists($dispute?->booking?->student?->image))
+                                                        @if (!empty($dispute?->booking?->student?->image) && mediaExists($dispute?->booking?->student?->image))
                                                         <img src="{{ resizedImage($dispute?->booking?->student?->image,34,34) }}" alt="{{$dispute?->booking?->student?->image}}" />
                                                         @else
-                                                            <img src="{{ setting('_general.default_avatar_for_user') ? Storage::url(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $dispute?->booking?->student?->image}}" />
+                                                            <img src="{{ setting('_general.default_avatar_for_user') ? mediaUrl(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $dispute?->booking?->student?->image}}" />
                                                         @endif
                                                     </figure>
                                                     <span>
@@ -105,10 +105,10 @@
                                             <td data-label="{{ __('dispute.tutor' )}}">
                                                 <div class="am-list-wrap">
                                                     <figure>
-                                                        @if (!empty($dispute?->booking?->tutor?->image) && Storage::disk(getStorageDisk())->exists($dispute?->booking?->tutor?->image))
+                                                        @if (!empty($dispute?->booking?->tutor?->image) && mediaExists($dispute?->booking?->tutor?->image))
                                                         <img src="{{ resizedImage($dispute?->booking?->tutor?->image,34,34) }}" alt="{{$dispute?->booking?->tutor?->image}}" />
                                                         @else 
-                                                            <img src="{{ setting('_general.default_avatar_for_user') ? Storage::url(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png',34,34) }}" alt="{{ $dispute?->booking?->tutor?->image }}" />
+                                                            <img src="{{ setting('_general.default_avatar_for_user') ? mediaUrl(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png',34,34) }}" alt="{{ $dispute?->booking?->tutor?->image }}" />
                                                         @endif
                                                     </figure>
                                                     <span>

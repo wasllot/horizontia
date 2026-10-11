@@ -21,7 +21,7 @@
                 @foreach($certificates as $certificate)
                 <div class="am-resume_item am-resume_wrap">
                     @if(!empty($certificate->image))
-                    <img src="{{ url(Storage::url($certificate->image)) }}" alt="image">
+                    <img src="{{ url(mediaUrl($certificate->image)) }}" alt="image">
                     @endif
                     <div class="am-resume_content">
                         <div class="am-resume_item_title">
@@ -152,7 +152,7 @@
                                             @if (method_exists($form->image,'temporaryUrl'))
                                             <img src="{{ $form->image->temporaryUrl() }}">
                                             @else
-                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : url(Storage::url($form->image)) }}">
+                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : url(mediaUrl($form->image)) }}">
                                             @endif
 
                                             @if (method_exists($form->image,'temporaryUrl'))

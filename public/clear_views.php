@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . "/_guard.php";
 // Script ultra simple para borrar la caché de vistas sin cargar Laravel entero
 $viewsPath = __DIR__ . '/../storage/framework/views';
 if (is_dir($viewsPath)) {

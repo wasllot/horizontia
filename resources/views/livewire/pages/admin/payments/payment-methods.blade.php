@@ -175,7 +175,7 @@
                                         @if($key == 'status') @continue @endif
                                         @if( $key == 'exchange_rate' && (!empty($methods[$edit_method]['currency']) && $methods[$edit_method]['currency'] == $site_currency ) ) @continue @endif
 
-                                        @if($key == 'enable_test_mode')
+                                        @if(in_array($key, ['enable_test_mode', 'binary_mode']))
                                             <div id="{{ $key }}_field" class="form-group form-group-half tb-testmode-wrapper">
                                                 <div class="tb-paymethod-items tb-test-opt px-0">
                                                     <div class="checkbox tb-payment-items">

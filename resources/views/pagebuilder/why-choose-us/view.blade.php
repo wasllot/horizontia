@@ -15,7 +15,7 @@
                             @foreach(pagesetting('steps_repeater') as $option)
                                 @if(!empty($option['image']) || !empty($option['data_heading']) || !empty($option['data_description'])) 
                                     <li data-aos="fade-up" data-aos-easing="ease" data-aos-delay="{{ $loop->iteration * 400 }}">
-                                        @if(!empty($option['image'][0]['path']))<img src="{{url(Storage::url($option['image'][0]['path']))}}" alt="{!! $option['data_description'] !!} image">@endif
+                                        @if(!empty($option['image'][0]['path']))<img src="{{url(mediaUrl($option['image'][0]['path']))}}" alt="{!! $option['data_description'] !!} image">@endif
                                         @if(!empty($option['data_heading']))<h3>{!! $option['data_heading'] !!}</h3>@endif
                                         @if(!empty($option['data_description']))<p>{!! $option['data_description'] !!}</p>@endif
                                     </li>

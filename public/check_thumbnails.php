@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . "/_guard.php";
 
 /**
  * Script puntual para detectar cursos sin imagen de portada y notificar a los tutores afectados.

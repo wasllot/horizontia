@@ -13,6 +13,7 @@ class OrderStatusCast implements CastsAttributes
         'pending'      => 0,
         'complete'     => 1,
         'processed'    => 2,
+        'refunded'     => 3,   // paid, then returned: the enrollment is removed and the order is kept as the record
     ];
 
     /**

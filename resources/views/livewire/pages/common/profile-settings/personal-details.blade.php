@@ -215,11 +215,11 @@
                             </div>
                             @if(!empty($form->image))
                                 <div class="am-uploadedfile">
-                                    <img src="{{ $form->isBase64 ? $form->image :  url(Storage::url($form->image )) }}" alt="{{ $form->imageName }}">
+                                    <img src="{{ $form->isBase64 ? $form->image :  url(mediaUrl($form->image )) }}" alt="{{ $form->imageName }}">
                                     @if( $form->isBase64 )
                                         <span>{{ $form->imageName }}</span>
                                     @else
-                                        <span>{{ basename(parse_url(url(Storage::url($form->image)), PHP_URL_PATH)) }}</span>
+                                        <span>{{ basename(parse_url(url(mediaUrl($form->image)), PHP_URL_PATH)) }}</span>
                                     @endif
                                     <a href="#" wire:click.prevent="removeMedia('photo')" class="am-delitem">
                                         <i class="am-icon-trash-02"></i>
@@ -261,12 +261,12 @@
                                 </div>
                                 @if(!empty($form->intro_video) || !empty($introVideo))
                                     @php
-                                        $videoUrl = !$errors->has('introVideo') && !empty($introVideo) && method_exists($introVideo,'temporaryUrl') ? $introVideo->temporaryUrl() : url(Storage::url($form->intro_video));
+                                        $videoUrl = !$errors->has('introVideo') && !empty($introVideo) && method_exists($introVideo,'temporaryUrl') ? $introVideo->temporaryUrl() : url(mediaUrl($form->intro_video));
                                     @endphp
                                     @if(!empty($videoUrl))
                                         <div class="am-uploadedfile">
                                             @if(!empty($form->intro_video))
-                                                <a href="{{ url(Storage::url($form->intro_video)) }}" data-vbtype="iframe" data-gall="gall" class="tu-themegallery tu-thumbnails_content">
+                                                <a href="{{ url(mediaUrl($form->intro_video)) }}" data-vbtype="iframe" data-gall="gall" class="tu-themegallery tu-thumbnails_content">
                                                     <figure>
                                                         <img src="{{ asset('images/video.jpg') }}" alt="{{ __('profile.intro_video') }}">
                                                     </figure>

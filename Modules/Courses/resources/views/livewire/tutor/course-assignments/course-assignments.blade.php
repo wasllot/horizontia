@@ -35,7 +35,7 @@
                                 </td>
                                 <td>
                                     @if($submission->file_path)
-                                        <a href="{{ Storage::url($submission->file_path) }}" target="_blank" class="am-btn am-btn-sm"><i class="am-icon-download"></i> Descargar</a>
+                                        <a href="{{ lessonMediaUrl($submission->file_path) }}" target="_blank" class="am-btn am-btn-sm"><i class="am-icon-download"></i> Descargar</a>
                                     @else
                                         -
                                     @endif

@@ -13,9 +13,10 @@ class Like extends Model
 
     protected $table;
 
-    public function __construct()
+    public function __construct(array $attributes = [])
     {
         $this->table = (config('courses.db_prefix') ?? 'courses_') . 'likes';
+        parent::__construct($attributes);   // boots traits and global scopes (SoftDeletes) and fills the attributes
     }
 
 

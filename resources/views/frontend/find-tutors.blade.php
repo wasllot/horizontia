@@ -254,7 +254,7 @@
                         @if(!empty(setting('_lernen.help_section_media')[0]['path']))
                         <div class="am-besttutor_video" style="margin-bottom: 20px; border-radius:12px; overflow:hidden;">
                             <video width="100%" height="auto"
-                                src="{{ url(Storage::url(setting('_lernen.help_section_media')[0]['path'])) }}" controls
+                                src="{{ url(mediaUrl(setting('_lernen.help_section_media')[0]['path'])) }}" controls
                                 class="video-js" data-setup='{}' preload="auto"></video>
                         </div>
                         @endif

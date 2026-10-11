@@ -32,7 +32,7 @@
                                     <ul>
                                         @foreach(pagesetting('image_repeater') as $option)
                                             @if(!empty($option['user_review_img']))
-                                                @if(!empty($option['user_review_img'][0]['path']))<li cla><img src="{{ url(Storage::url($option['user_review_img'][0]['path'])) }}" alt="Users image"></li>@endif
+                                                @if(!empty($option['user_review_img'][0]['path']))<li cla><img src="{{ url(mediaUrl($option['user_review_img'][0]['path'])) }}" alt="Users image"></li>@endif
                                             @endif
                                         @endforeach
                                     </ul>
@@ -60,22 +60,22 @@
             </div>
             @if(!empty(pagesetting('third_banner_image')))
                 <div class="am-banner-bg">
-                    @if(!empty(pagesetting('third_banner_image')[0]['path']))<img src="{{url(Storage::url(pagesetting('third_banner_image')[0]['path']))}}" alt="Background shape image" />@endif
+                    @if(!empty(pagesetting('third_banner_image')[0]['path']))<img src="{{url(mediaUrl(pagesetting('third_banner_image')[0]['path']))}}" alt="Background shape image" />@endif
                 </div>
             @endif
         @endif
     </div>
     <div class="am-banner-imgs">
         <figure>
-            @if(!empty(pagesetting('banner_main_image')))<img src="{{ url(Storage::url(pagesetting('banner_main_image')[0]['path'])) }}" alt="Banner image" data-aos="fade-left" data-aos-easing="ease" data-aos-delay="200">@endif
+            @if(!empty(pagesetting('banner_main_image')))<img src="{{ url(mediaUrl(pagesetting('banner_main_image')[0]['path'])) }}" alt="Banner image" data-aos="fade-left" data-aos-easing="ease" data-aos-delay="200">@endif
             <figcaption>
-                @if(!empty(pagesetting('animated_first_image')))<img class="am-img-1" src="{{ url(Storage::url(pagesetting('animated_first_image')[0]['path'])) }}" alt="Rate your experience image" data-aos="fade-left" data-aos-easing="ease" data-aos-delay="1600">@endif
-                @if(!empty(pagesetting('animated_second_image')))<img class="am-img-2" src="{{ url(Storage::url(pagesetting('animated_second_image')[0]['path'])) }}" alt="Cursor image">@endif
+                @if(!empty(pagesetting('animated_first_image')))<img class="am-img-1" src="{{ url(mediaUrl(pagesetting('animated_first_image')[0]['path'])) }}" alt="Rate your experience image" data-aos="fade-left" data-aos-easing="ease" data-aos-delay="1600">@endif
+                @if(!empty(pagesetting('animated_second_image')))<img class="am-img-2" src="{{ url(mediaUrl(pagesetting('animated_second_image')[0]['path'])) }}" alt="Cursor image">@endif
             </figcaption>
         </figure>
     </div>
-    @if(!empty(pagesetting('background_animated_first_image')))<img class="am-bgimg-1" src="{{url(Storage::url(pagesetting('background_animated_first_image')[0]['path']))}}" alt="Background shape image" />@endif
-    @if(!empty(pagesetting('background_animated_second_image')))<img class="am-bgimg-2" src="{{url(Storage::url(pagesetting('background_animated_second_image')[0]['path']))}}" alt="Background shape image" />@endif
+    @if(!empty(pagesetting('background_animated_first_image')))<img class="am-bgimg-1" src="{{url(mediaUrl(pagesetting('background_animated_first_image')[0]['path']))}}" alt="Background shape image" />@endif
+    @if(!empty(pagesetting('background_animated_second_image')))<img class="am-bgimg-2" src="{{url(mediaUrl(pagesetting('background_animated_second_image')[0]['path']))}}" alt="Background shape image" />@endif
 </div>
 
 @pushOnce('styles')

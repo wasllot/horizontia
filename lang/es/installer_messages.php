@@ -7,7 +7,7 @@ return [
      * Shared translations.
      *
      */
-    'title' => 'Instalador de Lernen',
+    'title' => 'Instalador de Horizontia',
     'next' => 'Siguiente Paso',
     'finish' => 'Instalar',
 
@@ -18,7 +18,7 @@ return [
      *
      */
     'welcome' => [
-        'title'   => 'Bienvenido al Instalador de Lernen',
+        'title'   => 'Bienvenido al Instalador de Horizontia',
         'message' => 'Bienvenido al asistente de configuración.',
     ],
 
@@ -41,7 +41,7 @@ return [
      */
     'permissions' => [
         'title' => 'Permisos',
-        'message' => 'Por favor, asegúrate de que Lernen tiene los permisos necesarios <br /> para acceder a las siguientes carpetas para continuar.',
+        'message' => 'Por favor, asegúrate de que Horizontia tiene los permisos necesarios <br /> para acceder a las siguientes carpetas para continuar.',
     ],
 
     /**
@@ -52,7 +52,7 @@ return [
     'seeders' => [
         'title' => 'Migrar e Importar Contenido Demo',
         'migrate_title' => 'Migración de Base de Datos',
-        'migrate_desc' => 'Migrar el esquema y estructura de la base de datos para Lernen.',
+        'migrate_desc' => 'Migrar el esquema y estructura de la base de datos para Horizontia.',
         'general_title' => 'Importación de Configuración del Sitio',
         'general_desc' => 'Importa la configuración básica para tu sitio.',
         'pages_title' => 'Importación de Páginas y Diseños',

@@ -78,3 +78,23 @@ output.html
 /tests/e2e-stagehand/failures/
 /tests/e2e-stagehand/results-*.json
 /tests/e2e-stagehand/downloads/
+/storage/app/backups/
+
+# Entornos locales con llaves/contraseñas y datos generados en tiempo de ejecución (no son código)
+/.env.qa
+/.env.testing
+/storage/app/addons/
+/storage/app/backups/
+/storage/app/chat/
+/storage/app/courses/
+/storage/app/curriculum_videos/
+/storage/app/exports/
+/storage/app/lernen-updates/
+/storage/app/livewire-tmp/
+/storage/app/migration/
+/storage/app/purifier/
+/storage/app/scorm/
+/storage/app/scorm_temp/
+/storage/framework/testing/
+/storage/framework/*.php
+/demo_curso_scorm.zip

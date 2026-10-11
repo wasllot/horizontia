@@ -6,6 +6,7 @@ use App\Facades\DbNotification;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\WithPagination;
 
 class Notifications extends Component
@@ -27,6 +28,12 @@ class Notifications extends Component
     {
         DbNotification::markAllAsRead(Auth::user());
         $this->dispatch('notifications-count-updated', count: Auth::user()->unreadNotifications()->count());
+    }
+
+    /** Fired by the panel's background pulse when new notifications arrive: re-rendering is enough. */
+    #[On('notifications-refresh')]
+    public function refreshList(): void
+    {
     }
 
     public function loadMore()

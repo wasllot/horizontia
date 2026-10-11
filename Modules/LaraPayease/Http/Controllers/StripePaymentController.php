@@ -2,7 +2,6 @@
 
 namespace Modules\LaraPayease\Http\Controllers;
 
-use Modules\LaraPayease\Facades\PaymentDriver;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -10,25 +9,23 @@ class StripePaymentController extends Controller{
 
     public function prepareCharge(Request $request){
         try{
-            $stripe_session = PaymentDriver::stripe()->prepareCharge([
-                'amount' => $request->amount,
-                'charge_amount' => $request->charge_amount,
-                'title' => $request->title,
-                'description' => $request->description,
-                'ipn_url' => $request->ipn_url,
-                'order_id' => $request->order_id,
-                'track' => $request->track,
-                'cancel_url' => $request->cancel_url,
-                'success_url' => $request->success_url,
-                'email' => $request->email,
-                'name' => $request->name,
-                'payment_type' => $request->payment_type,
-                'stripe_secret' => $request->stripe_secret,
-                'currency' => $request->currency,
-            ]);
-            return response()->json(['id' => $stripe_session['id']]);
+            // Never trust the client: the order, amount and URLs come from the payment
+            // data stored server-side by SiteController::preparePayment().
+            $paymentData = session('payment_data');
+            if (empty($paymentData) || (string) $paymentData['order_id'] !== (string) $request->input('order_id')) {
+                return response()->json(['msg' => __('general.payment_cancelled_desc'), 'type' => 'danger'], 422);
+            }
+
+            $gateway = getGatewayObject('stripe');
+            if (empty($gateway)) {
+                return response()->json(['msg' => __('general.payment_cancelled_desc'), 'type' => 'danger'], 422);
+            }
+
+            $stripeSession = $gateway->prepareCharge($paymentData);
+            return response()->json(['id' => $stripeSession['id']]);
         }catch(\Exception $e){
-            return response()->json(['msg' => $e->getMessage(),'type' => 'danger']);
+            report($e);
+            return response()->json(['msg' => __('general.something_went_wrong'), 'type' => 'danger'], 500);
         }
     }
 

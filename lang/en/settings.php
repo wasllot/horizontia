@@ -673,7 +673,7 @@ return [
     'ios_app_link'                              => 'iOS app link',
     'ios_app_placeholder'                       => 'Enter iOS app link',
 
-    'lernen_settings'                           => 'Lernen settings',
+    'lernen_settings'                           => 'Horizontia settings',
     'identity_verification_for_role'            => 'Identity verification for role',
     'enter_identity_verification_for_role'      => 'Enter identity verification for role',
     'add_identity_verification_for_role'        => 'Add identity verification for role',
@@ -944,4 +944,28 @@ return [
     'android_app_google_cred_title'             => 'Google credentials for android app',
     'ios_app_google_cred_title'                 => 'Google credentials for ios app',
 
+    //Mercado Pago
+    'mercadopago_title'                         => 'Mercado Pago',
+    'mercadopago_payment_title'                 => 'Mercado Pago payment settings',
+    'mp_access_token'                           => 'Mercado Pago access token',
+    'mp_public_key'                             => 'Mercado Pago public key',
+    'mp_webhook_secret'                         => 'Mercado Pago webhook secret',
+    'binary_mode'                               => 'Binary mode (approved or rejected only, no pending payments)',
+    'max_installments'                          => 'Maximum card installments (optional, empty = whatever your account allows)',
+
+  // Tutor IA (Gemini)
+  'gemini_tutor' => 'Tutor IA (Gemini)',
+  'gemini_info_title' => 'Tutor con inteligencia artificial',
+  'gemini_info_desc' => 'Muestra un asistente en cada lección a los estudiantes inscritos. Si no hay clave configurada o está desactivado, el asistente NO aparece.',
+  'gemini_tutor_enabled' => 'Activar tutor IA',
+  'gemini_tutor_enabled_desc' => 'Requiere una clave API de Google Gemini.',
+  'gemini_api_key' => 'Clave API de Gemini',
+  'gemini_api_key_placeholder' => 'Pega aquí tu clave de Google AI Studio',
+  'gemini_api_key_desc' => 'Créala en aistudio.google.com/apikey. Con el nivel gratuito Google puede usar las conversaciones para mejorar sus productos: para alumnos de pago usa una cuenta con facturación.',
+  'gemini_model' => 'Modelo',
+  'gemini_model_desc' => 'Por ejemplo gemini-3.5-flash-lite (económico) o gemini-3.8-flash (más capaz).',
+  'gemini_daily_limit' => 'Mensajes por alumno al día',
+  'gemini_daily_limit_desc' => 'Controla el costo. 0 = sin límite diario.',
+  'gemini_extra_instructions' => 'Instrucciones adicionales',
+  'gemini_extra_instructions_placeholder' => 'Opcional: tono, nombre de la academia, temas a evitar…',
 ];

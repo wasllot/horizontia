@@ -1,0 +1,19 @@
+/* Datos de la fecha presencial que compró el alumno (Mis cursos, gracias, aula). */
+.ht-mydate { display: grid; gap: 2px; margin: 0 0 12px; padding: 10px 12px; border-radius: 10px; border: 1px solid #c8d4f0; background: #f2f6ff; font: 500 13px/1.45 Inter, system-ui, sans-serif; color: #14213d; }
+.ht-mydate strong { display: block; font-size: 14px; }
+.ht-mydate strong::first-letter { text-transform: uppercase; }
+.ht-mydate a { color: #1f4fd8; font-weight: 600; text-decoration: none; }
+.ht-mydate a:hover { text-decoration: underline; }
+.ht-mydate__tag { justify-self: start; padding: 1px 9px; border-radius: 999px; background: #1f4fd8; color: #fff; font-size: 11px; font-weight: 600; }
+.ht-mydate.is-cancelled { background: #fff1f1; border-color: #f2c4c4; }
+.ht-mydate.is-cancelled .ht-mydate__tag { background: #c0392b; }
+.ht-thanks-date { margin: 18px 0; padding: 16px 18px; border: 1px solid #c8d4f0; border-radius: 12px; background: #f2f6ff; font-size: 15px; line-height: 1.6; color: #14213d; }
+.ht-thanks-date p { margin: 4px 0; }
+.ht-thanks-date small { color: #636d86; }
+.ht-thanks-date a { color: #1f4fd8; font-weight: 600; }
+.ht-aula-date { margin: 0 0 20px; padding: 18px 20px; border: 1px solid #c8d4f0; border-radius: 14px; background: #f2f6ff; color: #14213d; }
+.ht-aula-date h3 { margin: 0 0 8px; font-size: 18px; }
+.ht-aula-date dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 0 0 12px; }
+.ht-aula-date dt { font-weight: 600; color: #636d86; }
+.ht-aula-date dd { margin: 0; }
+.ht-aula-date a { color: #1f4fd8; font-weight: 600; }

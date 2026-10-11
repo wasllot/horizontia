@@ -56,10 +56,10 @@
                                         <td data-label="{{ __('Name' )}}">
                                             <div class="tb-varification_userinfo">
                                                 <strong class="tb-adminhead__img">
-                                                    @if (!empty($single?->personal_photo) && Storage::disk(getStorageDisk())->exists($single?->personal_photo))
-                                                    <img src="{{ resizedImage($single?->personal_photo,34,34) }}" alt="{{$single?->personal_photo}}" />
+                                                    @if (identityFileUrl($single, 'personal_photo'))
+                                                    <img src="{{ identityFileUrl($single, 'personal_photo') }}" alt="" width="34" height="34" />
                                                     @else
-                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png',34,34) }}" alt="{{ $single?->personal_photo }}" />
+                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png',34,34) }}" alt="{{ $single?->personal_photo }}" />
                                                     @endif
                                                 </strong>
                                                 <span>{{ $single->name }}</span>
@@ -83,12 +83,12 @@
     
                                         <td data-label="{{ __('identity.identity_document' )}}">
                                             <strong class="tb-adminhead__img">
-                                                @if (!empty($single?->attachments) && Storage::disk(getStorageDisk())->exists($single?->attachments))
-                                                <img src="{{ resizedImage($single?->attachments,34,34) }}" alt="{{$single?->attachments}}" />
-                                                @elseif (!empty($single?->transcript) && Storage::disk(getStorageDisk())->exists($single?->transcript))
-                                                <img src="{{ resizedImage($single?->transcript,34,34) }}" alt="{{$single?->transcript}}" />
+                                                @if (identityFileUrl($single, 'attachments'))
+                                                <a href="{{ identityFileUrl($single, 'attachments') }}" target="_blank" rel="noopener"><img src="{{ identityFileUrl($single, 'attachments') }}" alt="Documento" width="34" height="34" /></a>
+                                                @elseif (identityFileUrl($single, 'transcript'))
+                                                <a href="{{ identityFileUrl($single, 'transcript') }}" target="_blank" rel="noopener"><img src="{{ identityFileUrl($single, 'transcript') }}" alt="Documento" width="34" height="34" /></a>
                                                 @else
-                                                    <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png',34,34) }}" alt="{{ $single?->attachments }}" />
+                                                    <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png',34,34) }}" alt="{{ $single?->attachments }}" />
                                                 @endif
                                             </strong>
                                         </td>

@@ -50,8 +50,8 @@ return [
 
     'identity_verification_approved_subject'            => 'Identity Verification Approved',
     'identity_verification_rejected_subject'            => 'Identity Verification Rejected',
-    'session_booking_student_subject'                   => 'Thank you for booking with Lernen!',
-    'session_booking_tutor_subject'                     => 'Thank you for booking with Lernen!',
+    'session_booking_student_subject'                   => 'Thank you for booking with Horizontia!',
+    'session_booking_tutor_subject'                     => 'Thank you for booking with Horizontia!',
     'booking_rescheduled_subject'                       => 'Your Session Has Been Rescheduled',
     'withdraw_wallet_amount_request_subject'            => 'Withdraw Wallet Amount Request',
     'accepted_withdraw_request_subject'                 => 'Your Withdraw Request Has Been Approved',

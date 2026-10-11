@@ -188,4 +188,6 @@ return [
     'all_quizzes'                           => 'Aprobar todos los quizzes',
     'no_quizzes'                            => 'Sin aprobar ningún quiz',
     'assign_certificate_info'               => 'el certificado se asigna solo cuando se cumple la condición del quiz',
+    'current_' => 'Actual',
+    'subject' => 'Tema',
 ];

@@ -2,175 +2,96 @@
     <div class="row">
         <div class="col-lg-12 col-md-12">
             <div class="tb-dhb-mainheading">
-                <h4> {{ __('general.all_users') .' ('. $users->total() .')'}}</h4>
-                <div class="tb-sortby">
-                    <form class="tb-themeform tb-displistform">
-                        <fieldset>
-                            <div class="tb-themeform__wrap">
-                                <div class="tb-actionselect">
-                                    <a href="javascript:void(0)" id="add_user_click" class="tb-btn add-new"
-                                        data-bs-toggle="modal" data-bs-target="#tb-add-user">{{__('general.add_new_user')}}
-                                        <i class="icon-plus"></i></a>
-                                </div>
-                                <div class="tb-actionselect" wire:ignore>
-                                    <div class="tb-select">
-                                        <select data-componentid="@this" class="am-select2 form-control"
-                                            data-searchable="false" data-live='true' id="verification"
-                                            data-wiremodel="verification">
-                                            <option value="" {{ $verification=='' ? 'selected' : '' }}>{{ __('All users') }}
-                                            </option>
-                                            <option value="verified" {{ $verification=='verified' ? 'selected' : '' }}>{{
-                                                __('Verified users') }}</option>
-                                            <option value="unverified" {{ $verification=='non_verified' ? 'selected' : ''
-                                                }}>{{ __('Non verified users') }}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="tb-actionselect" wire:ignore>
-                                    <div class="tb-select">
-                                        <select data-componentid="@this" class="am-select2 form-control"
-                                            data-searchable="false" data-live='true' id="filter_user"
-                                            data-wiremodel="filterUser">
-                                            <option value="" {{ $filterUser=='' ? 'selected' : '' }}>{{ __('All users') }}
-                                            </option>
-                                            <option value="active" {{ $filterUser=='active' ? 'selected' : '' }}>{{
-                                                __('Active') }}</option>
-                                            <option value="inactive" {{ $filterUser=='inactive' ? 'selected' : '' }}>{{
-                                                __('Inactive') }}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="tb-actionselect" wire:ignore>
-                                    <div class="tb-select">
-                                        <select data-componentid="@this" class="am-select2 form-control"
-                                            data-searchable="false" data-live='true' id="roles" data-wiremodel="roles">
-                                            <option value="" {{ $roles=='' ? 'selected' : '' }}>{{ __('All users') }}
-                                            </option>
-                                            <option value="student" {{ $roles=='student' || $role=='student' ? 'selected' : '' }}>{{
-                                                $student_name }}</option>
-                                            <option value="tutor" {{ $roles=='tutor' || $role=='tutor' ? 'selected' : '' }}>{{
-                                                $tutor_name }}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="tb-actionselect" wire:ignore>
-                                    <div class="tb-select">
-                                        <select data-componentid="@this" class="am-select2 form-control"
-                                            data-searchable="false" data-live='true' id="sort_by" data-wiremodel="sortby">
-                                            <option value="asc" {{ $sortby=='asc' ? 'selected' : '' }}>{{ __('general.asc')
-                                                }}</option>
-                                            <option value="desc" {{ $sortby=='desc' ? 'selected' : '' }}>{{
-                                                __('general.desc') }}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group tb-inputicon tb-inputheight">
-                                    <i class="icon-search"></i>
-                                    <input type="text" class="form-control" wire:model.live.debounce.500ms="search"
-                                        autocomplete="off" placeholder="{{ __('general.search') }}">
-                                </div>
-                            </div>
-                        </fieldset>
-                    </form>
-                </div>
+                <h4>{{ __('general.all_users') }} <span class="hz-count">{{ $users->total() }}</span></h4>
+                <a href="javascript:void(0)" id="add_user_click" class="hz-btn hz-btn--sm add-new" data-bs-toggle="modal" data-bs-target="#tb-add-user"><i class="icon-plus" aria-hidden="true"></i> {{ __('general.add_new_user') }}</a>
             </div>
+            <form class="hz-toolbar" onsubmit="return false">
+                <div class="hz-toolbar__search">
+                    <i class="icon-search" aria-hidden="true"></i>
+                    <input type="search" class="form-control" wire:model.live.debounce.500ms="search" autocomplete="off" placeholder="{{ __('general.search') }}" aria-label="{{ __('general.search') }}">
+                </div>
+                <div class="hz-toolbar__filter" wire:ignore>
+                    <select data-componentid="@this" class="am-select2 form-control" data-searchable="false" data-live="true" id="roles" data-wiremodel="roles" aria-label="{{ __('admin/general.role') }}">
+                        <option value="" {{ $roles == '' ? 'selected' : '' }}>{{ __('Todos los roles') }}</option>
+                        <option value="student" {{ $roles == 'student' || $role == 'student' ? 'selected' : '' }}>{{ $student_name }}</option>
+                        <option value="tutor" {{ $roles == 'tutor' || $role == 'tutor' ? 'selected' : '' }}>{{ $tutor_name }}</option>
+                    </select>
+                </div>
+                <div class="hz-toolbar__filter" wire:ignore>
+                    <select data-componentid="@this" class="am-select2 form-control" data-searchable="false" data-live="true" id="filter_user" data-wiremodel="filterUser" aria-label="{{ __('general.status') }}">
+                        <option value="" {{ $filterUser == '' ? 'selected' : '' }}>{{ __('Todos los estados') }}</option>
+                        <option value="active" {{ $filterUser == 'active' ? 'selected' : '' }}>{{ __('Active') }}</option>
+                        <option value="inactive" {{ $filterUser == 'inactive' ? 'selected' : '' }}>{{ __('Inactive') }}</option>
+                    </select>
+                </div>
+                <div class="hz-toolbar__filter" wire:ignore>
+                    <select data-componentid="@this" class="am-select2 form-control" data-searchable="false" data-live="true" id="verification" data-wiremodel="verification" aria-label="{{ __('general.email_verification') }}">
+                        <option value="" {{ $verification == '' ? 'selected' : '' }}>{{ __('Toda verificación') }}</option>
+                        <option value="verified" {{ $verification == 'verified' ? 'selected' : '' }}>{{ __('Verified users') }}</option>
+                        <option value="unverified" {{ $verification == 'non_verified' ? 'selected' : '' }}>{{ __('Non verified users') }}</option>
+                    </select>
+                </div>
+                <div class="hz-toolbar__filter" wire:ignore>
+                    <select data-componentid="@this" class="am-select2 form-control" data-searchable="false" data-live="true" id="sort_by" data-wiremodel="sortby" aria-label="{{ __('Ordenar') }}">
+                        <option value="desc" {{ $sortby == 'desc' ? 'selected' : '' }}>{{ __('Más recientes') }}</option>
+                        <option value="asc" {{ $sortby == 'asc' ? 'selected' : '' }}>{{ __('Más antiguos') }}</option>
+                    </select>
+                </div>
+            </form>
             <div class="am-disputelist_wrap">
                 <div class="am-disputelist am-custom-scrollbar-y">
                     @if( !$users->isEmpty() )
-                    <table class="tb-table @if(setting('_general.table_responsive') == 'yes') tb-table-responsive @endif">
+                    <table class="tb-table @if(setting('_general.table_responsive') == 'yes') tb-table-responsive @endif tb-users-table">
                         <thead>
                             <tr>
-                                <th>{{ __('#' )}}</th>
-                                <th>{{ __('Name' )}}</th>
-                                <th>{{ __('general.email' )}}</th>
-                                <th>{{ __('general.created_date' )}}</th>
-                                <th>{{__('admin/general.role')}}</th>
-                                <th>{{ __('general.email_verification' )}}</th>
-                                <th>{{__('general.status')}}</th>
-                                <th>{{__('general.identity_verification')}}</th>
-                                <th>{{__('general.actions')}}</th>
+                                <th>{{ __('general.user') }}</th>
+                                <th>{{ __('admin/general.role') }}</th>
+                                <th>{{ __('general.created_date') }}</th>
+                                <th>{{ __('general.email_verification') }}</th>
+                                <th>{{ __('general.identity_verification') }}</th>
+                                <th>{{ __('general.status') }}</th>
+                                <th>{{ __('general.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($users as $single)
-                            <tr>
-                                <td data-label="{{ __('#' )}}"><span>{{ $single->id }}</span></td>
-                                <td data-label="{{ __('Name' )}}">
-                                    <div class="tb-varification_userinfo">
-                                        <strong class="tb-adminhead__img">
-                                            @if (!empty($single->profile->image) && Storage::disk(getStorageDisk())->exists($single->profile->image))
-                                                <img src="{{ resizedImage($single->profile->image,34,34) }}" alt="{{$single->profile->image}}" />
-                                            @else
-                                                <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $single->profile->image }}" />
-                                            @endif
-                                        </strong>
-                                        <span>{{ $single->profile->full_name }}</span>
-                                        @if($single->roles()->first()->name == 'tutor')
-                                            <a href="{{ route('tutor-detail',['slug' => $single->profile->slug]) }}" class="am-custom-tooltip">
-                                                <span class="am-tooltip-text">
-                                                    <span>{{ __('general.visit_profile') }}</span>
-                                                </span>
-                                                <i class="icon-external-link"></i>
-                                            </a>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td data-label="{{ __('general.email' )}}"><span>{{ $single->email }}</span></td>
-                                <td data-label="{{ __('general.created_date' )}}"><span>{{ $single->created_at->format('F d,
-                                        Y')}}</span></td>
-                                <td data-label="{{ __('admin/general.role') }}">
-                                    {{ ucfirst( $single->roles()->first()->name ) }}
-                                </td>
                                 @php
-                                    $verified_at = $single->email_verified_at ? "verified" : "non_verified";
-                                    $content = $single->email_verified_at ? __('general.reject_account') : __('general.approve_this_account');
+                                    $roleName   = $single->roles()->first()->name;
+                                    $verifiedAt = $single->email_verified_at ? 'verified' : 'non_verified';
+                                    $emailMsg   = $single->email_verified_at ? __('general.reject_account') : __('general.approve_this_account');
+                                    $statusMsg  = $single->status == 'active' ? __('general.disable_user') : __('general.enable_user');
                                 @endphp
-                                <td @click="$wire.dispatch('showConfirm', { id : {{ $single->id }}, content: '{{ $content }}', type: '{{ $verified_at }}', action : 'verified-at-template' })" data-label="{{ __('general.verification') }}">
-                                    <a href="javascript:;"
-                                       class="tb-email-verifiedbtn tk-project-tag"
-                                       @if (!$single->email_verified_at)
-                                           disabled
-                                       @endif>
-                                        <i class="icon-mail"></i>
-                                        {{ $single->email_verified_at ? "Verified" : "Non verified" }}
-                                    </a>
-                                </td>
-                                <td @click="$wire.dispatch('showConfirm', { id : {{ $single->id }}, content: `{{ $single->status == 'active' ? __('general.disable_user') : __('general.enable_user') }}`, type: '{{ $single->status }}', action : 'update-status' })"
-                                    data-label="{{__('general.status')}}">
-                                    <em class="tk-project-tag {{  $single->status == 'active' ? 'tk-hourly-tag' : 'tk-fixed-tag' }}">{{
-                                        $single->status}}</em>
-                                </td>
-                                <td data-label="{{__('general.identity_verification')}}">
-                                    <div class="am-status-tag">
-                                        <div class="am-status-tag">
-                                            <em class="tk-project-tag {{  !empty($single->profile->verified_at) ? 'tk-hourly-tag' : 'tk-fixed-tag' }}">{{
-                                                !empty($single->profile->verified_at) ? __('general.verified') : __('general.non_verified')}}</em>
+                                <tr wire:key="user-{{ $single->id }}">
+                                    <td data-label="{{ __('general.user') }}">
+                                        <x-panel.user-cell :name="$single->profile->full_name" :email="$single->email" :image="$single->profile->image" :url="$roleName == 'tutor' ? route('tutor-detail', ['slug' => $single->profile->slug]) : null" />
+                                    </td>
+                                    <td data-label="{{ __('admin/general.role') }}">{{ __(ucfirst($roleName)) }}</td>
+                                    <td data-label="{{ __('general.created_date') }}">{{ $single->created_at->translatedFormat('d M Y') }}</td>
+                                    <td data-label="{{ __('general.email_verification') }}">
+                                        <button type="button" class="hz-chipbtn" title="{{ $emailMsg }}"
+                                            @click="$wire.dispatch('showConfirm', { id : {{ $single->id }}, content: '{{ $emailMsg }}', type: '{{ $verifiedAt }}', action : 'verified-at-template' })">
+                                            <x-panel.badge :tone="$single->email_verified_at ? 'success' : 'warning'">{{ $single->email_verified_at ? __('general.verified') : __('general.non_verified') }}</x-panel.badge>
+                                        </button>
+                                    </td>
+                                    <td data-label="{{ __('general.identity_verification') }}">
+                                        <x-panel.badge :tone="!empty($single->profile->verified_at) ? 'success' : 'neutral'">{{ !empty($single->profile->verified_at) ? __('general.verified') : __('general.non_verified') }}</x-panel.badge>
+                                    </td>
+                                    <td data-label="{{ __('general.status') }}">
+                                        <button type="button" class="hz-chipbtn" title="{{ $statusMsg }}"
+                                            @click="$wire.dispatch('showConfirm', { id : {{ $single->id }}, content: `{{ $statusMsg }}`, type: '{{ $single->status }}', action : 'update-status' })">
+                                            <x-panel.badge :tone="$single->status == 'active' ? 'success' : 'warning'">{{ __(ucfirst($single->status)) }}</x-panel.badge>
+                                        </button>
+                                    </td>
+                                    <td data-label="{{ __('general.actions') }}">
+                                        <div class="hz-acts">
+                                            <x-panel.action icon="icon-edit-3" :label="__('general.edit_user')" @click="$wire.dispatch('edit-user', { id : {{ $single->id }} })" />
+                                            @if (!empty($single->email_verified_at))
+                                                <x-panel.action icon="icon-eye" :label="__('admin/general.impersonate_user')" @click="$wire.dispatch('showConfirm', { id : {{ $single->id }}, action : 'impersonate-user' })" />
+                                            @endif
+                                            <x-panel.action icon="icon-trash-2" tone="danger" :label="__('general.remove_user')" @click="$wire.dispatch('showConfirm', { id : {{ $single->id }}, content: '{{ __('general.delete_user') }}', action : 'delete-user' })" />
                                         </div>
-                                    </div>
-                                </td>
-                                <td  data-label="{{__('general.actions')}}">
-                                    <div class="am-custom-tooltip">
-                                        <span class="am-tooltip-text am-tooltip-textimp">
-                                            <span>{{__('general.edit_user')}}</span>
-                                        </span>
-                                        <i @click="$wire.dispatch('edit-user', { id : {{ $single->id }} })" class="icon-edit-3"></i>
-                                    </div> 
-                                    <div class="am-custom-tooltip">
-                                        <span class="am-tooltip-text am-tooltip-textimp">
-                                            <span>{{__('general.remove_user')}}</span>
-                                        </span>
-                                        <i @click="$wire.dispatch('showConfirm', { id : {{ $single->id }}, content: '{{ __('general.delete_user') }}', action : 'delete-user' })" class="icon-trash-2"></i>
-                                    </div> 
-                                    <div class="am-custom-tooltip am-tooltip-textimp">
-                                        <span class="am-tooltip-text">
-                                            <span>{{ __('admin/general.impersonate_user') }}</span>
-                                        </span>
-                                        @if (!empty($single->email_verified_at))
-                                        <i @click="$wire.dispatch('showConfirm', { id : {{ $single->id }}, action : 'impersonate-user' })" class="icon-eye"></i>
-                                        @endif
-                                    </div> 
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>

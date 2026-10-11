@@ -72,10 +72,10 @@
                     <li>
                         <div class="am-session-duration_title">
                             <figure>
-                                @if(!empty($currentBooking?->tutor?->image) && Storage::disk(getStorageDisk())->exists($currentBooking?->tutor?->image))
+                                @if(!empty($currentBooking?->tutor?->image) && mediaExists($currentBooking?->tutor?->image))
                                     <img src="{{ resizedImage($currentBooking?->tutor?->image, 24, 24) }}" alt="{{ $currentBooking?->tutor?->full_name }}">
                                 @else
-                                    <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 24, 24) }}" alt="{{ $currentBooking?->tutor?->full_name }}">
+                                    <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 24, 24) }}" alt="{{ $currentBooking?->tutor?->full_name }}">
                                 @endif
                             </figure>
                             <span><em>{{ __('calendar.session_tutor') }}</em></span>
@@ -163,7 +163,7 @@
             </div>
             <div class="am-session-detail-modal_body">
                 <figure>
-                    @if(!empty($currentBooking?->slot?->subjectGroupSubjects?->image) && Storage::disk(getStorageDisk())->exists($currentBooking?->slot?->subjectGroupSubjects?->image))
+                    @if(!empty($currentBooking?->slot?->subjectGroupSubjects?->image) && mediaExists($currentBooking?->slot?->subjectGroupSubjects?->image))
                         <img src="{{ resizedImage($currentBooking?->slot?->subjectGroupSubjects?->image, 700, 360) }}" alt="{{ $currentBooking?->slot?->subjectGroupSubjects?->subject?->name }}">
                     @else
                         <img src="{{ resizedImage('placeholder-land.png', 700, 360) }}" alt="{{ $currentBooking?->slot?->subjectGroupSubjects?->subject?->name }}">

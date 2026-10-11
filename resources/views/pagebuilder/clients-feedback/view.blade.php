@@ -60,7 +60,7 @@
                                                         @if(!empty($option['tutor_image']))
                                                             <figure>
                                                                 @if(!empty($option['tutor_image'][0]['path']))
-                                                                    <img src="{{url(Storage::url($option['tutor_image'][0]['path']))}}" alt="Profile image">
+                                                                    <img src="{{url(mediaUrl($option['tutor_image'][0]['path']))}}" alt="Profile image">
                                                                 @endif
                                                             </figure>
                                                         @endif
@@ -72,7 +72,7 @@
                                                             @if(!empty($option['student_image'][0]['path']))
                                                                 <span class="am-rating-company">
                                                                     @if(!empty($option['student_image'][0]['path']))
-                                                                        <img src="{{url(Storage::url($option['student_image'][0]['path']))}}" alt="Profile image">
+                                                                        <img src="{{url(mediaUrl($option['student_image'][0]['path']))}}" alt="Profile image">
                                                                     @endif      
                                                                 </span>
                                                             @endif 

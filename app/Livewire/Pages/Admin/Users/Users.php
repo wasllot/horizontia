@@ -310,7 +310,7 @@ class Users extends Component
             
         Auth::login($user);
         
-        return redirect('/login');
+        return redirect()->route('login');
     }
 
     #[On('tutor-template')]

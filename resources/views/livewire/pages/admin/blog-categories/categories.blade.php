@@ -68,7 +68,7 @@
                                                                 $image_path = $image['file_path'];
                                                                 $image_name = $image['file_name'];
                                                             @endphp
-                                                            <img src="{{ url(Storage::url($image_path)) }}" alt="{{ $image_name }}">
+                                                            <img src="{{ url(mediaUrl($image_path)) }}" alt="{{ $image_name }}">
                                                         @endif
                                                         {!! $single->name !!}
                                                     </span>
@@ -79,7 +79,7 @@
                                     <td data-label="{{ __('category.description') }}"><span>{!! $single->description !!}</span></td>
                                     <td data-label="{{ __('general.status') }}">
                                         <div class="am-status-tag">
-                                            <em class="tk-project-tag tk-{{ $single->status == 'active' ? 'active' : 'disabled' }}">{{ $single->status }}</em>
+                                            <em class="tk-project-tag tk-{{ $single->status == 'active' ? 'active' : 'disabled' }}">{{ __(ucfirst($single->status)) }}</em>
                                         </div>
                                     </td>
                                     <td data-label="{{ __('general.actions') }}">

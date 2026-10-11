@@ -1,0 +1,12 @@
+/* Solo dentro del lienzo del editor: ayudas visuales que NO existen en la página publicada. */
+body { margin: 0; }
+.ht-hero, .ht-block { position: relative; }
+
+/* Bloques dinámicos: aquí se ven tal como saldrán, con datos reales (se actualizan al cambiar sus ajustes). */
+[data-hz-block].hz-live { position: relative; min-height: 80px; cursor: pointer; }
+[data-hz-block].hz-live * { pointer-events: none; }
+[data-hz-block].is-loading { opacity: .55; transition: opacity .15s; }
+[data-hz-block].hz-live::after { content: attr(data-hz-block); position: absolute; top: 8px; right: 8px; z-index: 5; padding: 2px 9px; border-radius: 999px; background: rgba(20, 33, 61, .85); color: #fff; font: 600 11px/1.6 Inter, system-ui, sans-serif; letter-spacing: .02em; opacity: 0; transition: opacity .15s; }
+[data-hz-block].hz-live:hover::after { opacity: 1; }
+.hz-loading, .hz-empty-preview { display: grid; gap: 6px; justify-items: center; margin: 16px; padding: 28px; border: 2px dashed #b8c2d9; border-radius: 14px; background: repeating-linear-gradient(135deg, #f4f6fb, #f4f6fb 12px, #eef1f8 12px, #eef1f8 24px); color: #14213d; font: 600 14px/1.4 Inter, system-ui, sans-serif; text-align: center; }
+.hz-empty-preview span { color: #636d86; font-weight: 500; font-size: 13px; max-width: 46ch; }

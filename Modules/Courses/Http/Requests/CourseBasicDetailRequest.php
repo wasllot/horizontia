@@ -23,6 +23,7 @@ class CourseBasicDetailRequest extends FormRequest
             'tags'                  => 'nullable|array',
             'tags.*'                => 'required|string',
             'type'                  => 'required|in:video,audio,live,article,all',
+            'delivery'              => 'required|in:online,in_person,hybrid',
             'level'                 => 'required|in:beginner,intermediate,expert,all',
             'language_id'           => 'required|exists:languages,id',
             'learning_objectives'   => 'nullable|array',
@@ -39,6 +40,7 @@ class CourseBasicDetailRequest extends FormRequest
     {
         return [
             'type'              => 'course type',
+            'delivery'          => 'modalidad',
             'category_id'       => 'category',
             'sub_category_id'   => 'sub category',
             'language_id'       => 'language',

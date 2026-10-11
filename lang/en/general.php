@@ -559,5 +559,6 @@ return [
     'mark_as_read'                                  => 'Mark as read',
     'mark_all_as_read'                              => 'Mark all as read',
     'no_notification_desc'                          => 'There are no unread notifications available to show at the moment.',
-    'unable_to_create_dispute'                      => 'Unable to create dispute'
+    'unable_to_create_dispute'                      => 'Unable to create dispute',
+    'user' => 'User',
 ];

@@ -36,4 +36,5 @@ return [
         'add_menu_items'                => 'Por favor agrega elementos del menú antes de guardar',
         'select_menu_err'               => 'Por favor selecciona un menú',
         'menu_arrange'                  => 'Arrastra los elementos en el orden que prefieras. Haz clic en la flecha a la derecha del elemento para revelar opciones de configuración adicionales.',
+    'platform_links' => 'Enlaces de la plataforma',
 ];

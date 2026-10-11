@@ -52,7 +52,7 @@
                                     <div class="am-learning_video_info">
                                         @if(!empty(pagesetting('video')[0]['path']))
                                             <video class="video-js" data-setup='{}' preload="auto" id="auth-video" width="416" height="284" controls >
-                                                <source src="{{ url(Storage::url(pagesetting('video')[0]['path'])) }}" type="video/mp4" >
+                                                <source src="{{ url(mediaUrl(pagesetting('video')[0]['path'])) }}" type="video/mp4" >
                                             </video>   
                                         @endif
                                     </div>
@@ -100,14 +100,14 @@
                                 @if(!empty(pagesetting('tutors_image')))
                                     <figure class="am-learning_video_tutors-img">
                                         @if(!empty(pagesetting('tutors_image')[0]['path']))
-                                            <img src="{{url(Storage::url(pagesetting('tutors_image')[0]['path']))}}" alt="Registered Tutors with profile pictures">
+                                            <img src="{{url(mediaUrl(pagesetting('tutors_image')[0]['path']))}}" alt="Registered Tutors with profile pictures">
                                         @endif
                                     </figure>
                                 @endif
                                 @if(!empty(pagesetting('student_image')))
                                     <figure class="am-learning_video_talents-img">
                                         @if(!empty(pagesetting('student_image')[0]['path']))
-                                            <img src="{{url(Storage::url(pagesetting('student_image')[0]['path']))}}" alt="Profile card">
+                                            <img src="{{url(mediaUrl(pagesetting('student_image')[0]['path']))}}" alt="Profile card">
                                         @endif
                                     </figure>
                                 @endif

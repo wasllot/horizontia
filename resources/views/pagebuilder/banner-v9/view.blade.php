@@ -39,7 +39,7 @@
                                         <ul class="am-banner_companies am-banner-image" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="600">
                                             @foreach(pagesetting('banner_repeater') as $option)
                                                 @if(!empty($option['banner_image'][0]['path']))
-                                                    <li><figure><img src="{{url(Storage::url($option['banner_image'][0]['path']))}}" alt="Company logo"></figure></li>
+                                                    <li><figure><img src="{{url(mediaUrl($option['banner_image'][0]['path']))}}" alt="Company logo"></figure></li>
                                                 @endif
                                             @endforeach
                                         </ul>
@@ -52,7 +52,7 @@
                         <div class="am-banner_images">
                             @if(!empty(pagesetting('image')[0]['path']))
                                 <figure>
-                                    <img src="{{url(Storage::url(pagesetting('image')[0]['path']))}}" alt="Banner image" data-aos="fade-left" data-aos-easing="ease" data-aos-delay="600">
+                                    <img src="{{url(mediaUrl(pagesetting('image')[0]['path']))}}" alt="Banner image" data-aos="fade-left" data-aos-easing="ease" data-aos-delay="600">
                                 </figure>
                             @endif
                         </div>  

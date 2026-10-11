@@ -1,10 +1,9 @@
 <div>
-    @isset($jsPath)
-        <script>{!! file_get_contents($jsPath) !!}</script>
-    @endisset
-    @isset($cssPath)
-        <style>{!! file_get_contents($cssPath) !!}</style>
-    @endisset
+    {{-- Static, cacheable copies (public/vendor/spotlight, refreshed by `composer` post-update). Inlining them added ~400 KB to every dashboard page. --}}
+    @once
+        <link rel="stylesheet" href="{{ asset('vendor/spotlight/spotlight.css') }}?v={{ filemtime(public_path('vendor/spotlight/spotlight.css')) }}">
+        <script src="{{ asset('vendor/spotlight/spotlight.js') }}?v={{ filemtime(public_path('vendor/spotlight/spotlight.js')) }}"></script>
+    @endonce
 
     <div x-data="LivewireUISpotlight({
         componentId: '{{ $this->id() }}',

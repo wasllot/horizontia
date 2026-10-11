@@ -18,7 +18,7 @@
                         <ul class="am-checkout_steptab">
                             <li class="am-checkout_steptab_checked">
                                 <span><i class="am-icon-user-05"></i> <em class="am-checkicon"><i class="am-icon-check-circle03"></i></em> </span>
-                                {{ __('checkout.select_best_tutor') }}
+                                {{ isPrivateAcademy() ? __('checkout.select_courses') : __('checkout.select_best_tutor') }}
                             </li>
                             <li class="am-checkout_steptab_active">
                                 <span><i class="am-icon-lock-close"></i> <em class="am-checkicon"><i class="am-icon-check-circle03"></i></em></span>
@@ -117,23 +117,23 @@
                                         <legend>{{ __('checkout.billing_details') }}</legend>
                                     </div>
                                     <div @class(['form-group form-group-half', 'am-invalid' => $errors->has('form.firstName')])>
-                                        <input wire:model="form.firstName" type="text" class="form-control"  placeholder="Add first name">
+                                        <input wire:model="form.firstName" type="text" class="form-control"  placeholder="{{ __('checkout.ph_first_name') }}">
                                         <x-input-error field_name="form.firstName" />
 
                                     </div>
                                     <div  @class(['form-group form-group-half', 'am-invalid' => $errors->has('form.lastName')])>
-                                        <input wire:model="form.lastName" type="text" class="form-control"  placeholder="Add last name">
+                                        <input wire:model="form.lastName" type="text" class="form-control"  placeholder="{{ __('checkout.ph_last_name') }}">
                                         <x-input-error field_name="form.lastName" />
                                     </div>
                                     <div @class(['form-group', 'am-invalid' => $errors->has('form.company')]) class="">
-                                        <input wire:model="form.company" type="text" class="form-control"  placeholder="Add company title">
+                                        <input wire:model="form.company" type="text" class="form-control"  placeholder="{{ __('checkout.ph_company') }}">
                                     </div>
                                     <div  @class(['form-group form-group-half', 'am-invalid' => $errors->has('form.email')]) class="">
-                                        <input wire:model="form.email" type="text" class="form-control"  placeholder="Add email">
+                                        <input wire:model="form.email" type="text" class="form-control"  placeholder="{{ __('checkout.ph_email') }}">
                                         <x-input-error field_name="form.email" />
                                     </div>
                                     <div  @class(['form-group form-group-half', 'am-invalid' => $errors->has('form.phone')])>
-                                        <input wire:model="form.phone" type="text" class="form-control"  placeholder="Add phone number">
+                                        <input wire:model="form.phone" type="text" class="form-control"  placeholder="{{ __('checkout.ph_phone') }}">
                                         <x-input-error field_name="form.phone" />
                                     </div>
                                     <div class="form-group">
@@ -151,15 +151,15 @@
                                         <x-input-error field_name="form.country" />
                                     </div>
                                     <div  @class(['form-group form-group-3half', 'am-invalid' => $errors->has('form.city')])>
-                                        <input wire:model="form.city" type="text" class="form-control"  placeholder="Add town/city">
+                                        <input wire:model="form.city" type="text" class="form-control"  placeholder="{{ __('checkout.ph_city') }}">
                                         <x-input-error field_name="form.city" />
                                     </div>
                                     <div @class(['form-group form-group-3half', 'am-invalid' => $errors->has('form.state')])>
-                                        <input wire:model="form.state" type="text" class="form-control"  placeholder="Add state/country">
+                                        <input wire:model="form.state" type="text" class="form-control"  placeholder="{{ __('checkout.ph_state') }}">
                                         <x-input-error field_name="form.state" />
                                     </div>
                                     <div @class(['form-group form-group-3half', 'am-invalid' => $errors->has('form.zipcode')])>
-                                        <input wire:model="form.zipcode" type="text" class="form-control"  placeholder="Add postcode/zip">
+                                        <input wire:model="form.zipcode" type="text" class="form-control"  placeholder="{{ __('checkout.ph_zip') }}">
                                         <x-input-error field_name="form.zipcode" />
                                     </div>
                                 </fieldset>
@@ -174,12 +174,12 @@
                                         <span class="am-charleft" x-text="charLeft + ' {{ __('general.char_account') }}'"></span>
                                         <x-input-error field_name="form.dec" />
                                     </div>
-                                    @if ($walletBalance)
+                                    @if ($walletBalance && !isPrivateAcademy())
                                     <div class="form-group">
                                         <div class="am-checkbox ">
                                             <input wire:model.live="useWalletBalance" id="remember_me" type="checkbox" name="remember">
                                             <label for="remember_me">
-                                                <strong><span>{{ __('general.wallet_balance') }}</span><sup>{{ getCurrencySymbol() }}</sup>{{  $walletBalance }}</strong>
+                                                <strong><span>{{ __('general.wallet_balance') }}</span>{{ getCurrencySymbol() }}{{ $walletBalance }}</strong>
                                             </label>
                                         </div>
                                     </div>
@@ -199,10 +199,10 @@
                                     @foreach ($content as $item)
                                         <li>
                                             <figure class="am-ordersummary_list_img">
-                                                @if (!empty($item['options']['image']) && Storage::disk(getStorageDisk())->exists($item['options']['image']))
+                                                @if (!empty($item['options']['image']) && mediaExists($item['options']['image']))
                                                     <img src="{{ resizedImage($item['options']['image'],34,34) }}" alt="{{$item['options']['image']}}" />
                                                 @else
-                                                    <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="default avatar" />
+                                                    <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="default avatar" />
                                                 @endif
                                             </figure>
                                             <div class="am-ordersummary_list_title">
@@ -287,7 +287,7 @@
                                                             <div class="am-coupon_header" style="background-color: {{ $item['options']['discount_color'] }};">
                                                                 <span>
                                                                     @if($item['options']['discount_type'] == 'percentage')
-                                                                        {{ $item['options']['discount_value'] }}<sup>%</sup>
+                                                                        {{ $item['options']['discount_value'] }}%
                                                                     @else
                                                                         {!! formatAmount($item['options']['discount_value'], true) !!}
                                                                     @endif

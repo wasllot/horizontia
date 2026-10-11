@@ -55,10 +55,26 @@ class CartService
 
     public function remove($cartableId, $cartableType, $userId = null)
     {
+        // A course that came with a bundle cannot be dropped alone (it would keep the bundle discount): the whole bundle goes.
+        $line = CartItem::where('user_id', $userId ?? $this->userId)->where('cartable_id', $cartableId)->where('cartable_type', $cartableType)->first();
+        if ($line && !empty($line->options['bundle_id'])) {
+            $this->removeBundle((int) $line->options['bundle_id'], $userId);
+
+            return;
+        }
+
         CartItem::where('user_id', $userId ?? $this->userId)
             ->where('cartable_id', $cartableId)
             ->where('cartable_type', $cartableType)
             ->delete();
+        $this->reloadItems();
+    }
+
+    /** Removes every cart line that belongs to a bundle. */
+    public function removeBundle(int $bundleId, $userId = null): void
+    {
+        CartItem::where('user_id', $userId ?? $this->userId)->get()
+            ->filter(fn ($l) => (int) ($l->options['bundle_id'] ?? 0) === $bundleId)->each->delete();
         $this->reloadItems();
     }
 
@@ -103,7 +119,7 @@ class CartService
                 return $item->qty * ($item->price - $item->discount_amount);
             });
         }else {
-            $subtotal = $this->getSubtotal();
+            $subtotal = max(0, $this->getSubtotal() - $this->couponDiscount());
         }
         $tax = 0;
         $shipping = 0;
@@ -115,8 +131,20 @@ class CartService
         if (\Nwidart\Modules\Facades\Module::has('kupondeal') && \Nwidart\Modules\Facades\Module::isEnabled('kupondeal')) {
             return $this->items->sum('discount_amount');
         }else {
-            return 0;
+            return $this->couponDiscount();
         }
+    }
+
+    /** Descuento del código aplicado (se revalida con el carrito actual cada vez). */
+    public function couponDiscount(): float
+    {
+        return (float) (app(CouponService::class)->applied(Auth::user(), $this->items)['discount'] ?? 0);
+    }
+
+    /** Cupón aplicado ahora mismo (o null), con su descuento y el reparto por curso. */
+    public function appliedCoupon(): ?array
+    {
+        return app(CouponService::class)->applied(Auth::user(), $this->items);
     }
 
     protected function getSubtotal()
@@ -143,6 +171,7 @@ class CartService
         CartItem::where('user_id', $this->userId)->delete();
         $this->items = collect();
         Cache::forget('cart_items_'.$this->userId);
+        app(CouponService::class)->forget();
     }
 
     protected function reloadItems()

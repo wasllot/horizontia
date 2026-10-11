@@ -518,11 +518,11 @@ return [
     'course_purchase_student_variables'             => '{userName} - Para nombre de usuario <br> {sessionDate} - Para fecha de sesión <br> {tutorName} - Para nombre del tutor <br> {sessionSubject} - Para asunto de la sesión <br> {bookingDetails} - Para detalles de reservas <br> {courseDetails} - Para detalles del curso',
     'course_purchase_tutor_variables'               => '{userName} - Para nombre de usuario <br> {sessionDate} - Para fecha de sesión <br> {studentName} - Para nombre del estudiante <br> {sessionSubject} - Para asunto de la sesión <br> {bookingDetails} - Para detalles de reservas <br> {courseDetails} - Para detalles del curso',
 
-    'course_purchase'                               => '¡Gracias por tu compra en Lernen!',
+    'course_purchase'                               => '¡Gracias por tu compra en Horizontia!',
     'course_purchase_msg'                           => "¡Gracias por tu compra! Aquí están los detalles de tus artículos: <br> :bookingDetails <br> Esperamos ayudarte a alcanzar tus objetivos de aprendizaje. Ya sea que te unas a una sesión o comiences un curso, estamos aquí para apoyar tu viaje educativo. Si tienes alguna pregunta, no dudes en contactarnos.",
 
-    'course_purchase_tutor_subject'                 => '¡Nueva notificación de compra en Lernen!',
-    'course_buy_tutor_content'                      => '¡Un estudiante ha realizado una compra en Lernen! Aquí están los detalles de su pedido: <br> :bookingDetails <br> El estudiante ahora tiene acceso a su compra y puede comenzar. Puedes seguir su participación a través de tu panel de instructor. <br><br> ¡Gracias por ser parte de la comunidad de enseñanza de Lernen!',
+    'course_purchase_tutor_subject'                 => '¡Nueva notificación de compra en Horizontia!',
+    'course_buy_tutor_content'                      => '¡Un estudiante ha realizado una compra en Horizontia! Aquí están los detalles de su pedido: <br> :bookingDetails <br> El estudiante ahora tiene acceso a su compra y puede comenzar. Puedes seguir su participación a través de tu panel de instructor. <br><br> ¡Gracias por ser parte de la comunidad de enseñanza de Horizontia!',
 
     'courses_detail'                                => 'Detalles de los cursos:',
     'sessions_detail'                               => 'Detalles de las sesiones:',
@@ -574,4 +574,36 @@ return [
     'course_already_enrolled'                       => 'Ya estás inscrito en este curso',
 
     'author'                                        => '(Autor)',
+
+    // AI tutor
+    'tutor_title' => 'AI tutor',
+    'tutor_open' => 'Open the AI tutor',
+    'tutor_close' => 'Close',
+    'tutor_clear' => 'Clear chat',
+    'tutor_hint' => 'Ask me about this lesson. I will give hints and explanations, without solving your assessments.',
+    'tutor_placeholder' => 'Type your question…',
+    'tutor_send' => 'Send',
+    'tutor_thinking' => 'Thinking…',
+    'tutor_empty' => 'Type your question.',
+    'tutor_too_long' => 'The question is too long.',
+    'tutor_error_unavailable' => 'The tutor is not available for this course.',
+    'tutor_error_empty' => 'Type your question.',
+    'tutor_error_slow_down' => 'You are going too fast. Wait a minute and try again.',
+    'tutor_error_daily_limit' => 'You reached the daily question limit. Come back tomorrow.',
+    'tutor_error_busy' => 'The tutor is busy. Try again in a few minutes.',
+    'tutor_error_failed' => 'I could not answer right now. Please try again later.',
+    'tutor_error_blocked' => 'I cannot answer that. Rephrase your question about the course.',
+
+    // Previously missing keys
+    'assignments' => 'Assignments and tests',
+    'empty_view' => 'Nothing to show yet.',
+    'instagaram' => 'Instagram',
+    'like_this_course' => 'Like this course',
+    'noticeboard_deleted' => 'The notice was deleted successfully.',
+    'prerequisites' => 'Prerequisites',
+    'success' => 'Success',
+
+    'next_item' => 'Go to next item',
+    'mark_as_complete' => 'Mark as complete',
+    'completed' => 'Completed',
 ];

@@ -64,9 +64,9 @@
                                                     <div class="am-subject-list_content">
                                                         <figure>
                                                             @if(!empty($subject->pivot->image))
-                                                                <img src="{{ url(Storage::url($subject->pivot->image)) }}" alt="profile">
+                                                                <img src="{{ url(mediaUrl($subject->pivot->image)) }}" alt="profile">
                                                             @elseif(setting('_general.default_avatar_for_user'))
-                                                                <img src="{{ url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) }}" alt="profile">
+                                                                <img src="{{ url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) }}" alt="profile">
                                                             @else
                                                                 <img src="{{ asset('demo-content/placeholders/placeholder-land.png') }}" alt="profile">
                                                             @endif
@@ -318,16 +318,16 @@
                                             <div class="am-uploadedfile">
                                                 @if( !empty($form->image) && method_exists($form->image,'temporaryUrl'))
                                                     <img src="{{ $form->image->temporaryUrl() }}">
-                                                @elseif(!empty($form->image) && Storage::disk(getStorageDisk())->exists($form->image))
-                                                    <img src="{{ Storage::url($form->image) }}">
+                                                @elseif(!empty($form->image) && mediaExists($form->image))
+                                                    <img src="{{ mediaUrl($form->image) }}">
                                                 @else    
-                                                    <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : url(Storage::url($form->image)) }}">
+                                                    <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : url(mediaUrl($form->image)) }}">
                                                 @endif
 
                                                 @if ( !empty($form->image) && method_exists($form->image,'getClientOriginalName'))
                                                     <span>{{ $form->image->getClientOriginalName() }}</span>
                                                 @else
-                                                    <span>{{ basename(parse_url(url(Storage::url($form->image)), PHP_URL_PATH)) }}</span>
+                                                    <span>{{ basename(parse_url(url(mediaUrl($form->image)), PHP_URL_PATH)) }}</span>
                                                 @endif
 
                                                 <a href="#" wire:click.prevent="removeImage" class="am-delitem">

@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . "/_guard.php";
 $log = file_get_contents('/var/www/html/storage/logs/laravel.log');
 $lines = explode("\n", $log);
 $total = count($lines);

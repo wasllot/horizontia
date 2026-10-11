@@ -17,12 +17,12 @@ class Stripe extends BasePaymentDriver
         if(empty($this->getKeys()['stripe_key']) || empty($this->getKeys()['stripe_secret'])){
             return ['status' => Response::HTTP_BAD_REQUEST,'message' => __('Missing Stripe key or secret')];
         }
-        return view('larapayease::stripe', ['stripe_data' => array_merge($params,[
+        // Only the publishable key reaches the browser; amount/currency are rebuilt server-side in prepareCharge().
+        return view('larapayease::stripe', ['stripe_data' => [
             'stripe_key' => $this->getKeys()['stripe_key'],
-            'currency' => $this->getCurrency(),
-            'stripe_secret' => base64_encode($this->getKeys()['stripe_secret']),
-            'charge_amount' => $this->chargeableAmount($params['amount']),
-        ])]);
+            'order_id' => $params['order_id'],
+            'cancel_url' => $params['cancel_url'],
+        ]]);
     }
 
     public function driverName() : string{
@@ -63,7 +63,9 @@ class Stripe extends BasePaymentDriver
     }
 
     public function prepareCharge(array $params){
-        StripeSdk::setApiKey(base64_decode($params['stripe_secret']));
+        StripeSdk::setApiKey($this->getKeys()['stripe_secret']);
+        $params['currency'] = $this->getCurrency();
+        $params['charge_amount'] = $this->chargeableAmount($params['amount']);
 
         $session = Session::create([
             'line_items' => [[

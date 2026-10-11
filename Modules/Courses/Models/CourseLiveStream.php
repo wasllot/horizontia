@@ -13,13 +13,18 @@ class CourseLiveStream extends Model
 
     protected $table;
 
-    public function __construct()
+    public function __construct(array $attributes = [])
     {
         $this->table = (config('courses.db_prefix') ?? 'courses_') . 'course_live_streams';
+        parent::__construct($attributes);
     }
 
     protected $fillable = [
         'course_id',
+        'curriculum_id',
+        'provider',
+        'recording_url',
+        'recording_curriculum_id',
         'title',
         'description',
         'meeting_link',
@@ -48,6 +53,11 @@ class CourseLiveStream extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
+    public function curriculum(): BelongsTo
+    {
+        return $this->belongsTo(Curriculum::class, 'curriculum_id');
+    }
+
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class, 'course_id');

@@ -218,6 +218,18 @@ class Navigation extends Component
             }
         }
 
+        // Certificados verificables propios (no dependen del módulo upcertify).
+        if ($this->role == 'student' && \App\Services\CourseCertificateService::enabled() && !(\Nwidart\Modules\Facades\Module::has('upcertify') && \Nwidart\Modules\Facades\Module::isEnabled('upcertify'))) {
+            $this->menuItems[] = [
+                'studentSortOrder' => 8,
+                'route' => 'student.certificate-list',
+                'onActiveRoute' => ['student.certificate-list'],
+                'title' => 'Mis certificados',
+                'icon'  => '<i class="am-icon-certificate"> <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 3.45455C6.38421 3.45455 3.45455 6.38421 3.45455 10C3.45455 13.6158 6.38421 16.5455 10 16.5455H15.5169L10.9953 12.0238C10.4954 12.3271 9.90884 12.5018 9.28145 12.5018C7.4547 12.5018 5.97382 11.0209 5.97382 9.19418C5.97382 7.36742 7.4547 5.88655 9.28145 5.88655C11.1082 5.88655 12.5891 7.36742 12.5891 9.19418C12.5891 9.86686 12.3883 10.4926 12.0434 11.0148L16.5455 15.5169V10C16.5455 6.38421 13.6158 3.45455 10 3.45455ZM2 10C2 5.58088 5.58088 2 10 2C14.4191 2 18 5.58088 18 10V18H10C5.58088 18 2 14.4191 2 10ZM9.28145 7.34109C8.25802 7.34109 7.42836 8.17075 7.42836 9.19418C7.42836 10.2176 8.25802 11.0473 9.28145 11.0473C10.3049 11.0473 11.1345 10.2176 11.1345 9.19418C11.1345 8.17075 10.3049 7.34109 9.28145 7.34109Z" fill="#585858"/></svg> </i>',
+                'accessibility' => ['student'],
+            ];
+        }
+
         if (\Nwidart\Modules\Facades\Module::has('kupondeal') && \Nwidart\Modules\Facades\Module::isEnabled('kupondeal')) {
             if($this->role == 'tutor'){
                 $this->menuItems[] = [
@@ -234,6 +246,11 @@ class Navigation extends Component
                 ];
             }
         }
+        if (isPrivateAcademy()) {
+            // No dead links: drop the marketplace entries (bookings, payouts, favourites, tutor search, disputes).
+            $marketplaceRoutes = ['tutor.bookings.subjects', 'tutor.payouts', 'student.bookings', 'student.favourites', 'find-tutors', 'tutor.disputes', 'student.disputes', 'tutor.dashboard'];
+            $this->menuItems = collect($this->menuItems)->reject(fn ($item) => in_array($item['route'] ?? '', $marketplaceRoutes, true))->values()->toArray();
+        }
         if($this->role == 'tutor'){
             $this->menuItems = collect($this->menuItems)->sortBy('tutorSortOrder')->reject(function($item) {
                 return !isset($item['tutorSortOrder']);
@@ -243,6 +260,22 @@ class Navigation extends Component
                 return !isset($item['studentSortOrder']);
             })->toArray();
         }
+
+        $this->menuItems = $this->groupMenu(array_values($this->menuItems));
+    }
+
+    /** Agrupa el menú ("Enseñanza/Aprendizaje" arriba, "Mi cuenta" abajo) conservando el orden interno de cada grupo. */
+    protected function groupMenu(array $items): array
+    {
+        $learning = '/^(courses\.|upcertify\.|kupondeal\.|quiz|student\.certificate|student\.bookings|tutor\.bookings|tutor\.dashboard|forums|find-tutors)/';
+        $rows = [];
+        foreach ($items as $position => $item) {
+            $item['group'] = preg_match($learning, (string) ($item['route'] ?? '')) ? 'learning' : 'account';
+            $rows[] = [$item['group'] === 'learning' ? 0 : 1, $position, $item];
+        }
+        usort($rows, fn ($a, $b) => [$a[0], $a[1]] <=> [$b[0], $b[1]]);
+
+        return array_map(fn ($row) => $row[2], $rows);
     }
 
     #[Layout('layouts.app')]
@@ -303,6 +336,6 @@ class Navigation extends Component
     public function logout(Logout $logout): void
     {
         $logout();
-        $this->redirect('/login');
+        $this->redirect(route('login'));
     }
 }

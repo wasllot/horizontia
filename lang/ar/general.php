@@ -12,7 +12,7 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-    'app_name'                                  => 'Lernen',
+    'app_name'                                  => 'Horizontia',
     'profile_settings'                          => 'إعدادات الملف الشخصي',
     'manage_bookings'                           => 'إدارة الحجوزات',
     'student'                                   => 'طالب',

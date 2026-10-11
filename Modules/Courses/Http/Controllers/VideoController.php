@@ -4,44 +4,54 @@ namespace Modules\Courses\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
+/**
+ * Serves private lesson files from a LOCAL disk through a signed, expiring URL.
+ * On remote disks (R2/S3) lessonMediaUrl() hands out presigned URLs instead and this route is unused.
+ * The signature (issued only to enrolled students / instructors / admins) is the authorization.
+ */
 class VideoController extends Controller
 {
+    private const ALLOWED_PREFIXES = ['curriculum_videos/', 'courses/', 'media/videos/', 'assignments/'];
 
-    public function play(Request $request, $path)
+    public function play(Request $request, string $path)
     {
-        if (base64_decode($request->get('type')) == 'courses') {
-            $relativePath = "courses/$path";
-        } elseif (base64_decode($request->get('type')) == 'curriculum_videos') {
-            $relativePath = "curriculum_videos/$path";
-        } else {
-            $relativePath = $path;
+        if (!$request->hasValidSignature()) {
+            abort(403);
         }
 
-        if (
-            !Auth::check() || 
-            !$request->hasValidSignature() || 
-            !Storage::disk(getStorageDisk())->exists($relativePath) ||
-            parse_url($request->headers->get('referer'), PHP_URL_HOST) !== parse_url(config('app.url'), PHP_URL_HOST)
-            ) {
+        $relativePath = ltrim($path, '/');
+        $legacyType = base64_decode((string) $request->get('type'), true);
+        if (in_array($legacyType, ['courses', 'curriculum_videos'], true)) {
+            $relativePath = "$legacyType/$relativePath";
+        }
+
+        if (str_contains($relativePath, '..') || !$this->hasAllowedPrefix($relativePath)) {
             abort(404);
-        }   
+        }
 
-        $path = Storage::disk(getStorageDisk())->path($relativePath);
+        $disk = collect([getPrivateDisk(), getStorageDisk()])->unique()
+            ->first(fn ($d) => !isRemoteDisk($d) && Storage::disk($d)->exists($relativePath));
 
-        $stream = new StreamedResponse(function() use ($path) {
-            $stream = fopen($path, 'rb');
-            fpassthru($stream);
-            fclose($stream);
-        });
+        if (!$disk) {
+            abort(404);
+        }
 
-        $stream->headers->set('Content-Type', mime_content_type($path));
-        $stream->headers->set('Content-Disposition', 'inline; filename="' . $path . '"');
+        return response()->file(Storage::disk($disk)->path($relativePath), [
+            'Cache-Control' => 'private, max-age=3600',
+            'Content-Disposition' => 'inline',
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
+    }
 
-        return $stream;
-        
+    private function hasAllowedPrefix(string $path): bool
+    {
+        foreach (self::ALLOWED_PREFIXES as $prefix) {
+            if (str_starts_with($path, $prefix)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

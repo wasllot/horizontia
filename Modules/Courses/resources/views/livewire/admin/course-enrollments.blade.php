@@ -3,6 +3,7 @@
         <div class="col-lg-12 col-md-12">
             <div class="tb-dhb-mainheading">
                 <h4> {{ __('courses::courses.course_enrolments') .' ('. $orders->total() .')'}}</h4>
+                <button type="button" class="hz-btn hz-btn--sm" wire:click="$toggle('manualOpen')" data-testid="manual-enroll-toggle"><i class="icon-plus" aria-hidden="true"></i> Inscribir manualmente</button>
                 <div class="tb-sortby">
                     <form class="tb-themeform tb-displistform">
                         <fieldset>
@@ -24,6 +25,33 @@
                     </form>
                 </div>
             </div>
+            @if ($manualOpen)
+                <form class="hz-en__form" wire:submit="enrollManually" data-testid="manual-enroll-form">
+                    <strong>Inscribir a un alumno sin pedido</strong>
+                    <small>Para cortesías, pagos por transferencia o errores de cobro. Queda registrado en el log.</small>
+                    <label for="me-email">Correo del alumno</label>
+                    <input id="me-email" type="email" class="form-control" wire:model="manualEmail" placeholder="alumno@correo.com" autocomplete="off">
+                    @error('manualEmail') <small class="hz-en__err">{{ $message }}</small> @enderror
+                    <label for="me-course">Curso</label>
+                    <select id="me-course" class="form-control" wire:model.live="manualCourseId">
+                        <option value="">Elige un curso…</option>
+                        @foreach ($courseOptions as $c)<option value="{{ $c->id }}">{{ html_entity_decode($c->title) }}</option>@endforeach
+                    </select>
+                    @error('manualCourseId') <small class="hz-en__err">{{ $message }}</small> @enderror
+                    @if ($manualDates->isNotEmpty())
+                        <label for="me-date">Fecha</label>
+                        <select id="me-date" class="form-control" wire:model="manualSessionId">
+                            <option value="">Elige una fecha…</option>
+                            @foreach ($manualDates as $d)<option value="{{ $d->id }}">{{ $d->startsLocal()->locale('es')->translatedFormat('j M Y, H:i') }} · {{ $d->city }}</option>@endforeach
+                        </select>
+                        @error('manualSessionId') <small class="hz-en__err">{{ $message }}</small> @enderror
+                    @endif
+                    <div class="hz-en__formacts">
+                        <button type="submit" class="hz-btn hz-btn--sm" wire:loading.attr="disabled">Inscribir</button>
+                        <button type="button" class="hz-btn hz-btn--ghost hz-btn--sm" wire:click="$set('manualOpen', false)">Cerrar</button>
+                    </div>
+                </form>
+            @endif
             <div class="am-disputelist_wrap">
                 <div class="am-disputelist am-custom-scrollbar-y">
                     @if( !$orders->isEmpty() )
@@ -52,14 +80,14 @@
                                     @endphp
                                     <tr>
                                         <td data-label="{{ __('courses::courses.id') }}"><span>{{ $order?->order_id }}</span></td>
-                                        <td data-label="{{ __('courses::courses.transaction_id') }}"><span>{{$order?->orders?->transaction_id }}</span></td>
+                                        <td data-label="{{ __('courses::courses.transaction_id') }}" class="hz-wrapany"><span>{{$order?->orders?->transaction_id }}</span></td>
                                         <td data-label="{{ __('courses::courses.course_title' )}}">
                                             <div class="tb-varification_userinfo">
                                                 <strong class="tb-adminhead__img">
-                                                    @if (!empty($image) && Storage::disk(getStorageDisk())->exists($image))
+                                                    @if (!empty($image) && mediaExists($image))
                                                         <img src="{{ resizedImage($image,34,34) }}" alt="{{$image}}" />
                                                     @else
-                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png',34,34) }}" alt="{{ $image }}" />
+                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png',34,34) }}" alt="{{ $image }}" />
                                                     @endif
                                                 </strong>
     
@@ -71,10 +99,10 @@
                                         <td data-label="{{ __('booking.student_name' )}}">
                                             <div class="tb-varification_userinfo">
                                                 <strong class="tb-adminhead__img">
-                                                    @if (!empty($order?->orders?->userProfile?->image) && Storage::disk(getStorageDisk())->exists($order?->orders?->userProfile?->image))
+                                                    @if (!empty($order?->orders?->userProfile?->image) && mediaExists($order?->orders?->userProfile?->image))
                                                     <img src="{{ resizedImage($order?->orders?->userProfile?->image,34,34) }}" alt="{{$order?->orders?->userProfile?->image}}" />
                                                     @else
-                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $order?->orderable?->student?->image }}" />
+                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $order?->orderable?->student?->image }}" />
                                                     @endif
                                                 </strong>
                                                 <span>{{ $order?->orders?->userProfile?->full_name }}</span>
@@ -84,10 +112,10 @@
                                             <div class="tb-varification_userinfo">
                                                 <strong class="tb-adminhead__img">
                                                    
-                                                    @if (!empty($order?->orderable?->instructor->profile?->image) && Storage::disk(getStorageDisk())->exists($order?->orderable?->instructor->profile?->image))
+                                                    @if (!empty($order?->orderable?->instructor->profile?->image) && mediaExists($order?->orderable?->instructor->profile?->image))
                                                     <img src="{{ resizedImage($order?->orderable?->instructor->profile?->image,34,34) }}" alt="{{$order?->orderable?->instructor->profile?->image}}" />
                                                     @else 
-                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png',34,34) }}" alt="{{ $order?->orderable?->instructor->profile?->image }}" />
+                                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png',34,34) }}" alt="{{ $order?->orderable?->instructor->profile?->image }}" />
                                                     @endif
                                                 </strong>
                                                 <span>{{ $order?->orderable?->instructor->profile?->full_name }}</span>
@@ -101,11 +129,18 @@
                                         </td>
                                         <td data-label="{{ __('courses::courses.status' )}}">
                                             <div class="am-status-tag">
-                                                <em class="tk-project-tag {{ $order?->orders?->status == 'complete' ? 'tk-hourly-tag' : 'tk-fixed-tag' }}">{{ $order?->orders?->status}}</em>
+                                                <em class="tk-project-tag {{ $order?->orders?->status == 'complete' ? 'tk-hourly-tag' : 'tk-fixed-tag' }}">{{ ['pending' => 'Pendiente', 'complete' => 'Pagado', 'processed' => 'Procesado', 'refunded' => 'Reembolsado'][$order?->orders?->status] ?? $order?->orders?->status }}</em>
                                             </div>
                                         </td>
                                         <td data-label="{{ __('courses::courses.course_enrolments_detail') }}">
                                             <ul class="tb-action-icon">
+                                                @if ($order?->orders?->status === 'complete')
+                                                    <li>
+                                                        <x-panel.action icon="icon-refresh-ccw" label="Reembolsar" tone="danger" data-testid="refund-order"
+                                                            wire:click="refund({{ $order->order_id }})"
+                                                            wire:confirm="¿Reembolsar este pedido? {{ $order->orders->payment_method === 'mercadopago' ? 'Se enviará el reembolso a Mercado Pago y ' : '' }}el alumno perderá el acceso al curso." />
+                                                    </li>
+                                                @endif
                                                 <li>
                                                     <div class="am-custom-tooltip">
                                                         <span class="am-tooltip-text">{{ __('courses::courses.view_details') }}</span>

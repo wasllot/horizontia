@@ -148,7 +148,7 @@ if(!function_exists('courseMenuOptions')) {
                         'tutorSortOrder' => 5,
                         'route' => 'courses.tutor.schedule-live-stream',
                         'onActiveRoute' => ['courses.tutor.schedule-live-stream'],
-                        'title' => 'Programar En Vivo',
+                        'title' => 'Programar en vivo',
                         'icon'  => '<i><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#585858" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></i>',
                         'accessibility' => ['tutor'],
                         'disableNavigate' => true,
@@ -157,8 +157,17 @@ if(!function_exists('courseMenuOptions')) {
                         'tutorSortOrder' => 6,
                         'route' => 'courses.tutor.manage-live-streams',
                         'onActiveRoute' => ['courses.tutor.manage-live-streams'],
-                        'title' => 'Mis Sesiones en Vivo',
+                        'title' => 'Mis sesiones en vivo',
                         'icon'  => '<i><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#585858" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7"></path></svg></i>',
+                        'accessibility' => ['tutor'],
+                        'disableNavigate' => true,
+                    ],
+                    [
+                        'tutorSortOrder' => 7,
+                        'route' => 'courses.tutor.content-studio',
+                        'onActiveRoute' => ['courses.tutor.content-studio'],
+                        'title' => 'Estudio de contenido',
+                        'icon'  => '<i><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#585858" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"></path></svg></i>',
                         'accessibility' => ['tutor'],
                         'disableNavigate' => true,
                     ],
@@ -201,6 +210,7 @@ if(!function_exists('courseMenuOptions')) {
                 'courses.admin.courses' => __('courses::courses.all_courses'),
                 'courses.admin.categories' => __('courses::courses.categories'),
                 'courses.admin.course-enrollments' => __('courses::courses.course_enrollments'),
+                'courses.admin.bundles' => 'Paquetes',
             ];
 
             if ((function_exists('isPaidSystem') && isPaidSystem()) || !function_exists('isPaidSystem')) {
@@ -217,6 +227,21 @@ if(!function_exists('courseMenuOptions')) {
             default:
                 return [];
         }
+    }
+}
+
+if (!function_exists('courseEditUrl')) {
+    /** URL of a wizard step; admins use their own route (the instructor one is role:tutor and would bounce them). */
+    function courseEditUrl(string $tab, int|string $id): string
+    {
+        return route(\Modules\Courses\Services\CourseAccess::isAdmin() ? 'courses.admin.edit-course' : 'courses.tutor.edit-course', ['tab' => $tab, 'id' => $id]);
+    }
+}
+
+if (!function_exists('courseListUrl')) {
+    function courseListUrl(): string
+    {
+        return route(\Modules\Courses\Services\CourseAccess::isAdmin() ? 'courses.admin.courses' : 'courses.tutor.courses');
     }
 }
 
@@ -245,9 +270,29 @@ if (!function_exists('getVideoUrl')) {
             }
             return isset($videoId) ? 'https://player.vimeo.com/video/' . $videoId : '';
         } else {
-            // MP4 file
-
-            return Storage::url($curriculum->media_path);
+            // MP4 file (private lesson file: short-lived URL, never a permanent public one)
+            return lessonMediaUrl($curriculum->media_path);
         }
    }
+}
+
+
+if (!function_exists('scormEntryUrl')) {
+    /**
+     * Local installs keep serving SCORM from public/storage; remote private disks (R2/S3)
+     * go through ScormAssetController, which checks enrollment on every file.
+     */
+    function scormEntryUrl($curriculumId, ?string $mediaPath): string
+    {
+        if (empty($mediaPath)) {
+            return '';
+        }
+        if (str_starts_with($mediaPath, 'storage/')) {
+            return asset($mediaPath);
+        }
+        $prefix = 'scorm/' . $curriculumId . '/';
+        $entry = str_starts_with($mediaPath, $prefix) ? substr($mediaPath, strlen($prefix)) : $mediaPath;
+
+        return route('courses.scorm.asset', ['curriculumId' => $curriculumId, 'path' => $entry]);
+    }
 }

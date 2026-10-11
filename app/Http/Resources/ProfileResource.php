@@ -19,7 +19,7 @@ class ProfileResource extends JsonResource
             'user_id'               => $this->whenHas('user_id'),
             'gender'                => $this->whenHas('gender'),
             'recommend_tutor'       => $this->whenHas('recommend_tutor'),
-            'intro_video'           => !empty($this->intro_video) ? url(Storage::url($this->intro_video)) : null,
+            'intro_video'           => !empty($this->intro_video) ? url(mediaUrl($this->intro_video)) : null,
             'native_language'       => $this->whenHas('native_language'),
             'verified'              => !empty($this->verified_at) ? true : false,
             'phone_number'          => $this->whenHas('phone_number'),

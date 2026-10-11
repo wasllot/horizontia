@@ -7,13 +7,13 @@
               <div class="am-hero-container">
                 <div class="am-hero-background">
                   @if(!empty($option['bg_image_one']))
-                    <img src="{{ Storage::url($option['bg_image_one'][0]['path']) }}" alt="Banner slice first image" class="image slice slice1">
+                    <img src="{{ mediaUrl($option['bg_image_one'][0]['path']) }}" alt="Banner slice first image" class="image slice slice1">
                   @endif
                   @if(!empty($option['bg_image_two']))
-                    <img src="{{ Storage::url($option['bg_image_two'][0]['path']) }}" alt="Banner slice second image" class="image slice slice2">
+                    <img src="{{ mediaUrl($option['bg_image_two'][0]['path']) }}" alt="Banner slice second image" class="image slice slice2">
                   @endif
                   @if(!empty($option['bg_image_three']))
-                    <img src="{{ Storage::url($option['bg_image_three'][0]['path']) }}" alt="Banner slice third image" class="image slice slice3">
+                    <img src="{{ mediaUrl($option['bg_image_three'][0]['path']) }}" alt="Banner slice third image" class="image slice slice3">
                   @endif
                 </div>
                 <div class="am-banner-content">
@@ -27,7 +27,7 @@
                       @if(!empty($option['companies_images']))
                         @foreach($option['companies_images'] as $image)
                           @if(!empty($image['path']))
-                            <img src="{{ Storage::url($image['path']) }}" alt="Company image" class="am-partner-logo">
+                            <img src="{{ mediaUrl($image['path']) }}" alt="Company image" class="am-partner-logo">
                           @endif
                         @endforeach
                       @endif

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Modules\LaraPayease\Facades\PaymentDriver;
 use Intervention\Image\Laravel\Facades\Image;
@@ -108,6 +109,18 @@ if (!function_exists('sanitizeTextField')) {
         $filtered = clean($filtered, ['Attr.EnableID' => true]);
 
         return $filtered;
+    }
+}
+
+if (!function_exists('cleanLessonHtml')) {
+    /** Sanitize instructor-written rich text before storing it (it is later printed unescaped to students). */
+    function cleanLessonHtml(?string $html): ?string
+    {
+        if ($html === null || trim($html) === '') {
+            return $html;
+        }
+
+        return clean($html, 'lesson');
     }
 }
 
@@ -387,18 +400,158 @@ if (!function_exists('getStorageDisk')) {
     }
 }
 
+if (!function_exists('isPrivateAcademy')) {
+    /** True when the platform runs as a private academy (no tutor marketplace). */
+    function isPrivateAcademy(): bool
+    {
+        return (bool) config('academy.private_mode');
+    }
+}
+
+if (!function_exists('getPrivateDisk')) {
+    /**
+     * Disk holding paid course content (lesson videos, SCORM, assignments).
+     * Falls back to the public media disk so existing installs keep working.
+     */
+    function getPrivateDisk()
+    {
+        return config('filesystems.private_disk') ?: getStorageDisk();
+    }
+}
+
+if (!function_exists('isRemoteDisk')) {
+    function isRemoteDisk(string $disk): bool
+    {
+        return config("filesystems.disks.$disk.driver") === 's3';
+    }
+}
+
+if (!function_exists('mediaUrl')) {
+    /**
+     * Public URL of a stored file. Unlike Storage::url(), a missing path never throws on S3/R2
+     * (the local driver tolerated null, the S3 adapter does not): it falls back to the placeholder image.
+     */
+    function mediaUrl(?string $path, ?string $disk = null): string
+    {
+        if ($path === null || $path === '') {
+            $path = 'placeholder.png';
+        }
+
+        return $disk ? Storage::disk($disk)->url($path) : Storage::url($path);
+    }
+}
+
+if (!function_exists('mediaThumb')) {
+    /**
+     * URL of a small WebP variant (default 640px wide) of a stored image, created on first use.
+     * Course thumbnails are often multi-MB originals; cards only need ~40 KB. Falls back to the original
+     * on any failure, so a page never breaks because of this.
+     */
+    function mediaThumb(?string $path, int $width = 640): string
+    {
+        if ($path === null || $path === '') {
+            return mediaUrl(null);
+        }
+
+        $disk = getStorageDisk();
+        $variant = 'thumbnails/w' . $width . '/' . md5($path) . '.webp';
+
+        try {
+            if (mediaExists($variant, $disk)) {
+                return mediaUrl($variant, $disk);
+            }
+            if (!mediaExists($path, $disk) || !function_exists('imagewebp')) {
+                return mediaUrl($path, $disk);
+            }
+
+            $image = Image::read(Storage::disk($disk)->get($path))->scaleDown(width: $width);
+            Storage::disk($disk)->put($variant, (string) $image->toWebp(78), ['visibility' => 'public']);
+            Cache::forget('media_exists:' . $disk . ':' . md5($variant));
+
+            return mediaUrl($variant, $disk);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return mediaUrl($path, $disk);
+        }
+    }
+}
+
+if (!function_exists('webpAsset')) {
+    /**
+     * asset() for bundled brand images: uses the optimized .webp sibling (php artisan media:optimize) when present.
+     */
+    function webpAsset(string $path): string
+    {
+        return asset(brandImagePath($path));
+    }
+}
+
+if (!function_exists('mediaExists')) {
+    /**
+     * Storage::exists() with a short cache on remote disks (each call is a network request on R2/S3).
+     */
+    function mediaExists(?string $path, ?string $disk = null): bool
+    {
+        if (empty($path)) {
+            return false;
+        }
+        $disk = $disk ?: getStorageDisk();
+        if (!isRemoteDisk($disk)) {
+            return Storage::disk($disk)->exists($path);
+        }
+        $key = 'media_exists:' . $disk . ':' . md5($path);
+        // Both answers are cached: a missing file (e.g. demo images never copied to R2) used to cost one network
+        // round trip per image on every page view. Writers that create a path call Cache::forget on this key.
+        $cached = Cache::get($key);
+        if ($cached !== null) {
+            return (bool) $cached;
+        }
+        $exists = Storage::disk($disk)->exists($path);
+        Cache::put($key, $exists, $exists ? 3600 : 120);
+        return $exists;
+    }
+}
+
+if (!function_exists('lessonMediaExists')) {
+    /** Private lesson file lookup that also finds legacy files still on the public disk. */
+    function lessonMediaExists(?string $path): bool
+    {
+        return mediaExists($path, getPrivateDisk()) || (getPrivateDisk() !== getStorageDisk() && mediaExists($path, getStorageDisk()));
+    }
+}
+
+if (!function_exists('lessonMediaUrl')) {
+    /**
+     * Short-lived URL for a private lesson file. Remote disks: presigned URL straight from R2/S3.
+     * Local disks: signed route streamed by VideoController (supports HTTP Range).
+     */
+    function lessonMediaUrl(?string $path, int $minutes = 120): ?string
+    {
+        if (empty($path)) {
+            return null;
+        }
+        $disk = getPrivateDisk();
+        if (isRemoteDisk($disk)) {
+            // Pure local signing, no network call. Files that predate the switch must be moved with `php artisan storage:copy`.
+            return Storage::disk($disk)->temporaryUrl($path, now()->addMinutes($minutes));
+        }
+        return URL::temporarySignedRoute('courses.secure.video', now()->addMinutes($minutes), ['path' => ltrim($path, '/')]);
+    }
+}
+
 if (!function_exists('resizedImage')) {
 
     function resizedImage(string $image, int $width, int $height)
     {
         $disk = getStorageDisk();
-        if (!Storage::disk($disk)->exists($image)) {
+        if (!mediaExists($image, $disk)) {
             return null;
         }
 
         $resizedImageName = 'thumbnails/' . uniqueImageName($image, $width . 'x' . $height);
 
-        if (Storage::disk($disk)->exists($resizedImageName)) {
+        if (mediaExists($resizedImageName, $disk)) {
             return Storage::disk($disk)->url($resizedImageName);
         }
 
@@ -490,7 +643,23 @@ if (!function_exists('getCurrencySymbol')) {
     }
 }
 
+if (!function_exists('statusLabel')) {
+    /** Localised label for an order/payment status ("complete" → "Completado"); unknown statuses fall back to a capitalised form. */
+    function statusLabel(?string $status): string
+    {
+        $status = (string) $status;
+        foreach (['booking', 'general'] as $group) {
+            if ($status !== '' && \Illuminate\Support\Facades\Lang::has("$group.$status")) {
+                return __("$group.$status");
+            }
+        }
+
+        return $status === '' ? '' : __(ucfirst(str_replace('_', ' ', $status)));
+    }
+}
+
 if (!function_exists('formatAmount')) {
+    /** The currency symbol is always written inline, at normal size ($1,200.00). `$currencySuperscript` is kept only for old callers. */
     function formatAmount($amount, $currencySuperscript = false)
     {
         $decimals = (int)(!empty(setting('_general.number_of_decimals')) ? setting('_general.number_of_decimals') : 2);
@@ -501,13 +670,13 @@ if (!function_exists('formatAmount')) {
 
         switch ($currencyPosition) {
             case 'left':
-                return $currencySuperscript ? '<sup>' . getCurrencySymbol() . '</sup>' . $formattedAmount : getCurrencySymbol() . $formattedAmount;
+                return getCurrencySymbol() . $formattedAmount;
             case 'right':
-                return $currencySuperscript ? $formattedAmount . '<sup>' . getCurrencySymbol() . '</sup>' : $formattedAmount . getCurrencySymbol();
+                return $formattedAmount . getCurrencySymbol();
             case 'left_space':
-                return $currencySuperscript ? '<sup>' . getCurrencySymbol() . '</sup>' . ' ' . $formattedAmount : getCurrencySymbol() . ' ' . $formattedAmount;
+                return getCurrencySymbol() . ' ' . $formattedAmount;
             case 'right_space':
-                return $currencySuperscript ? $formattedAmount . ' <sup>' . getCurrencySymbol() . '</sup>' : $formattedAmount . ' ' . getCurrencySymbol();
+                return $formattedAmount . ' ' . getCurrencySymbol();
             default:
                 return $formattedAmount;
         }
@@ -526,15 +695,15 @@ if (!function_exists('formatAmountV2')) {
         list($integerPart, $decimalPart) = explode($decimalSeparator, $formattedAmount);
         switch ($currencyPosition) {
             case 'left':
-                return '<sup>' . getCurrencySymbol() . '</sup>' . $integerPart . '.' . '<sub>' . $decimalPart . '</sub>';
+                return getCurrencySymbol() . $integerPart . $decimalSeparator . $decimalPart;
             case 'right':
-                return $integerPart . '.' . '<sub>' . $decimalPart . '</sub>' . '<sup>' . getCurrencySymbol() . '</sup>';
+                return $integerPart . $decimalSeparator . $decimalPart . getCurrencySymbol();
             case 'left_space':
-                return '<sup>' . getCurrencySymbol() . '</sup>' . ' ' . $integerPart . '.' . '<sub>' . $decimalPart . '</sub>';
+                return getCurrencySymbol() . ' ' . $integerPart . $decimalSeparator . $decimalPart;
             case 'right_space':
-                return $integerPart . '.' . '<sub>' . $decimalPart . '</sub>' . ' ' . '<sup>' . getCurrencySymbol() . '</sup>';
+                return $integerPart . $decimalSeparator . $decimalPart . ' ' . getCurrencySymbol();
             default:
-                return $integerPart . '.' . '<sub>' . $decimalPart . '</sub>';
+                return $integerPart . $decimalSeparator . $decimalPart;
         }
     }
 }
@@ -2080,7 +2249,7 @@ if (!function_exists('getGatewayObject')) {
 
         $data  = setting('admin_settings.payment_method');
         $settings = $data[$gateway] ?? null;
-        if (!empty(getCurrentCurrency())) {
+        if (!empty(getCurrentCurrency()) && $gateway !== 'mercadopago') {
             $settings['currency'] = getCurrentCurrency()['code'];
         }
         $gateways = PaymentDriver::supportedGateways();
@@ -2091,6 +2260,11 @@ if (!function_exists('getGatewayObject')) {
 
             if ($gateway == 'payfast') {
                 $keys['webhook_url'] = route('payfast.webhook');
+            }
+
+            if ($gateway == 'mercadopago') {
+                $keys['binary_mode'] = $settings['binary_mode'] ?? '';
+                $keys['max_installments'] = $settings['max_installments'] ?? '';
             }
 
             $gatewayObj = PaymentDriver::{$gateway}();
@@ -2364,8 +2538,11 @@ if (!function_exists('isActiveModule')) {
 if (!function_exists('isPaidSystem')) {
     function isPaidSystem()
     {
-        // Check if the system is configured to support paid features
-        // This can be based on a setting or configuration
+        // A private academy sells courses by definition; otherwise follow the admin setting.
+        if (isPrivateAcademy()) {
+            return true;
+        }
+
         return setting('_general.enable_paid_system') == '1' || setting('_general.enable_paid_system') === true;
     }
 }
@@ -2438,5 +2615,233 @@ if (!function_exists('seo_for_blog')) {
         $seo->reset();
         
         return $seo->forBlogPost($post)->getViewData();
+    }
+}
+
+
+if (!function_exists('recaptchaSiteKey')) {
+    function recaptchaSiteKey(): string
+    {
+        return trim((string) setting('_integrations.recaptcha_site_key'));
+    }
+}
+
+if (!function_exists('recaptchaSecret')) {
+    function recaptchaSecret(): string
+    {
+        return trim((string) setting('_integrations.recaptcha_secret_key'));
+    }
+}
+
+if (!function_exists('recaptchaEnabled')) {
+    /**
+     * reCAPTCHA protects the public forms (login, register, contact, newsletter) only when it is switched on and both keys exist.
+     * Without keys it stays off on purpose: requiring a token nobody can produce would lock people out of login.
+     *
+     * @param string|null $form kept for readability at the call sites; every form is protected together
+     */
+    function recaptchaEnabled(?string $form = null): bool
+    {
+        if (setting('_integrations.enable_recaptcha') != '1' || recaptchaSiteKey() === '' || recaptchaSecret() === '') {
+            return false;
+        }
+
+        return true;
+    }
+}
+
+if (!function_exists('gtmContainerId')) {
+    /** Valid Google Tag Manager container id, or null when GTM is off / misconfigured. `$panel` = the page is a logged-in panel. */
+    function gtmContainerId(bool $panel = false): ?string
+    {
+        if (setting('_integrations.gtm_enabled') != '1') {
+            return null;
+        }
+        if ($panel && setting('_integrations.gtm_in_panels') != '1') {
+            return null;
+        }
+        $id = strtoupper(trim((string) setting('_integrations.gtm_id')));
+
+        return preg_match('/^GTM-[A-Z0-9]{4,12}$/', $id) ? $id : null;
+    }
+}
+
+
+if (!function_exists('whatsappUrl')) {
+    /** wa.me link of the support chat, or null when the button is off or the number is not usable. `$panel` = logged-in area. */
+    function whatsappUrl(bool $panel = false): ?string
+    {
+        if (setting('_integrations.whatsapp_enabled') != '1') {
+            return null;
+        }
+        if ($panel && setting('_integrations.whatsapp_in_panels') != '1') {
+            return null;
+        }
+        $digits = preg_replace('/\D+/', '', (string) setting('_integrations.whatsapp_number'));
+        if (!preg_match('/^[1-9]\d{7,14}$/', (string) $digits)) {
+            return null;
+        }
+        $message = trim(preg_replace('/\s+/', ' ', html_entity_decode(strip_tags((string) setting('_integrations.whatsapp_message')), ENT_QUOTES | ENT_HTML5)));
+
+        return 'https://wa.me/' . $digits . ($message !== '' ? '?text=' . rawurlencode(mb_substr($message, 0, 300)) : '');
+    }
+}
+
+
+if (!function_exists('brandImagePath')) {
+    /** Relative public path of a bundled image: the optimised .webp sibling when it is current, otherwise the original. */
+    function brandImagePath(string $path): string
+    {
+        $webp = preg_replace('/\.(jpe?g|png)$/i', '.webp', $path);
+        if ($webp !== $path && is_file(public_path($webp)) && filemtime(public_path($webp)) >= (is_file(public_path($path)) ? filemtime(public_path($path)) : 0)) {
+            return $webp;
+        }
+
+        return $path;
+    }
+}
+
+if (!function_exists('imgAttrs')) {
+    /**
+     * `width`/`height` (no layout shift) plus lazy/async decoding for a bundled image, e.g. <img src="…" {!! imgAttrs('images/nuevo/x.jpg') !!}>.
+     * Pass `lazy: false` for the image that is visible on first paint.
+     */
+    function imgAttrs(string $path, bool $lazy = true): string
+    {
+        $rel = brandImagePath($path);
+        $file = public_path($rel);
+        $size = is_file($file)
+            ? \Illuminate\Support\Facades\Cache::remember('imgdims:' . $rel . ':' . filemtime($file), 86400, fn () => @getimagesize($file) ?: null)
+            : null;
+        $attrs = $size ? 'width="' . $size[0] . '" height="' . $size[1] . '" ' : '';
+
+        return $attrs . ($lazy ? 'loading="lazy" ' : '') . 'decoding="async"';
+    }
+}
+
+if (!function_exists('logoAsset')) {
+    /** Light logo variant (`.sm.webp`, built by `php artisan media:optimize`) when it exists; the full-size PNG otherwise. */
+    function logoAsset(string $path): string
+    {
+        $small = preg_replace('/\.png$/i', '.sm.webp', $path);
+
+        return is_file(public_path($small)) && filemtime(public_path($small)) >= filemtime(public_path($path)) ? asset($small) : asset($path);
+    }
+}
+
+if (!function_exists('identityDisk')) {
+    /** Where identity documents live: the private disk when configured, otherwise local storage (never a publicly served disk). */
+    function identityDisk(): string
+    {
+        $disk = config('filesystems.private_disk');
+
+        return $disk && $disk !== 'public' ? $disk : 'local';
+    }
+}
+
+if (!function_exists('identityFileName')) {
+    /** A server-chosen name: the client's file name is never trusted (collisions overwrite other people's documents). */
+    function identityFileName(\Illuminate\Http\UploadedFile $file): string
+    {
+        $ext = strtolower($file->guessExtension() ?: 'jpg');
+
+        return \Illuminate\Support\Str::uuid() . '.' . (in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif', 'pdf'], true) ? $ext : 'jpg');
+    }
+}
+
+if (!function_exists('identityFileUrl')) {
+    /** URL of the authenticated route that streams one identity document (owner and admins only). */
+    function identityFileUrl($verification, string $field): ?string
+    {
+        return !empty($verification?->{$field}) && is_string($verification->{$field}) ? route('identity.file', ['verification' => $verification->id, 'field' => $field]) : null;
+    }
+}
+
+if (!function_exists('languageLabel')) {
+    /** Language name in Spanish ("Spanish" -> "Español"); names it does not know are returned as stored. */
+    function languageLabel(?string $name): string
+    {
+        $name = (string) $name;
+        if ($name === '' || !class_exists('Locale')) {
+            return $name;
+        }
+        static $map = null;
+        $map ??= \Illuminate\Support\Facades\Cache::rememberForever('language-names-es', function () {
+            $m = [];
+            foreach (range('a', 'z') as $a) {
+                foreach (range('a', 'z') as $b) {
+                    $en = \Locale::getDisplayLanguage($a . $b, 'en');
+                    if ($en !== '' && $en !== $a . $b) {
+                        $m[$en] = \Locale::getDisplayLanguage($a . $b, 'es');
+                    }
+                }
+            }
+
+            return $m;
+        });
+
+        return isset($map[$name]) ? mb_strtoupper(mb_substr($map[$name], 0, 1)) . mb_substr($map[$name], 1) : $name;
+    }
+}
+
+if (!function_exists('dateEs')) {
+    /** "11 oct 2026" for any date-like value. */
+    function dateEs($date, string $format = 'j M Y'): string
+    {
+        return $date ? \Carbon\Carbon::parse($date)->locale('es')->translatedFormat($format) : '';
+    }
+}
+
+if (!function_exists('currentPageTitle')) {
+    /** Human title of the current route for the browser tab: explicit table first, then the admin breadcrumb. */
+    function currentPageTitle(): ?string
+    {
+        $name = request()->route()?->getName();
+        if (!$name) {
+            return null;
+        }
+        $titles = [
+            'courses.course-list' => 'Mis cursos', 'checkout' => 'Finalizar compra', 'thank-you' => 'Gracias por tu compra', 'payment.pending' => 'Pago pendiente',
+            'courses.tutor.courses' => 'Gestionar cursos', 'courses.tutor.create-course' => 'Crear curso', 'courses.tutor.edit-course' => 'Editar curso',
+            'courses.tutor.course-enrollees' => 'Inscritos del curso', 'courses.tutor.schedule-live-stream' => 'Programar transmisión', 'courses.tutor.manage-live-streams' => 'Transmisiones en vivo',
+            'courses.tutor.assignments' => 'Tareas de los alumnos', 'courses.bundles.index' => 'Paquetes de cursos', 'courses.search-courses' => 'Catálogo de cursos',
+            'student.certificate-list' => 'Mis certificados', 'student.invoices' => 'Mis facturas', 'student.favourites' => 'Mis favoritos', 'student.billing-detail' => 'Datos de facturación',
+            'tutor.dashboard' => 'Panel del instructor', 'tutor.invoices' => 'Facturas', 'tutor.payouts' => 'Pagos',
+            'register' => 'Solicitar acceso', 'access.request' => 'Solicitar acceso', 'login' => 'Iniciar sesión', 'password.request' => 'Recuperar contraseña',
+        ];
+        if (isset($titles[$name])) {
+            return $titles[$name];
+        }
+        try {
+            if (\Diglactic\Breadcrumbs\Breadcrumbs::exists($name)) {
+                $last = \Diglactic\Breadcrumbs\Breadcrumbs::generate($name)->last();
+
+                return $last ? trim(strip_tags((string) $last->title)) : null;
+            }
+        } catch (\Throwable) {
+        }
+
+        return null;
+    }
+}
+
+if (!function_exists('paymentMethodLabels')) {
+    /** Payment methods worth announcing before checkout, from what is actually enabled (never promises OXXO/SPEI without Mercado Pago). */
+    function paymentMethodLabels(): array
+    {
+        $methods = (array) (setting('admin_settings.payment_method') ?? []);
+        $on = fn ($k) => (($methods[$k]['status'] ?? 'off') === 'on');
+        $out = [];
+        if ($on('mercadopago')) {
+            $out = ['Tarjeta'];
+            if (empty($methods['mercadopago']['binary_mode'])) {   // binary mode removes pending payments, i.e. OXXO and SPEI
+                $out[] = 'OXXO';
+                $out[] = 'SPEI';
+            }
+        } elseif ($on('stripe')) {
+            $out = ['Tarjeta'];
+        }
+
+        return $out;
     }
 }

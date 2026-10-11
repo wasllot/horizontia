@@ -6,9 +6,14 @@ use Modules\Courses\Models\Course;
 use Modules\Courses\Models\CourseLiveStream;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Modules\Courses\Livewire\Traits\GuardsCourseAccess;
+use Modules\Courses\Services\CourseAccess;
+use Modules\Courses\Services\LiveSessionService;
 
 class ScheduleLiveStream extends Component
 {
+    use GuardsCourseAccess;
+
     public $courses = [];
     public $course_id = '';
     public $title = '';
@@ -30,7 +35,7 @@ class ScheduleLiveStream extends Component
 
     public function mount()
     {
-        $this->courses = Course::where('instructor_id', auth()->id())
+        $this->courses = Course::when(!CourseAccess::isAdmin(), fn ($q) => $q->where('instructor_id', auth()->id()))
             ->orderBy('title')
             ->get()
             ->unique(fn($c) => mb_strtolower(trim($c->title)));
@@ -47,34 +52,16 @@ class ScheduleLiveStream extends Component
     public function save()
     {
         $this->validate();
+        $course = $this->guardedCourse($this->course_id);   // a posted id must be a course the user manages
 
-        $liveStream = CourseLiveStream::create([
-            'course_id' => $this->course_id,
+        (new LiveSessionService())->create($course, [
             'title' => $this->title,
             'description' => $this->description,
             'meeting_link' => $this->meeting_link,
             'date_time' => $this->date_time,
             'duration_minutes' => $this->duration_minutes,
-            'status' => CourseLiveStream::STATUS_SCHEDULED,
             'notify_hours_before' => $this->notify_hours_before,
         ]);
-
-        // Dispatch email notification here later...
-        // event(new LiveStreamScheduledEvent($liveStream));
-        // Note: Enrollment::student() returns the student's Profile (not a
-        // User) — see Modules/Courses/Models/Enrollment.php — so the user
-        // record (and its email) has to be reached via Profile::user().
-        $course = Course::with('enrollments.student.user')->find($this->course_id);
-        if ($course) {
-            foreach ($course->enrollments as $enrollment) {
-                $studentUser = $enrollment->student?->user;
-                if ($studentUser && $studentUser->email) {
-                    $studentName = $enrollment->student->full_name ?? $studentUser->name ?? 'Estudiante';
-                    \Illuminate\Support\Facades\Mail::to($studentUser->email)
-                        ->queue(new \App\Mail\LiveStreamScheduledEmail($liveStream, $studentName));
-                }
-            }
-        }
 
         // Let the user know it was saved
         session()->flash('success', 'En Vivo programado con éxito.');

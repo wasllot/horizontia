@@ -19,9 +19,10 @@ class Enrollment extends Model
 
     protected $table;
 
-    public function __construct()
+    public function __construct(array $attributes = [])
     {
         $this->table = (config('courses.db_prefix') ?? 'courses_') . 'enrollments';
+        parent::__construct($attributes);   // boots traits and global scopes (SoftDeletes) and fills the attributes
     }
 
     public const STATUSES = [
@@ -53,6 +54,12 @@ class Enrollment extends Model
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class, 'course_id');
+    }
+
+    /** The date chosen when buying an in-person course (null for online courses). */
+    public function session(): BelongsTo
+    {
+        return $this->belongsTo(CourseSession::class, 'session_id');
     }
 
     /**

@@ -13,7 +13,7 @@
             </div>
         </div>
         <div class="am-insights_notice">
-            <p><strong>{!! __('admin/general.note') !!}</strong> <i class="text-warning">{!! __('admin/general.upgrade_warning', ['addons' => '<strong><a href="/admin/packages" class="text-danger">Manage Addons</a></strong>']) !!}</i></p>
+            <p><strong>{!! __('admin/general.note') !!}</strong> <i class="text-warning">{!! __('admin/general.upgrade_warning', ['addons' => '<strong><a href="' . route('admin.packages.index') . '" class="text-danger">Manage Addons</a></strong>']) !!}</i></p>
         </div>
         <div class="am-insights_content am-upgrade">
             <form>

@@ -19,7 +19,7 @@
                                 @if(!empty(pagesetting('pre_heading_image')))
                                     <figure>
                                         @if(!empty(pagesetting('pre_heading_image')[0]['path']))
-                                            <img src="{{url(Storage::url(pagesetting('pre_heading_image')[0]['path']))}}" alt="Heading image">
+                                            <img src="{{url(mediaUrl(pagesetting('pre_heading_image')[0]['path']))}}" alt="Heading image">
                                         @endif
                                     </figure>
                                 @endif
@@ -48,7 +48,7 @@
                             <div class="am-banner_images">
                                 <figure>
                                     @if(!empty(pagesetting('image')[0]['path']))
-                                        <img src="{{url(Storage::url(pagesetting('image')[0]['path']))}}" alt="Banner image">
+                                        <img src="{{url(mediaUrl(pagesetting('image')[0]['path']))}}" alt="Banner image">
                                     @endif
                                 </figure>
                             </div>
@@ -60,7 +60,7 @@
                         @foreach(pagesetting('banner_repeater') as $option)
                             @if(!empty($option['banner_image']))
                                 @if(!empty($option['banner_image'][0]['path']))
-                                    <li><figure><img src="{{url(Storage::url($option['banner_image'][0]['path']))}}" alt="Company logo"></figure></li>
+                                    <li><figure><img src="{{url(mediaUrl($option['banner_image'][0]['path']))}}" alt="Company logo"></figure></li>
                                 @endif
                             @endif
                         @endforeach

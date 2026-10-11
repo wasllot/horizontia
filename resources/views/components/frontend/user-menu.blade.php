@@ -1,9 +1,9 @@
 @props(['multiLang' => true])
 @php
-    if(!empty(auth()?->user()?->profile->image) && Storage::disk(getStorageDisk())->exists(auth()?->user()?->profile?->image)) {
+    if(!empty(auth()?->user()?->profile->image) && mediaExists(auth()?->user()?->profile?->image)) {
         $userImage = resizedImage(auth()?->user()?->profile?->image, 36, 36);
     } else {
-        $userImage = setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 36, 36);
+        $userImage = setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 36, 36);
     }
 @endphp
 @props(['showCart' => true, 'showMessage' => true])
@@ -208,10 +208,10 @@
                 <div class="am-user_info" style="background:linear-gradient(135deg,#667eea15,#764ba215); border-radius:12px; padding:14px; margin:4px 8px 8px; border:1px solid #eee;">
                     <figure style="position:relative;">
                         @if(auth()->user()->hasRole('tutor'))
-                            <a href={{ route('tutor.dashboard') }}><img src="{{ $userImage }}" alt="{{ auth()?->user()?->profile?->full_name }}" style="border:2px solid #667eea;"></a>
+                            <a href="{{ url(auth()->user()->redirect_after_login) }}"><img src="{{ $userImage }}" alt="{{ auth()?->user()?->profile?->full_name }}" style="border:2px solid #667eea;"></a>
                             <span style="position:absolute; bottom:0; right:0; width:10px; height:10px; background:#22c55e; border:2px solid #fff; border-radius:50%;"></span>
                         @elseif(auth()->user()->hasRole('student'))
-                            <a href="{{ route('student.bookings') }}"><img src="{{ $userImage }}" alt="{{ auth()?->user()?->profile?->full_name }}"></a>
+                            <a href="{{ url(auth()->user()->redirect_after_login) }}"><img src="{{ $userImage }}" alt="{{ auth()?->user()?->profile?->full_name }}"></a>
                         @else
                             <a href="{{ auth()->user()->redirect_after_login }}"><img src="{{ $userImage }}" alt="{{ auth()?->user()?->profile?->full_name }}"></a>
                         @endif
@@ -219,7 +219,7 @@
                     <div class="am-user_name">
                         <h6 style="display:flex; align-items:center; gap:6px;">
                             <a href={{ url(auth()->user()->redirect_after_login) }} style="font-weight:700;">{{ auth()?->user()?->profile?->full_name }}</a>
-                            @if(auth()->user()->hasRole('tutor') && !empty(auth()?->user()?->profile?->slug))
+                            @if(auth()->user()->hasRole('tutor') && !empty(auth()?->user()?->profile?->slug) && !isPrivateAcademy())
                                 <a href="{{ route('tutor-detail',['slug' => auth()?->user()?->profile?->slug]) }}" class="am-custom-tooltip">
                                     <span class="am-tooltip-text"><span>{{ __('general.visit_profile') }}</span></span>
                                     <i class="am-icon-external-link-02"></i>
@@ -240,12 +240,14 @@
                         {{ __('sidebar.profile_settings') }}
                     </a>
                 </li>
-                <li>
+                @unless(isPrivateAcademy())
+<li>
                     <a href="{{ route('student.bookings') }}">
                         <i class="am-icon-calender-day"></i>
                         {{ __('sidebar.bookings') }}
                     </a>
                 </li>
+@endunless
                 @if(\Nwidart\Modules\Facades\Module::has('courses') && \Nwidart\Modules\Facades\Module::isEnabled('courses') && function_exists('courseMenuOptions'))
                     @php
                         $courseMenuOptions = courseMenuOptions('student');
@@ -271,18 +273,22 @@
                         {{ __('sidebar.billing_detail') }}
                     </a>
                 </li>
-                <li>
+                @unless(isPrivateAcademy())
+<li>
                     <a href="{{ route('student.favourites') }}">
                         <i class="am-icon-heart-01"></i>
                         {{ __('sidebar.favourites') }}
                     </a>
                 </li>
-                <li>
+@endunless
+                @unless(isPrivateAcademy())
+<li>
                     <a href="{{ route('find-tutors') }}" >
                         <i class="am-icon-user-02"></i>
                         {{__('sidebar.find_tutors') }}
                     </a>
                 </li>
+@endunless
                 @if(\Nwidart\Modules\Facades\Module::has('courses') && \Nwidart\Modules\Facades\Module::isEnabled('courses'))
                     <li>
                         <a href="{{ route('courses.search-courses') }}">
@@ -296,7 +302,8 @@
             @elserole('tutor')
                 {{-- Separator --}}
                 <li style="padding:2px 12px;"><span style="display:block; font-size:.68rem; font-weight:700; color:#bbb; text-transform:uppercase; letter-spacing:.08em;">Panel del Tutor</span></li>
-                <li>
+                @unless(isPrivateAcademy())
+<li>
                     <a href="{{ route('tutor.dashboard') }}" style="display:flex; align-items:center; gap:10px;">
                         <span style="width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,#667eea,#764ba2); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                             <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
@@ -304,6 +311,7 @@
                         {{ __('sidebar.dashboard') }}
                     </a>
                 </li>
+@endunless
                 <li>
                     <a href="{{ route('tutor.profile.personal-details') }}" style="display:flex; align-items:center; gap:10px;">
                         <span style="width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,#43e97b,#38f9d7); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
@@ -331,7 +339,8 @@
                         </a>
                     </li>
                 @endif
-                <li>
+                @unless(isPrivateAcademy())
+<li>
                     <a href="{{ route('tutor.bookings.subjects') }}" style="display:flex; align-items:center; gap:10px;">
                         <span style="width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,#4facfe,#00f2fe); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                             <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -339,6 +348,7 @@
                         {{ __('sidebar.bookings') }}
                     </a>
                 </li>
+@endunless
                 @if (\Nwidart\Modules\Facades\Module::has('forumwise') && \Nwidart\Modules\Facades\Module::isEnabled('forumwise'))
                     <li>
                         <a href="{{ route('forums') }}">
@@ -375,7 +385,8 @@
                         </a>
                     </li>
                 @endif
-                <li>
+                @unless(isPrivateAcademy())
+<li>
                     <a href="{{ route('tutor.invoices') }}" style="display:flex; align-items:center; gap:10px;">
                         <span style="width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,#fa709a,#fee140); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                             <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
@@ -383,6 +394,7 @@
                         {{ __('sidebar.invoices') }}
                     </a>
                 </li>
+@endunless
             @endrole     
             @hasanyrole('tutor|student')
             <li>

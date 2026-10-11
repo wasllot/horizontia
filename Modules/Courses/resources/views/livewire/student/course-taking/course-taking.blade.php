@@ -241,7 +241,7 @@
         @endif
         <div class="cr-sidebar_title">
             <span>{{ __('courses::courses.course_outline') }}</span>
-            <h2>{{ $course->title }}</h2>
+            <h1>{{ $course->title }}</h1>
         </div>
         <div class="cr-sidebar_contentwrap"> 
             <div id="cr-sidebar_accordion" class="cr-sidebar_accordion">
@@ -318,9 +318,26 @@
         </div>
     </div>
     <div class="cr-coursedetails_content">
+        @if($myDate)
+            <link rel="stylesheet" href="{{ asset('css/onsite.css') }}">
+            <section class="ht-aula-date" data-testid="aula-date">
+                <h3>Tu fecha presencial @if($myDate->isCancelled())<small>(cancelada)</small>@endif</h3>
+                <dl>
+                    <dt>Cuándo</dt><dd>{{ $myDate->whenLabel() }}@if($myDate->schedule_note) · {{ $myDate->schedule_note }}@endif</dd>
+                    <dt>Dónde</dt><dd>{{ $myDate->fullAddress() }}</dd>
+                    @if($myDate->venue_notes)<dt>Indicaciones</dt><dd>{{ $myDate->venue_notes }}</dd>@endif
+                </dl>
+                @unless($myDate->isCancelled())
+                    <a href="{{ $myDate->mapUrl() }}" target="_blank" rel="noopener">Cómo llegar</a> ·
+                    <a href="{{ route('courses.onsite.ics', $myDate->id) }}">Añadir al calendario</a>
+                @else
+                    <p>Escríbenos para elegir otra fecha o tramitar tu reembolso.</p>
+                @endunless
+            </section>
+        @endif
         <div wire:ignore class="cr-usercourse_header">
             @role('student')
-                <div x-data="{ progress: @js(floor($progress)) }" 
+                <div x-data="{ progress: @js(floor($progress)), certUrl: @js($certificateUrl) }" x-on:certificate-ready.window="certUrl = $event.detail.url"
                 x-on:updated-progress.window="
                 progress = $event.detail.progress; 
                 if( $event.detail.resultAssigned){
@@ -332,6 +349,7 @@
                     <div class="cr-usercourse_header_progress_bar">
                         <div class="cr-usercourse_header_progress_bar_inner" :style="'width: '+progress+'%'"> </div>
                     </div>
+                    <a x-show="certUrl" x-cloak :href="certUrl" target="_blank" rel="noopener" class="cr-btn" data-testid="cert-link" style="margin-left:12px">🎓 Ver mi certificado</a>
                 </div>
             @endrole
             <div class="cr-usercourse_header_actions">
@@ -371,7 +389,9 @@
                                     @else
                                         <i class="am-icon-book-1"></i> {{ __('courses::courses.next') }}
                                     @endif
+                                    <span class="ht-next-count" aria-live="polite"></span>
                                 </button>
+                                <a href="#" class="ht-next-cancel">Quedarme en esta lección</a>
                             </div>
                         </div>
                     @endif
@@ -392,6 +412,9 @@
                                     const sk = document.getElementById('cr-card-skeleton-{{ $activeCurriculum['id'] }}');
                                     if (sk) sk.style.display = 'none';
                                 });
+                                @role('student')
+                                if (window.crLessonVideo) crLessonVideo.track(player, {{ (int) $activeCurriculum['id'] }}, '{{ route('courses.lesson-position') }}', '{{ csrf_token() }}', {{ (int) app(\App\Services\LessonProgressService::class)->resumeAt(auth()->user(), (int) $activeCurriculum['id']) }});
+                                @endrole
                             })"
                         >
                             <video
@@ -406,17 +429,17 @@
                             </video>
                             <strong class="am-logo">
                                 @if(!empty(setting('_general.watermark_logo')))
-                                    <img src="{{ url(Storage::url(setting('_general.watermark_logo')[0]['path'])) }}" alt="watermark-logo">
+                                    <img src="{{ url(mediaUrl(setting('_general.watermark_logo')[0]['path'])) }}" alt="watermark-logo">
                                 @else
                                     <img src="{{ asset('modules/courses/images/green-logo.png') }}" alt="watermark-logo">
                                 @endif
                             </strong>
                             <div class="cr-video-info" style="background: rgba(0,0,0,0.6); padding: 8px 16px 8px 8px; border-radius: 50px; backdrop-filter: blur(4px);">
                                 <figure style="margin: 0;">
-                                    @if (!empty($course?->instructor?->profile?->image) && Storage::disk(getStorageDisk())->exists($course?->instructor?->profile?->image))
+                                    @if (!empty($course?->instructor?->profile?->image) && mediaExists($course?->instructor?->profile?->image))
                                         <img src="{{ resizedImage($course?->instructor?->profile?->image,50,50) }}" alt="{{ $course?->instructor?->profile?->image }}" style="border-radius: 50%;" />
                                     @else
-                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 50, 50) }}" alt="{{ $course?->instructor?->profile?->image }}" style="border-radius: 50%;" />
+                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 50, 50) }}" alt="{{ $course?->instructor?->profile?->image }}" style="border-radius: 50%;" />
                                     @endif
                                 </figure>
                                 @if(!empty($course?->instructor?->profile?->full_name) || !empty($course?->instructor?->profile?->tagline))
@@ -560,10 +583,10 @@
                                 </div>
                                 <iframe
                                     id="scorm-iframe-{{ $activeCurriculum['id'] }}"
-                                    src="{{ asset($activeCurriculum['media_path']) }}"
+                                    src="{{ scormEntryUrl($activeCurriculum['id'], $activeCurriculum['media_path']) }}"
                                     frameborder="0"
                                     allowfullscreen="true"
-                                    allow="autoplay; fullscreen; microphone; camera"
+                                    allow="autoplay; fullscreen"
                                     x-on:load="loading = false"
                                     :style="loading ? 'opacity:0;pointer-events:none' : 'opacity:1'"
                                     style="width:100%;height:100%;border:none;transition:opacity .3s;">
@@ -594,10 +617,10 @@
                         <div class="" style="width: 100%; display: flex; flex-direction: column;">
                             <div style="width: 100%; height: 75vh; min-height: 600px; border-radius: 8px; overflow: hidden; background: #fff;">
                                 <iframe 
-                                    src="{{ $activeCurriculum['media_path'] }}" 
+                                    src="{{ (new \Modules\Courses\Services\Lessons\GeniallyHandler())->normalize((string) ($activeCurriculum['media_path'] ?? '')) ?? 'about:blank' }}" 
                                     frameborder="0" 
                                     allowfullscreen="true" 
-                                    allow="autoplay; fullscreen; microphone; camera" 
+                                    allow="autoplay; fullscreen" 
                                     style="width: 100%; height: 100%; border: none;">
                                 </iframe>
                             </div>
@@ -608,170 +631,52 @@
                                         && ($activeCurriculum['watchtime']['duration'] == $activeCurriculum['content_length'])
                                         )
                                         @if(!empty($curriculumOrder[$activeCurriculum['id']]))
-                                            <a href="javascript:void(0);" class="am-btn" wire:click.prevent="nextCurriculum({{ $curriculumOrder[$activeCurriculum['id']] }})">Go to next item</a>
+                                            <a href="javascript:void(0);" class="am-btn" wire:click.prevent="nextCurriculum({{ $curriculumOrder[$activeCurriculum['id']] }})">{{ __('courses::courses.next_item') }}</a>
                                         @endif
-                                        <button type="button" class="am-btnnext"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none"><path d="M3.16699 8.66667L6.50033 12L13.8337 4" stroke="#34A853" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg> Completed</button>
+                                        <button type="button" class="am-btnnext"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none"><path d="M3.16699 8.66667L6.50033 12L13.8337 4" stroke="#34A853" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg> {{ __('courses::courses.completed') }}</button>
                                     @else
-                                        <button type="button" class="am-btn" wire:click.prevent="markAsCompleted()">Mark as complete</button>
+                                        <button type="button" class="am-btn" wire:click.prevent="markAsCompleted()">{{ __('courses::courses.mark_as_complete') }}</button>
                                     @endif
                                 </div>
                         @endrole
                     @elseif($activeCurriculum['type'] == 'assignment')
                         @role('student')
-                            @php
-                                $quizJson    = $activeCurriculum['article_content'] ?? '{}';
-                                $quizData    = json_decode($quizJson, true) ?: [];
-                                $quizQs      = $quizData['questions'] ?? [];
-                                $passScore   = $quizData['pass_score'] ?? 70;
-                                $submission  = \Modules\Courses\Models\AssignmentSubmission::where('curriculum_id', $activeCurriculum['id'])
-                                                ->where('user_id', auth()->id())->first();
-                                $answers     = $submission ? json_decode($submission->student_comment ?? '{}', true) : [];
-                                $quizScore   = $submission ? ($submission->score ?? null) : null;
-                            @endphp
-
-                            <div id="quiz-{{ $activeCurriculum['id'] }}" class="cr-quiz-take"
-                                 x-data="quizTake(@js($quizQs), @js($answers), @js($quizScore !== null))">
-
-                                @if(count($quizQs) === 0)
-                                    <div style="padding:2rem;text-align:center;color:#888;">
-                                        <i class="am-icon-check-square" style="font-size:2rem;display:block;margin-bottom:.5rem;"></i>
-                                        Este test aún no tiene preguntas.
-                                    </div>
-                                @else
-                                    {{-- Results view --}}
-                                    <div x-show="submitted" class="cr-quiz-results">
-                                        <div class="cr-quiz-results-icon" :class="score >= {{ $passScore }} ? 'cr-quiz-pass' : 'cr-quiz-fail'">
-                                            <template x-if="score >= {{ $passScore }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#d1fae5"/><path d="M14 25l8 8L34 17" stroke="#17B26A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                            </template>
-                                            <template x-if="score < {{ $passScore }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#fee2e2"/><path d="M17 17l14 14M31 17L17 31" stroke="#EF4444" stroke-width="3" stroke-linecap="round"/></svg>
-                                            </template>
-                                        </div>
-                                        <h3 class="cr-quiz-results-title" x-text="score >= {{ $passScore }} ? '¡Felicitaciones!' : 'Inténtalo de nuevo'"></h3>
-                                        <p class="cr-quiz-results-score">Puntaje: <strong x-text="score + '%'"></strong></p>
-                                        <p class="cr-quiz-results-pass" x-text="score >= {{ $passScore }} ? 'Aprobado' : 'Mínimo requerido: {{ $passScore }}%'"
-                                           :class="score >= {{ $passScore }} ? 'text-success' : 'text-danger'"></p>
-                                        <div class="cr-quiz-review">
-                                            @foreach($quizQs as $qi => $q)
-                                                <div class="cr-quiz-review-item" :class="parseInt(userAnswers[{{ $qi }}]) === {{ $q['correct'] }} ? 'cr-quiz-review-correct' : 'cr-quiz-review-wrong'">
-                                                    <p><strong>{{ $qi + 1 }}. {{ $q['text'] }}</strong></p>
-                                                    <p>Tu respuesta: <em x-text="userAnswers[{{ $qi }}] !== undefined ? questions[{{ $qi }}].options[userAnswers[{{ $qi }}]] : '—'"></em></p>
-                                                    @if(isset($q['options'][$q['correct']]))
-                                                        <p>Correcta: <em>{{ $q['options'][$q['correct']] }}</em></p>
-                                                    @endif
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                        <div style="display:flex;gap:1rem;justify-content:center;margin-top:1.5rem;">
-                                            <button type="button" class="am-btn" @click="retakeQuiz()">Volver a intentar</button>
-                                            @if(!empty($curriculumOrder[$activeCurriculum['id']]))
-                                                <a href="javascript:void(0);" class="am-btn" wire:click.prevent="nextCurriculum({{ $curriculumOrder[$activeCurriculum['id']] }})">Siguiente lección</a>
-                                            @endif
-                                        </div>
-                                    </div>
-
-                                    {{-- Quiz form --}}
-                                    <div x-show="!submitted" class="cr-quiz-form">
-                                        <div class="cr-quiz-form-header">
-                                            <h4>Test — {{ count($quizQs) }} {{ count($quizQs) === 1 ? 'pregunta' : 'preguntas' }}</h4>
-                                            <span>Mínimo para aprobar: {{ $passScore }}%</span>
-                                        </div>
-                                        @foreach($quizQs as $qi => $q)
-                                            <div class="cr-quiz-form-question">
-                                                <p class="cr-quiz-form-qtext"><span class="cr-quiz-qnum">{{ $qi + 1 }}</span> {{ $q['text'] }}</p>
-                                                <div class="cr-quiz-form-options">
-                                                    @foreach($q['options'] as $oi => $opt)
-                                                        <label class="cr-quiz-form-opt" :class="userAnswers[{{ $qi }}] === {{ $oi }} ? 'cr-quiz-form-opt-selected' : ''">
-                                                            <input type="radio" name="q{{ $qi }}" value="{{ $oi }}"
-                                                                   x-model.number="userAnswers[{{ $qi }}]"
-                                                                   @change="userAnswers[{{ $qi }}] = {{ $oi }}">
-                                                            <span>{{ $opt }}</span>
-                                                        </label>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                        <div class="cr-quiz-form-actions">
-                                            <button type="button" class="am-btn" @click="submitQuiz()"
-                                                    :disabled="!allAnswered">
-                                                <span x-show="!allAnswered">Responde todas las preguntas</span>
-                                                <span x-show="allAnswered">Enviar respuestas</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-
-                            @push('scripts')
-                            <script>
-                            function quizTake(questions, savedAnswers, alreadySubmitted) {
-                                const totalQ = questions.length;
-                                return {
-                                    questions,
-                                    userAnswers: savedAnswers && Object.keys(savedAnswers).length ? savedAnswers : {},
-                                    submitted: alreadySubmitted,
-                                    score: 0,
-                                    get allAnswered() {
-                                        return totalQ > 0 && Object.keys(this.userAnswers).length === totalQ;
-                                    },
-                                    init() {
-                                        if (this.submitted) this.calcScore();
-                                    },
-                                    calcScore() {
-                                        let correct = 0;
-                                        this.questions.forEach((q, i) => {
-                                            if (parseInt(this.userAnswers[i]) === parseInt(q.correct)) correct++;
-                                        });
-                                        this.score = totalQ > 0 ? Math.round((correct / totalQ) * 100) : 0;
-                                    },
-                                    submitQuiz() {
-                                        this.calcScore();
-                                        @this.call('submitQuiz', this.userAnswers, this.score);
-                                        this.submitted = true;
-                                    },
-                                    retakeQuiz() {
-                                        this.userAnswers = {};
-                                        this.submitted = false;
-                                        this.score = 0;
-                                    }
-                                };
-                            }
-                            </script>
-                            @endpush
+                            @include('courses::livewire.student.course-taking.partials.quiz')
                         @endrole
+                    @elseif($activeCurriculum['type'] == 'live')
+                        @include('courses::livewire.student.course-taking.partials.live')
                     @elseif($activeCurriculum['type'] == 'article')
                         @role('student')     
                             <div 
                                 id="article-{{ $activeCurriculum['id'] }}"
                                 class="cr-coursedetails_article" 
                             >
-                                <div class="cr-coursedetails_article_wrap">{!! $activeCurriculum['article_content'] !!}</div>
+                                <div class="cr-coursedetails_article_wrap">{!! cleanLessonHtml($activeCurriculum['article_content']) !!}</div>
                                 <div class="cr-coursedetails_article_actions">                                 
                                     @if( 
                                         isset($activeCurriculum['watchtime']['duration']) && isset($activeCurriculum['content_length'])
                                         && ($activeCurriculum['watchtime']['duration'] == $activeCurriculum['content_length'])
                                         )
                                         @if(!empty($curriculumOrder[$activeCurriculum['id']]))
-                                            <a href="javascript:void(0);" class="am-btn" wire:click.prevent="nextCurriculum({{ $curriculumOrder[$activeCurriculum['id']] }})">Go to next item</a>
+                                            <a href="javascript:void(0);" class="am-btn" wire:click.prevent="nextCurriculum({{ $curriculumOrder[$activeCurriculum['id']] }})">{{ __('courses::courses.next_item') }}</a>
                                         @endif
-                                        <button type="button" class="am-btnnext"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none"><path d="M3.16699 8.66667L6.50033 12L13.8337 4" stroke="#34A853" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg> Completed</button>
+                                        <button type="button" class="am-btnnext"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none"><path d="M3.16699 8.66667L6.50033 12L13.8337 4" stroke="#34A853" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg> {{ __('courses::courses.completed') }}</button>
                                     @else
-                                        <button type="button" class="am-btn" wire:click.prevent="markAsCompleted()">Mark as complete</button>
+                                        <button type="button" class="am-btn" wire:click.prevent="markAsCompleted()">{{ __('courses::courses.mark_as_complete') }}</button>
                                     @endif
                                 </div>
 
                             </div>
                         @else
                             <div id="article-{{ $activeCurriculum['id'] }}" class="cr-coursedetails_article" >
-                                <div class="cr-coursedetails_article_wrap">{!! $activeCurriculum['article_content'] !!}</div>
+                                <div class="cr-coursedetails_article_wrap">{!! cleanLessonHtml($activeCurriculum['article_content']) !!}</div>
                             </div>
                         @endrole
                     @endif
                 @else
                     <div wire:ignore class="cr-image-wrapper" x-data="{
                         isPlaying: false,
-                        url : '{{ asset(Storage::url($course?->promotionalVideo?->path)) }}',
+                        url : '{{ asset(mediaUrl($course?->promotionalVideo?->path)) }}',
                         playVideo() {
                             this.isPlaying = true;
                             this.$nextTick(() => {
@@ -787,13 +692,13 @@
                         </template>
                         <template x-if="!isPlaying">
                             <figure class="cr-image-wrapper">
-                                @if(!empty($course->thumbnail?->path) && Storage::disk(getStorageDisk())->exists($course->thumbnail?->path))
-                                    <img src="{{ Storage::url($course->thumbnail->path) }}" alt="{{ $course->title }}" class="cr-background-image" />
+                                @if(!empty($course->thumbnail?->path) && mediaExists($course->thumbnail?->path))
+                                    <img loading="lazy" decoding="async" src="{{ mediaThumb($course->thumbnail->path, 640) }}" alt="{{ $course->title }}" class="cr-background-image" />
                                 @else
                                     <img src="{{ asset('modules/courses/images/course.png') }}" alt="{{ $course->title }}" class="cr-background-image--placeholder" />
                                 @endif
                             
-                                @if(!empty($course?->promotionalVideo?->path) && Storage::disk(getStorageDisk())->exists($course?->promotionalVideo?->path))
+                                @if(!empty($course?->promotionalVideo?->path) && mediaExists($course?->promotionalVideo?->path))
                                     <figcaption @click="playVideo">
                                         <button >
                                             <i class="am-icon-play-filled"></i>
@@ -823,6 +728,16 @@
                         <li class="nav-item cr-coursecontent_tab" :class="{ 'active': activeTab === 'cr-noticeboard' }" role="cr-coursecontent_tab">
                             <button class="nav-link" @click="activeTab = 'cr-noticeboard'" id="cr-noticeboard-tab" data-bs-toggle="tab" data-bs-target="#cr-noticeboard" type="button" role="tab" aria-controls="cr-noticeboard" aria-selected="false">{{ __('courses::courses.noticeboard') }}</button>
                         </li>
+                        @if (\App\Services\CommunityService::enabled())
+                        <li class="nav-item cr-coursecontent_tab" :class="{ 'active': activeTab === 'cr-community' }" role="cr-coursecontent_tab">
+                            <button class="nav-link" @click="activeTab = 'cr-community'" id="cr-community-tab" data-bs-toggle="tab" data-bs-target="#cr-community" type="button" role="tab" aria-controls="cr-community" aria-selected="false" data-testid="community-tab">Comunidad</button>
+                        </li>
+                        @endif
+                        @role('student')
+                        <li class="nav-item cr-coursecontent_tab" :class="{ 'active': activeTab === 'cr-notes' }" role="cr-coursecontent_tab">
+                            <button class="nav-link" @click="activeTab = 'cr-notes'" id="cr-notes-tab" data-bs-toggle="tab" data-bs-target="#cr-notes" type="button" role="tab" aria-controls="cr-notes" aria-selected="false" data-testid="notes-tab">Mis notas</button>
+                        </li>
+                        @endrole
                         @if(isset($course->liveStreams) && $course->liveStreams->count() > 0)
                         <li class="nav-item cr-coursecontent_tab" :class="{ 'active': activeTab === 'cr-livestreams' }" role="cr-coursecontent_tab">
                             <button class="nav-link" @click="activeTab = 'cr-livestreams'" id="cr-livestreams-tab" data-bs-toggle="tab" data-bs-target="#cr-livestreams" type="button" role="tab" aria-controls="cr-livestreams" aria-selected="false">Próximos En Vivo</button>
@@ -831,90 +746,6 @@
                     </ul>
                     <div class="cr-coursecontent_tabs_content tab-content" id="cr-tab-content" wire:ignore.self>
                         <div wire:ignore.self class="tab-pane fade active" x-bind:class="{ 'show active': activeTab === 'cr-overview' }" id="cr-overview" role="tabpanel" aria-labelledby="cr-overview-tab">
-                            <section class="cr-course-details-banner">
-                                <div class="cr-course-details-area">
-                                    <div class="cr-course-details-info">
-                                        @if (!empty($course->title) || !empty($course->subtitle))
-                                            <div class="am-searchhead_title">
-                                                <div class="cr-title-box">
-                                                    @if (!empty($course->title))
-                                                        <h2>{{ $course->title }}</h1>
-                                                    @endif
-                                                    <span data-toggle="modal" data-bs-toggle="modal" data-bs-target="#back-confirm-popup"><em>{{ __('courses::courses.in') }}:</em> {!! $course->category?->name !!}</span>
-                                                </div>
-                                                @if (!empty($course->subtitle))
-                                                    <p>{{ $course->subtitle }}</p>
-                                                @endif
-                                            </div>
-                                        @endif
-                                        <div class="cr-course-meta">
-                                            <div class="cr-rating-container">
-                                                <span @class([
-                                                    'cr-stars',
-                                                    'cr-' . floor($course->ratings_avg_rating) . 'star' => !empty($course->ratings_count)
-                                                ])>
-                                                    @for ($i = 1; $i <= 5; $i++)
-                                                        <i class="am-icon-star-01"></i>
-                                                    @endfor
-                                                </span>
-                                                <span class="cr-rating-score">{{ number_format($course->ratings_avg_rating, 1) }}</span>
-                                                <span class="cr-review-count">({{ $course->ratings_count }} {{ __('courses::courses.reviews') }})</span>
-                                            </div>
-                                          
-                                            @if (!empty($course->updated_at))
-                                                <div class="cr-last-updated">
-                                                    <span>
-                                                        <i class="am-icon-time"></i>
-                                                    </span>
-                                                    <span class="cr-update-date">{{ __('courses::courses.last_updated') }}: {{ \Carbon\Carbon::parse($course->updated_at)->format('M d, Y') }}</span>
-                                                </div>
-                                            @endif
-                                        </div>
-                                        <div class="cr-course-stats">
-                                            @if (!empty($course->level))
-                                                <div class="cr-stat-item">
-                                                    <div class="cr-stat-icon-wrapper">
-                                                        <i class="am-icon-bar-chart-04"></i>
-                                                    </div>
-                                                    <div class="cr-stat-content">
-                                                        <span class="cr-stat-label">{{ __('courses::courses.level') }}</span>
-                                                        <span class="cr-stat-value">{{ __('courses::courses.'. $course->level) }}</span>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                            @if (!empty($course->language))
-                                                <div class="cr-stat-item">
-                                                    <div class="cr-stat-icon-wrapper">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="none"><path opacity="0.7" d="M13.75 8C13.75 11.4518 10.9518 14.25 7.5 14.25M13.75 8C13.75 4.54822 10.9518 1.75 7.5 1.75M13.75 8C13.75 6.61929 10.9518 5.5 7.5 5.5C4.04822 5.5 1.25 6.61929 1.25 8M13.75 8C13.75 9.38071 10.9518 10.5 7.5 10.5C4.04822 10.5 1.25 9.38071 1.25 8M7.5 14.25C4.04822 14.25 1.25 11.4518 1.25 8M7.5 14.25C8.88071 14.25 10 11.4518 10 8C10 4.54822 8.88071 1.75 7.5 1.75M7.5 14.25C6.11929 14.25 5 11.4518 5 8C5 4.54822 6.11929 1.75 7.5 1.75M1.25 8C1.25 4.54822 4.04822 1.75 7.5 1.75" stroke="#585858" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                                    </div>
-                                                    <div class="cr-stat-content">
-                                                        <span class="cr-stat-label">{{ __('courses::courses.language') }}</span>
-                                                        <span class="cr-stat-value">{{ $course->language?->name }}</span>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                            <div class="cr-stat-item">
-                                                <div class="cr-stat-icon-wrapper">
-                                                    <i class="am-icon-user-group"></i>
-                                                </div>
-                                                <div class="cr-stat-content">
-                                                    <span class="cr-stat-label">{{ __('courses::courses.enrolments') }}</span>
-                                                    <span class="cr-stat-value">{{ number_format($course?->enrollments_count ?? 0) }} {{$course?->enrollments_count == 1 ? __('courses::courses.student') : __('courses::courses.students') }}</span>
-                                                </div>
-                                            </div>
-                                            <div class="cr-stat-item">
-                                                <div class="cr-stat-icon-wrapper">
-                                                    <i class="am-icon-eye-open-01"></i>
-                                                </div>
-                                                <div class="cr-stat-content">
-                                                    <span class="cr-stat-label">{{ __('courses::courses.views') }}</span>
-                                                    <span class="cr-stat-value">{{ number_format($course->views_count) }}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
                             @if (!empty($course->description))
                                 <div class="cr-overview-course cr-desc-section" 
                                     x-bind:class="{ 'cr-desc-section-show': showMore }" 
@@ -961,7 +792,7 @@
                                                             </span>
                                                         </label>
                                                         <div class="accordion-content">
-                                                            <p>{!! $faq->answer !!}</p>
+                                                            <p>{!! cleanLessonHtml($faq->answer) !!}</p>
                                                         </div>
                                                     </div>
                                                 @endforeach
@@ -973,7 +804,7 @@
                                     <div class="cr-overview-course" id="prerequisites">
                                         <h3>{{ __('courses::courses.prerequisites_title') }}</h3>
                                         <div class="cr-prerequisites-frame">
-                                        {!! $course->prerequisites !!}
+                                        {!! cleanLessonHtml($course->prerequisites) !!}
                                         </div>
                                     </div>
                                 @endif
@@ -995,14 +826,32 @@
                                 </div>
                             </div>
                         @endif
+                        @if (\App\Services\CommunityService::enabled())
+                            <div wire:ignore.self class="tab-pane fade" x-bind:class="{ 'show active': activeTab === 'cr-community' }" id="cr-community" role="tabpanel" aria-labelledby="cr-community-tab">
+                                <div class="cr-overview-course">
+                                    <h3>Comunidad del curso</h3>
+                                    @livewire('frontend.course-community', ['courseId' => $course->id], key('community-' . $course->id))
+                                </div>
+                            </div>
+                        @endif
+                        @role('student')
+                        @if (!empty($activeCurriculum['id']))
+                            <div wire:ignore.self class="tab-pane fade" x-bind:class="{ 'show active': activeTab === 'cr-notes' }" id="cr-notes" role="tabpanel" aria-labelledby="cr-notes-tab">
+                                <div class="cr-overview-course">
+                                    <h3>Mis notas</h3>
+                                    @livewire('frontend.lesson-notes', ['courseId' => $course->id, 'curriculumId' => (int) $activeCurriculum['id']], key('notes-' . $activeCurriculum['id']))
+                                </div>
+                            </div>
+                        @endif
+                        @endrole
                         <div wire:ignore.self class="tab-pane fade cr-noticeboard-tab" x-bind:class="{ 'show active': activeTab === 'cr-noticeboard' }" id="cr-noticeboard" role="tabpanel" aria-labelledby="cr-noticeboard-tab">
                             <div class="cr-forum-item-wrapper">
                                 @if($course->noticeboards->count() > 0)
                                     <h3>{{ __('courses::courses.noticeboard') }}</h3>
                                     @foreach ($course->noticeboards as $noticeboard)
                                         <div class="cr-noticeboard-item">
-                                            <span class="cr-noticeboard_date">{{ $noticeboard?->created_at?->format('M d, Y') }}</span>
-                                            <p>{!! $noticeboard->content !!}</p>
+                                            <span class="cr-noticeboard_date">{{ dateEs($noticeboard?->created_at) }}</span>
+                                            <p>{!! cleanLessonHtml($noticeboard->content) !!}</p>
                                         </div>
                                     @endforeach
                                 @else
@@ -1036,10 +885,12 @@
                                                             <p class="mt-1 text-gray-700 dark:text-gray-300">{{ $liveStream->description }}</p>
                                                         @endif
                                                     </div>
-                                                    @if($liveStream->meeting_link)
-                                                        <a href="{{ $liveStream->meeting_link }}" target="_blank" class="am-btn am-btn-sm bg-blue-600 !text-white hover:bg-blue-700 rounded px-4 py-2 text-sm transition-colors">
+                                                    @if(in_array(\Modules\Courses\Services\LiveSessionService::phase($liveStream), ['soon', 'live'], true) && $liveStream->meeting_link)
+                                                        <a href="{{ $liveStream->meeting_link }}" target="_blank" rel="noopener noreferrer" class="am-btn am-btn-sm bg-blue-600 !text-white hover:bg-blue-700 rounded px-4 py-2 text-sm transition-colors">
                                                             Unirse a la llamada
                                                         </a>
+                                                    @else
+                                                        <span class="text-xs text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">{{ __('El enlace se habilita 15 minutos antes') }}</span>
                                                     @endif
                                                 </li>
                                             @endforeach
@@ -1088,7 +939,7 @@
                                                         $total_duration = $course->curriculums->where('type', 'video')->sum('content_length');
                                                     @endphp
                                                     <span class="cr-includes-value">{{ number_format($totalVideos) }}</span>
-                                                    <span class="cr-includes-label">{{ $totalVideos == 1 ? __('courses::courses.video') : __('courses::courses.videos') }} of {{ getCourseDuration($total_duration) }}</span>
+                                                    <span class="cr-includes-label">{{ $totalVideos == 1 ? __('courses::courses.video') : __('courses::courses.videos') }} · {{ getCourseDuration($total_duration) }}</span>
                                                 </div>
                                             </li>
                                         @endif
@@ -1122,7 +973,7 @@
                                             @enderror
                                         </div>
                                         <div class="cr-rating-form" x-data="{ show: false, description: @entangle('description') }">
-                                            <textarea class="form-control" placeholder="{{ __('courses::courses.write_description') }}" x-model="description"></textarea>
+                                            <textarea class="form-control" aria-label="Tu comentario sobre el curso" placeholder="{{ __('courses::courses.write_description') }}" x-model="description"></textarea>
                                             <template x-if=" description?.length > 0">
                                                 <div class="cr-character-count-wrapper">
                                                     <span class="cr-character-count" x-text="1000 - description.length"></span> 
@@ -1166,7 +1017,7 @@
                                 <div class="am-tutordetail_user" onclick="window.open(`{{ route('tutor-detail',['slug' => $course->instructor?->profile?->slug]) }}`, '_blank')">
                                     @if(!empty($course->instructor->profile?->image))
                                         <figure class="am-tutorvone_img">
-                                            <img src="{{ url(Storage::url($course->instructor->profile?->image)) }}" alt="{{ $course->instructor->profile?->short_name }}">
+                                            <img src="{{ url(mediaUrl($course->instructor->profile?->image)) }}" alt="{{ $course->instructor->profile?->short_name }}">
                                         </figure>
                                     @endif
                                     <div class="am-tutordetail_user_name">
@@ -1220,6 +1071,7 @@
                                             <span> {{ number_format( $this->instructorCoursesCount ) }} <em>{{ $this->instructorCoursesCount == 1 ? __('courses::courses.course') : __('courses::courses.courses') }}</em></span>
                                         </div>
                                     </li>
+                                    @unless(isPrivateAcademy())
                                     <li>
                                         <div class="am-tutorreview-item">
                                             <div class="am-tutorreview-item_icon">
@@ -1240,7 +1092,7 @@
                                                         </li>
                                                     @endif
                                                     @foreach ($course->instructor->languages->take(2) as $language)
-                                                        <li><span>{{ ucfirst($language->name) }}</span></li>
+                                                        <li><span>{{ languageLabel($language->name) }}</span></li>
                                                     @endforeach
                                                     @if($course->instructor->languages->count() > 2)
                                                         <li><span>+{{ $course->instructor->languages->count() - 2 }} {{ __('courses::courses.more') }}</span></li>
@@ -1250,6 +1102,7 @@
                                         </div>
                                         @endif
                                     </li>
+                                    @endunless
                                 </ul>
                                 @if( !empty($course->instructor?->profile?->description))
                                     <p class="cr-instructor-bio">   
@@ -1280,9 +1133,11 @@
                                             @endforeach
                                         </ul>
                                     @endif
+                                    @unless(isPrivateAcademy())
                                     <a href="{{ route('tutor-detail', ['slug' => $course->instructor?->profile->slug]) }}">
                                         <button class="cr-view-profile-btn">{{ __('courses::courses.view_profile') }}</button>
                                     </a>
+                                    @endunless
                                 </div>
                             </div>
                         @endif
@@ -1303,7 +1158,7 @@
                     <div class="am-share-link" x-data="{copied: false, textToCopy: '{{ route('courses.course-detail', ['slug' => $course->slug]) }}'}">
                         <label>{{ __('courses::courses.url') }}</label>
                         <div class="cr-copy-link">
-                            <input type="text" disabled class="form-control" readonly value="{{ route('courses.course-detail', ['slug' => $course->slug]) }}">
+                            <input type="text" disabled class="form-control" aria-label="Enlace del curso" readonly value="{{ route('courses.course-detail', ['slug' => $course->slug]) }}">
                             <button @click="navigator.clipboard.writeText(textToCopy).then(() => { copied = true; setTimeout(() => copied = false, 1000) }).catch(() => {})" class="cr-btncopy">
                                 <i class="am-icon-copy-01"></i>
                                 <template x-if="copied">
@@ -1368,10 +1223,14 @@
             </div>
         </div>
     @endif
+    @if (!empty($activeCurriculum['id']))
+        @livewire('frontend.ai-tutor', ['courseId' => $course->id, 'curriculumId' => $activeCurriculum['id']], key('ai-tutor-' . $activeCurriculum['id']))
+    @endif
 </div>
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('modules/courses/css/main.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/lesson-player.css') }}?v={{ @filemtime(public_path('css/lesson-player.css')) }}">
     @vite([
         'public/css/videojs.css',
         'public/css/flags.css',
@@ -1379,6 +1238,7 @@
 @endpush
 
 @push('scripts')
+    <script src="{{ asset('js/lesson-player.js') }}?v={{ @filemtime(public_path('js/lesson-player.js')) }}"></script>
     <script defer src="{{ asset('modules/courses/js/nouislider.min.js')}}"></script>
     <script src="{{ asset('js/video.min.js') }}"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
@@ -1403,8 +1263,18 @@
             })();
         }, 1000);
         
+        // When a lesson ends the "next" card appears and moves on by itself after 8 s (the student can stay).
         function showNextItemContent (){
-            $('.cr-next-curriculum').removeClass('d-none');
+            const box = $('.cr-next-curriculum').removeClass('d-none');
+            const btn = box.find('.cr-next-curriculum_btn')[0];
+            if (!btn || window.__htNextTimer) return;
+            const label = btn.querySelector('.ht-next-count');
+            let n = 8;
+            const stop = () => { clearInterval(window.__htNextTimer); window.__htNextTimer = null; if (label) label.textContent = ''; };
+            const tick = () => { if (label) label.textContent = ' · en ' + n + ' s'; if (n-- <= 0) { stop(); btn.click(); } };
+            tick();
+            window.__htNextTimer = setInterval(tick, 1000);
+            box.find('.ht-next-cancel').off('click').on('click', (e) => { e.preventDefault(); stop(); });
         }
 
         // document.addEventListener('livewire:initialized', () => {

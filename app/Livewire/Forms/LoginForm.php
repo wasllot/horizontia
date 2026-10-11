@@ -30,7 +30,7 @@ class LoginForm extends Form
      */
     public function authenticate(): void
     {
-        if (setting('_general.enable_recaptcha') == '1') {
+        if (recaptchaEnabled('login')) {
             $this->validate([
                 'recaptchaToken' => ['required', new \App\Rules\RecaptchaRule],
             ], [

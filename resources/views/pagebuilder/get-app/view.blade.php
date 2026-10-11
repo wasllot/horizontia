@@ -12,10 +12,10 @@
                             @if(!empty(pagesetting('app_store_image')) || !empty(pagesetting('google_image')))
                             <div class="am-coming-soon_btns" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="500">
                                 @if(!empty(pagesetting('app_store_image')[0]['path']))
-                                    <img src="{{url(Storage::url(pagesetting('app_store_image')[0]['path']))}}" alt="App store image">
+                                    <img src="{{url(mediaUrl(pagesetting('app_store_image')[0]['path']))}}" alt="App store image">
                                 @endif
                                 @if(!empty(pagesetting('google_image')[0]['path']))
-                                    <img src="{{url(Storage::url(pagesetting('google_image')[0]['path']))}}" alt="Google play store image">
+                                    <img src="{{url(mediaUrl(pagesetting('google_image')[0]['path']))}}" alt="Google play store image">
                                 @endif
                             </div>
                             @endif
@@ -23,7 +23,7 @@
                         @if(!empty(pagesetting('mobile_image')))
                             <figure data-aos="fade-left"  data-aos-duration="500" data-aos-easing="linear" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="600">
                                 @if(!empty(pagesetting('mobile_image')[0]['path']))
-                                    <img src="{{url(Storage::url(pagesetting('mobile_image')[0]['path']))}}" alt="Mobile image">
+                                    <img src="{{url(mediaUrl(pagesetting('mobile_image')[0]['path']))}}" alt="Mobile image">
                                 @endif
                             </figure>
                         @endif

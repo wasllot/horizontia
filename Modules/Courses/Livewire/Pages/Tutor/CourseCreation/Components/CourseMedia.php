@@ -3,9 +3,12 @@
 
 namespace Modules\Courses\Livewire\Pages\Tutor\CourseCreation\Components;
 
+use Illuminate\Support\Facades\Storage;
 use Modules\Courses\Models\Course;
 use Modules\Courses\Services\CourseService;
 use Livewire\Component;
+use Livewire\Attributes\Locked;
+use Modules\Courses\Livewire\Traits\GuardsCourseAccess;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Str;
 use Modules\Courses\Http\Requests\CourseMediaRequest;
@@ -15,7 +18,9 @@ class CourseMedia extends Component
 {
     use WithFileUploads;
     use AdminAwareCourseRouting;
+    use GuardsCourseAccess;
 
+    #[Locked]
     public $courseId;
     public $course;
     public $coursePromotionalVideo;
@@ -41,12 +46,12 @@ class CourseMedia extends Component
     public function mount()
     {
         $this->courseId     = request()->route('id');
+        $this->guardedCourse($this->courseId);
         $this->course       = Course::with(['thumbnail', 'promotionalVideo'])->findOrFail($this->courseId);
         $this->thumbnail    = $this->course?->thumbnail ? $this->course?->thumbnail?->path : null;
         if ($this->thumbnail) {
-            $thumbnailPath = storage_path('app/public/' . $this->thumbnail);
-            if (file_exists($thumbnailPath)) {
-                $this->thumbnailSize = filesize($thumbnailPath);
+            if (mediaExists($this->thumbnail)) {
+                $this->thumbnailSize = Storage::disk(getStorageDisk())->size($this->thumbnail);
                 $this->thumbnailSize = (round($this->thumbnailSize / 1000, 2));
             } else {
                 $this->thumbnailSize = 0;
@@ -58,9 +63,8 @@ class CourseMedia extends Component
         $this->coursePromotionalVideo   = $this->course->promotionalVideo;
 
         if ($this->coursePromotionalVideo) {
-            $videoPath = storage_path('app/public/' . $this->course->promotionalVideo->path);
-            if (file_exists($videoPath)) {
-                $this->promotionalVideoSize = filesize($videoPath);
+            if (mediaExists($this->course->promotionalVideo->path)) {
+                $this->promotionalVideoSize = Storage::disk(getStorageDisk())->size($this->course->promotionalVideo->path);
                 $this->promotionalVideoSize = (round($this->promotionalVideoSize / (1024 * 1024), 2));
             } else {
                 $this->promotionalVideoSize = 0;
@@ -115,10 +119,7 @@ class CourseMedia extends Component
             $this->thumbnail = null;
 
             if ($this->course->thumbnail) {
-                $thumbnailPath = storage_path('app/public/' . $this->course->thumbnail->path);
-                if (file_exists($thumbnailPath)) {
-                    unlink($thumbnailPath);
-                }
+                Storage::disk(getStorageDisk())->delete($this->course->thumbnail->path);
                 $this->course->thumbnail->delete();
 
                 $this->resetErrorBag('thumbnail');
@@ -129,10 +130,7 @@ class CourseMedia extends Component
             $this->coursePromotionalVideo = '';
 
             if ($this->course?->promotionalVideo?->path) {
-                $videoPath = storage_path('app/public/' . $this->course->promotionalVideo?->path);
-                if (file_exists($videoPath)) {
-                    unlink($videoPath);
-                }
+                Storage::disk(getStorageDisk())->delete($this->course->promotionalVideo->path);
 
                 $this->course->promotionalVideo->delete();
 
@@ -200,12 +198,9 @@ class CourseMedia extends Component
             ]);
         }
 
-       if(isPaidSystem()){ 
-        $tab = 'pricing';
-       }else{
-        $tab = 'content';
-       }
-        
+        // In-person / hybrid courses set their dates next; the rest of the flow is unchanged.
+        $tab = \Modules\Courses\Models\Course::whereKey($this->courseId)->first()?->isOnsite() ? 'sessions' : (isPaidSystem() ? 'pricing' : 'content');
+
         return redirect($this->editCourseRoute($tab, $this->courseId));
     }
 }

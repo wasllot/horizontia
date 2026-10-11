@@ -62,16 +62,10 @@
                                 @foreach($blogs as $single)
                                     <tr>
                                         <td data-label="{{ __('title') }}">
-                                            <div class="tb-checkboxwithimg">
-                                                <div class="tb-checkbox">
-                                                    <input id="blog_id{{ $single->id }}" wire:model.lazy="selectedBlogs" value="{{ $single->id }}" type="checkbox">
-                                                    <label for="blog_id{{ $single->id }}">
-                                                        <img src="{{ url(Storage::url($single->image)) }}" alt="{{ $single->title }}" width="100"> 
-                                                        <span>
-                                                            {!! $single->title !!}
-                                                        </span>
-                                                    </label>
-                                                </div>
+                                            <div class="hz-mediacell">
+                                                <input id="blog_id{{ $single->id }}" wire:model.lazy="selectedBlogs" value="{{ $single->id }}" type="checkbox" aria-label="{{ __('general.select') }}">
+                                                <img class="hz-mediacell__img" src="{{ url(mediaUrl($single->image)) }}" alt="" loading="lazy" width="56" height="40">
+                                                <label for="blog_id{{ $single->id }}">{!! $single->title !!}</label>
                                             </div>
                                         </td>
                                         <td data-label="{{ __('description') }}">
@@ -86,21 +80,15 @@
                                         @endif
                                         <td data-label="{{__('general.status')}}">
                                             <div class="am-status-tag">
-                                                <em class="tk-project-tag tk-{{ $single->status == 'published' ? 'active' : 'disabled' }}">{{ $single->status }}</em>
+                                                <em class="tk-project-tag tk-{{ $single->status == 'published' ? 'active' : 'disabled' }}">{{ __(ucfirst($single->status)) }}</em>
                                             </div>
                                         </td>
                                         <td data-label="{{__('general.actions')}}">
-                                            <ul class="tb-action-icon">
-                                                <li> <a href="{{ route('admin.update-blog', $single->id) }}"><i class="icon-edit-3"></i></a> </li>
-                                                <li> <a href="{{ route('blog-details', ['slug' => $single->slug, 'source' => 'admin']) }}" target="_blank"><i class="icon-eye"></i></a> </li>
-                                                <li>    
-                                                    <a href="javascript:void(0);" 
-                                                    @click="$wire.dispatch('showConfirm', { id: {{ $single->id }}, action: 'delete-blog' })" 
-                                                    class="tb-delete">
-                                                    <i class="icon-trash-2"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
+                                            <div class="hz-acts">
+                                                <a class="hz-act" href="{{ route('admin.update-blog', $single->id) }}" title="{{ __('general.edit') }}" aria-label="{{ __('general.edit') }}"><i class="icon-edit-3" aria-hidden="true"></i></a>
+                                                <a class="hz-act" href="{{ route('blog-details', ['slug' => $single->slug, 'source' => 'admin']) }}" target="_blank" rel="noopener" title="{{ __('general.view') }}" aria-label="{{ __('general.view') }}"><i class="icon-eye" aria-hidden="true"></i></a>
+                                                <x-panel.action icon="icon-trash-2" tone="danger" :label="__('general.delete')" @click="$wire.dispatch('showConfirm', { id: {{ $single->id }}, action: 'delete-blog' })" />
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach

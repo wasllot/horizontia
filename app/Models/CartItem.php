@@ -11,6 +11,7 @@ class CartItem extends Model
     
     protected $casts = [
         'options' => 'array',
+        'reminded_at' => 'datetime',
     ];
 
     public function user()

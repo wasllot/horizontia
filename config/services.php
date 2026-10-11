@@ -14,6 +14,11 @@ return [
     |
     */
 
+    // Zoom: webhook de grabaciones en la nube (ver docs/funciones.md). Sin secreto, la ruta responde 404.
+    'zoom' => [
+        'webhook_secret' => env('ZOOM_WEBHOOK_SECRET'),
+    ],
+
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
@@ -40,5 +45,11 @@ return [
         'client_secret'     => env('GOOGLE_CLIENT_SECRET'),
         'redirect'          => env('GOOGLE_REDIRECT_URI'),
         'redirect_uri'      => env('GOOGLE_CALENDAR_REDIRECT_URI'),
-    ]
+    ],
+
+    'gemini' => [
+        // Fallback when the key is not saved in Admin > API settings. GEMINI_APY_KEY is accepted because an early .env used that spelling.
+        'key' => env('GEMINI_API_KEY', env('GEMINI_APY_KEY')),
+    ],
+
 ];

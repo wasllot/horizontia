@@ -36,7 +36,7 @@ class CoursesResource extends JsonResource
                     'id'            => $this->instructor?->id ?? null,
                     'name'          => $this->instructor?->profile?->full_name ?? null,
                     'is_online'     => $this->instructor?->is_online ?? false,
-                    'image'         => $this->instructor?->profile?->image ? url(Storage::url($this->instructor?->profile?->image)) : url(Storage::url('placeholder.png')),
+                    'image'         => $this->instructor?->profile?->image ? url(mediaUrl($this->instructor?->profile?->image)) : url(mediaUrl('placeholder.png')),
                 ];
             }),
 
@@ -56,13 +56,13 @@ class CoursesResource extends JsonResource
 
             'thumbnail'             => $this->whenLoaded('thumbnail', function () {
                 return [    
-                    'url'           => $this->thumbnail?->path ? url(Storage::url($this->thumbnail?->path)) : url(Storage::url('placeholder.png')),
+                    'url'           => $this->thumbnail?->path ? url(mediaUrl($this->thumbnail?->path)) : url(mediaUrl('placeholder.png')),
                 ];            
             }),
 
             'promotional_video'     => $this->whenLoaded('promotionalVideo', function () {
                 return [    
-                    'url'           => !empty($this->promotionalVideo?->path) ? url(Storage::url($this->promotionalVideo?->path)) : null,
+                    'url'           => !empty($this->promotionalVideo?->path) ? url(mediaUrl($this->promotionalVideo?->path)) : null,
                 ];            
             }),
         ];

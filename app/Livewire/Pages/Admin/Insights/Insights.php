@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Admin\Insights;
 
+use App\Services\AcademyDashboardService;
 use App\Services\InsightsService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -17,6 +18,10 @@ class Insights extends Component
     public $tutorEarnings;
     public $platformCommission;
     public $tutorPendingEarnings;
+    public $academySales = 0;
+    public $academyOrders = 0;
+    public $academyEnrollments = 0;
+    public $academyCourses = 0;
     public $totalSessions;
     public $completedSessions;
     public $cancelledSessions;
@@ -29,6 +34,9 @@ class Insights extends Component
     public $currentMonthUsers;
     public $lastMonthUsers;
     public $difference;
+
+    /** Period of the academy dashboard: 7d | 30d | 90d | month. */
+    public string $range = '30d';
 
     public $revenueStartDate   = null;
     public $revenueEndDate     = null;
@@ -49,10 +57,14 @@ class Insights extends Component
 
     public function mount()
     {
-        $this->tutor_name   = Str::plural(!empty(setting('_lernen.tutor_display_name')) ? setting('_lernen.tutor_display_name') : __('general.tutor')) ;
-        $this->student_name = Str::plural(!empty(setting('_lernen.student_display_name')) ? setting('_lernen.student_display_name') : __('general.student'));
+        $this->tutor_name   = app()->getLocale() === 'es' ? 'Tutores' : Str::plural(!empty(setting('_lernen.tutor_display_name')) ? setting('_lernen.tutor_display_name') : __('general.tutor'));
+        $this->student_name = app()->getLocale() === 'es' ? 'Estudiantes' : Str::plural(!empty(setting('_lernen.student_display_name')) ? setting('_lernen.student_display_name') : __('general.student'));
         $this->revenueStartDate         = now()->startOfMonth()->format('Y-m-d');
         $this->revenueEndDate           = now()->endOfMonth()->format('Y-m-d');
+
+        if (isPrivateAcademy()) {
+            return; // the academy dashboard computes its numbers on render, per period
+        }
 
         $this->sessionStartDate         = now()->startOfMonth()->format('Y-m-d');
         $this->sessionEndDate           = now()->endOfMonth()->format('Y-m-d');
@@ -83,9 +95,18 @@ class Insights extends Component
         $this->difference                   = number_format($percentageChange);
     }
 
+    public function setRange(string $range): void
+    {
+        $this->range = array_key_exists($range, AcademyDashboardService::RANGES) ? $range : '30d';
+    }
+
     #[Layout('layouts.admin-app')]
     public function render()
     {
+        if (isPrivateAcademy()) {
+            return view('livewire.pages.admin.insights.academy', ['dash' => new AcademyDashboardService($this->range)]);
+        }
+
         $this->platformEarnings             = $this->insightsService->getPlatformEarnings(revenueStartDate: $this->revenueStartDate, revenueEndDate: $this->revenueEndDate);
         $this->tutorEarnings                = $this->insightsService->getTutorEarnings(type: 'add', revenueStartDate: $this->revenueStartDate, revenueEndDate: $this->revenueEndDate);
         $this->tutorPendingEarnings         = $this->insightsService->getTutorEarnings(type: 'pending_available', revenueStartDate: $this->revenueStartDate, revenueEndDate: $this->revenueEndDate);
@@ -94,6 +115,16 @@ class Insights extends Component
         $this->totalSessions                = $this->insightsService->getSessions(statuses: ['active', 'completed'], sessionStartDate: $this->sessionStartDate, sessionEndDate: $this->sessionEndDate);
         $this->completedSessions            = $this->insightsService->getSessions(statuses: ['completed'], sessionStartDate: $this->sessionStartDate, sessionEndDate: $this->sessionEndDate);
         $this->cancelledSessions            = $this->insightsService->getSessions(statuses: ['rescheduled'], sessionStartDate: $this->sessionStartDate, sessionEndDate: $this->sessionEndDate);
+
+        if (isPrivateAcademy()) {
+            $from = $this->revenueStartDate . ' 00:00:00';
+            $to   = $this->revenueEndDate . ' 23:59:59';
+            $completed = \App\Models\Order::whereBetween('created_at', [$from, $to])->where('status', \App\Casts\OrderStatusCast::$statuses['complete']);
+            $this->academyOrders      = (clone $completed)->count();
+            $this->academySales       = (clone $completed)->sum('amount');
+            $this->academyEnrollments = \Modules\Courses\Models\Enrollment::whereBetween('created_at', [$from, $to])->count();
+            $this->academyCourses     = \Modules\Courses\Models\Course::where('status', \Modules\Courses\Models\Course::STATUSES['active'])->count();
+        }
 
         return view('livewire.pages.admin.insights.insights');
     }

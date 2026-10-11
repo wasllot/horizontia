@@ -28,9 +28,10 @@ class Course extends Model
 
     protected $table;
 
-    public function __construct()
+    public function __construct(array $attributes = [])
     {
         $this->table = (config('courses.db_prefix') ?? 'courses_') . 'courses';
+        parent::__construct($attributes);   // boots traits and global scopes (SoftDeletes) and fills the attributes
     }
 
     protected $fillable = [
@@ -44,6 +45,7 @@ class Course extends Model
         'level',
         'status',
         'type',
+        'delivery',
         'tags',
         'learning_objectives',
         'prerequisites',
@@ -62,6 +64,13 @@ class Course extends Model
         'learning_objectives'       => 'array',
         'discussion_forum'          => 'boolean',
         'meta_data'                 => 'array'
+    ];
+
+    /** Modalities: online (the default), in_person (dates + venue) and hybrid (in-person dates plus online lessons). */
+    public const DELIVERIES = [
+        'online' => 'En línea',
+        'in_person' => 'Presencial',
+        'hybrid' => 'Híbrido',
     ];
 
     public const STATUSES = [
@@ -258,7 +267,7 @@ class Course extends Model
      */
     public function sections(): HasMany
     {
-        return $this->hasMany(Section::class);
+        return $this->hasMany(Section::class)->orderBy('sort_order')->orderBy('id');
     }
 
     /**
@@ -284,6 +293,36 @@ class Course extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    /** Informative builder pages attached to this course, in display order. */
+    /** Dates of an in-person course, soonest first. */
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(CourseSession::class, 'course_id')->orderBy('starts_at')->orderBy('id');
+    }
+
+    /** The "Inscritos" screen that belongs to the current user's panel (admin or instructor), optionally on one date. */
+    public function enrolleesUrl(?int $sessionId = null): string
+    {
+        $admin = auth()->user()?->hasRole('admin') || auth()->user()?->hasRole('sub_admin');
+
+        return route($admin ? 'courses.admin.course-enrollees' : 'courses.tutor.course-enrollees', ['course' => $this->id] + ($sessionId ? ['fecha' => $sessionId] : []));
+    }
+
+    public function isOnsite(): bool
+    {
+        return in_array($this->delivery, ['in_person', 'hybrid'], true);
+    }
+
+    public function deliveryLabel(): string
+    {
+        return self::DELIVERIES[$this->delivery] ?? self::DELIVERIES['online'];
+    }
+
+    public function infoPages(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\CoursePage::class, 'course_id')->orderBy('sort')->orderBy('id');
+    }
+
     public function ratings(): MorphMany
     {
         return $this->morphMany(Rating::class, 'ratingable');

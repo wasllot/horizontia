@@ -7,7 +7,7 @@
                         <div class="am-revolutionize_video">
                             @if(!empty(pagesetting('video')[0]['path']))
                                 <video class="video-js" data-setup='{}' preload="auto" id="vision-video" width="940" height="737" controls >
-                                    <source src="{{ url(Storage::url(pagesetting('video')[0]['path'])) }}#t=0.1" wire:key="auth-video-src" type="video/mp4" >
+                                    <source src="{{ url(mediaUrl(pagesetting('video')[0]['path'])) }}#t=0.1" wire:key="auth-video-src" type="video/mp4" >
                                 </video>
                             @endif
                         </div>
@@ -25,7 +25,7 @@
                                 @foreach(pagesetting('revolutionize_repeater') as $option)
                                     <div class="am-revolutionize_achivments_content">
                                         @if(!empty($option['revolu_image'][0]['path']))
-                                            <figure><img src="{{url(Storage::url($option['revolu_image'][0]['path']))}}" alt="Revolutionize image"></figure>
+                                            <figure><img src="{{url(mediaUrl($option['revolu_image'][0]['path']))}}" alt="Revolutionize image"></figure>
                                         @endif
                                         @if(!empty($option['revolu_heading']))<h4>{!! $option['revolu_heading'] !!}</h4>@endif
                                         @if(!empty($option['revolu_paragraph']))<p>{!! $option['revolu_paragraph'] !!}</p>@endif
@@ -40,7 +40,7 @@
     </div>
     @if(!empty(pagesetting('bg_image')))
         @if(!empty(pagesetting('bg_image')[0]['path']))
-            <img src="{{url(Storage::url(pagesetting('bg_image')[0]['path']))}}" alt="Background shape image">
+            <img src="{{url(mediaUrl(pagesetting('bg_image')[0]['path']))}}" alt="Background shape image">
         @endif
     @endif
 </div>

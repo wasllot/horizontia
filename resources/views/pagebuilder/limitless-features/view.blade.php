@@ -27,28 +27,28 @@
                         @if(!empty(pagesetting('image')))
                             <figure>
                                 @if(!empty(pagesetting('image')[0]['path']))
-                                    <img src="{{url(Storage::url(pagesetting('image')[0]['path']))}}" alt="Limitless features image" data-aos="fade-up-left" data-aos-easing="ease" data-aos-delay="1000">
+                                    <img src="{{url(mediaUrl(pagesetting('image')[0]['path']))}}" alt="Limitless features image" data-aos="fade-up-left" data-aos-easing="ease" data-aos-delay="1000">
                                 @endif
                             </figure>
                         @endif
                         @if(!empty(pagesetting('shape_image')))
                             @if(!empty(pagesetting('shape_image')[0]['path']))
-                                <img src="{{url(Storage::url(pagesetting('shape_image')[0]['path']))}}" class="am-limitless-features-img01" alt="Background shape image">
+                                <img src="{{url(mediaUrl(pagesetting('shape_image')[0]['path']))}}" class="am-limitless-features-img01" alt="Background shape image">
                             @endif
                         @endif
                         @if(!empty(pagesetting('second_shape_image')))
                             @if(!empty(pagesetting('second_shape_image')[0]['path']))
-                                <img src="{{url(Storage::url(pagesetting('second_shape_image')[0]['path']))}}" class="am-limitless-features-img02" alt="Background shape image">
+                                <img src="{{url(mediaUrl(pagesetting('second_shape_image')[0]['path']))}}" class="am-limitless-features-img02" alt="Background shape image">
                             @endif
                         @endif
                         @if(!empty(pagesetting('left_shape_image')))
                             @if(!empty(pagesetting('left_shape_image')[0]['path']))
-                                <img src="{{url(Storage::url(pagesetting('left_shape_image')[0]['path']))}}" class="am-limitless-features-img03" alt="Background shape image">
+                                <img src="{{url(mediaUrl(pagesetting('left_shape_image')[0]['path']))}}" class="am-limitless-features-img03" alt="Background shape image">
                             @endif
                         @endif
                         @if(!empty(pagesetting('right_shape_image')))
                             @if(!empty(pagesetting('right_shape_image')[0]['path']))
-                                <img src="{{url(Storage::url(pagesetting('right_shape_image')[0]['path']))}}" class="am-limitless-features-img04" alt="Background shape image">
+                                <img src="{{url(mediaUrl(pagesetting('right_shape_image')[0]['path']))}}" class="am-limitless-features-img04" alt="Background shape image">
                             @endif
                         @endif
                     </div>

@@ -2,43 +2,25 @@
     <div class="am-dbbox_content am-invoicelist">
         <div class="am-dbbox_title">
             @slot('title')
-                {{ __('general.certificates') }}
+                Mis certificados
             @endslot
-            <h2>{{ __('general.certificates') }}</h2>
+            <h2>Mis certificados</h2>
         </div>
-        @if($isLoading)
-            @include('skeletons.invoices')
-        @elseif ($certificates && $certificates->isNotEmpty())
+        <p class="hz-cert__hint">Se emiten solos cuando terminas un curso. Cada uno tiene un código con el que cualquiera puede comprobar que es auténtico en <a href="{{ route('certificates.verify') }}" target="_blank" rel="noopener">{{ preg_replace('#^https?://#', '', route('certificates.verify')) }}</a>.</p>
+        @if ($certificates->isNotEmpty())
             <div class="am-invoicetable">
-                <table class="am-table @if(setting('_general.table_responsive') == 'yes') am-table-responsive @endif">
-                    <thead>
-                        <tr>
-                            <th>#{{ __('general.sr_no') }}</th>
-                            <th>{{ __('general.title') }}</th>
-                            <th>{{ __('calendar.certificate_for') }}</th>
-                            <th>{{ __('general.date') }}</th>
-                            <th>{{ __('general.issued_by') }}</th>
-                            <th>{{ __('general.actions') }}</th>
-                        </tr>
-                    </thead>
+                <table class="am-table @if(setting('_general.table_responsive') == 'yes') am-table-responsive @endif" data-testid="certificates-table">
+                    <thead><tr><th>Curso</th><th>Emitido</th><th>Código</th><th>Acciones</th></tr></thead>
                     <tbody>
-                        @foreach($certificates as $key => $certificate)       
-                            <tr>
-                                <td data-label="{{ __('general.no') }}"><span>{{ $key + 1 }}</span></td>
-                                <td data-label="{{ __('general.title') }}"><span>{{$certificate?->template->title ?? 'N/A' }} </span></td>
-                                <td data-label="{{ __('calendar.subject') }}"><span>{{$certificate?->wildcard_data['course_title'] ?? $certificate?->wildcard_data['subject_name'] ?? 'N/A' }}</span></td>
-                                <td data-label="{{ __('general.date') }}"><span>{{ $certificate?->created_at->format(setting('_general.date_format')) ?? 'N/A' }}</span></td>
-                                <td data-label="{{ __('general.issued_by' )}}">
-                                    <span>{{$certificate?->wildcard_data['issue_date'] ?? 'N/A' }}</span>
-                                </td>
-                                <td data-label="{{ __('general.actions' )}}">
+                        @foreach ($certificates as $c)
+                            <tr wire:key="cert-{{ $c->id }}">
+                                <td data-label="Curso"><span>{{ $c->course_title }}</span>@unless ($c->isValid()) <em>(revocado)</em>@endunless</td>
+                                <td data-label="Emitido"><span>{{ dateEs($c->issued_at) }}</span></td>
+                                <td data-label="Código"><span>{{ $c->code }}</span></td>
+                                <td data-label="Acciones">
                                     <div class="am-invoicetable_actions">
-                                        <a href="{{ route('upcertify.certificate', $certificate?->hash_id) }}" target="_blank" class="am-custom-tooltip">
-                                            <span class="am-tooltip-text"><span>{{ __('general.view') }}</span></span><i class="am-icon-eye-open-01"></i>
-                                        </a>
-                                        <a href="{{ route('upcertify.download', $certificate?->hash_id) }}" class="am-custom-tooltip">
-                                            <i class="am-icon-download-01"></i>
-                                            <span class="am-tooltip-text"><span>{{ __('general.download') }}</span></span>
+                                        <a href="{{ $c->url() }}" target="_blank" rel="noopener" class="am-custom-tooltip" aria-label="Ver certificado de {{ $c->course_title }}">
+                                            <span class="am-tooltip-text"><span>Ver / imprimir</span></span><i class="am-icon-eye-open-01"></i>
                                         </a>
                                     </div>
                                 </td>
@@ -47,8 +29,8 @@
                     </tbody>
                 </table>
             </div>
-        @elseif ($certificates->isEmpty())
-            <x-no-record :image="asset('images/payouts.png')" :title="__('general.no_record_title')" :description="__('general.no_records_available')"  />
+        @else
+            <x-no-record :image="asset('images/payouts.png')" title="Aún no tienes certificados" description="Termina un curso al 100 % y tu certificado aparecerá aquí automáticamente." />
         @endif
     </div>
 </div>

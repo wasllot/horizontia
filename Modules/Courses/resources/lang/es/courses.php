@@ -518,11 +518,11 @@ return [
     'course_purchase_student_variables'             => '{userName} - Para nombre de usuario <br> {sessionDate} - Para fecha de sesión <br> {tutorName} - Para nombre del tutor <br> {sessionSubject} - Para asunto de la sesión <br> {bookingDetails} - Para detalles de reservas <br> {courseDetails} - Para detalles del curso',
     'course_purchase_tutor_variables'               => '{userName} - Para nombre de usuario <br> {sessionDate} - Para fecha de sesión <br> {studentName} - Para nombre del estudiante <br> {sessionSubject} - Para asunto de la sesión <br> {bookingDetails} - Para detalles de reservas <br> {courseDetails} - Para detalles del curso',
 
-    'course_purchase'                               => '¡Gracias por tu compra en Lernen!',
+    'course_purchase'                               => '¡Gracias por tu compra en Horizontia!',
     'course_purchase_msg'                           => "¡Gracias por tu compra! Aquí están los detalles de tus artículos: <br> :bookingDetails <br> Esperamos ayudarte a alcanzar tus objetivos de aprendizaje. Ya sea que te unas a una sesión o comiences un curso, estamos aquí para apoyar tu viaje educativo. Si tienes alguna pregunta, no dudes en contactarnos.",
 
-    'course_purchase_tutor_subject'                 => '¡Nueva notificación de compra en Lernen!',
-    'course_buy_tutor_content'                      => '¡Un estudiante ha realizado una compra en Lernen! Aquí están los detalles de su pedido: <br> :bookingDetails <br> El estudiante ahora tiene acceso a su compra y puede comenzar. Puedes seguir su participación a través de tu panel de instructor. <br><br> ¡Gracias por ser parte de la comunidad de enseñanza de Lernen!',
+    'course_purchase_tutor_subject'                 => '¡Nueva notificación de compra en Horizontia!',
+    'course_buy_tutor_content'                      => '¡Un estudiante ha realizado una compra en Horizontia! Aquí están los detalles de su pedido: <br> :bookingDetails <br> El estudiante ahora tiene acceso a su compra y puede comenzar. Puedes seguir su participación a través de tu panel de instructor. <br><br> ¡Gracias por ser parte de la comunidad de enseñanza de Horizontia!',
 
     'courses_detail'                                => 'Detalles de los cursos:',
     'sessions_detail'                               => 'Detalles de las sesiones:',
@@ -574,4 +574,43 @@ return [
     'course_already_enrolled'                       => 'Ya estás inscrito en este curso',
 
     'author'                                        => '(Autor)',
+
+    // Tutor IA
+    'tutor_title' => 'Tutor IA',
+    'tutor_open' => 'Abrir el tutor IA',
+    'tutor_close' => 'Cerrar',
+    'tutor_clear' => 'Borrar chat',
+    'tutor_hint' => 'Pregúntame sobre esta lección. Te daré pistas y explicaciones, sin resolver tus evaluaciones.',
+    'tutor_placeholder' => 'Escribe tu duda…',
+    'tutor_send' => 'Enviar',
+    'tutor_thinking' => 'Pensando…',
+    'tutor_empty' => 'Escribe tu pregunta.',
+    'tutor_too_long' => 'La pregunta es demasiado larga.',
+    'tutor_error_unavailable' => 'El tutor no está disponible para este curso.',
+    'tutor_error_empty' => 'Escribe tu pregunta.',
+    'tutor_error_slow_down' => 'Vas muy rápido. Espera un minuto e inténtalo de nuevo.',
+    'tutor_error_daily_limit' => 'Alcanzaste el límite diario de preguntas. Vuelve mañana.',
+    'tutor_error_busy' => 'El tutor está ocupado. Inténtalo en unos minutos.',
+    'tutor_error_failed' => 'No pude responder ahora. Inténtalo de nuevo más tarde.',
+    'tutor_error_blocked' => 'No puedo responder a eso. Reformula tu pregunta sobre el curso.',
+
+    // Claves que faltaban
+    'assignments' => 'Tareas y evaluaciones',
+    'empty_view' => 'No hay nada que mostrar todavía.',
+    'instagaram' => 'Instagram',
+    'like_this_course' => 'Me gusta este curso',
+    'noticeboard_deleted' => 'El aviso se eliminó correctamente.',
+    'prerequisites' => 'Requisitos previos',
+    'success' => 'Éxito',
+
+    'next_item' => 'Ir al siguiente elemento',
+    'mark_as_complete' => 'Marcar como completado',
+    'completed' => 'Completado',
+    'tutor_error_unavailable' => 'El tutor no está disponible para este curso.',
+    'tutor_error_empty' => 'Escribe tu pregunta.',
+    'tutor_error_slow_down' => 'Vas muy rápido. Espera un minuto e inténtalo de nuevo.',
+    'tutor_error_daily_limit' => 'Alcanzaste el límite diario de preguntas. Vuelve mañana.',
+    'tutor_error_busy' => 'El tutor está ocupado. Inténtalo de nuevo en unos minutos.',
+    'tutor_error_failed' => 'No pude responder en este momento. Inténtalo más tarde.',
+    'tutor_error_blocked' => 'No puedo responder eso. Reformula tu pregunta sobre el curso.',
 ];

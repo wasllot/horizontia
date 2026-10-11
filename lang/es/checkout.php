@@ -56,4 +56,15 @@ return [
     'need_help'                                 => '¿Necesitas ayuda para encontrar el tutor?',
     'need_help_desc'                            => "Te ayudaremos a encontrar el tutor perfecto para satisfacer tus necesidades educativas.",
     'contact_us_now'                            => 'Contáctanos Ahora',
+
+    'select_courses' => 'Elegir tus cursos',
+    'ph_first_name' => 'Nombre',
+    'ph_last_name' => 'Apellidos',
+    'ph_company' => 'Empresa (opcional)',
+    'ph_email' => 'Correo electrónico',
+    'ph_phone' => 'Teléfono',
+    'ph_city' => 'Ciudad',
+    'ph_state' => 'Estado',
+    'ph_zip' => 'Código postal',
+    'escrow_site_title' => 'Pago seguro',
 ];

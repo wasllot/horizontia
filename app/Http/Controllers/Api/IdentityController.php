@@ -67,8 +67,7 @@ class IdentityController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            $fileName    = uniqueFileName('public/identity', $request->image->getClientOriginalName());
-            $verificationData['personal_photo'] = $request->image->storeAs('personal_photo', $fileName, getStorageDisk());
+            $verificationData['personal_photo'] = $request->image->storeAs('identity_photo', identityFileName($request->image), identityDisk());
         } else {
             $verificationData['personal_photo'] = $request->image;
         }
@@ -76,16 +75,14 @@ class IdentityController extends Controller
         if(Auth::user()->hasRole('student')){
 
             if ($request->hasFile('transcript')) {
-                $fileName    = uniqueFileName('public/identity', $request->transcript->getClientOriginalName());
-                $verificationData['transcript'] = $request->transcript->storeAs('transcript', $fileName, getStorageDisk());
+                $verificationData['transcript'] = $request->transcript->storeAs('identity_photo', identityFileName($request->transcript), identityDisk());
             } else {
                 $verificationData['transcript'] = $request->transcript;
             }
         } 
         else{
             if ($request->hasFile('identificationCard')) {
-                $fileName    = uniqueFileName('public/identity', $request->identificationCard->getClientOriginalName());
-            $verificationData['attachments'] = $request->identificationCard->storeAs('identificationCard', $fileName, getStorageDisk());
+                $verificationData['attachments'] = $request->identificationCard->storeAs('identity_photo', identityFileName($request->identificationCard), identityDisk());
             } else {
                 $verificationData['attachments'] = $request->identificationCard;
             }

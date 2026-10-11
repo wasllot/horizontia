@@ -73,7 +73,7 @@
                                                     'date'    => parseToUserTz($date->copy())->format('F d, Y'),
                                                 ];
 
-                                                if (!empty($subject['info']['image']) && Storage::disk(getStorageDisk())->exists($subject['info']['image'])) {
+                                                if (!empty($subject['info']['image']) && mediaExists($subject['info']['image'])) {
                                                     $sessionInfo['image'] = resizedImage($subject['info']['image'], 40,40);
                                                 } else {
                                                     $sessionInfo['image'] = resizedImage('placeholder.png', 40,40);
@@ -149,10 +149,10 @@
                                                                 <ul>
                                                                     @foreach ($slot->students as $student)
                                                                         <li>
-                                                                            @if (!empty($student->image) && Storage::disk(getStorageDisk())->exists($student->image))
+                                                                            @if (!empty($student->image) && mediaExists($student->image))
                                                                                 <img src="{{ resizedImage($student->image, 40, 40) }}" alt="profile-img">
                                                                             @else
-                                                                                <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 40, 40) }}" alt="profile-img">
+                                                                                <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 40, 40) }}" alt="profile-img">
                                                                             @endif
                                                                         </li>
                                                                     @endforeach
@@ -189,7 +189,7 @@
                                                                                         'end_time' => parseToUserTz($slot->end_time)->format('H:i'),
                                                                                     ];
                                                                                 }   
-                                                                                if (!empty($subject['info']['image']) && Storage::disk(getStorageDisk())->exists($subject['info']['image'])) {
+                                                                                if (!empty($subject['info']['image']) && mediaExists($subject['info']['image'])) {
                                                                                     $sessionInfo['image'] = resizedImage($subject['info']['image'], 40,40);
                                                                                 } else {
                                                                                     $sessionInfo['image'] = resizedImage('placeholder.png', 40,40);

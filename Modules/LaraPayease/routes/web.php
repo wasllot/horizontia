@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\LaraPayease\Http\Controllers\StripePaymentController;
+use Modules\LaraPayease\Http\Controllers\MercadoPagoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,3 +15,6 @@ use Modules\LaraPayease\Http\Controllers\StripePaymentController;
 |
 */
 Route::post('payease/stripe', [StripePaymentController::class, 'prepareCharge'])->name('payease.stripe');
+Route::post('mercadopago/webhook', [MercadoPagoController::class, 'webhook'])->name('mercadopago.webhook');
+Route::get('pago-pendiente/{order}', [MercadoPagoController::class, 'pending'])->middleware('auth')->whereNumber('order')->name('payment.pending');
+Route::get('mercadopago/retorno', [MercadoPagoController::class, 'return'])->middleware('auth')->name('mercadopago.return');

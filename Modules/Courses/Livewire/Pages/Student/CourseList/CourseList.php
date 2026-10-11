@@ -71,7 +71,14 @@ class CourseList extends Component
     {
         $courses = $this->courses;
         $favCourseIds = Like::where('likeable_type', Course::class)->where('user_id', Auth::id())?->pluck('likeable_id')?->toArray() ?? [];
-        return view('courses::livewire.student.course-list.courselist', compact('courses', 'favCourseIds'));
+        // Where each course resumes (first lesson not completed) so the card can say "Continuar: lección X".
+        $resume = collect($courses->items())->mapWithKeys(fn ($e) => [$e->course_id => $e->course ? app(\Modules\Courses\Services\ResumeService::class)->resume(Auth::user(), $e->course) : null]);
+
+        $certificates = \App\Models\CourseCertificate::where('user_id', Auth::id())->whereNull('revoked_at')->whereIn('course_id', collect($courses->items())->pluck('course_id'))->pluck('code', 'course_id');
+
+        $recommended = $this->keyword === '' ? app(\Modules\Courses\Services\CourseRecommendationService::class)->forStudent(Auth::user(), 3) : collect();
+
+        return view('courses::livewire.student.course-list.courselist', compact('courses', 'favCourseIds', 'resume', 'certificates', 'recommended'));
     }
 
     public function loadCoursesData() {

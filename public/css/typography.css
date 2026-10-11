@@ -1,0 +1,16 @@
+/* Tipografía de títulos de todo el sitio: serif editorial (la de la página de verificación de certificados).
+ * Los textos corridos, menús, botones, tablas y formularios conservan su fuente. */
+:root { --hz-font-display: Georgia, "Times New Roman", "Source Serif 4", serif; }
+
+h1, h2, h3,
+.cr-title-box h1, .cr-title-box h2,
+.hz-dash__head h1, .hz-dash__cardhead h2 {
+    font-family: var(--hz-font-display) !important;
+    font-weight: 700 !important;
+    letter-spacing: -.01em;
+}
+/* Los títulos pequeños de componentes (tarjetas, filas, menús) se quedan en la fuente de la interfaz. */
+.hz-nav h1, .hz-nav h2, .hz-nav h3,
+.op-textcontent h6, .select2-results h1, .select2-results h2, .select2-results h3,
+.cr-includes-title, .share-text, .tags-title,
+.tb-table h1, .tb-table h2, .tb-table h3, .tb-table th { font-family: inherit !important; }

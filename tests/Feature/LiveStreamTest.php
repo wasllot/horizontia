@@ -140,11 +140,11 @@ class LiveStreamTest extends TestCase
     {
         $student = $this->student();
 
-        $schedule = $this->actingAs($student)->get('/tutor/schedule-live-stream');
+        $schedule = $this->actingAs($student)->get('/tutor/programar-transmision');
         $this->assertLessThan(500, $schedule->getStatusCode());
         $this->assertNotEquals(200, $schedule->getStatusCode(), 'A student should not be able to load the tutor-only schedule-live-stream page.');
 
-        $manage = $this->actingAs($student)->get('/tutor/manage-live-streams');
+        $manage = $this->actingAs($student)->get('/tutor/transmisiones');
         $this->assertLessThan(500, $manage->getStatusCode());
         $this->assertNotEquals(200, $manage->getStatusCode(), 'A student should not be able to load the tutor-only manage-live-streams page.');
     }

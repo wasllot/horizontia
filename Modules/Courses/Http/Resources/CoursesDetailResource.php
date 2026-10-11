@@ -54,7 +54,7 @@ class CoursesDetailResource extends JsonResource
                     'is_online'                => $this->instructor?->is_online ?? false,
                     'tagline'                  => $this->instructor?->profile?->tagline ?? null,
                     'verified_at'              => $this->instructor?->profile?->verified_at ?? null,
-                    'image'                    => $this->instructor?->profile?->image ? url(Storage::url($this->instructor?->profile?->image)) : url(Storage::url('placeholder.png')),
+                    'image'                    => $this->instructor?->profile?->image ? url(mediaUrl($this->instructor?->profile?->image)) : url(mediaUrl('placeholder.png')),
                     'country_short_code'       => $this->instructor?->address ? $this->instructor?->address?->country?->short_code : null,
                      
                 ];
@@ -73,12 +73,12 @@ class CoursesDetailResource extends JsonResource
             }),
             'thumbnail'             => $this->whenLoaded('thumbnail', function () {
                 return [    
-                    'url'           => $this->thumbnail?->path ? url(Storage::url($this->thumbnail?->path)) : url(Storage::url('placeholder.png')),
+                    'url'           => $this->thumbnail?->path ? url(mediaUrl($this->thumbnail?->path)) : url(mediaUrl('placeholder.png')),
                 ];            
             }),
             'promotional_video'     => $this->whenLoaded('promotionalVideo', function () {
                 return [    
-                    'url'           => !empty($this->promotionalVideo?->path) ? url(Storage::url($this->promotionalVideo?->path)) : null,
+                    'url'           => !empty($this->promotionalVideo?->path) ? url(mediaUrl($this->promotionalVideo?->path)) : null,
                 ];            
             }),
             'faqs'                  => FaqResource::collection($this->whenLoaded('faqs')),

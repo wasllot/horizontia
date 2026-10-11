@@ -30,6 +30,19 @@ return [
             'AutoFormat.AutoParagraph' => false,
             'AutoFormat.RemoveEmpty'   => true,
         ],
+        // Rich text written by instructors (lessons, FAQs, descriptions): formatting, images, tables and YouTube/Vimeo embeds; no scripts, styles blocks or event handlers.
+        'lesson' => [
+            'HTML.Doctype'             => 'HTML 4.01 Transitional',
+            'HTML.Allowed'             => 'h1,h2,h3,h4,h5,h6,p[style],br,hr,div[class],span[style],b,strong,i,em,u,s,strike,del,sup,sub,blockquote,pre,code,ul,ol,li,a[href|title|target|rel],img[src|alt|title|width|height],table[class],thead,tbody,tfoot,tr,th[colspan|rowspan],td[colspan|rowspan],iframe[src|width|height|frameborder|allowfullscreen|title]',
+            'CSS.AllowedProperties'    => 'font-size,font-weight,font-style,text-decoration,color,background-color,text-align',
+            'HTML.SafeIframe'          => true,
+            'URI.SafeIframeRegexp'     => '%^(https://|//)(www\\.youtube(-nocookie)?\\.com/embed/|player\\.vimeo\\.com/video/)%',
+            'Attr.AllowedFrameTargets' => ['_blank'],
+            'Attr.AllowedRel'          => ['noopener', 'noreferrer'],
+            'AutoFormat.AutoParagraph' => false,
+            'AutoFormat.RemoveEmpty'   => true,
+            'AutoFormat.RemoveEmpty.RemoveNbsp' => false,
+        ],
         'test'    => [
             'Attr.EnableID' => 'true',
         ],

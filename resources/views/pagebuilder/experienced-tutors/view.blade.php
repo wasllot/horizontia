@@ -1,9 +1,9 @@
 <section class="am-feature-tutors {{ pagesetting('select_verient') }} {{ pagesetting('style_verient') }}">
     @if(!empty(pagesetting('1st_shape_image')))
-        <img class="am-shap-img" src="{{url(Storage::url(pagesetting('1st_shape_image')[0]['path']))}}" alt="Background shape image"> 
+        <img class="am-shap-img" src="{{url(mediaUrl(pagesetting('1st_shape_image')[0]['path']))}}" alt="Background shape image"> 
     @endif
     @if(!empty(pagesetting('2nd_shape_image')))
-        <img class="am-shap-img-1" src="{{url(Storage::url(pagesetting('2nd_shape_image')[0]['path']))}}" alt="Background shape image">
+        <img class="am-shap-img-1" src="{{url(mediaUrl(pagesetting('2nd_shape_image')[0]['path']))}}" alt="Background shape image">
     @endif
     <div class="container">
         <div class="row">

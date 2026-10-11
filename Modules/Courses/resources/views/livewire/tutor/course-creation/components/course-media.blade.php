@@ -1,185 +1,6 @@
 @push('styles')
     @vite(['public/css/venobox.min.css'])
     <link rel="stylesheet" href="{{ asset('modules/courses/css/main.css') }}">
-<style>
-/* ── Media form ──────────────────────────────────────────────────── */
-.cr-media-page { display: flex; flex-direction: column; gap: 24px; }
-
-.cr-media-card {
-    background: #fff;
-    border: 1px solid #e4e9f0;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(20,33,61,.05);
-}
-
-.cr-media-card-head {
-    display: flex; align-items: center; gap: 14px;
-    padding: 20px 24px 18px;
-    border-bottom: 1px solid #f0f3f8;
-    background: linear-gradient(135deg, #14213d 0%, #1e2f55 100%);
-}
-.cr-media-card-head .cr-mh-icon {
-    width: 44px; height: 44px; border-radius: 11px;
-    background: rgba(254,211,4,.15); border: 1px solid rgba(254,211,4,.3);
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.cr-media-card-head .cr-mh-icon svg { width: 22px; height: 22px; }
-.cr-media-card-head .cr-mh-text h3 { margin: 0 0 2px; font-size: 15px; font-weight: 700; color: #fff; }
-.cr-media-card-head .cr-mh-text p  { margin: 0; font-size: 12px; color: #aab3c5; line-height: 1.4; }
-.cr-media-card-head .cr-mh-required {
-    margin-left: auto; background: #fed304; color: #14213d;
-    font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
-    padding: 3px 8px; border-radius: 5px; flex-shrink: 0;
-}
-
-.cr-media-card-body { padding: 24px; }
-
-.cr-media-specs {
-    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
-}
-.cr-media-spec-tag {
-    display: inline-flex; align-items: center; gap: 5px;
-    background: #f4f6fb; border: 1px solid #e4e9f0;
-    border-radius: 6px; padding: 4px 10px;
-    font-size: 11px; font-weight: 600; color: #5a6480;
-}
-.cr-media-spec-tag svg { width: 11px; height: 11px; color: #8a95b0; }
-
-/* ── Drop zone ───────────────────────────────────────────────────── */
-.cr-dropzone {
-    border: 2px dashed #d5dce8;
-    border-radius: 12px; padding: 32px 24px; text-align: center;
-    cursor: pointer; background: #f9fafc;
-    transition: border-color .2s, background .2s;
-    position: relative; overflow: hidden;
-}
-.cr-dropzone:hover  { border-color: #fed304; background: #fffef5; }
-.cr-dropzone.is-drag { border-color: #fed304; background: #fffef5; }
-.cr-dropzone label {
-    cursor: pointer; display: block;
-    font-size: 14px; color: #3d4a63; margin: 0;
-}
-.cr-dropzone label em { color: #14213d; font-style: normal; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
-.cr-dropzone label span { display: block; font-size: 12px; color: #8a95b0; margin-top: 4px; }
-.cr-dz-icon {
-    width: 52px; height: 52px; border-radius: 13px;
-    background: #14213d; display: flex; align-items: center;
-    justify-content: center; margin: 0 auto 12px;
-}
-.cr-dz-hint { font-size: 11px; color: #aab3c5; margin-top: 8px; }
-
-/* ── Upload loader overlay ───────────────────────────────────────── */
-.cr-upload-loading {
-    position: absolute; inset: 0;
-    background: rgba(255,255,255,.92);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 12px;
-    border-radius: 10px; z-index: 10;
-}
-.cr-upload-loading .cr-spinner {
-    width: 40px; height: 40px;
-    border: 3px solid #e4e9f0;
-    border-top-color: #14213d;
-    border-radius: 50%;
-    animation: cr-spin .7s linear infinite;
-}
-@keyframes cr-spin { to { transform: rotate(360deg); } }
-.cr-upload-loading span { font-size: 13px; font-weight: 600; color: #14213d; }
-
-/* ── Thumbnail preview ───────────────────────────────────────────── */
-.cr-thumb-wrap { border-radius: 12px; overflow: hidden; border: 1px solid #e4e9f0; }
-.cr-thumb-wrap img { width: 100%; height: 220px; object-fit: cover; display: block; background: #14213d; }
-.cr-thumb-bar {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px 14px; background: #f4f6fb; border-top: 1px solid #e4e9f0;
-}
-.cr-thumb-bar .cr-thumb-info { flex: 1; min-width: 0; }
-.cr-thumb-bar .cr-thumb-info strong {
-    display: block; font-size: 13px; font-weight: 600; color: #14213d;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.cr-thumb-bar .cr-thumb-info em { font-style: normal; font-size: 11px; color: #8a95b0; }
-.cr-thumb-bar .cr-ok-badge {
-    background: #d1fae5; color: #065f46; border-radius: 5px;
-    font-size: 11px; font-weight: 700; padding: 2px 8px; flex-shrink: 0;
-}
-.cr-thumb-bar .cr-change-btn {
-    background: #14213d; color: #fed304;
-    border: none; border-radius: 8px; padding: 7px 14px;
-    font-size: 12px; font-weight: 700; cursor: pointer;
-    white-space: nowrap; flex-shrink: 0;
-    transition: background .2s;
-}
-.cr-thumb-bar .cr-change-btn:hover { background: #1e2f55; }
-.cr-thumb-bar .cr-del-btn {
-    width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
-    background: #fff5f5; border: 1px solid #fecaca; color: #dc2626;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: background .2s;
-}
-.cr-thumb-bar .cr-del-btn:hover { background: #fecaca; }
-
-/* ── Video uploaded state ────────────────────────────────────────── */
-.cr-video-uploaded {
-    border: 1px solid #e4e9f0; border-radius: 12px; overflow: hidden;
-}
-.cr-video-uploaded-body {
-    display: flex; align-items: center; gap: 14px; padding: 16px 18px;
-    background: #f9fafc;
-}
-.cr-video-icon-wrap {
-    width: 46px; height: 46px; border-radius: 11px; flex-shrink: 0;
-    background: #14213d; display: flex; align-items: center; justify-content: center;
-}
-.cr-video-info { flex: 1; min-width: 0; }
-.cr-video-info strong {
-    display: block; font-size: 13px; font-weight: 700; color: #14213d;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.cr-video-info span { font-size: 12px; color: #8a95b0; }
-.cr-video-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.cr-video-preview-btn {
-    padding: 6px 12px; border: 1px solid #e4e9f0; border-radius: 8px;
-    font-size: 12px; font-weight: 600; color: #14213d; background: #fff;
-    text-decoration: none; white-space: nowrap; transition: border-color .2s;
-}
-.cr-video-preview-btn:hover { border-color: #14213d; }
-.cr-video-del-btn {
-    width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
-    background: #fff5f5; border: 1.5px solid #fecaca; color: #dc2626;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: background .2s;
-}
-.cr-video-del-btn:hover { background: #fecaca; }
-
-/* ── Video upload progress bar ───────────────────────────────────── */
-.cr-video-progress-wrap {
-    padding: 0 18px 14px; background: #f9fafc; border-top: 1px solid #e4e9f0;
-}
-.cr-video-progress-bar {
-    height: 4px; background: #e4e9f0; border-radius: 4px; overflow: hidden;
-}
-.cr-video-progress-bar::after {
-    content: '';
-    display: block; height: 100%; width: 60%;
-    background: linear-gradient(90deg, #14213d, #fed304);
-    border-radius: 4px;
-    animation: cr-bar-slide 1.4s ease-in-out infinite;
-}
-@keyframes cr-bar-slide {
-    0%   { transform: translateX(-100%); }
-    100% { transform: translateX(200%); }
-}
-
-/* ── Error message ───────────────────────────────────────────────── */
-.cr-media-error {
-    display: flex; align-items: flex-start; gap: 8px;
-    background: #fff5f5; border: 1px solid #fecaca; border-radius: 8px;
-    padding: 10px 14px; margin-top: 12px; font-size: 13px; color: #dc2626;
-}
-.cr-media-error svg { flex-shrink: 0; margin-top: 1px; }
-</style>
 @endpush
 
 <div class="cr-course-box" wire:init="loadData" wire:key="@this">
@@ -241,14 +62,14 @@
                         @if (!empty($thumbnail))
                             {{-- Preview --}}
                             <div class="cr-thumb-wrap">
-                                <img src="{{ $isBase64 ? $thumbnail : Storage::url($thumbnail) }}" alt="Thumbnail Preview">
+                                <img src="{{ $isBase64 ? $thumbnail : mediaUrl($thumbnail) }}" alt="Thumbnail Preview">
                                 <div class="cr-thumb-bar">
                                     <div class="cr-thumb-info">
                                         @if ($isBase64)
                                             <strong>{{ $imageName }}.png</strong>
                                             @if (!empty($uploadedThumbnailSize))<em>{{ $uploadedThumbnailSize }} KB</em>@endif
                                         @else
-                                            <strong>{{ basename(parse_url(Storage::url($thumbnail), PHP_URL_PATH)) }}</strong>
+                                            <strong>{{ basename(parse_url(mediaUrl($thumbnail), PHP_URL_PATH)) }}</strong>
                                             @if (!empty($thumbnailSize))<em>{{ $thumbnailSize }} KB</em>@endif
                                         @endif
                                     </div>
@@ -318,7 +139,7 @@
                             <h3>{{ __('courses::courses.add_promotional_video') }}</h3>
                             <p>Video corto (1–3 min) que presente el curso a potenciales estudiantes</p>
                         </div>
-                        <span class="cr-mh-required" style="background:rgba(255,255,255,.12);color:#aab3c5;">Opcional</span>
+                        <span class="cr-mh-required cr-mh-optional">Opcional</span>
                     </div>
 
                     <div class="cr-media-card-body">
@@ -358,7 +179,7 @@
                                     </div>
                                     <div class="cr-video-actions">
                                         @if (!empty($coursePromotionalVideo))
-                                            <a href="{{ Storage::url($coursePromotionalVideo->path) }}" data-gall="gall" data-vbtype="iframe" class="tu-themegallery cr-video-preview-btn">
+                                            <a href="{{ mediaUrl($coursePromotionalVideo->path) }}" data-gall="gall" data-vbtype="iframe" class="tu-themegallery cr-video-preview-btn">
                                                 ▶ Ver
                                             </a>
                                         @endif
@@ -424,7 +245,7 @@
         </fieldset>
 
         <div class="am-themeform_footer">
-            <a href="{{ route('courses.tutor.edit-course', ['id' => $courseId, 'tab' => 'details']) }}" class="am-white-btn">
+            <a href="{{ courseEditUrl('details', $courseId) }}" class="am-white-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
                     <path d="M10.5 4.5L6 9L10.5 13.5" stroke="#585858" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>

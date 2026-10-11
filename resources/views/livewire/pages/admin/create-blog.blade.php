@@ -37,8 +37,8 @@
                                     <div class="form-group @error('category_ids') tk-invalid @enderror">
                                         <div class="form-group fw-forms-group" wire:ignore>
                                             <label class="tb-label tb-label-star">{{ __('blogs.categories') }}</label>
-                                            <select data-placeholder='Select category' data-componentid="@this" data-disable_onchange="true" class="categories form-control tk-select2 tk-select2_disable" data-searchable="true" id="category_ids" multiple>
-                                                <option value="" disabled >{{ __('Select category') }}</option>
+                                            <select data-placeholder='{{ __('Selecciona categorías') }}' data-componentid="@this" data-disable_onchange="true" class="categories form-control tk-select2 tk-select2_disable" data-searchable="true" id="category_ids" multiple>
+                                                <option value="" disabled >{{ __('Selecciona categorías') }}</option>
                                                 @foreach ( $categories as $id => $category)
                                                     <option value="{{ $id }}" @if( in_array( $id, $selectedCategories) ) selected @endif>{{ $category }}</option>
                                                 @endforeach
@@ -123,7 +123,7 @@
                                                                 <li class="op-upload-img-info op-img-thumbnail uploaded-img">
                                                                     <div class="op-upload-data">
                                                                         <figure>
-                                                                            <img src="{{ url(Storage::url($blog->image)) }}" alt="{{ $title }}" width="100"> 
+                                                                            <img src="{{ url(mediaUrl($blog->image)) }}" alt="{{ $title }}" width="100"> 
                                                                         </figure>
                                                                         <div wire:click="removeImage" class="op-overlay-icon op-remove-file">
                                                                             <i class="icon-trash-2"></i>

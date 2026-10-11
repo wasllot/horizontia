@@ -2,9 +2,9 @@
     <div class="cr-villy-about">
         <figure class="cr-villy-img">
             @if ($comment?->creator?->profile?->image)
-                <img src="{{ url(Storage::url($comment?->creator?->profile?->image)) }}" alt="{{ __('courses::courses.profile_image') }}" />
+                <img src="{{ url(mediaUrl($comment?->creator?->profile?->image)) }}" alt="{{ __('courses::courses.profile_image') }}" />
             @elseif($comment?->creator?->image)
-                <img src="{{ url(Storage::url($comment?->creator?->image)) }}" alt="{{ __('courses::courses.profile_image') }}" />
+                <img src="{{ url(mediaUrl($comment?->creator?->image)) }}" alt="{{ __('courses::courses.profile_image') }}" />
             @else
                 <img src="{{ asset('modules\courses\images\placeholder.png') }}" alt="{{ __('courses::courses.profile_image') }}" />  
             @endif

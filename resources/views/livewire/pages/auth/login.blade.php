@@ -33,77 +33,6 @@ new #[Layout('layouts.guest')] class extends Component {
 }; ?>
 
 <div>
-    <style>
-        .am-login-right {
-            background: #fff !important;
-            padding: 80px !important;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .am-login-right_title h2 {
-            font-size: 2.5rem !important;
-            font-weight: 800 !important;
-            color: #1a1a1a !important;
-            margin-bottom: 10px !important;
-        }
-
-        .am-login-right_title h3 {
-            font-size: 1.1rem !important;
-            color: #666 !important;
-            font-weight: 400 !important;
-        }
-
-        .am-themeform .form-group label {
-            font-weight: 600 !important;
-            color: #1a1a1a !important;
-            margin-bottom: 8px !important;
-        }
-
-        .am-themeform .form-control,
-        .am-themeform input[type="text"],
-        .am-themeform input[type="password"] {
-            border-radius: 10px !important;
-            border: 1px solid #ddd !important;
-            padding: 12px 15px !important;
-            height: auto !important;
-        }
-
-        .am-btn,
-        .am-primary-btn,
-        button[type="submit"] {
-            background-color: #F2D07F !important;
-            color: #000 !important;
-            font-weight: 700 !important;
-            border-radius: 10px !important;
-            padding: 15px 30px !important;
-            border: none !important;
-            width: 100%;
-            transition: all 0.3s ease;
-        }
-
-        .am-btn:hover {
-            background-color: #e5c165 !important;
-            transform: translateY(-2px);
-        }
-
-        .am-lost-password a {
-            color: #F2D07F !important;
-            font-weight: 600;
-        }
-
-        .am-already-account a {
-            color: #F2D07F !important;
-            font-weight: 700;
-        }
-
-        .am-signinoption_btn {
-            border-radius: 10px !important;
-            border: 1px solid #ddd !important;
-            font-weight: 600 !important;
-        }
-    </style>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
     @slot('title')
@@ -114,8 +43,8 @@ new #[Layout('layouts.guest')] class extends Component {
         <x-slot name="logo">
             <strong>
                 <a href="{{ url('/') }}">
-                    <img src="{{ asset('images/nuevo/Logo-Horizontia-footer.png') }}" alt="Logo Horizontia"
-                        style="max-height: 80px; width: auto; filter: brightness(0) invert(1);">
+                    <img src="{{ webpAsset('images/nuevo/Logo-Horizontia-footer.png') }}" alt="Logo Horizontia"
+                        style="filter: brightness(0) invert(1);">
                 </a>
             </strong>
         </x-slot>
@@ -124,7 +53,8 @@ new #[Layout('layouts.guest')] class extends Component {
         <x-auth-session-status class="mb-4" :status="session('status')" />
         <x-slot name="formHeader">
             <div class="am-login-right_title">
-                <h2>¡Bienvenido!</h2>
+                <span class="ht-auth__eyebrow">Acceso a la academia</span>
+                <h1>¡Bienvenido!</h1>
                 <h3>Ingresa tus credenciales para continuar capacitándote con los mejores.</h3>
             </div>
         </x-slot>
@@ -150,17 +80,17 @@ new #[Layout('layouts.guest')] class extends Component {
                         </div>
                         <div class="form-group am-lost-password">
                             <div class="am-checkbox">
-                                <input id="remember_me" type="checkbox" name="remember">
+                                <input id="remember_me" type="checkbox" name="remember" wire:model="form.remember">
                                 <label for="remember_me">
                                     <span>{{ __('auth.remember_me') }}</span>
                                 </label>
                             </div>
                             <a href="{{ route('password.request') }}">{{ __('auth.lost_password') }}</a>
                         </div>
-                        @if(setting('_general.enable_recaptcha') == '1')
+                        @if(recaptchaEnabled('login'))
                         <div class="form-group" wire:ignore>
                             <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-                            <div class="g-recaptcha" data-sitekey="{{ setting('_general.recaptcha_site_key') }}" data-callback="onLoginRecaptchaComplete"></div>
+                            <div class="g-recaptcha" data-sitekey="{{ recaptchaSiteKey() }}" data-callback="onLoginRecaptchaComplete"></div>
                             <script>
                                 function onLoginRecaptchaComplete(response) {
                                     @this.set('form.recaptchaToken', response);
@@ -171,8 +101,8 @@ new #[Layout('layouts.guest')] class extends Component {
                         @endif
                         <div class="form-group">
                             <x-primary-button wire:loading.class="am-btn_disable"
-                                wire:target="login"><span>{{ __('auth.login_btn') }}</span><i
-                                    class="icon icon-arrow-right"></i></x-primary-button>
+                                wire:target="login"><span wire:loading.remove wire:target="login">{{ __('auth.login_btn') }}</span><span wire:loading wire:target="login">Entrando…</span><i
+                                    class="icon icon-arrow-right" wire:loading.remove wire:target="login"></i></x-primary-button>
                         </div>
                         @if(isDemoSite())
                             <div class="form-group">
@@ -196,11 +126,11 @@ new #[Layout('layouts.guest')] class extends Component {
                                         @click="form.email = 'admin@amentotech.com'; form.password = 'google'">
                                         {{ __('auth.admin') }}
                                     </button>
-                                    <!-- Registration link removed by request -->
                                 </div>
                             </div>
-                        @else
-                            <!-- Registration link removed by request -->
+                        @endif
+                        @if (\App\Services\AccessRequestService::enabled())
+                            <p class="am-already-account" style="text-align: center; margin-top: 8px;">¿Aún no tienes cuenta? <a href="{{ route('access.request') }}" data-testid="login-request-access">Solicita acceso</a></p>
                         @endif
                     </div>
                 </div>

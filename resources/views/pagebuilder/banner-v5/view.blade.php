@@ -27,7 +27,7 @@
                                             @if(!empty(pagesetting('pre_heading_image')))
                                                 <figure>
                                                     @if(!empty(pagesetting('pre_heading_image')[0]['path']))
-                                                        <img src="{{url(Storage::url(pagesetting('pre_heading_image')[0]['path']))}}" alt="Heading image">
+                                                        <img src="{{url(mediaUrl(pagesetting('pre_heading_image')[0]['path']))}}" alt="Heading image">
                                                     @endif
                                                 </figure>
                                             @endif
@@ -37,7 +37,7 @@
                                     @if(!empty(pagesetting('heading')))<h1 data-aos="fade-up" data-aos-easing="ease" data-aos-delay="700">{{ pagesetting('heading') }}</h1>@endif
                                     @if(!empty(pagesetting('paragraph')))<p data-aos="fade-up" data-aos-easing="ease" data-aos-delay="800">{{ pagesetting('paragraph') }}</p>@endif
                                     @if(!empty(pagesetting('search_btn_txt')) || !empty(pagesetting('search_placeholder'))) 
-                                        <form action="{{ url('find-tutors') }}" method="GET" class="am-learning_search" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="900">
+                                        <form action="{{ route('find-tutors') }}" method="GET" class="am-learning_search" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="900">
                                             <i class="am-icon-search-02"></i>
                                             @if(!empty(pagesetting('search_placeholder')))
                                                 <div class="am-learning_search_input">
@@ -62,28 +62,28 @@
                                     <figure>
                                         @if(!empty(pagesetting('banner_first_image')))
                                             @if(!empty(pagesetting('banner_first_image')[0]['path']))
-                                                <img src="{{url(Storage::url(pagesetting('banner_first_image')[0]['path']))}}" data-aos="fade-left" data-aos-easing="ease" data-aos-delay="600" alt="User image">
+                                                <img src="{{url(mediaUrl(pagesetting('banner_first_image')[0]['path']))}}" data-aos="fade-left" data-aos-easing="ease" data-aos-delay="600" alt="User image">
                                             @endif
                                         @endif
                                         <figcaption>
                                             @if(!empty(pagesetting('banner_second_image')))
                                                 @if(!empty(pagesetting('banner_second_image')[0]['path']))
-                                                    <img  class="am-image-one" src="{{url(Storage::url(pagesetting('banner_second_image')[0]['path']))}}" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="800" alt="Online user image">
+                                                    <img  class="am-image-one" src="{{url(mediaUrl(pagesetting('banner_second_image')[0]['path']))}}" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="800" alt="Online user image">
                                                 @endif
                                             @endif
                                             @if(!empty(pagesetting('banner_third_image')))
                                                 @if(!empty(pagesetting('banner_third_image')[0]['path']))
-                                                    <img  class="am-image-two" src="{{url(Storage::url(pagesetting('banner_third_image')[0]['path']))}}" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="900" alt="Users image">
+                                                    <img  class="am-image-two" src="{{url(mediaUrl(pagesetting('banner_third_image')[0]['path']))}}" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="900" alt="Users image">
                                                 @endif
                                             @endif
                                             @if(!empty(pagesetting('banner_fourth_image')))
                                                 @if(!empty(pagesetting('banner_fourth_image')[0]['path']))
-                                                    <img  class="am-image-three" src="{{url(Storage::url(pagesetting('banner_fourth_image')[0]['path']))}}" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="1000" alt="Cursor image">
+                                                    <img  class="am-image-three" src="{{url(mediaUrl(pagesetting('banner_fourth_image')[0]['path']))}}" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="1000" alt="Cursor image">
                                                 @endif
                                             @endif
                                             @if(!empty(pagesetting('banner_fifth_image')))
                                                 @if(!empty(pagesetting('banner_fifth_image')[0]['path']))
-                                                    <img  class="am-image-four" src="{{url(Storage::url(pagesetting('banner_fifth_image')[0]['path']))}}" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="1100" alt="Rate experience image">
+                                                    <img  class="am-image-four" src="{{url(mediaUrl(pagesetting('banner_fifth_image')[0]['path']))}}" data-aos="fade-up" data-aos-easing="ease" data-aos-delay="1100" alt="Rate experience image">
                                                 @endif
                                             @endif
                                         </figcaption>

@@ -7,11 +7,11 @@
                     <div class="am-experience-tutor-img">
                         @if ($sectionVerient == 'am-tutors-varient-two')
                             @if ($singleTutor->profile->image)
-                                <img src="{{ url(Storage::url($singleTutor->profile->image)) }}" alt="Profile image">
+                                <img src="{{ url(mediaUrl($singleTutor->profile->image)) }}" alt="Profile image">
                             @endif
                         @else
                             @if ($singleTutor->profile->image)
-                                <img src="{{ url(Storage::url($singleTutor->profile->image)) }}" alt="Profile image">
+                                <img src="{{ url(mediaUrl($singleTutor->profile->image)) }}" alt="Profile image">
                             @endif
                             @guest
                                 <span>
@@ -89,7 +89,7 @@
                             <div class="am-experience-tutor-card">
                                 @if ($singleTutor->profile->image)
                                     <figure class="am-experience-tutor-img">
-                                        <img src="{{ url(Storage::url($singleTutor->profile->image)) }}" alt="Profile image" class="user-avatar" />
+                                        <img src="{{ url(mediaUrl($singleTutor->profile->image)) }}" alt="Profile image" class="user-avatar" />
                                     </figure>
                                 @endif
                                 <div class="am-experience-tutor-info">

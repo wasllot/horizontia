@@ -16,10 +16,10 @@
             <div class="am-resume">
                 @foreach($favourites as $favourite)
                     <div class="am-resume_item am-resume_wrap">
-                            @if (!empty($favourite->profile->image) && Storage::disk(getStorageDisk())->exists($favourite->profile->image))
+                            @if (!empty($favourite->profile->image) && mediaExists($favourite->profile->image))
                                 <img src="{{ resizedImage($favourite->profile->image,50,50) }}" alt="{{$favourite->profile->image}}" />
                             @else
-                                <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 50, 50) }}" alt="{{ $favourite->profile->image }}" />
+                                <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 50, 50) }}" alt="{{ $favourite->profile->image }}" />
                             @endif
                         <div class="am-resume_content">
                             <div class="am-resume_item_title">

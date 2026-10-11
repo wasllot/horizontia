@@ -50,7 +50,7 @@ new #[Layout('layouts.guest')] class extends Component
         }
         
         $rules = (new RegisterUserRequest())->rules();
-        if (setting('_general.enable_recaptcha') == '1') {
+        if (recaptchaEnabled('register')) {
             $rules['recaptchaToken'] = ['required', new \App\Rules\RecaptchaRule];
         }
 
@@ -89,7 +89,7 @@ new #[Layout('layouts.guest')] class extends Component
                 <x-application-logo />
             </strong>
             <div class="am-login-right_title">
-                <h2>{{ __('auth.register_right_h2') }}</h2>
+                <h1>{{ __('auth.register_right_h2') }}</h1>
                 <h3>{{ __('auth.register_right_h3') }}</h3>
             </div>
         </x-slot>
@@ -148,10 +148,10 @@ new #[Layout('layouts.guest')] class extends Component
                             <x-input-error :field_name="'terms'"></x-input-error>
                         </div>
 
-                        @if(setting('_general.enable_recaptcha') == '1')
+                        @if(recaptchaEnabled('register'))
                         <div class="form-group" wire:ignore>
                             <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-                            <div class="g-recaptcha" data-sitekey="{{ setting('_general.recaptcha_site_key') }}" data-callback="onRegisterRecaptchaComplete"></div>
+                            <div class="g-recaptcha" data-sitekey="{{ recaptchaSiteKey() }}" data-callback="onRegisterRecaptchaComplete"></div>
                             <script>
                                 function onRegisterRecaptchaComplete(response) {
                                     @this.set('recaptchaToken', response);

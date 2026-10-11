@@ -27,7 +27,7 @@
         "name": "LaraPayEase",
         "package": "amentotech/larapayease",
         "image": "larapayease.jpg",
-        "description": "Versatile Payment Gateway Integration Addon for Lernen.",
+        "description": "Versatile Payment Gateway Integration Addon for Horizontia.",
         "type": "external",
         "price": "$29",
         "demo_url": "https://codecanyon.net/item/lara-payease-versatile-payment-gateway-integration-addon-for-taskup/53009467",
@@ -35,7 +35,7 @@
     },
     "meetfusion": {
         "name": "MeetFusion",
-        "description": "Google Meet Scheduler for Lernen LMS",
+        "description": "Google Meet Scheduler for Horizontia LMS",
         "package": "amentotech/meetfusion",
         "image": "meetfusion.png",
         "type": "external",
@@ -81,7 +81,7 @@
     },
     "starup": {
         "name": "StarUp",
-        "description": "StarUp LMS - Badges Addon For Lernen",
+        "description": "StarUp LMS - Badges Addon For Horizontia",
         "package": "amentotech/starup",
         "image": "starup.png",
         "type": "external",

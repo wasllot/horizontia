@@ -1,4 +1,6 @@
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/events.css') }}?v={{ @filemtime(public_path('css/events.css')) }}">
+@if(!empty($eventSchema['@graph']))<script type="application/ld+json">{!! json_encode($eventSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}</script>@endif
 <style>
     /* Premium / corporate / educational redesign.
        !important is required throughout: modules/courses/css/main.css defines
@@ -33,7 +35,7 @@
     .cr-course-details-banner * { color: #fff !important; }
     .cr-course-details-banner .am-breadcrumb li a { color: #aab3c5 !important; }
     .cr-course-details-banner .am-breadcrumb li.active span { color: #fed304 !important; }
-    .cr-course-details-banner .cr-title-box h2 { font-size: 2.8rem !important; font-weight: 800 !important; margin-bottom: 10px !important; line-height: 1.2 !important; }
+    .cr-course-details-banner .cr-title-box h1, .cr-course-details-banner .cr-title-box h2 { font-size: 2.8rem !important; font-weight: 800 !important; margin-bottom: 10px !important; line-height: 1.2 !important; }
     .cr-course-details-banner .cr-title-box p { font-size: 1.2rem !important; color: #c3cadb !important; }
 
     .cr-course-stats {
@@ -206,26 +208,14 @@
         font-size: 2.4rem !important; font-weight: 900 !important;
         color: #14213d !important; line-height: 1 !important; letter-spacing: -1.5px !important;
     }
-    /* Free: "Gratis" in large dark with a green tag next to it */
+    /* Free: "Gratis" in large dark (no second "GRATIS" tag: it said the same twice) */
     .cr-course-sidebar .cr-price-wrapper > .cr-amount {
         font-size: 2.2rem !important; font-weight: 900 !important;
         color: #14213d !important; line-height: 1 !important;
         display: flex !important; align-items: center !important; gap: 10px !important;
     }
-    .cr-course-sidebar .cr-price-wrapper > .cr-amount::after {
-        content: 'GRATIS';
-        display: inline-flex !important;
-        font-size: 0.65rem !important; font-weight: 800 !important;
-        letter-spacing: .1em !important;
-        padding: 4px 10px !important;
-        border-radius: 20px !important;
-        background: #dcfce7 !important; color: #166534 !important;
-        margin-left: 2px !important;
-        vertical-align: middle !important;
-        line-height: 1.4 !important;
-    }
     .cr-course-sidebar .cr-discount {
-        font-size: 1rem !important; color: #94a3b8 !important;
+        font-size: 1rem !important; color: #667086 !important;
         text-decoration: line-through !important;
     }
     .cr-course-sidebar .cr-discount-label {
@@ -244,7 +234,7 @@
     }
     .cr-course-sidebar .cr-includes-title {
         font-size: 0.65rem !important; text-transform: uppercase !important;
-        letter-spacing: .14em !important; color: #94a3b8 !important;
+        letter-spacing: .14em !important; color: #667086 !important;
         font-weight: 700 !important; margin: 0 0 10px !important;
     }
     .cr-course-sidebar .cr-includes-list {
@@ -335,12 +325,16 @@
         font-size: .78rem !important; color: #374151 !important; font-weight: 600 !important;
     }
     .cr-course-sidebar .am-uniqespace em {
-        color: #94a3b8 !important; font-style: normal !important; font-weight: 400 !important;
+        color: #667086 !important; font-style: normal !important; font-weight: 400 !important;
     }
 
 </style>
 @endpush
-<div class="cr-course-details-page">
+<div class="cr-course-details-page" x-data="{ barOn: false }" x-init="
+        const target = document.querySelector('.cr-action-buttons');
+        if (target && 'IntersectionObserver' in window) {
+            new IntersectionObserver(([e]) => { barOn = !e.isIntersecting; }, { threshold: 0 }).observe(target);
+        }">
     <div class="cr-course-content">
         <div class="cr-course-details-wrapper">
             <section class="cr-course-details-banner">
@@ -357,7 +351,7 @@
                         <div class="am-searchhead_title">
                             <div class="cr-title-box">
                                 @if (!empty($course?->title))
-                                    <h2>{{ $course?->title }}</h1>
+                                    <h1>{{ $course?->title }}</h1>
                                 @endif
                                 @if (!empty($course?->subtitle))
                                     <p>{{ $course?->subtitle }}</p>
@@ -375,15 +369,19 @@
                                         <i class="am-icon-star-01"></i>
                                     @endfor
                                 </span>
-                                <span class="cr-rating-score">{{ number_format($course->ratings_avg_rating, 1) }}</span>
-                                <span class="cr-review-count">({{ $course->ratings_count }} {{ __('courses::courses.reviews') }})</span>
+                                @if(!empty($course->ratings_count))
+                                    <span class="cr-rating-score">{{ number_format($course->ratings_avg_rating, 1) }}</span>
+                                    <span class="cr-review-count">({{ $course->ratings_count }} {{ $course->ratings_count == 1 ? 'reseña' : __('courses::courses.reviews') }})</span>
+                                @else
+                                    <span class="ht-new-course" data-testid="new-course">Curso nuevo</span>
+                                @endif
                             </div>
                             @if (!empty($course->updated_at))
                                 <div class="cr-last-updated">
                                     <span>
                                         <i class="am-icon-time"></i>
                                     </span>
-                                    <span class="cr-update-date">{{ __('courses::courses.last_updated') }}: {{ \Carbon\Carbon::parse($course->updated_at)->format('M d, Y') }}</span>
+                                    <span class="cr-update-date">{{ __('courses::courses.last_updated') }}: {{ dateEs($course->updated_at) }}</span>
                                 </div>
                             @endif
                         </div>
@@ -404,7 +402,7 @@
                                 </div>
                                 <div class="cr-stat-content">
                                     <span class="cr-stat-label">{{ __('courses::courses.language') }}</span>
-                                    <span class="cr-stat-value">{{ $course->language?->name }}</span>
+                                    <span class="cr-stat-value">{{ languageLabel($course->language?->name) }}</span>
                                 </div>
                             </div>
                             <div class="cr-stat-item">
@@ -433,6 +431,12 @@
                     </div>
                 </div>
             </section>
+            @if(!empty($courseBundle))
+                <div class="ht-bundle-hint" data-testid="course-bundle-hint">
+                    <span><strong>Ahorra {{ $courseBundle->percent }}%</strong> llevando este curso en el paquete «{{ $courseBundle->title }}» ({{ $courseBundle->courses->count() }} cursos por {!! formatAmount($courseBundle->price, true) !!}).</span>
+                    <a href="{{ route('courses.bundles.show', ['slug' => $courseBundle->slug]) }}">Ver paquete →</a>
+                </div>
+            @endif
             <section class="cr-course-details-sections">
                 <div class="am-aboutuser_section cr-detail-tabs">
                     <div class="cr-course-details-area">
@@ -443,9 +447,11 @@
                             <li x-bind:class="tab == 'objectives' ? 'active' : ''">
                                 <a href="#objectives" @click="tab='objectives'" class="am-tabitem">{{ __('courses::courses.objectives') }}</a>
                             </li>
+                            @if($course->sections_count > 0)
                             <li x-bind:class="tab == 'course-curriculum' ? 'active' : ''">
                                 <a @click="tab='course-curriculum'" href="#course-curriculum" class="am-tabitem">{{ __('courses::courses.course_curriculum') }}</a>
                             </li>
+                            @endif
                             <li x-bind:class="tab == 'prerequisites-&-faq' ? 'active' : ''">
                                 <a @click="tab='prerequisites-&-faq'" href="#prerequisites-&-faq" class="am-tabitem">{{ __('courses::courses.prerequisites_and_faqs') }}</a>
                             </li>
@@ -457,11 +463,61 @@
                                 <a @click="tab='live-streams'" href="#live-streams" class="am-tabitem">Próximos En Vivo</a>
                             </li>
                             @endif
+                            @foreach ($course->infoPages()->with('page:id,slug,status')->get()->filter(fn ($l) => $l->page?->status === 'published') as $info)
+                                <li><a class="am-tabitem" href="{{ route('courses.info-page', [$course->slug, $info->page->slug]) }}">{{ $info->label }}</a></li>
+                            @endforeach
                         </ul>
                     </div>
                 </div>
                 <div class="cr-course-details-area">
                     <div class="cr-overview am-tutor-detail">
+                        @if($course->isOnsite())
+                            <div class="cr-overview-course ev ev-pick" id="dates">
+                                <h3>Fechas y sede</h3>
+                                @if($this->dates->isEmpty())
+                                    <p class="ev-pick__none">Este curso aún no tiene fechas disponibles. Escríbenos desde <a href="{{ route('contacto') }}">contacto</a> y te avisamos cuando haya una nueva edición.</p>
+                                @else
+                                    <p class="ev-pick__lead">{{ $this->dates->count() > 1 ? 'Elige la fecha a la que quieres asistir.' : 'Esta es la fecha del curso.' }}</p>
+                                    <div class="ev-pick__list" role="radiogroup" aria-label="Fechas disponibles">
+                                        @foreach($this->dates as $d)
+                                            @php
+                                                $dStart = $d->startsLocal();
+                                                $dLeft = $d->seatsLeft();
+                                                $dReason = $d->unavailableReason();
+                                                $on = $selectedSession?->id === $d->id;
+                                            @endphp
+                                            <button type="button" role="radio" aria-checked="{{ $on ? 'true' : 'false' }}" wire:key="date-{{ $d->id }}"
+                                                    class="ev-pick__item {{ $on ? 'is-on' : '' }} {{ $dReason ? 'is-off' : '' }}"
+                                                    wire:click="selectSession({{ $d->id }})" @disabled((bool) $dReason)>
+                                                <time class="ht-date__badge" datetime="{{ $d->starts_at->toIso8601String() }}"><strong>{{ $dStart->format('j') }}</strong><span>{{ mb_strtoupper($dStart->locale('es')->translatedFormat('M')) }}</span></time>
+                                                <span class="ev-pick__main">
+                                                    <strong>{{ ucfirst($d->whenLabel()) }}</strong>
+                                                    <span>{{ $d->venue_name }} · {{ $d->city }}</span>
+                                                    @if($d->schedule_note)<small>{{ $d->schedule_note }}</small>@endif
+                                                </span>
+                                                <span class="ev-pick__seats">
+                                                    @if($dReason === 'sold_out')<span class="ev-seats ev-seats--out">Agotada</span>
+                                                    @elseif($dReason === 'closed')<span class="ev-seats ev-seats--out">Ventas cerradas</span>
+                                                    @elseif($dLeft === null)<span>Cupo disponible</span>
+                                                    @elseif($dLeft <= 5)<span class="ev-seats ev-seats--low">Quedan {{ $dLeft }} {{ $dLeft === 1 ? 'lugar' : 'lugares' }}</span>
+                                                    @else<span>{{ $dLeft }} lugares</span>@endif
+                                                </span>
+                                                <span class="ev-pick__radio" aria-hidden="true"></span>
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                    @if($selectedSession)
+                                        <div class="ev-pick__venue">
+                                            <strong>{{ $selectedSession->venue_name }}</strong>
+                                            <span>{{ $selectedSession->address }} · {{ $selectedSession->city }}{{ $selectedSession->state ? ', ' . $selectedSession->state : '' }}</span>
+                                            @if($selectedSession->venue_notes)<p>{{ $selectedSession->venue_notes }}</p>@endif
+                                            <a href="{{ $selectedSession->mapUrl() }}" target="_blank" rel="noopener noreferrer">Ver en el mapa ↗</a>
+                                        </div>
+                                    @endif
+                                    <p class="ev-pick__tz">Las horas son de la sede (hora de {{ trim(str_replace('_', ' ', \Illuminate\Support\Str::afterLast((string) config('academy.timezone'), '/'))) }}).</p>
+                                @endif
+                            </div>
+                        @endif
                         @if(isset($course->liveStreams) && $course->liveStreams->count() > 0)
                             <div class="cr-overview-course" id="live-streams" x-show="tab == 'live-streams' || tab == 'overview'">
                                 <h3>Sesiones "En Vivo" Programadas</h3>
@@ -482,10 +538,12 @@
                                                     @endif
                                                 </div>
                                                 @if($viewCourse)
-                                                    @if($liveStream->meeting_link)
-                                                        <a href="{{ $liveStream->meeting_link }}" target="_blank" class="am-btn am-btn-sm bg-blue-600 !text-white hover:bg-blue-700 rounded px-4 py-2 text-sm transition-colors">
+                                                    @if(in_array(\Modules\Courses\Services\LiveSessionService::phase($liveStream), ['soon', 'live'], true) && $liveStream->meeting_link)
+                                                        <a href="{{ $liveStream->meeting_link }}" target="_blank" rel="noopener noreferrer" class="am-btn am-btn-sm bg-blue-600 !text-white hover:bg-blue-700 rounded px-4 py-2 text-sm transition-colors">
                                                             Unirse
                                                         </a>
+                                                    @else
+                                                        <span class="text-xs text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">{{ __('El enlace se habilita 15 minutos antes') }}</span>
                                                     @endif
                                                 @else
                                                     <span class="text-xs text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">Solo inscritos</span>
@@ -501,7 +559,7 @@
                                 <h3>{{ __('courses::courses.about_this_course') }}</h3>
                                 <p>
                                     @if ($fullDescription)
-                                        {!! $course->description !!}
+                                        {!! cleanLessonHtml($course->description) !!}
                                     @else
                                         {!! Str::limit(strip_tags($course->description), 400, '...', preserveWords: true) !!}
                                     @endif
@@ -532,6 +590,7 @@
                             </ul>
                         </div>
                         @endif
+                        @if($course->sections_count > 0)
                         <div class="cr-overview-course cr-overview-curriculm" id="course-curriculum">
                             <h3>{{ __('courses::courses.course_curriculum') }}</h3>
                             <div class="cr-curriculum-header">
@@ -634,7 +693,7 @@
                                                                                             x-data="{
                                                                                                 type: '{{ $curriculum->type }}',
                                                                                                 articleTitle: @js($curriculum->title),
-                                                                                                articleContent: @js($curriculum->article_content),
+                                                                                                articleContent: @js($curriculum->type === 'article' ? $curriculum->article_content : null),
                                                                                                 videoUrl: @js(getVideoUrl($curriculum)), 
                                                                                                 viewContent() {
                                                                                                     if (this.type === 'article') {
@@ -668,6 +727,7 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
                         @if (!empty($course->faqs) && $course->faqs->isNotEmpty())
                             <div class="cr-overview-course" id="prerequisites-&-faq">
                                 <h3>{{ __('courses::courses.faqs_title') }}</h3>
@@ -687,7 +747,7 @@
                                                     </span>
                                                 </label>
                                                 <div class="accordion-content">
-                                                    <p>{!! $faq->answer !!}</p>
+                                                    <p>{!! cleanLessonHtml($faq->answer) !!}</p>
                                                 </div>
                                             </div>
                                         @endforeach
@@ -699,7 +759,7 @@
                             <div class="cr-overview-course" id="prerequisites-&-faq">
                                 <h3>{{ __('courses::courses.prerequisites_title') }}</h3>
                                 <div class="cr-prerequisites-frame">
-                                {!! $course->prerequisites !!}
+                                {!! cleanLessonHtml($course->prerequisites) !!}
                                 </div>
                             </div>
                         @endif
@@ -715,8 +775,8 @@
                                 @foreach ($course->ratings as $index =>$rating)
                                 
                                     <div class="cr-review" @if($index >= 4) x-show="showMore" @endif>
-                                        @if (!empty($rating->student?->profile?->image) && Storage::disk(getStorageDisk())->exists($rating->student?->profile?->image))
-                                            <img src="{{ Storage::url($rating->student?->profile?->image) }}" alt="{{ $rating->student?->profile?->full_name }}">
+                                        @if (!empty($rating->student?->profile?->image) && mediaExists($rating->student?->profile?->image))
+                                            <img src="{{ mediaUrl($rating->student?->profile?->image) }}" alt="{{ $rating->student?->profile?->full_name }}">
                                         @else
                                         <img src="{{ resizedImage('placeholder.png',42,42) }}" alt="{{ $rating->student?->profile?->full_name }}" />
                                         @endif
@@ -737,7 +797,7 @@
                                                         @endif
                                                     </div>
                                                     @if (!empty($rating->created_at))
-                                                        <span>{{ $rating->created_at->format('M d, Y') }}</span>
+                                                        <span>{{ dateEs($rating->created_at) }}</span>
                                                     @endif
                                                 </div>
                                                 <div class="cr-reviews-content">
@@ -768,7 +828,7 @@
                                 class="cr-image-wrapper" 
                                 x-data="{ 
                                     isOpen: false, 
-                                    videoUrl: '{{ url(Storage::url($course?->promotionalVideo?->path)) }}',
+                                    videoUrl: '{{ url(mediaUrl($course?->promotionalVideo?->path)) }}',
                                     courseId: '{{ $course->id }}',
                                     playVideo() {
                                         this.isOpen = true;
@@ -788,9 +848,9 @@
                                     </div>
                                 </template>
                                 <template x-if="!isOpen">
-                                    <img height="200" width="360" src="{{ !empty($course?->thumbnail?->path) ? url(Storage::url($course?->thumbnail?->path)) : asset('modules/courses/images/course.png') }}" alt="{{ $course?->title }}" class="cr-background-image {{ empty($course?->thumbnail?->path) ? 'cr-background-image--placeholder' : '' }}" />
+                                    <img loading="lazy" decoding="async" height="200" width="360" src="{{ !empty($course?->thumbnail?->path) ? mediaThumb($course?->thumbnail?->path, 640) : asset('modules/courses/images/course.png') }}" alt="{{ $course?->title }}" class="cr-background-image {{ empty($course?->thumbnail?->path) ? 'cr-background-image--placeholder' : '' }}" />
                                 </template>
-                                @if(!empty($course?->promotionalVideo?->path) && Storage::disk(getStorageDisk())->exists($course?->promotionalVideo?->path) )
+                                @if(!empty($course?->promotionalVideo?->path) && mediaExists($course?->promotionalVideo?->path) )
                                     <template x-if="!isOpen">
                                         <figcaption>
                                             <button @click="playVideo()">
@@ -823,9 +883,26 @@
                                         <span class="cr-amount">{{ __('courses::courses.free') }}</span>
                                     </div>
                                 @endif
+                                @php $hasIncludes = $course->isOnsite() || !empty($course->sections_count) || !empty($totalArticles) || !empty($totalVideos); @endphp
+                                @if($hasIncludes)
                                 <div class="cr-course-includes">
                                     <h2 class="cr-includes-title">{{ __('courses::courses.course_includes') }}:</h2>
                                     <ul class="cr-includes-list">
+                                        @if($course->isOnsite() && $this->dates->isNotEmpty())
+                                            <li class="cr-includes-item">
+                                                <i class="am-icon-list-02"></i>
+                                                <div class="cr-includes-text">
+                                                    <span class="cr-includes-value">{{ $this->dates->count() }}</span>
+                                                    <span class="cr-includes-label">{{ $this->dates->count() === 1 ? 'fecha disponible' : 'fechas disponibles' }}</span>
+                                                </div>
+                                            </li>
+                                            <li class="cr-includes-item">
+                                                <i class="am-icon-location"></i>
+                                                <div class="cr-includes-text">
+                                                    <span class="cr-includes-label">{{ $this->dates->pluck('city')->unique()->implode(', ') }}</span>
+                                                </div>
+                                            </li>
+                                        @endif
                                         @if(!empty($course->sections_count))
                                             <li class="cr-includes-item">
                                                 <i class="am-icon-list-02"></i>
@@ -861,18 +938,38 @@
                                                         $total_duration = $course->curriculums->where('type', 'video')->sum('content_length');
                                                     @endphp
                                                     <span class="cr-includes-value">{{ number_format($totalVideos) }}</span>
-                                                    <span class="cr-includes-label">{{ $totalVideos == 1 ? __('courses::courses.video') : __('courses::courses.videos') }} of {{ getCourseDuration($total_duration) }}</span>
+                                                    <span class="cr-includes-label">{{ $totalVideos == 1 ? __('courses::courses.video') : __('courses::courses.videos') }} · {{ getCourseDuration($total_duration) }}</span>
                                                 </div>
                                             </li>
                                         @endif
                                     </ul>
                                 </div>
+                                @endif
                             </div>
+                            @if($course->isOnsite() && !$viewCourse && $isBuyable)
+                                <div class="ev-pick__summary" data-testid="chosen-date">
+                                    @if($selectedSession)
+                                        <span>Tu fecha</span>
+                                        <strong>{{ ucfirst($selectedSession->whenLabel()) }}</strong>
+                                        <small>{{ $selectedSession->venue_name }} · {{ $selectedSession->city }}</small>
+                                        @if($this->dates->count() > 1)<a href="#dates">Cambiar fecha</a>@endif
+                                    @else
+                                        <span>{{ $this->dates->isEmpty() ? 'Sin fechas disponibles por ahora' : 'Elige una fecha para continuar' }}</span>
+                                        @unless($this->dates->isEmpty())<a href="#dates">Ver fechas ↓</a>@endunless
+                                    @endif
+                                </div>
+                            @endif
                             <div class="cr-action-buttons">
-                                @if($viewCourse)
+                                @if($viewCourse && $course->isOnsite() && empty($course->sections_count) && (auth()->user()->hasRole('admin') || $course->instructor_id === auth()->id()))
+                                    <a href="{{ $course->enrolleesUrl() }}" class="am-btn" data-testid="see-enrollees">Ver inscritos</a>
+                                @elseif($viewCourse && $course->isOnsite() && empty($course->sections_count))
+                                    <a href="{{ route('courses.course-taking', ['slug' => $course->slug, 'redirect' => 'course-detail']) }}" class="am-btn">Ver mi fecha</a>
+                                @elseif($viewCourse)
                                     <a href="{{ route('courses.course-taking', ['slug' => $course->slug, 'redirect' => 'course-detail']) }}" class="am-btn">
                                         {{ __('courses::courses.view_course') }}
                                     </a>
+                                @elseif($isBuyable && $course->isOnsite() && !$selectedSession)
+                                    <a href="#dates" class="am-btn {{ $this->dates->isEmpty() ? 'am-btn_disable' : '' }}">{{ $this->dates->isEmpty() ? 'Sin fechas disponibles' : 'Elegir fecha' }}</a>
                                 @elseif($isBuyable)
                                     @if($courseInCart)
                                         <a href="{{ route('checkout') }}" class="am-btn">
@@ -880,9 +977,21 @@
                                         </a>
                                     @else
                                         @if(isPaidSystem())
-                                            <button class="am-btn" wire:click="addToCart" wire:loading.attr="disabled" wire:loading.class="am-btn_disable" wire:target="addToCart">
-                                                {{ __('courses::courses.add_to_cart') }}
-                                            </button>
+                                            @if(isPrivateAcademy())
+                                                @php $isFree = (float) ($course?->pricing?->final_price ?? 0) <= 0; @endphp
+                                                <button class="am-btn" wire:click="buyNow" wire:loading.attr="disabled" wire:loading.class="am-btn_disable" wire:target="buyNow">
+                                                    {{ $isFree ? 'Inscribirme gratis' : 'Comprar ahora' }}
+                                                </button>
+                                                @unless($isFree)
+                                                <button class="ht-btn-ghost ht-addcart" wire:click="addToCart" wire:loading.attr="disabled" wire:target="addToCart">
+                                                    {{ __('courses::courses.add_to_cart') }}
+                                                </button>
+                                                @endunless
+                                            @else
+                                                <button class="am-btn" wire:click="addToCart" wire:loading.attr="disabled" wire:loading.class="am-btn_disable" wire:target="addToCart">
+                                                    {{ __('courses::courses.add_to_cart') }}
+                                                </button>
+                                            @endif
                                         @else
                                             <button class="am-btn" wire:click="enrollCourse" wire:loading.attr="disabled" wire:loading.class="am-btn_disable" wire:target="addToCart">
                                                 {{ __('courses::courses.enroll_now') }}
@@ -891,14 +1000,24 @@
                                     @endif
                                 @endif
                             </div>
+                            @if($isBuyable && !$viewCourse && isPaidSystem() && (float) ($course?->pricing?->final_price ?? 0) > 0)
+                                <ul class="ht-paynote" data-testid="pay-note">
+                                    @php $methods = paymentMethodLabels(); @endphp
+                                    @if($methods)<li><strong>Paga con</strong> {{ implode(' · ', $methods) }}</li>@endif
+                                    <li>Garantía de reembolso de {{ config('academy.refund_days') }} días</li>
+                                    <li>Acceso inmediato tras el pago</li>
+                                </ul>
+                            @endif
                         </div>
                         @if (!empty($course->instructor))
                             <div class="am-similar-user">
-                                <div class="am-tutordetail_user" onclick="window.open(`{{ route('tutor-detail',['slug' => $course->instructor?->profile?->slug]) }}`, '_blank')">
+                                <div class="am-tutordetail_user" @unless(isPrivateAcademy()) onclick="window.open(`{{ route('tutor-detail',['slug' => $course->instructor?->profile?->slug]) }}`, '_blank')" @endunless>
                                     @if(!empty($course->instructor->profile?->image))
                                         <figure class="am-tutorvone_img">
-                                            <img src="{{ url(Storage::url($course->instructor->profile?->image)) }}" alt="{{ $course->instructor->profile?->short_name }}">
+                                            <img loading="lazy" decoding="async" src="{{ url(mediaUrl($course->instructor->profile?->image)) }}" alt="{{ $course->instructor->profile?->short_name }}">
                                         </figure>
+                                    @else
+                                        <figure class="am-tutorvone_img"><span class="ht-avatar" aria-hidden="true">{{ \Illuminate\Support\Str::of($course->instructor->profile?->full_name ?? '?')->explode(' ')->take(2)->map(fn ($w) => \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($w, 0, 1)))->implode('') }}</span></figure>
                                     @endif
                                     <div class="am-tutordetail_user_name">
                                         <h3>
@@ -956,6 +1075,7 @@
                                             <span> {{ number_format( $this->instructorCoursesCount ) }} <em>{{ $this->instructorCoursesCount == 1 ? __('courses::courses.course') : __('courses::courses.courses') }}</em></span>
                                         </div>
                                     </li>
+                                    @unless(isPrivateAcademy())
                                     <li>
                                         <div class="am-tutorreview-item">
                                             <div class="am-tutorreview-item_icon">
@@ -988,6 +1108,7 @@
                                         </div>
                                         @endif
                                     </li>
+                                    @endunless
                                 </ul>
                                 @if( !empty($course->instructor?->profile?->description))
                                     <p class="cr-instructor-bio">   
@@ -1019,9 +1140,11 @@
                                             @endforeach
                                         </ul>
                                     @endif
+                                    @unless(isPrivateAcademy())
                                     <a href="{{ route('tutor-detail', ['slug' => $course->instructor?->profile->slug]) }}">
                                         <button class="cr-view-profile-btn">{{ __('courses::courses.view_profile') }}</button>
                                     </a>
+                                    @endunless
                                 </div>
                             </div>
                         @endif
@@ -1077,6 +1200,7 @@
                     </div>
                 </div>
             </section>
+            @include('courses::partials.recommendations', ['title' => 'Otros alumnos también tomaron', 'recs' => app(\Modules\Courses\Services\CourseRecommendationService::class)->related($course, auth()->user(), 4)])
         </div>
     </div>
     <!-- Video.js Player Modal -->
@@ -1111,6 +1235,34 @@
             </div>
         </div>
     </div>
+    {{-- Barra de compra fija en móvil: aparece cuando el botón principal sale de la pantalla --}}
+    @if($isBuyable || $viewCourse)
+        <div class="ht-buybar" x-show="barOn" x-cloak x-transition.opacity style="display:none" data-testid="buy-bar">
+            @if($viewCourse)
+                <a class="am-btn ht-buybar__cta" href="{{ route('courses.course-taking', ['slug' => $course->slug, 'redirect' => 'course-detail']) }}">{{ $course->isOnsite() && empty($course->sections_count) ? 'Ver mi fecha' : __('courses::courses.view_course') }}</a>
+            @else
+                <div class="ht-buybar__price">
+                    @if(!empty($course?->pricing?->final_price))
+                        <strong>{!! formatAmount($course->pricing->final_price, true) !!}</strong>
+                        @if(!empty($course->pricing->discount) && $course->pricing->price > $course->pricing->final_price)<s>{!! formatAmount($course->pricing->price, true) !!}</s>@endif
+                    @else
+                        <strong>{{ __('courses::courses.free') }}</strong>
+                    @endif
+                </div>
+                @if($course->isOnsite() && !$selectedSession)
+                    <a href="#dates" class="am-btn ht-buybar__cta {{ $this->dates->isEmpty() ? 'am-btn_disable' : '' }}">{{ $this->dates->isEmpty() ? 'Sin fechas' : 'Elegir fecha' }}</a>
+                @elseif($courseInCart)
+                    <a href="{{ route('checkout') }}" class="am-btn ht-buybar__cta">{{ __('general.proceed_order') }}</a>
+                @elseif(isPaidSystem() && isPrivateAcademy())
+                    <button class="am-btn ht-buybar__cta" wire:click="buyNow" wire:loading.attr="disabled" wire:target="buyNow">{{ (float) ($course?->pricing?->final_price ?? 0) <= 0 ? 'Inscribirme gratis' : 'Comprar ahora' }}</button>
+                @elseif(isPaidSystem())
+                    <button class="am-btn ht-buybar__cta" wire:click="addToCart" wire:loading.attr="disabled" wire:target="addToCart">{{ __('courses::courses.add_to_cart') }}</button>
+                @else
+                    <button class="am-btn ht-buybar__cta" wire:click="enrollCourse" wire:loading.attr="disabled">{{ __('courses::courses.enroll_now') }}</button>
+                @endif
+            @endif
+        </div>
+    @endif
 </div>
 @push('styles')
 <link rel="stylesheet" href="{{ asset('modules/courses/css/main.css') }}">

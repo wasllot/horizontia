@@ -1,5 +1,5 @@
 @php
-    if(!empty(auth()?->user()?->profile->image) && Storage::disk(getStorageDisk())->exists(auth()?->user()?->profile?->image)) {
+    if(!empty(auth()?->user()?->profile->image) && mediaExists(auth()?->user()?->profile?->image)) {
         $userImage = resizedImage(auth()?->user()?->profile?->image, 36, 36);
     } else {
         $userImage = resizedImage('placeholder.png', 36, 36);

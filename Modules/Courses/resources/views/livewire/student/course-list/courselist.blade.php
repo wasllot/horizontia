@@ -1,11 +1,11 @@
 <div class="cr-allcourses" wire:init="loadCoursesData">
     <div class="cr-allcourses_title">
         <div>
-            <h2>{{ __('courses::courses.all_courses_heading') }}</h2>
+            <h1>{{ __('courses::courses.all_courses_heading') }}</h1>
             <p>{{ __('courses::courses.course_sub_title') }}</p>
         </div>
         <div class="am-searchinput">
-            <input type="text" wire:model.live.debounce.500ms="keyword" value="" placeholder="{{ __('courses::courses.search_by_keyword') }}" class="form-control" id="keyword">
+            <input type="text" aria-label="Buscar en mis cursos" wire:model.live.debounce.500ms="keyword" value="" placeholder="{{ __('courses::courses.search_by_keyword') }}" class="form-control" id="keyword">
             <span class="am-searchinput_icon">
                 <i class="am-icon-search-02"></i>
             </span>
@@ -50,7 +50,7 @@
                             class="cr-image-wrapper" 
                             x-data="{ 
                                 isOpen: false, 
-                                videoUrl: '{{ url(Storage::url($course?->promotionalVideo?->path)) }}',
+                                videoUrl: '{{ url(mediaUrl($course?->promotionalVideo?->path)) }}',
                                 courseId: '{{ $course->id }}',
                                 playVideo() {
                                     this.isOpen = true;
@@ -70,9 +70,9 @@
                                 </div>
                             </template>
                             <template x-if="!isOpen">
-                                <img height="200" width="360" src="{{ !empty($course->thumbnail->path) ? url(Storage::url($course->thumbnail->path)) : asset('modules/courses/images/course.png') }}" alt="{{ $course->title }}" class="cr-background-image" />
+                                <img loading="lazy" decoding="async" height="200" width="360" src="{{ !empty($course->thumbnail->path) ? mediaThumb($course->thumbnail->path, 640) : asset('modules/courses/images/course.png') }}" alt="{{ $course->title }}" class="cr-background-image" />
                             </template>
-                            @if(!empty($course?->promotionalVideo?->path) && Storage::disk(getStorageDisk())->exists($course?->promotionalVideo?->path) )
+                            @if(!empty($course?->promotionalVideo?->path) && mediaExists($course?->promotionalVideo?->path) )
                                 <template x-if="!isOpen">
                                     <figcaption>
                                         <button @click="playVideo()">
@@ -89,7 +89,7 @@
                                 <div class="cr-instructor-info">
                                     <div class="cr-instructor-details">
                                         <a href="{{ route('tutor-detail',['slug' => $course->instructor?->profile?->slug]) }}" target="_blank" class="cr-instructor-name">
-                                            <img src="{{ Storage::url($course->instructor?->profile?->image) }}" alt="{{ $course->instructor?->profile?->short_name }}" class="cr-instructor-avatar" />
+                                            <img src="{{ mediaUrl($course->instructor?->profile?->image) }}" alt="{{ $course->instructor?->profile?->short_name }}" class="cr-instructor-avatar" />
                                             {{ $course->instructor?->profile?->short_name }}
                                         </a>
                                     </div>
@@ -110,7 +110,18 @@
                                     <a href="javascript:void(0);" class="cr-category-link">{{ $course->category->name }}</a>
                                 </div>
                             </div>
-                            <div class="cr-usercourse_header_progress">
+                            @if($data->session)
+                                @php $date = $data->session; @endphp
+                                <div class="ht-mydate @if($date->isCancelled()) is-cancelled @endif" data-testid="my-date">
+                                    <span class="ht-mydate__tag">{{ $course->delivery === 'hybrid' ? 'Presencial + en línea' : 'Presencial' }}@if($date->isCancelled()) · Cancelada @endif</span>
+                                    <strong>{{ $date->startsLocal()->locale('es')->translatedFormat('l j \d\e F, H:i') }}</strong>
+                                    <span>{{ $date->venue_name }} · {{ $date->city }}</span>
+                                    @unless($date->isCancelled())
+                                        <a href="{{ route('courses.onsite.ics', $date->id) }}">Añadir al calendario</a>
+                                    @endunless
+                                </div>
+                            @endif
+                            <div class="cr-usercourse_header_progress" @if($course->delivery === 'in_person') hidden @endif>
                                 @php 
                                     $progress = 0;
                                     if(!empty($data->course_progress_sum_duration) && !empty($course->content_length)) {
@@ -122,8 +133,23 @@
                                     <div class="cr-usercourse_header_progress_bar_inner" style="width: {{ $progress }}%"> </div>
                                 </div>
                             </div>
-                            <a href={{ route('courses.course-taking', ['slug' => $course->slug]) }} class="cr-start-course">
-                                {{ __('courses::courses.start_course') }}
+                            @php
+                                $next = $resume[$data->course_id] ?? null;
+                                $isTicket = $course->delivery === 'in_person';
+                            @endphp
+                            @if(!$isTicket && $progress > 0 && $progress < 99 && \App\Services\CourseCertificateService::enabled())
+                                <small class="ht-resume-hint">Te falta {{ 100 - $progress }}% para tu certificado</small>
+                            @endif
+                            @if(!empty($certificates[$data->course_id]))
+                                <a href="{{ route('certificates.show', ['code' => $certificates[$data->course_id]]) }}" target="_blank" rel="noopener" class="ht-resume-hint" data-testid="cert-card-link">🎓 Ver mi certificado</a>
+                            @endif
+                            <a href="{{ route('courses.course-taking', ['slug' => $course->slug] + ($next && $progress > 0 ? ['leccion' => $next['lesson']->id] : [])) }}" class="cr-start-course" data-testid="resume-btn">
+                                @if($isTicket) Ver mi fecha
+                                @elseif($progress >= 100) Repasar curso
+                                @elseif($progress > 0 && $next) Continuar: {{ \Illuminate\Support\Str::limit(html_entity_decode($next['lesson']->title), 26) }}
+                                @elseif($progress > 0) Continuar curso
+                                @else {{ __('courses::courses.start_course') }}
+                                @endif
                             </a>
                         </div>
                     </div>
@@ -134,18 +160,26 @@
                         <figure>
                             <img src="{{ asset('modules/courses/images/empty-view.png') }}" alt="empty-view">
                         </figure>
-                        <h6>{{ __('courses::courses.no_course_found') }}</h6>
-                        <p>{{ __('courses::courses.no_course_found_desc') }}</p>
+                        @if(!empty($keyword))
+                            <h6>No encontramos cursos con «{{ $keyword }}»</h6>
+                            <p>Prueba con otra palabra o borra la búsqueda.</p>
+                        @else
+                            <h6>Aún no tienes cursos</h6>
+                            <p>Cuando compres o te inscribas en un curso aparecerá aquí, con tu avance y el botón para continuar.</p>
+                            <a href="{{ route('courses.search-courses') }}" class="cr-start-course" style="display:inline-flex;max-width:260px;justify-content:center">Explorar cursos</a>
+                        @endif
                     </div>
                 </div>
             @endif
         @endif
     </div>
+    @include('courses::partials.recommendations', ['title' => 'Recomendados para ti', 'recs' => $recommended ?? collect()])
 </div>
 
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('modules/courses/css/main.css') }}">
+<link rel="stylesheet" href="{{ asset('css/onsite.css') }}">
     @vite([
         'public/css/videojs.css',
         'public/css/flags.css',
@@ -155,11 +189,6 @@
 @push('scripts')
 <script src="{{ asset('js/video.min.js') }}"></script>
 <script type="text/javascript" data-navigate-once>
-    document.addEventListener('loadPageJs', (event) => {
-        setTimeout(function() {
-            initPriceRange();
-        }, 50);
-    });
     function initializeVideoPlayer(videoElement, courseId) {
         if (!videoElement.player) {
             let player = videojs(videoElement);

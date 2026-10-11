@@ -16,6 +16,13 @@ return [
     'default' => env('FILESYSTEM_DISK', 'local'),
 
     /*
+    | Disk for paid/private course content (lesson videos, SCORM packages, assignments).
+    | Empty = same disk as the public media (legacy behaviour). With Cloudflare R2 use
+    | PRIVATE_FILESYSTEM_DISK=r2_private so lesson files are only reachable via short-lived signed URLs.
+    */
+    'private_disk' => env('PRIVATE_FILESYSTEM_DISK'),
+
+    /*
     |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
@@ -53,6 +60,38 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
+        ],
+
+        // Cloudflare R2 (S3 compatible). Public bucket: thumbnails, avatars, blog images.
+        'r2' => [
+            'driver' => 's3',
+            'key' => env('R2_ACCESS_KEY_ID'),
+            'secret' => env('R2_SECRET_ACCESS_KEY'),
+            'region' => 'auto',
+            'bucket' => env('R2_BUCKET'),
+            'url' => env('R2_PUBLIC_URL'),
+            'endpoint' => env('R2_ENDPOINT'),
+            'use_path_style_endpoint' => env('R2_USE_PATH_STYLE_ENDPOINT', true),
+            // aws-sdk-php >= 3.337 sends CRC32 checksums by default, which R2 rejects.
+            'request_checksum_calculation' => 'when_required',
+            'response_checksum_validation' => 'when_required',
+            // Public media is immutable in practice (random file names): let browsers and the CDN keep it for a year.
+            'options' => ['CacheControl' => 'public, max-age=31536000'],
+            'throw' => false,
+        ],
+
+        // Cloudflare R2 private bucket (NO public domain): lesson videos, SCORM, assignments.
+        'r2_private' => [
+            'driver' => 's3',
+            'key' => env('R2_ACCESS_KEY_ID'),
+            'secret' => env('R2_SECRET_ACCESS_KEY'),
+            'region' => 'auto',
+            'bucket' => env('R2_PRIVATE_BUCKET'),
+            'endpoint' => env('R2_ENDPOINT'),
+            'use_path_style_endpoint' => env('R2_USE_PATH_STYLE_ENDPOINT', true),
+            'request_checksum_calculation' => 'when_required',
+            'response_checksum_validation' => 'when_required',
             'throw' => false,
         ],
 

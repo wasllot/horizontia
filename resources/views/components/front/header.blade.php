@@ -33,35 +33,26 @@
                             </label>
                         </div>
                         <div class="collapse navbar-collapse" id="tenavbar">
-                            <style>
-                                #tenavbar .navbar-nav li,
-                                #tenavbar .navbar-nav li::before,
-                                #tenavbar .navbar-nav li::after { content: none !important; display:none; list-style:none !important; }
-                                #tenavbar .navbar-nav li { display: block !important; margin:0; padding:0; }
-                                /* Fix potential stray arrows or bullets in header */
-                                .am-header_two_wrap .am-navigation::before, .am-header_two_wrap .am-navigation::after { content: none !important; }
-                            </style>
-                            <ul class="navbar-nav" style="display:flex; gap:20px; list-style-type:none; padding:0; margin:0; align-items:center;">
-                                <li class="nav-item" style="list-style:none; padding:0; margin:0; background:none;">
-                                    <a class="nav-link" href="{{ route('home') }}" style="color:#1a1a2e; font-weight:600; text-decoration:none; display:flex; align-items:center; gap:5px;">
-                                        <i class="am-icon-home" style="color:#667eea;"></i> Inicio
-                                    </a>
-                                </li>
-                                <li class="nav-item" style="list-style:none; padding:0; margin:0; background:none;">
-                                    <a class="nav-link" href="{{ route('courses.search-courses') }}" style="color:#1a1a2e; font-weight:600; text-decoration:none; display:flex; align-items:center; gap:5px;">
-                                        <i class="am-icon-book-1" style="color:#ff9a9e;"></i> Cursos
-                                    </a>
-                                </li>
-                                <li class="nav-item" style="list-style:none; padding:0; margin:0; background:none;">
-                                    <a class="nav-link" href="{{ route('find-tutors') }}" style="color:#1a1a2e; font-weight:600; text-decoration:none; display:flex; align-items:center; gap:5px;">
-                                        <i class="am-icon-user-group" style="color:#f6d365;"></i> Tutores
-                                    </a>
-                                </li>
-                                <li class="nav-item" style="list-style:none; padding:0; margin:0; background:none;">
-                                    <a class="nav-link" href="{{ route('contacto') }}" style="color:#1a1a2e; font-weight:600; text-decoration:none; display:flex; align-items:center; gap:5px;">
-                                        <i class="am-icon-email" style="color:#2ecc71;"></i> Contacto
-                                    </a>
-                                </li>
+                            @php $navItems = app(\App\Services\MenuService::class)->header(); @endphp
+                            <ul class="navbar-nav ht-nav">
+                                @foreach ($navItems as $item)
+                                    @php
+                                        $path = '/' . ltrim((string) parse_url($item['url'], PHP_URL_PATH), '/');
+                                        $active = $path === '/' ? request()->path() === '/' : (request()->is(ltrim($path, '/')) || request()->is(ltrim($path, '/') . '/*'));
+                                    @endphp
+                                    @if (!empty($item['children']))
+                                        <li class="nav-item ht-nav__item ht-nav__has-children" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" @keydown.escape="open = false">
+                                            <a class="nav-link {{ $active ? 'is-active' : '' }}" href="{{ $item['url'] }}" target="{{ $item['target'] }}" aria-haspopup="true" :aria-expanded="open">{{ $item['label'] }} <span class="ht-nav__caret" aria-hidden="true"></span></a>
+                                            <ul class="ht-nav__dropdown" x-show="open" x-transition.opacity.duration.150ms x-cloak>
+                                                @foreach ($item['children'] as $child)
+                                                    <li><a href="{{ $child['url'] }}" target="{{ $child['target'] }}">{{ $child['label'] }}</a></li>
+                                                @endforeach
+                                            </ul>
+                                        </li>
+                                    @else
+                                        <li class="nav-item ht-nav__item"><a class="nav-link {{ $active ? 'is-active' : '' }}" href="{{ $item['url'] }}" target="{{ $item['target'] }}" @if ($active) aria-current="page" @endif>{{ $item['label'] }}</a></li>
+                                    @endif
+                                @endforeach
                             </ul>
                         </div>
                     </nav>
@@ -70,6 +61,9 @@
                     @endauth
                     @guest
                         <div class="am-loginbtns">
+                            @if (\App\Services\AccessRequestService::enabled())
+                                <a href="{{ route('access.request') }}" class="am-request-link" style="margin-right: 18px; color: #14213d; font-weight: 700; text-decoration: none; white-space: nowrap;">Solicitar acceso</a>
+                            @endif
                             <a href="{{ route('login') }}" class="am-btn">{{ __('general.login') }}</a>
                         </div>
                     @endguest

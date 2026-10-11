@@ -1,9 +1,9 @@
 <section class="am-achievements_section">
     @if(!empty(pagesetting('shape_image')))
-        <img class="am-placeholder-one" src="{{url(Storage::url(pagesetting('shape_image')[0]['path']))}}" alt="Background shape image"> 
+        <img class="am-placeholder-one" src="{{url(mediaUrl(pagesetting('shape_image')[0]['path']))}}" alt="Background shape image"> 
     @endif
     @if(!empty(pagesetting('shape_second_image')))
-        <img class="am-placeholder-two" src="{{url(Storage::url(pagesetting('shape_second_image')[0]['path']))}}" alt="Background shape image"> 
+        <img class="am-placeholder-two" src="{{url(mediaUrl(pagesetting('shape_second_image')[0]['path']))}}" alt="Background shape image"> 
     @endif
     <div class="container">
         <div class="row">

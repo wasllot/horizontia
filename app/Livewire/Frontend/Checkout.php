@@ -7,6 +7,7 @@ use App\Livewire\Forms\Frontend\OrderForm;
 use App\Models\Country;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use App\Facades\Cart;
 use App\Services\ProfileService;
 use App\Jobs\CompletePurchaseJob;
@@ -30,14 +31,22 @@ class Checkout extends Component
     public $address;
     public $content;
     public $countries           = [];
-    public $payAmount, $discount, $subTotal;
+    #[Locked]
+    public $payAmount;
+    #[Locked]
+    public $discount;
+    #[Locked]
+    public $subTotal;
+    #[Locked]
     public $totalAmount         = '';
+    #[Locked]
     public $walletBalance       = '';
     public $billingDetail;
     public $payment_methods     = [];
     public $useWalletBalance    = false;
     public $checkoutReady       = true;
     public $subscriptions, $chosenSubscription, $invalidCartItem;
+    #[Locked]
     public $orderDetail;
     public $coupon;
     public  $available_payment_methods           = [];
@@ -58,6 +67,10 @@ class Checkout extends Component
 
     public function mount()
     {
+        if (isPrivateAcademy()) {
+            $this->mountAcademy();
+            return;
+        }
         $this->dispatch('initSelect2', target: '.am-select2' );
         $order_id = session('order_id') ?? '';
         if($order_id){
@@ -124,6 +137,38 @@ class Checkout extends Component
         $this->getavailablePaymentMethods();
     }
 
+    /**
+     * One-page checkout for the private academy: no address, no wallet, no select2/countries lookups.
+     * Prefills name/e-mail (from an unpaid order being retried or from the profile) and preselects a payment method.
+     */
+    protected function mountAcademy(): void
+    {
+        $orderId = session('order_id');
+        $this->orderDetail = $orderId ? $this->orderService->getOrderDetail($orderId) : null;
+
+        if (!empty($this->orderDetail)) {
+            $this->form->setInfo((object) [
+                'first_name' => $this->orderDetail->first_name, 'last_name' => $this->orderDetail->last_name,
+                'email' => $this->orderDetail->email, 'phone' => $this->orderDetail->phone, 'payment_method' => $this->orderDetail->payment_method,
+            ]);
+        } else {
+            $profile = $this->user->profile;
+            $this->form->setInfo((object) ['first_name' => $profile->first_name ?? '', 'last_name' => $profile->last_name ?? '', 'email' => $this->user->email]);
+        }
+
+        $this->walletBalance = 0;
+        $this->methods = array_merge($this->methods, $this->rearrangeArray(PaymentDriver::supportedGateways()));
+        $this->prepareCartAmount();
+        $this->getavailablePaymentMethods();
+
+        $enabled = collect($this->available_payment_methods)->filter(fn ($m) => ($m['status'] ?? 'off') === 'on')->keys();
+        if (!$enabled->contains($this->form->paymentMethod)) {
+            // Mercado Pago is the academy's main gateway; otherwise the admin's default, otherwise the first enabled one.
+            $default = setting('admin_settings.default_payment_method');
+            $this->form->paymentMethod = $enabled->contains('mercadopago') ? 'mercadopago' : ($enabled->contains($default) ? $default : (string) $enabled->first());
+        }
+    }
+
     public function getAvailablePaymentMethods()
     {
         $payment_methods = setting('admin_settings.payment_method');
@@ -145,8 +190,11 @@ class Checkout extends Component
         $this->form->walletBalance      = $this->walletBalance;
         $this->form->useWalletBalance   = $this->useWalletBalance;
 
-        if ($this->content->count() == 0) {
-            redirect()->route('find-tutors');
+        if (isPrivateAcademy()) {
+            // In-person dates can sell out while the buyer is on this page: warn before they try to pay.
+            $dateProblem = app(\Modules\Courses\Services\OnsiteSeatsService::class)->checkCart($this->content ?? []);
+
+            return view('livewire.frontend.checkout-academy', ['dateProblem' => $dateProblem]);
         }
 
         return view('livewire.frontend.checkout');
@@ -164,6 +212,12 @@ class Checkout extends Component
 
     public function updatedUseWalletBalance($value)
     {
+        if (isPrivateAcademy()) {
+            // The wallet belongs to the tutor marketplace; a client-sent toggle must not enable it.
+            $this->useWalletBalance = false;
+            $this->payAmount = $this->totalAmount;
+            return;
+        }
         if($value){
             $this->payAmount =  $this->totalAmount - $this->walletBalance ;
         } else {
@@ -240,16 +294,60 @@ class Checkout extends Component
         }, $array);
     }
 
+    /**
+     * Public Livewire state is client-editable, so every amount used to build the
+     * order and the payment is re-derived here from the server-side cart and wallet.
+     */
+    protected function refreshTrustedAmounts(): void
+    {
+        if (isPrivateAcademy()) {
+            $this->useWalletBalance = false;
+        }
+        $this->prepareCartAmount();
+        $this->walletBalance        = $this->walletService->getWalletAmount(Auth::user()->id);
+        $this->form->walletBalance  = $this->walletBalance;
+
+        if ($this->useWalletBalance) {
+            $this->payAmount = max(0, $this->totalAmount - $this->walletBalance);
+        }
+
+        if (Module::has('subscriptions') && Module::isEnabled('subscriptions') && !empty($this->chosenSubscription)) {
+            $this->subscriptions = (new \Modules\Subscriptions\Services\SubscriptionService())->getUserSubscription(userId: Auth::user()->id);
+            $this->updatedChosenSubscription($this->chosenSubscription);
+        }
+    }
+
     public function updateInfo()
     {
         try {
+            $this->refreshTrustedAmounts();
+            $this->getavailablePaymentMethods();
+            if ($this->payAmount > 0 && ($this->available_payment_methods[$this->form->paymentMethod]['status'] ?? 'off') !== 'on') {
+                $this->dispatch('showAlertMessage', type: 'error', message: __('general.payment_cancelled_desc'));
+                return;
+            }
             if($this->checkoutReady == false){
                 $this->dispatch('showAlertMessage', type: 'error',  message: __('subscriptions::subscription.not_applicable_to_cart_item', ['name' => $this->invalidCartItem['name'] ?? '']));
                 return;
             }
+            // Bundles: every course present at its current share, otherwise the cart is rebuilt and the buyer reviews it.
+            if ($bundleMessage = app(\Modules\Courses\Services\BundleService::class)->validateCart($this->content, Auth::user())) {
+                $this->prepareCartAmount();
+                $this->dispatch('showAlertMessage', type: 'error', message: $bundleMessage);
+                return;
+            }
             DB::beginTransaction();
+            // In-person courses: the chosen date must still be sellable. The row lock makes concurrent checkouts wait for each other.
+            if ($problem = app(\Modules\Courses\Services\OnsiteSeatsService::class)->checkCart($this->content, lock: true)) {
+                DB::rollBack();
+                $this->dispatch('showAlertMessage', type: 'error', message: ($problem[2] ?? '') . ': ' . $problem[1]);
+                return;
+            }
             $orderItems = [];
             $data = $this->form->updateInfo();
+            $applied = Cart::appliedCoupon();
+            $data['coupon_code'] = $applied['coupon']->code ?? null;
+            $data['discount_amount'] = $applied['discount'] ?? 0;
             if(Module::has('subscriptions') && Module::isEnabled('subscriptions') && !empty($this->chosenSubscription)){
                 $data['subscription_id'] = $this->chosenSubscription;
             }
@@ -259,6 +357,9 @@ class Checkout extends Component
                 $orderDetail = $this->orderService->createOrder($data);
             }
             session(['order_id' => $orderDetail->id]);
+            if ($this->form->whatsappOptin && \App\Services\WhatsAppService::enabled()) {
+                app(\App\Services\WhatsAppService::class)->optIn(Auth::user(), $this->form->phone);   // el consentimiento queda guardado con la compra
+            }
 
             foreach ($this->content as $item) {
                 $orderItemData = [
@@ -267,7 +368,7 @@ class Checkout extends Component
                     'quantity'       => $item['qty'],
                     'options'        => $item['options'],
                     'price'          => $item['price'],
-                    'total'          => (float)$item['qty'] * (float)$item['price'],
+                    'total'          => max(0, (float)$item['qty'] * (float)$item['price'] - (float) ($applied['shares'][(int) $item['cartable_id']] ?? 0)),
                     'orderable_id'   => $item['cartable_id'],
                     'orderable_type' => $item['cartable_type'],
                 ];
@@ -292,7 +393,7 @@ class Checkout extends Component
                 $orderDetail = $this->orderService->updateOrder($orderDetail,['status'=>'complete']);
                 DB::commit();
                 session()->forget('order_id');
-                dispatch(new CompletePurchaseJob($orderDetail));
+                dispatch_sync(new CompletePurchaseJob($orderDetail));
                 Cart::clear();
                 redirect()->route('thank-you', ['id' => $orderDetail->id]);
             } else {
@@ -300,8 +401,8 @@ class Checkout extends Component
                 $ipnUrl = PaymentDriver::getIpnUrl($this->form->paymentMethod);
                 session(['payment_data' =>  [
                     'amount'        => $this->payAmount,
-                    'title'         => setting('_general.site_name') ?? env('APP_NAME', 'Lernen') . ' Purchase',
-                    'description'   => setting('_general.site_name') ?? env('APP_NAME', 'Lernen') . ' Purchase Order Confirmation for reference #'.$orderDetail->id,
+                    'title'         => setting('_general.site_name') ?? env('APP_NAME', 'Horizontia') . ' Purchase',
+                    'description'   => setting('_general.site_name') ?? env('APP_NAME', 'Horizontia') . ' Purchase Order Confirmation for reference #'.$orderDetail->id,
                     'ipn_url'       => !empty($ipnUrl) ? route($ipnUrl, ['payment_method' => $this->form->paymentMethod]) : url('/'),
                     'order_id'      => $orderDetail->id,
                     'track'         => Str::random(36),
@@ -327,56 +428,36 @@ class Checkout extends Component
         }
         Cart::remove($id, $type);
         $this->prepareCartAmount();
+        $this->dispatch('cart-updated', cart_data: Cart::content(), discount: formatAmount(Cart::discount(), true), total: formatAmount(Cart::total(), true), subTotal: formatAmount(Cart::subtotal(), true));
     }
 
-    public function removeCoupon($couponCode)
+    public function removeCoupon($couponCode = null)
     {
-        $response = \Modules\KuponDeal\Facades\KuponDeal::removeCoupon($couponCode);
-        $this->dispatch('showAlertMessage', type: $response['status'],  message: $response['message']);
+        if (Module::has('kupondeal') && Module::isEnabled('kupondeal') && !empty($couponCode)) {
+            $response = \Modules\KuponDeal\Facades\KuponDeal::removeCoupon($couponCode);
+            $this->dispatch('showAlertMessage', type: $response['status'],  message: $response['message']);
+        } else {
+            app(\App\Services\CouponService::class)->forget();
+        }
         $this->prepareCartAmount();
         $this->dispatch('cart-updated', cart_data: Cart::content(), discount: formatAmount(Cart::discount(), true), total: formatAmount(Cart::total(), true), subTotal: formatAmount(Cart::subtotal(), true));
     }
 
+    /** Códigos de descuento de la academia (App\Services\CouponService); se revalidan en cada cálculo del carrito. */
     public function applyCoupon()
     {
-        $this->validate([
-            'coupon' => 'required|string|max:30',
-        ]);
+        $this->validate(['coupon' => 'required|string|max:40'], ['coupon.required' => 'Escribe tu código de descuento.']);
 
         if (!empty($this->chosenSubscription)) {
             $this->dispatch('showAlertMessage', type: 'error',  message: __('subscriptions::subscription.cupon_not_applicable_with_subscription'));
+            return;
         }
 
-        if (Module::has('kupondeal') && Module::isEnabled('kupondeal')) {
-            $conditionCopoun = \Modules\KuponDeal\Facades\KuponDeal::getCouponConditions($this->coupon);
-            $order = $this->orderService->getUserOrderDetail();
-            $couponConditions = true;
-            if (!empty($conditionCopoun->conditions)) {
-                foreach ($conditionCopoun->conditions as $condition => $value) {
-                    if ($condition == \Modules\KuponDeal\Models\Coupon::CONDITION_FIRST_ORDER && !empty($order)) {
-                        $couponConditions = false;
-                        break;
-                    } elseif($condition == \Modules\KuponDeal\Models\Coupon::CONDITION_MINIMUM_ORDER && Cart::total() < $value) {
-                        $couponConditions = false;
-                        break;
-                    }
-                }
-            }
-
-            if ($couponConditions) {
-                $response = \Modules\KuponDeal\Facades\KuponDeal::applyCoupon($this->coupon);
-            } else {
-                $response = [
-                    'status' => 'error',
-                    'message' => __('kupondeal::kupondeal.coupon_apply_failed'),
-                ];
-            }
-
-            $this->dispatch('showAlertMessage', type: $response['status'],  message: $response['message']);
-        } else {
-            $this->dispatch('showAlertMessage', type: 'error',  message: __('kupondeal::kupondeal.kupondeal_not_active'));
+        $result = app(\App\Services\CouponService::class)->apply($this->coupon, Auth::user(), Cart::content());
+        $this->dispatch('showAlertMessage', type: $result['ok'] ? 'success' : 'error', message: $result['ok'] ? 'Código aplicado: ' . strip_tags(formatAmount($result['discount'], true)) . ' de descuento.' : $result['message']);
+        if ($result['ok']) {
+            $this->reset('coupon');
         }
-        $this->reset('coupon');
         $this->prepareCartAmount();
     }
 }

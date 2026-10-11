@@ -89,7 +89,7 @@ class Profile extends Model {
 
      public function profileImage(): Attribute {
         return Attribute::make(
-            get: fn () => !empty($this->image) && Storage::disk(getStorageDisk())->exists($this->image) ? url(Storage::url($this->image)) : (setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : url(Storage::url('placeholder.png')))
+            get: fn () => !empty($this->image) && mediaExists($this->image) ? url(mediaUrl($this->image)) : (setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : url(mediaUrl('placeholder.png')))
         );
     }
 

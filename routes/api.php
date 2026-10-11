@@ -38,12 +38,12 @@ Route::post('social-login',                                     [AuthController:
 Route::post('social-profile',                                   [AuthController::class,'createSocialProfile']);
 Route::post('register',                                         [AuthController::class,'register']);
 Route::post('forget-password',                                  [AuthController::class,'resetEmailPassword']);
-Route::get('recommended-tutors',                                [TutorController::class,'getRecommendedTutors']);
-Route::get('find-tutors',                                       [TutorController::class,'findTutots']);
-Route::get('tutor/{slug}',                                      [TutorController::class,'getTutorDetail']);
+Route::get('recommended-tutors',                                [TutorController::class,'getRecommendedTutors'])->middleware('marketplace');
+Route::get('find-tutors',                                       [TutorController::class,'findTutots'])->middleware('marketplace');
+Route::get('tutor/{slug}',                                      [TutorController::class,'getTutorDetail'])->middleware('marketplace');
 Route::get('student-reviews/{id}',                              [StudentController::class,'getStudentReviews']);
-Route::get('tutor-available-slots',                             [TutorController::class,'getTutorAvailableSlots']);
-Route::get('slot-detail/{id}',                                  [TutorController::class,'slotDetail']);
+Route::get('tutor-available-slots',                             [TutorController::class,'getTutorAvailableSlots'])->middleware('marketplace');
+Route::get('slot-detail/{id}',                                  [TutorController::class,'slotDetail'])->middleware('marketplace');
 
 Route::apiResource('tutor-education',                           EducationController::class)->only(['show']);
 Route::apiResource('tutor-experience',                          ExperienceController::class)->only(['show']);
@@ -55,7 +55,7 @@ Route::get('states',                                        [TaxonomiesControlle
 
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('upcoming-bookings',                             [BookingController::class,'getUpComingBooking']);
+    Route::get('upcoming-bookings',                             [BookingController::class,'getUpComingBooking'])->middleware('marketplace');
     Route::apiResource('tutor-education',                       EducationController::class)->only(['store','update','destroy']);
     Route::apiResource('tutor-experience',                      ExperienceController::class)->only(['store','update','destroy']);
     Route::apiResource('tutor-certification',                   CertificationController::class)->only(['store','destroy']);
@@ -67,7 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('send-message/{recipientId}',                   [StudentController::class,'sendMessage']);
     Route::get('resend-email',                                  [AuthController::class,'resendEmail']);
     Route::post('logout',                                       [AuthController::class,'logout']);
-    Route::apiResource('favourite-tutors',                      FavouriteTutorController::class)->only('index', 'update');
+    Route::apiResource('favourite-tutors',                      FavouriteTutorController::class)->only('index', 'update')->middleware('marketplace');
     Route::post('profile-settings/{id}',                        [ProfileController::class,'updateProfile']);
     Route::get('profile-settings/{id}',                         [ProfileController::class,'getProfile']);
 
@@ -75,24 +75,24 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('invoices',                                      [InvoiceController::class,'getInvoices']);
     Route::apiResource('billing-detail',                        BillingDetailController::class)->only(['show', 'update','store']);
     
-    Route::get('tutor-payouts/{id}',                            [PayoutController::class,'getPayoutHistory']);
-    Route::get('my-earning/{id}',                               [PayoutController::class,'getEarning']);
-    Route::get('earning-detail',                                [PayoutController::class,'getEarningDetail']);
-    Route::post('user-withdrawal',                              [PayoutController::class,'userWithdrawal']);
+    Route::get('tutor-payouts/{id}',                            [PayoutController::class,'getPayoutHistory'])->middleware('marketplace');
+    Route::get('my-earning/{id}',                               [PayoutController::class,'getEarning'])->middleware('marketplace');
+    Route::get('earning-detail',                                [PayoutController::class,'getEarningDetail'])->middleware('marketplace');
+    Route::post('user-withdrawal',                              [PayoutController::class,'userWithdrawal'])->middleware('marketplace');
     Route::get('payout-status',                                 [PayoutController::class,'getPayoutStatus']);
     Route::post('payout-status',                                [PayoutController::class,'updateStatus']);
-    Route::post('payout-method',                                [PayoutController::class,'addPayoutMethod']);
-    Route::Delete('payout-method',                              [PayoutController::class,'removePayoutMethod']);
-    Route::apiResource('booking-cart',                          CartController::class);
+    Route::post('payout-method',                                [PayoutController::class,'addPayoutMethod'])->middleware('marketplace');
+    Route::Delete('payout-method',                              [PayoutController::class,'removePayoutMethod'])->middleware('marketplace');
+    Route::apiResource('booking-cart',                          CartController::class)->middleware('marketplace');
     Route::post('checkout',                                     [CheckoutController::class,'addCheckoutDetails']);
 
-    Route::post('complete-booking/{id}',                        [BookingController::class, 'completeBooking']);
-    Route::post('dispute/{id}',                                 [BookingController::class, 'createDispute']);
-    Route::get('dispute-listing',                              [BookingController::class, 'getDisputes']);
-    Route::get('dispute-detail/{id}',                           [BookingController::class, 'getDispute']);
-    Route::get('dispute-discussion/{id}',                       [BookingController::class, 'getDisputeDiscussion']);
-    Route::post('dispute-reply/{id}',                           [BookingController::class, 'addDisputeReply']);
-    Route::post('review/{id}',                                  [BookingController::class, 'addReview']);
+    Route::post('complete-booking/{id}',                        [BookingController::class, 'completeBooking'])->middleware('marketplace');
+    Route::post('dispute/{id}',                                 [BookingController::class, 'createDispute'])->middleware('marketplace');
+    Route::get('dispute-listing',                              [BookingController::class, 'getDisputes'])->middleware('marketplace');
+    Route::get('dispute-detail/{id}',                           [BookingController::class, 'getDispute'])->middleware('marketplace');
+    Route::get('dispute-discussion/{id}',                       [BookingController::class, 'getDisputeDiscussion'])->middleware('marketplace');
+    Route::post('dispute-reply/{id}',                           [BookingController::class, 'addDisputeReply'])->middleware('marketplace');
+    Route::post('review/{id}',                                  [BookingController::class, 'addReview'])->middleware('marketplace');
 });
 
 Route::get('country-states',                                    [TutorController::class,'getStates']);

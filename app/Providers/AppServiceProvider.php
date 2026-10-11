@@ -34,9 +34,33 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // El chat nativo (Livewire) reemplaza la pantalla del paquete LaraGuppy: se quita su ruta /messenger para que no choque.
+        $this->app->booted(function () {
+            $router = $this->app['router'];
+            $routes = new \Illuminate\Routing\RouteCollection();
+            foreach ($router->getRoutes() as $route) {
+                if ($route->uri() === 'messenger' && str_contains((string) $route->getActionName(), 'ChatActionsController')) {
+                    continue;
+                }
+                $routes->add($route);
+            }
+            $routes->refreshNameLookups();
+            $routes->refreshActionLookups();
+            $router->setRoutes($routes);
+        });
+
+        // Livewire re-applies only these route middleware on /livewire/update; without it `role:admin` was skipped on actions.
+        \Livewire\Livewire::addPersistentMiddleware([\Spatie\Permission\Middleware\RoleMiddleware::class]);
+
         Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
             $event->extendSocialite('google', \SocialiteProviders\Google\Provider::class);
         });
         View::composer('*', AdminComposer::class);
+
+        // Public header/footer read cached menus: any change in the menu builder refreshes them.
+        foreach ([\App\Models\Menu::class, \App\Models\MenuItem::class] as $model) {
+            $model::saved(fn () => \App\Services\MenuService::flush());
+            $model::deleted(fn () => \App\Services\MenuService::flush());
+        }
     }
 }

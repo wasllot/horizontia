@@ -2,7 +2,7 @@
 <section class="am-marketplace"> 
     @if(!empty(pagesetting('shape_image')))
         @if(!empty(pagesetting('shape_image')[0]['path']))
-            <img class="am-section-shape" src="{{url(Storage::url(pagesetting('shape_image')[0]['path']))}}" alt="Background shape image">
+            <img class="am-section-shape" src="{{url(mediaUrl(pagesetting('shape_image')[0]['path']))}}" alt="Background shape image">
         @endif 
     @endif 
     <div class="container">
@@ -70,7 +70,7 @@
                         @if(!empty(pagesetting('image')))
                             <div class="am-marketplace_content_video">
                                 @if(!empty(pagesetting('image')[0]['path']))
-                                    <img src="{{url(Storage::url(pagesetting('image')[0]['path']))}}" alt="Marketplace image">
+                                    <img src="{{url(mediaUrl(pagesetting('image')[0]['path']))}}" alt="Marketplace image">
                                 @endif
                             </div>
                         @endif

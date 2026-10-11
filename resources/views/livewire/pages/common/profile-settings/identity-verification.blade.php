@@ -131,8 +131,8 @@
                                         @if (method_exists($form?->image,'temporaryUrl'))
                                             <img src="{{ $form?->image->temporaryUrl() }}">
                                         @else
-                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : url(Storage::url($form?->image)) }}" />
-                                            <!-- <img src="{{ url(Storage::url($form?->image)) }}"> -->
+                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : url(mediaUrl($form?->image)) }}" />
+                                            <!-- <img src="{{ url(mediaUrl($form?->image)) }}"> -->
                                         @endif
                                         @if (method_exists($form->image,'temporaryUrl'))
                                             <span>{{ basename(parse_url($form?->image->temporaryUrl(), PHP_URL_PATH)) }}</span>
@@ -180,7 +180,7 @@
                                             @if (method_exists($form->identificationCard,'temporaryUrl'))
                                                 <img src="{{ $form->identificationCard->temporaryUrl() }}">
                                             @else
-                                                <img src="{{ url(Storage::url($form->identificationCard)) }}">
+                                                <img src="{{ url(mediaUrl($form->identificationCard)) }}">
                                             @endif
 
                                             @if (method_exists($form->identificationCard,'temporaryUrl'))
@@ -249,7 +249,7 @@
                                             @if (method_exists($form->transcript,'temporaryUrl'))
                                                 <img src="{{ $form->transcript->temporaryUrl() }}">
                                             @else
-                                                <img src="{{ url(Storage::url($form->transcript)) }}">
+                                                <img src="{{ url(mediaUrl($form->transcript)) }}">
                                             @endif
 
                                             @if (method_exists($form->transcript,'temporaryUrl'))

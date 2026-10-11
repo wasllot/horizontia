@@ -31,11 +31,10 @@ class CheckoutController extends Controller
             return $this->error(data: null,message: __('api.wallet_balance_empty'),code: Response::HTTP_BAD_REQUEST);
         }
         
-        if($request->useWalletBalance && empty($request->amount)){
-            return $this->error(data: null,message: __('api.amount_is_required'),code: Response::HTTP_BAD_REQUEST);
-        }
-
         $content   = Cart::content(); 
+        // Never trust the amount sent by the client: charge what is in the server-side cart.
+        $cartTotal = (float) Cart::total();
+        $walletUsed = $request->useWalletBalance ? min((float) $walletBalance, $cartTotal) : 0;
 
         if ($content->count() == 0) {
             return $this->error(data: null,message: __('api.cart_is_empty'),code: Response::HTTP_BAD_REQUEST);
@@ -47,9 +46,9 @@ class CheckoutController extends Controller
             'user_id'                   => Auth::user()->id,
             'first_name'                => $request?->firstName,
             'unique_payment_id'         => $uniquePaymentId,
-            'amount'                    => $request?->amount,
+            'amount'                    => $cartTotal,
             'currency'                  => setting('_general.currency') ?? '',
-            'used_wallet_amt'           => $request?->useWalletBalance ? $walletBalance : 0,
+            'used_wallet_amt'           => $walletUsed,
             'last_name'                 => $request?->lastName,
             'company'                   => $request?->company,
             'email'                     => $request?->email,
@@ -81,17 +80,13 @@ class CheckoutController extends Controller
         
         $orderItems = $orderService->storeOrderItems($orderDetail->id,$orderItems);
 
-        if ($request->useWalletBalance ) {
-            if($walletBalance >= $request->amount){
-                $walletService->deductFunds(Auth::user()->id, $request->amount, 'deduct_booking', $orderDetail->id);
-            } else{
-                $walletService->deductFunds(Auth::user()->id, $walletBalance, 'deduct_booking', $orderDetail->id);
-            }
+        if ($walletUsed > 0) {
+            $walletService->deductFunds(Auth::user()->id, $walletUsed, 'deduct_booking', $orderDetail->id);
         }
         
-        if($request->useWalletBalance && ($walletBalance >= $request->amount) ){
+        if($cartTotal == 0 || ($request->useWalletBalance && $walletBalance >= $cartTotal)){
            $orderDetail = $orderService->updateOrder($orderDetail,['status'=>'complete']);
-           dispatch(new CompletePurchaseJob($orderDetail));
+           dispatch_sync(new CompletePurchaseJob($orderDetail));
            Cart::clear();
             return $this->success(data: ['payment_status' => 'completed'], message: __('api.checkout_details_added_successfully'));
         } else{

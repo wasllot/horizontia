@@ -53,7 +53,7 @@
                                     <td data-label="{{ __('dispute.session' )}}">
                                         <div class="am-list-wrap">
                                             <figure class="am-img-rounded">
-                                                @if (!empty($dispute?->booking?->slot?->subjectGroupSubjects?->image) && Storage::disk(getStorageDisk())->exists($dispute?->booking?->slot?->subjectGroupSubjects?->image))
+                                                @if (!empty($dispute?->booking?->slot?->subjectGroupSubjects?->image) && mediaExists($dispute?->booking?->slot?->subjectGroupSubjects?->image))
                                                 <img src="{{ resizedImage($dispute?->booking?->slot?->subjectGroupSubjects?->image,34,34) }}" alt="{{$dispute?->booking?->slot?->subjectGroupSubjects?->image}}" />
                                                 @else
                                                     <img src="{{ resizedImage('placeholder.png',34,34) }}" alt="image" />
@@ -74,10 +74,10 @@
                                         <td data-label="{{ __('dispute.tutor') }}">
                                             <div class="am-list-wrap ">
                                                 <figure>
-                                                    @if (!empty($dispute?->responsibleBy?->profile?->image) && Storage::disk(getStorageDisk())->exists($dispute?->responsibleBy?->profile?->image))
+                                                    @if (!empty($dispute?->responsibleBy?->profile?->image) && mediaExists($dispute?->responsibleBy?->profile?->image))
                                                     <img src="{{ resizedImage($dispute?->responsibleBy?->profile?->image,34,34) }}" alt="{{$dispute?->responsibleBy?->profile?->image}}" />
                                                     @else
-                                                        <img src="{{ setting('_general.default_avatar_for_user') ? Storage::url(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $dispute?->responsibleBy?->profile?->image }}" />
+                                                        <img src="{{ setting('_general.default_avatar_for_user') ? mediaUrl(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $dispute?->responsibleBy?->profile?->image }}" />
                                                     @endif
                                                 </figure>
                                                 <span>{{$dispute?->responsibleBy?->profile?->full_name }} 
@@ -92,7 +92,7 @@
                                                     @if (!empty($dispute?->creatorBy?->profile?->image) && Storage::disk(   'public')->exists($dispute?->creatorBy?->profile?->image))
                                                     <img src="{{ resizedImage($dispute?->creatorBy?->profile?->image,34,34) }}" alt="{{$dispute?->creatorBy?->profile?->image}}" />
                                                     @else
-                                                        <img src="{{ setting('_general.default_avatar_for_user') ? Storage::url(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $dispute?->creatorBy?->profile?->image }}" />
+                                                        <img src="{{ setting('_general.default_avatar_for_user') ? mediaUrl(setting('_general.default_avatar_for_user')[0]['path']) : resizedImage('placeholder.png', 34, 34) }}" alt="{{ $dispute?->creatorBy?->profile?->image }}" />
                                                     @endif
                                                 </figure>
                                                 <span>{{ $dispute?->creatorBy?->profile?->full_name }}

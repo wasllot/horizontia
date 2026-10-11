@@ -7,7 +7,7 @@
                         @if(!empty(pagesetting('left_image')))
                             <div class="am-works_info_user">
                                 @if(!empty(pagesetting('left_image')[0]['path']))
-                                    <figure><img src="{{url(Storage::url(pagesetting('left_image')[0]['path']))}}" alt="Comprehensive support image"></figure>
+                                    <figure><img src="{{url(mediaUrl(pagesetting('left_image')[0]['path']))}}" alt="Comprehensive support image"></figure>
                                 @endif
                             </div>
                         @endif
@@ -36,7 +36,7 @@
                         @if(!empty(pagesetting('right_image')))
                         <div class="am-works_info_user">
                             @if(!empty(pagesetting('right_image')[0]['path']))
-                                <figure><img src="{{url(Storage::url(pagesetting('right_image')[0]['path']))}}" alt="User guide image"></figure>
+                                <figure><img src="{{url(mediaUrl(pagesetting('right_image')[0]['path']))}}" alt="User guide image"></figure>
                             @endif
                         </div>
                         @endif

@@ -14,15 +14,17 @@ class Section extends Model
 
     protected $table;
 
-    public function __construct()
+    public function __construct(array $attributes = [])
     {
         $this->table = (config('courses.db_prefix') ?? 'courses_') . 'sections';
+        parent::__construct($attributes);   // boots traits and global scopes (SoftDeletes) and fills the attributes
     }
 
     protected $fillable = [
         'course_id',
         'title',
         'description',
+        'sort_order',
     ];
 
     public function course()
@@ -36,6 +38,6 @@ class Section extends Model
      */
     public function curriculums(): HasMany
     {
-        return $this->hasMany(Curriculum::class);
+        return $this->hasMany(Curriculum::class)->orderBy('sort_order')->orderBy('id');
     }
 }

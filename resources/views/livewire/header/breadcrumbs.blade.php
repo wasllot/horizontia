@@ -1,16 +1,13 @@
 @unless($breadcrumbs->isEmpty())
-    <ol class="am-breadcrumb">
-        @foreach($breadcrumbs as $breadcrumb)
-
-            @if(!is_null($breadcrumb->url) && !$loop->last)
-                <li><a href="{{ $breadcrumb->url }}" wire:navigate.remove>{{ $breadcrumb->title }}</a></li>
-                <li>
-                    <em>/</em>
-                </li>
-            @else
-                <li class="active"><span>{{ $breadcrumb->title }}</span></li>
-            @endif
-
-        @endforeach
-    </ol>
+    <nav aria-label="{{ __('Ruta de navegación') }}">
+        <ol class="hz-crumbs">
+            @foreach($breadcrumbs as $breadcrumb)
+                @if(!is_null($breadcrumb->url) && !$loop->last)
+                    <li><a href="{{ $breadcrumb->url }}" wire:navigate.remove>{{ $breadcrumb->title }}</a></li>
+                @else
+                    <li><span aria-current="page">{{ $breadcrumb->title }}</span></li>
+                @endif
+            @endforeach
+        </ol>
+    </nav>
 @endunless

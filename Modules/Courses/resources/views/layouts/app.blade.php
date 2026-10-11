@@ -7,8 +7,10 @@
         @php
             $siteTitle        = setting('_general.site_name');
         @endphp
-        <title>{{ $siteTitle }} {!! request()->is('messenger') ? ' | Messages' : (!empty($title) ? ' | ' . $title : '') !!}</title>
+        <title>{{ $siteTitle }} {!! request()->is('messenger') ? ' | Mensajes' : ((!empty($title) ? $title : currentPageTitle()) ? ' | ' . e(!empty($title) ? $title : currentPageTitle()) : '') !!}</title>
+        <meta name="robots" content="noindex, nofollow">
         <x-favicon />
+        <x-typography />
         @vite([
             'public/css/bootstrap.min.css',
             'public/css/fonts.css',
@@ -17,6 +19,7 @@
             'public/css/main.css',
         ])
         @stack('styles')
+        <x-ui-styles />
         @if( !empty(setting('_general.enable_rtl')) )
             <link rel="stylesheet" type="text/css" href="{{ asset('css/rtl.css') }}">
         @endif

@@ -37,7 +37,7 @@
                                 @foreach(pagesetting('banner_repeater') as $option)
                                     @if(!empty($option['banner_image']))
                                         @if(!empty($option['banner_image'][0]['path']))
-                                            <li><figure><img src="{{url(Storage::url($option['banner_image'][0]['path']))}}" alt="Company logo"></figure></li>
+                                            <li><figure><img src="{{url(mediaUrl($option['banner_image'][0]['path']))}}" alt="Company logo"></figure></li>
                                         @endif
                                     @endif
                                 @endforeach
@@ -50,13 +50,13 @@
     </div>
     @if(!empty(pagesetting('bg_img_one')) || !empty(pagesetting('bg_img_two')) || !empty(pagesetting('bg_img_three')))
         @if(!empty(pagesetting('bg_img_one')))
-            <img class="am-bgimg1" src="{{url(Storage::url(pagesetting('bg_img_one')[0]['path']))}}" alt="Background shape image"> 
+            <img class="am-bgimg1" src="{{url(mediaUrl(pagesetting('bg_img_one')[0]['path']))}}" alt="Background shape image"> 
         @endif
         @if(!empty(pagesetting('bg_img_two')))
-            <img class="am-bgimg2" src="{{url(Storage::url(pagesetting('bg_img_two')[0]['path']))}}" alt="Background shape image"> 
+            <img class="am-bgimg2" src="{{url(mediaUrl(pagesetting('bg_img_two')[0]['path']))}}" alt="Background shape image"> 
         @endif
         @if(!empty(pagesetting('bg_img_three')))
-            <img class="am-bgimg3" src="{{url(Storage::url(pagesetting('bg_img_three')[0]['path']))}}" alt="Background shape image"> 
+            <img class="am-bgimg3" src="{{url(mediaUrl(pagesetting('bg_img_three')[0]['path']))}}" alt="Background shape image"> 
         @endif
     @endif
     <img class="am-bgimg4" src="{{ asset('demo-content/home-v2/banner/bg-boxs.png') }}" alt="Background shape image">

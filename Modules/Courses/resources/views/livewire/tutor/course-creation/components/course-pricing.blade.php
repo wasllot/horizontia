@@ -1,150 +1,5 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('modules/courses/css/main.css') }}">
-<style>
-/* ── Pricing form ─────────────────────────────────────────────────── */
-
-/* Free / Paid toggle cards */
-.cr-pricing-mode {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px;
-}
-.cr-mode-card {
-    border: 2px solid #e4e9f0; border-radius: 14px; padding: 18px 20px;
-    cursor: pointer; transition: border-color .2s, background .2s;
-    display: flex; align-items: center; gap: 14px; background: #fff;
-    user-select: none;
-}
-.cr-mode-card:hover { border-color: #aab3c5; }
-.cr-mode-card.is-active { border-color: #14213d; background: #f4f6fb; }
-.cr-mode-card .cr-mode-icon {
-    width: 44px; height: 44px; border-radius: 11px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: #f0f3fa; transition: background .2s;
-}
-.cr-mode-card.is-active .cr-mode-icon { background: #14213d; }
-.cr-mode-card.is-active .cr-mode-icon svg path,
-.cr-mode-card.is-active .cr-mode-icon svg circle,
-.cr-mode-card.is-active .cr-mode-icon svg polyline { stroke: #fed304; }
-.cr-mode-card .cr-mode-text h4 { margin: 0 0 3px; font-size: 14px; font-weight: 700; color: #14213d; }
-.cr-mode-card .cr-mode-text p  { margin: 0; font-size: 12px; color: #8a95b0; line-height: 1.4; }
-.cr-mode-card .cr-mode-check {
-    margin-left: auto; width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
-    border: 2px solid #d5dce8; display: flex; align-items: center; justify-content: center;
-    transition: border-color .2s, background .2s;
-}
-.cr-mode-card.is-active .cr-mode-check {
-    background: #14213d; border-color: #14213d;
-}
-.cr-mode-card.is-active .cr-mode-check::after {
-    content: ''; width: 6px; height: 6px; border-radius: 50%; background: #fed304;
-}
-
-/* Price input block */
-.cr-price-block {
-    background: linear-gradient(135deg, #14213d 0%, #1e2f55 100%);
-    border-radius: 16px; padding: 24px 28px; margin-bottom: 24px; position: relative;
-}
-.cr-price-block-label {
-    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
-    color: #aab3c5; margin-bottom: 12px;
-}
-.cr-price-input-row {
-    display: flex; align-items: center; gap: 0;
-}
-.cr-currency-badge {
-    background: rgba(254,211,4,.15); border: 1px solid rgba(254,211,4,.35);
-    border-radius: 10px 0 0 10px; padding: 12px 16px;
-    font-size: 18px; font-weight: 800; color: #fed304; flex-shrink: 0;
-}
-.cr-price-input-row input[type="number"] {
-    flex: 1; background: rgba(255,255,255,.08);
-    border: 1px solid rgba(255,255,255,.15); border-left: none;
-    border-radius: 0 10px 10px 0; padding: 12px 16px;
-    font-size: 22px; font-weight: 800; color: #fff; outline: none;
-    transition: border-color .2s;
-}
-.cr-price-input-row input[type="number"]:focus { border-color: #fed304; }
-.cr-price-input-row input[type="number"]::placeholder { color: rgba(255,255,255,.3); }
-.cr-price-hint { font-size: 12px; color: rgba(255,255,255,.45); margin-top: 8px; }
-
-/* Discount toggle row */
-.cr-discount-toggle-row {
-    display: flex; align-items: center; justify-content: space-between;
-    background: #f8f9fc; border: 1px solid #e4e9f0;
-    border-radius: 12px; padding: 16px 20px; margin-bottom: 20px;
-}
-.cr-discount-toggle-row .cr-dt-text h4 { margin: 0 0 2px; font-size: 14px; font-weight: 700; color: #14213d; }
-.cr-discount-toggle-row .cr-dt-text p  { margin: 0; font-size: 12px; color: #8a95b0; }
-
-/* Discount cards grid */
-.cr-discount-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px; margin-bottom: 16px;
-}
-.cr-discount-card {
-    border: 2px solid #e4e9f0; border-radius: 14px; padding: 16px 14px;
-    cursor: pointer; background: #fff; transition: border-color .2s, background .2s;
-    text-align: center; position: relative;
-}
-.cr-discount-card:hover { border-color: #aab3c5; }
-.cr-discount-card.is-active { border-color: #fed304; background: #fffef5; }
-.cr-discount-card .cr-dc-pct {
-    font-size: 20px; font-weight: 800; color: #14213d; line-height: 1;
-    margin-bottom: 6px;
-}
-.cr-discount-card.is-active .cr-dc-pct { color: #d4a800; }
-.cr-discount-card .cr-dc-saves {
-    font-size: 11px; color: #8a95b0; margin-bottom: 4px;
-}
-.cr-discount-card .cr-dc-final {
-    font-size: 13px; font-weight: 700; color: #065f46;
-}
-.cr-discount-card .cr-dc-check {
-    position: absolute; top: 8px; right: 8px;
-    width: 18px; height: 18px; border-radius: 50%;
-    border: 2px solid #d5dce8;
-    display: flex; align-items: center; justify-content: center;
-}
-.cr-discount-card.is-active .cr-dc-check { background: #fed304; border-color: #fed304; }
-.cr-discount-card.is-active .cr-dc-check::after {
-    content: '✓'; font-size: 10px; color: #14213d; font-weight: 900;
-}
-
-/* Custom discount card */
-.cr-discount-card.cr-custom-card .cr-custom-input-wrap {
-    display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 6px;
-}
-.cr-discount-card.cr-custom-card input[type="text"] {
-    width: 52px; text-align: center; font-size: 14px; font-weight: 700;
-    border: 1px solid #d5dce8; border-radius: 6px; padding: 4px 6px;
-    color: #14213d; outline: none; background: #f8f9fc;
-}
-.cr-discount-card.cr-custom-card input[type="text"]:focus { border-color: #fed304; }
-.cr-discount-card.cr-custom-card span { font-size: 14px; font-weight: 700; color: #8a95b0; }
-
-/* Final price summary */
-.cr-final-price-banner {
-    background: linear-gradient(135deg, #065f46, #047857);
-    border-radius: 12px; padding: 16px 20px;
-    display: flex; align-items: center; justify-content: space-between;
-}
-.cr-final-price-banner .cr-fp-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,.8); }
-.cr-final-price-banner .cr-fp-amount { font-size: 24px; font-weight: 900; color: #fff; }
-.cr-final-price-banner .cr-fp-savings { font-size: 12px; color: rgba(255,255,255,.6); }
-
-/* Free course banner */
-.cr-free-banner {
-    background: linear-gradient(135deg, #14213d, #1e2f55);
-    border-radius: 14px; padding: 28px 24px; text-align: center;
-}
-.cr-free-banner h3 { color: #fff; font-size: 18px; font-weight: 800; margin: 0 0 8px; }
-.cr-free-banner p  { color: #aab3c5; font-size: 13px; margin: 0; }
-.cr-free-banner .cr-free-badge {
-    display: inline-block; background: #fed304; color: #14213d;
-    font-size: 22px; font-weight: 900; padding: 8px 28px;
-    border-radius: 10px; margin-bottom: 12px;
-}
-</style>
 @endpush
 
 <div class="cr-course-box" wire:init="loadData" wire:key="@this">
@@ -155,6 +10,8 @@
 
     <form class="am-themeform" onsubmit="return false;">
         <fieldset>
+            <div class="cr-pricing-cols">
+                <div class="cr-col">
             {{-- ── Free / Paid selector ──────────────────────────── --}}
             <div class="cr-pricing-mode">
                 {{-- Paid option --}}
@@ -186,15 +43,7 @@
                 </div>
             </div>
 
-            @if ($isFree)
-                {{-- Free course state --}}
-                <div class="cr-free-banner">
-                    <div class="cr-free-badge">GRATIS</div>
-                    <h3>Este curso es gratuito</h3>
-                    <p>Los estudiantes podrán inscribirse sin costo. Cambia a "Curso de pago" para establecer un precio.</p>
-                </div>
-
-            @else
+                    @unless ($isFree)
                 {{-- ── Price input ───────────────────────────────── --}}
                 <div class="cr-price-block">
                     <div class="cr-price-block-label">Precio base del curso</div>
@@ -207,6 +56,17 @@
                 </div>
                 <x-input-error field_name='price' />
 
+                    @endunless
+                </div>
+                <div class="cr-col">
+                    @if ($isFree)
+                <div class="cr-free-banner">
+                    <div class="cr-free-badge">GRATIS</div>
+                    <h3>Este curso es gratuito</h3>
+                    <p>Los estudiantes podrán inscribirse sin costo. Cambia a "Curso de pago" para establecer un precio.</p>
+                </div>
+
+                    @else
                 {{-- ── Discount toggle ───────────────────────────── --}}
                 <div class="cr-discount-toggle-row">
                     <div class="cr-dt-text">
@@ -272,12 +132,14 @@
                         </div>
                     @endif
                 @endif
-            @endif
+                    @endif
+                </div>
+            </div>
 
         </fieldset>
 
         <div class="am-themeform_footer">
-            <a href="{{ route('courses.tutor.edit-course', ['tab' => 'media', 'id' => $courseId]) }}" class="am-white-btn">
+            <a href="{{ courseEditUrl(\Modules\Courses\Models\Course::find($courseId)?->isOnsite() ? 'sessions' : 'media', $courseId) }}" class="am-white-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
                     <path d="M10.5 4.5L6 9L10.5 13.5" stroke="#585858" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>

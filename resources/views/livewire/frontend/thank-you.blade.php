@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="{{ asset('css/onsite.css') }}">
 <div class="am-checkout_section">
     <div class="container">
         <div class="row">
@@ -41,8 +42,20 @@
                         <div class="am-checkout_perinfo">
                             <p>{!! __('thank_you.thanks_detail') !!}</p> 
                         </div>
+                        @foreach ($onsiteDates as $date)
+                            <div class="ht-thanks-date" data-testid="thanks-date">
+                                <strong>{{ html_entity_decode($date->course->title) }}</strong>
+                                <p><b>Cuándo:</b> {{ $date->whenLabel() }}</p>
+                                <p><b>Dónde:</b> {{ $date->fullAddress() }}</p>
+                                <p>
+                                    <a href="{{ $date->mapUrl() }}" target="_blank" rel="noopener">Cómo llegar</a> ·
+                                    <a href="{{ route('courses.onsite.ics', $date->id) }}">Añadir al calendario</a>
+                                </p>
+                                <small>Te enviamos estos datos por correo.</small>
+                            </div>
+                        @endforeach
                         <div class="am-checkout-details">
-                            <a href="{{ auth()->user()->role == 'student' ? route('student.bookings') : route('tutor.invoices') }}" class="am-btn">{{ __('thank_you.continue_profile') }}</a>
+                            <a href="{{ auth()->user()->role == 'student' ? route('courses.course-list') : route('tutor.invoices') }}" class="am-btn">{{ __('thank_you.continue_profile') }}</a>
                         </div>
                     </div>
                     <div class="am-ordersummary">
@@ -57,10 +70,10 @@
                             @foreach ($orderItem as $item)
                             <li>
                                 <figure class="am-ordersummary_list_img">
-                                    @if(!empty($item->options['image']) && Storage::disk(getStorageDisk())->exists($item->options['image']))
+                                    @if(!empty($item->options['image']) && mediaExists($item->options['image']))
                                         <img src="{{ resizedImage($item->options['image'],34,34) }}" alt="{{$item->options['image']}}" />
                                     @else
-                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(Storage::url(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="default avatar" />
+                                        <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : resizedImage('placeholder.png', 34, 34) }}" alt="default avatar" />
                                     @endif
                                 </figure>
                                 <div class="am-ordersummary_list_title">

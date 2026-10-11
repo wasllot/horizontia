@@ -1,7 +1,7 @@
 <section class="am-marketplace am-marketplace-slider">
     @if(!empty(pagesetting('shape_image')))
         @if(!empty(pagesetting('shape_image')[0]['path']))
-            <img class="am-section-shape" src="{{url(Storage::url(pagesetting('shape_image')[0]['path']))}}" alt="image"> 
+            <img class="am-section-shape" src="{{url(mediaUrl(pagesetting('shape_image')[0]['path']))}}" alt="image"> 
         @endif 
     @endif
     <div class="container">

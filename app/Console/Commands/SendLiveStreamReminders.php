@@ -21,7 +21,7 @@ class SendLiveStreamReminders extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Queue the reminder e-mail of live sessions whose reminder window just opened';
 
     /**
      * Execute the console command.
@@ -33,7 +33,7 @@ class SendLiveStreamReminders extends Command
             ->whereNotNull('notify_hours_before')
             ->where('notify_hours_before', '>', 0)
             ->where('date_time', '>', $now)
-            ->with(['course.enrollments.student.profile', 'course.enrollments.student'])
+            ->with('course')
             ->get();
 
         foreach ($streams as $stream) {
@@ -46,14 +46,11 @@ class SendLiveStreamReminders extends Command
 
                 if (!\Illuminate\Support\Facades\Cache::has($cacheKey)) {
                     if ($stream->course) {
-                        foreach ($stream->course->enrollments as $enrollment) {
-                            if ($enrollment->student && $enrollment->student->email) {
-                                $studentName = $enrollment->student->profile?->full_name ?? $enrollment->student->name ?? 'Estudiante';
-                                Mail::to($enrollment->student->email)
-                                    ->queue(new LiveStreamReminderEmail($stream, $studentName));
-                            }
+                        foreach ((new \Modules\Courses\Services\LiveSessionService())->recipients($stream->course) as $email => $studentName) {
+                            Mail::to($email)->queue(new LiveStreamReminderEmail($stream, $studentName));
                         }
                     }
+                    $stream->course && app(\App\Services\WhatsAppService::class)->liveReminder($stream);
                     $this->info("Reminders queued for stream ID: {$stream->id}");
 
                     // Mark as sent in cache for 7 days
