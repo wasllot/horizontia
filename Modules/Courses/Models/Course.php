@@ -36,6 +36,7 @@ class Course extends Model
 
     protected $fillable = [
         'instructor_id',
+        'promo_video_url',
         'title',
         'subtitle',
         'description',

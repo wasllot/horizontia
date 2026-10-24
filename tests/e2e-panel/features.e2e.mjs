@@ -216,7 +216,7 @@ test('PWA: manifiesto válido, service worker activo y página sin conexión', a
 
 test('banners de páginas: el admin cambia título, subtítulo e imagen y se ve en la página pública', async () => {
     const s = await session(browser, 'admin');
-    const key = php(`echo 'page:' . App\\Models\\SitePage::where('slug', 'nosotros')->value('id');`);
+    const key = php(`echo 'page:' . App\\Models\\SitePage::where('slug', 'como-funciona')->value('id');`);
     try {
         const { page } = s;
         await page.goto(`${BASE}/admin/banners-de-paginas`, { waitUntil: 'networkidle' });
@@ -234,7 +234,7 @@ test('banners de páginas: el admin cambia título, subtítulo e imagen y se ve 
         const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
         await ctx.addCookies([{ name: 'cookie_consent', value: '1', url: BASE }]);
         const pub = await ctx.newPage();
-        await pub.goto(`${BASE}/nosotros`, { waitUntil: 'networkidle' });
+        await pub.goto(`${BASE}/como-funciona`, { waitUntil: 'networkidle' });
         assert.match(await pub.getByTestId('page-banner').innerText(), /Conoce nuestra academia/);
         assert.equal(await pub.getByTestId('page-banner').locator('h1').count(), 1);
         assert.equal(await pub.locator('h1').count(), 1, 'una sola portada: la original se reemplaza');
@@ -254,8 +254,8 @@ test('solicitar acceso: la persona pide acceso, el admin aprueba y puede crear s
     const page = await ctx.newPage();
     try {
         await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
-        await page.locator('.am-steps-section').screenshot({ path: `${SHOTS}/feat-home-step.png` });
-        await page.getByRole('link', { name: 'SOLICITAR', exact: true }).click();
+        await page.locator('#pasos').screenshot({ path: `${SHOTS}/feat-home-step.png` });
+        await page.locator('#pasos').getByRole('link', { name: /^Solicitar/ }).first().click();
         await page.waitForURL(/solicitar-acceso/);
         await page.getByTestId('type-tutor').click();
         await page.locator('#ra-name').fill(`E2E ${TAG} Instructor`);

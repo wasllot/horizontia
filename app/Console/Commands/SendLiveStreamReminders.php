@@ -30,33 +30,33 @@ class SendLiveStreamReminders extends Command
     {
         $now = now();
         $streams = CourseLiveStream::where('status', CourseLiveStream::STATUS_SCHEDULED)
-            ->whereNotNull('notify_hours_before')
-            ->where('notify_hours_before', '>', 0)
+            ->whereNotNull('notify_hours_before')->where('notify_hours_before', '>', 0)
+            ->whereNull('reminded_at')
             ->where('date_time', '>', $now)
             ->with('course')
             ->get();
 
         foreach ($streams as $stream) {
             $notificationTime = $stream->date_time->copy()->subHours($stream->notify_hours_before);
-            
-            // Check if it's currently the hour to notify
-            if ($now->greaterThanOrEqualTo($notificationTime) && $now->lessThan($notificationTime->copy()->addHour())) {
-                
-                $cacheKey = 'livestream_reminded_'.$stream->id;
 
-                if (!\Illuminate\Support\Facades\Cache::has($cacheKey)) {
-                    if ($stream->course) {
-                        foreach ((new \Modules\Courses\Services\LiveSessionService())->recipients($stream->course) as $email => $studentName) {
-                            Mail::to($email)->queue(new LiveStreamReminderEmail($stream, $studentName));
-                        }
-                    }
-                    $stream->course && app(\App\Services\WhatsAppService::class)->liveReminder($stream);
-                    $this->info("Reminders queued for stream ID: {$stream->id}");
-
-                    // Mark as sent in cache for 7 days
-                    \Illuminate\Support\Facades\Cache::put($cacheKey, true, now()->addDays(7));
-                }
+            // Toca avisar cuando ya llegó la hora del recordatorio (sin ventana: si el planificador se atrasó, sale en la siguiente vuelta)
+            // y la sesión se programó ANTES de esa hora: si se creó después, el correo de «sesión programada» ya les avisó.
+            if ($now->lessThan($notificationTime) || $stream->created_at?->greaterThan($notificationTime)) {
+                continue;
             }
+
+            // Se marca primero y de forma atómica: dos corridas a la vez no mandan el aviso dos veces.
+            if (CourseLiveStream::whereKey($stream->id)->whereNull('reminded_at')->update(['reminded_at' => $now]) !== 1) {
+                continue;
+            }
+
+            if ($stream->course) {
+                foreach ((new \Modules\Courses\Services\LiveSessionService())->recipients($stream->course) as $email => $studentName) {
+                    Mail::to($email)->queue(new LiveStreamReminderEmail($stream, $studentName));
+                }
+                app(\App\Services\WhatsAppService::class)->liveReminder($stream);
+            }
+            $this->info("Reminders queued for stream ID: {$stream->id}");
         }
     }
 }

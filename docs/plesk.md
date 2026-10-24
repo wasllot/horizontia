@@ -78,3 +78,11 @@ Alternativa: extensión **Git** de Plesk con acciones de despliegue adicionales,
 - *«Instalación limpia» dice que ya hay usuarios:* la base ya se usó; si es una base nueva, revisa que `DB_*` apunte a la correcta.
 - *Redirige a `/install`:* falta `storage/installed`; vuelve a extraer el zip.
 - *Los correos no salen:* revisa que el cron del paso 5 esté creado y `QUEUE_CONNECTION=database`.
+
+## Actualizar la base de datos cuando no puedes correr `artisan migrate`
+Cada actualización que cambia la base trae un archivo SQL en `database/sql/` (con la fecha en el nombre) que equivale a `php artisan migrate`:
+1. Haz un respaldo (Plesk → Bases de datos → tu base → **Exportar**).
+2. Plesk → Bases de datos → **phpMyAdmin** → tu base → pestaña **Importar** → elige el archivo (p. ej. `database/sql/2026-10-24-actualizacion.sql`) → **Continuar**.
+3. Plesk → Git → **Pull** (si no lo hiciste) y, después, `tareas.php` → «Limpiar cachés».
+
+Cada archivo es **seguro de repetir** (solo crea lo que falta) y anota las migraciones en la tabla `migrations`, así que si algún día sí corres `php artisan migrate` no las repite. Aplícalos en orden de fecha.

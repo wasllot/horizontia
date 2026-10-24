@@ -59,6 +59,7 @@
             <div class="hz-body">
                 <livewire:header.header />
                 <main class="hz-content" id="hz-main" tabindex="-1" @if(\App\Support\PanelLive::interval()) data-hz-live="{{ \App\Support\PanelLive::interval() }}" @endif>
+                    <x-panel.page-heading :html="$__env->yieldContent('content') . ($slot ?? '')" />
                     <div class="am-dashboard_box">
                         <div class="am-dashboard_box_wrap">
                             @yield('content')

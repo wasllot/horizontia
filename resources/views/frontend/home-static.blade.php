@@ -345,7 +345,7 @@
                 .ht-cc__media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s ease; }
                 .ht-cc__card:hover .ht-cc__media img { transform: scale(1.07); }
                 .ht-cc__chip { position: absolute; top: 12px; left: 12px; max-width: calc(100% - 24px); padding: 5px 12px; border-radius: 999px; background: rgba(255, 255, 255, .95); color: #14213d; font-size: .72rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 2px 8px rgba(0, 0, 0, .15); }
-                .ht-cc__chip--live { top: auto; bottom: 12px; left: 12px; background: #e0361f; color: #fff; }
+                .ht-cc__chip--live { top: auto; bottom: 12px; left: 12px; background: #cf2c17; color: #fff; }
                 .ht-cc__body { display: flex; flex-direction: column; flex: 1; padding: 18px 18px 16px; }
                 .ht-cc__body h3 { margin: 0 0 8px; font-size: 1.08rem; line-height: 1.3; color: #14213d; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.6em; }
                 .ht-cc__who { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: .86rem; color: #6b7280; }

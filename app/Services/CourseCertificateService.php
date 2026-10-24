@@ -35,7 +35,7 @@ class CourseCertificateService
     }
 
     /** Emite el certificado si el curso está completo. Devuelve el certificado (nuevo o el que ya tenía) o null. */
-    public function issueIfComplete(User $student, Course $course): ?CourseCertificate
+    public function issueIfComplete(User $student, Course $course, bool $notify = true): ?CourseCertificate
     {
         if (!self::enabled() || $course->delivery === 'in_person') {
             return null;
@@ -47,15 +47,15 @@ class CourseCertificateService
             return null;
         }
 
-        $cert = $this->issue($student, $course);
+        $cert = $this->issue($student, $course, $notify);
         app(LearningPathService::class)->onCourseCompleted($student, $course);
 
         return $cert;
     }
 
-    public function issue(User $student, Course $course): CourseCertificate
+    public function issue(User $student, Course $course, bool $notify = true): CourseCertificate
     {
-        return CourseCertificate::firstOrCreate(['user_id' => $student->id, 'course_id' => $course->id], [
+        $cert = CourseCertificate::firstOrCreate(['user_id' => $student->id, 'course_id' => $course->id], [
             'code' => $this->newCode(),
             'student_name' => trim((string) ($student->profile?->full_name ?: $student->email)),
             'course_title' => trim(html_entity_decode(strip_tags((string) $course->title))),
@@ -63,6 +63,17 @@ class CourseCertificateService
             'content_seconds' => (int) $course->content_length,
             'issued_at' => now(),
         ]);
+
+        // Solo cuando se emite de verdad (no al volver a pedir uno existente) y nunca al emitir en lote los de antes.
+        if ($notify && $cert->wasRecentlyCreated && $student->email) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($student->email)->queue(new \App\Mail\CertificateIssuedEmail($cert));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('No se pudo avisar del certificado: ' . $e->getMessage(), ['certificate' => $cert->id]);
+            }
+        }
+
+        return $cert;
     }
 
     /** Código corto, legible y difícil de adivinar: HZ-XXXX-XXXX-XXXX. */
@@ -89,7 +100,7 @@ class CourseCertificateService
             foreach ($rows as $row) {
                 $student = User::find($row->user_id);
                 $course = Course::find($row->course_id);
-                if ($student && $course && !$this->find($student, $course) && $this->issueIfComplete($student, $course)) {
+                if ($student && $course && !$this->find($student, $course) && $this->issueIfComplete($student, $course, false)) {
                     $issued++;
                 }
             }

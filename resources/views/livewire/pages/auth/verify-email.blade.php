@@ -70,7 +70,7 @@ new #[Layout('layouts.guest')] class extends Component
                 <x-application-logo />
             </strong>
             <div class="am-login-right_title">
-                <h2>{{ __('auth.verify_title') }}</h2>
+                <h1>{{ __('auth.verify_title') }}</h1>
                 <p class="am-description">{{ __('auth.verify_email_msg') }}</p>
                 <p class="am-description">{{ __('auth.verify_email_msg2') }}</p>
             </div>

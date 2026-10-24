@@ -170,6 +170,8 @@ Route::middleware(['locale', 'maintenance'])->group(function () {
             Route::get('facturas', Invoices::class)->name('invoices');
             Route::get('datos-de-facturacion', BillingDetail::class)->name('billing-detail');
             Route::get('favoritos', Favourites::class)->middleware('marketplace')->name('favourites');
+            // Modo academia: los cursos con corazón (la ruta de arriba es la de tutores favoritos del marketplace).
+            Route::get('mis-favoritos', \App\Livewire\Pages\Student\FavouriteCourses::class)->name('favourite-courses');
             Route::get('reprogramar-sesion/{id}', RescheduleSession::class)->middleware('marketplace')->name('reschedule-session');
             Route::get('completar-reserva/{id}', [SiteController::class, 'completeBooking'])->middleware('marketplace')->name('complete-booking');
             Route::get('certificados', CertificateList::class)->name('certificate-list');

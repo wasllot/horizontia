@@ -47,6 +47,7 @@ new class extends Component
                 'admin.withdraw-requests' => __('sidebar.withdraw_requests'),
                 'admin.payment-methods' => __('sidebar.payment_methods'),
                 'admin.coupons' => 'Cupones',
+                'admin.refunds' => 'Reembolsos',
                 'admin.commission-settings' => __('sidebar.commission_settings'),
                 'admin.disputes' => __('sidebar.disputes'),
             ]],
@@ -140,7 +141,7 @@ new class extends Component
                 @if (($item['group'] ?? null) !== $lastGroup)
                     @php $lastGroup = $item['group'] ?? null; @endphp
                     @if ($lastGroup !== 'general')
-                        <li class="hz-nav__heading" role="presentation">{{ __('sidebar.group_' . $lastGroup) }}</li>
+                        <li class="hz-nav__heading">{{ __('sidebar.group_' . $lastGroup) }}</li>
                     @endif
                 @endif
                 <li @class(['hz-nav__item', 'is-active' => $isOpen, 'is-open' => $isOpen && $count > 1])>

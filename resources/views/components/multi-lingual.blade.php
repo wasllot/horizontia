@@ -1,5 +1,6 @@
+{{-- Con un solo idioma no hay nada que elegir: el selector solo aparece si hay al menos dos. --}}
 @if(!empty(setting('_general.enable_multi_language')))
-    @if(!empty(setting('_general.multi_language_list')))
+    @if(is_array(setting('_general.multi_language_list')) && count(array_filter(setting('_general.multi_language_list'))) > 1)
         @php
             $translatedLangs = getTranslatedLanguages();
             $selectedLang = app()->getLocale() ?? 'en';

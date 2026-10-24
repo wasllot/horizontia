@@ -8,7 +8,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Modules\Courses\Models\Course;
 
-/** Admin > Reportes: ventas, aprendizaje (finalización y abandono) y cupones, con exportación a CSV. */
+/** Admin > Reportes: ventas, embudo de acceso, aprendizaje (finalización y abandono) y cupones, con exportación a CSV. */
 class Reports extends Component
 {
     use \App\Livewire\Concerns\AuthorizesAdmin;
@@ -29,16 +29,18 @@ class Reports extends Component
 
     public function setTab(string $tab): void
     {
-        $this->tab = in_array($tab, ['ventas', 'aprendizaje', 'cupones', 'busquedas', 'whatsapp'], true) ? $tab : 'ventas';
+        $this->tab = in_array($tab, ['ventas', 'embudo', 'aprendizaje', 'cupones', 'busquedas', 'whatsapp'], true) ? $tab : 'ventas';
     }
 
     #[Layout('layouts.admin-app')]
     public function render()
     {
         $report = new BusinessReportService(array_key_exists($this->range, BusinessReportService::RANGES) ? $this->range : '30d');
-        $data = ['report' => $report, 'tabs' => ['ventas' => 'Ventas', 'aprendizaje' => 'Aprendizaje', 'cupones' => 'Cupones', 'busquedas' => 'Búsquedas', 'whatsapp' => 'WhatsApp']];
+        $data = ['report' => $report, 'tabs' => ['ventas' => 'Ventas', 'embudo' => 'Embudo', 'aprendizaje' => 'Aprendizaje', 'cupones' => 'Cupones', 'busquedas' => 'Búsquedas', 'whatsapp' => 'WhatsApp']];
 
-        if ($this->tab === 'aprendizaje') {
+        if ($this->tab === 'embudo') {
+            $data += ['funnel' => $report->accessFunnel()];
+        } elseif ($this->tab === 'aprendizaje') {
             $learning = $report->learning();
             $selected = $this->courseId && $learning->contains('id', $this->courseId) ? $this->courseId : $learning->first()?->id;
             $data += ['learning' => $learning, 'selected' => $selected, 'funnel' => $selected ? $report->lessonFunnel($selected) : collect()];

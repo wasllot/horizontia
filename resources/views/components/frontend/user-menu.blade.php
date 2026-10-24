@@ -54,7 +54,7 @@
                     menue.slideUp();
                 }
             ">
-            <a href="javascript:void(0);" class="am-header_user_noti cart-bag" >
+            <a href="javascript:void(0);" class="am-header_user_noti cart-bag" aria-label="Carrito de compras">
                 <template x-if="cartData.length > 0">
                     <em x-text="cartData.length"></em>
                 </template>
@@ -175,7 +175,7 @@
             x-on:notifications-count-updated.window="
                 userNotificationCount = $event.detail.count;
             ">
-            <a href="#" class="am-header_user_notify">
+            <a href="#" class="am-header_user_notify" aria-label="Notificaciones">
                 <i class="am-icon-notification-ring-bell-01"></i>
                 <template x-if="userNotificationCount > 0">
                     <span x-text="userNotificationCount"></span>
@@ -186,7 +186,7 @@
     @endhasanyrole
     @if($showMessage)
         @hasanyrole('tutor|student')
-            <a href="{{ route('laraguppy.messenger') }}" class="am-header_user_chat">
+            <a href="{{ route('laraguppy.messenger') }}" class="am-header_user_chat" aria-label="Mensajes">
                 <i class="am-icon-chat-03"></i>
                 @php
                     $message = getUnreadMsgsCount();

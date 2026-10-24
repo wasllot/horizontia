@@ -34,7 +34,7 @@ class PanelTonalUiTest extends TestCase
         $html = $this->actingAs($this->admin())->get('/admin/estadisticas')->assertOk()->getContent();
 
         foreach (['Academia', 'Contenido', 'Negocio', 'Sistema'] as $group) {
-            $this->assertStringContainsString('class="hz-nav__heading" role="presentation">' . $group . '</li>', $html, "group $group");
+            $this->assertStringContainsString('class="hz-nav__heading">' . $group . '</li>', $html, "group $group");
         }
         foreach (['Leads &amp; Contactos', 'Usuarios y Perfiles', 'Finanzas y Pagos', 'Sistema y Plataforma', 'Ajustes Generales'] as $old) {
             $this->assertStringNotContainsString($old, $html, "old sidebar title $old");

@@ -829,6 +829,7 @@
                                 x-data="{ 
                                     isOpen: false, 
                                     videoUrl: '{{ url(mediaUrl($course?->promotionalVideo?->path)) }}',
+                                    embedUrl: @js(\Modules\Courses\Services\PromoVideo::embedUrl($course->promo_video_url)),
                                     courseId: '{{ $course->id }}',
                                     playVideo() {
                                         this.isOpen = true;
@@ -840,7 +841,12 @@
                                         });
                                     }
                                 }">
-                                <template x-if="isOpen">
+                                <template x-if="isOpen && embedUrl">
+                                    <div class="cr-video-modal">
+                                        <iframe :src="embedUrl" title="Video del curso" style="width: 100%; height: 100%; border: 0;" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                                    </div>
+                                </template>
+                                <template x-if="isOpen && !embedUrl">
                                     <div class="cr-video-modal">
                                         <video :id="'course-'+courseId" onloadeddata="let player = videojs(this); player.removeClass('d-none'); setTimeout(() => player.play(), 100);" class="d-none video-js vjs-default-skin d-none-playBtn" width="100%" height="100%" controls>
                                             <source :src="videoUrl" type="video/mp4" x-ref="video" >
@@ -850,10 +856,10 @@
                                 <template x-if="!isOpen">
                                     <img loading="lazy" decoding="async" height="200" width="360" src="{{ !empty($course?->thumbnail?->path) ? mediaThumb($course?->thumbnail?->path, 640) : asset('modules/courses/images/course.png') }}" alt="{{ $course?->title }}" class="cr-background-image {{ empty($course?->thumbnail?->path) ? 'cr-background-image--placeholder' : '' }}" />
                                 </template>
-                                @if(!empty($course?->promotionalVideo?->path) && mediaExists($course?->promotionalVideo?->path) )
+                                @if(\Modules\Courses\Services\PromoVideo::embedUrl($course->promo_video_url) || (!empty($course?->promotionalVideo?->path) && mediaExists($course?->promotionalVideo?->path)))
                                     <template x-if="!isOpen">
                                         <figcaption>
-                                            <button @click="playVideo()">
+                                            <button type="button" @click="playVideo()" aria-label="Reproducir video">
                                                 <svg width="14" height="18" viewBox="0 0 14 18" fill="none">
                                                     <path d="M0.109375 12.9487V5.0514C0.109375 3.16703 0.109375 2.22484 0.503774 1.69381C0.847558 1.23093 1.37438 0.93894 1.94911 0.892737C2.60845 0.839731 3.40742 1.33909 5.00537 2.33781L11.3232 6.28644C12.7629 7.18627 13.4828 7.63619 13.7296 8.21222C13.9452 8.7153 13.9452 9.28476 13.7296 9.78785C13.4828 10.3639 12.7629 10.8138 11.3232 11.7136L5.00537 15.6623C3.40742 16.661 2.60845 17.1603 1.94911 17.1073C1.37438 17.0611 0.847558 16.7691 0.503774 16.3063C0.109375 15.7752 0.109375 14.833 0.109375 12.9487Z" fill="white"/>
                                                 </svg>

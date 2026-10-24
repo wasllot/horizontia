@@ -41,7 +41,7 @@
 .ht-auth__back svg { transition: transform .2s; }
 .ht-auth__back:hover svg { transform: translateX(-3px); }
 .ht-auth__body { width: 100%; max-width: 440px; margin: 0 auto; padding: 28px 0; }
-.ht-auth__legal { text-align: center; margin: 0; font-size: .84rem; color: #7a8296; }
+.ht-auth__legal { text-align: center; margin: 0; font-size: .84rem; color: #5f6a80; }
 .ht-auth__legal a { color: var(--a-muted); text-decoration: underline; text-underline-offset: 2px; }
 
 .ht-auth .am-login-right_title { text-align: left; margin-bottom: 26px; }

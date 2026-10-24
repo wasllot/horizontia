@@ -6,7 +6,7 @@
         <div class="am-profile-setting_content">
             <div class="am-filter-wrap mb-4 d-flex justify-content-between">
                 <input type="text" wire:model.live.debounce.300ms="search" class="form-control" placeholder="Buscar por alumno o tarea..." style="max-width: 300px;">
-                <select wire:model.live="filterStatus" class="form-control" style="max-width: 200px;">
+                <select wire:model.live="filterStatus" aria-label="Filtrar por estado" class="form-control" style="max-width: 200px;">
                     <option value="">Todos</option>
                     <option value="submitted">Pendientes de calificar</option>
                     <option value="graded">Calificados</option>

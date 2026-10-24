@@ -10,10 +10,12 @@
         </div>
     </header>
 
+    <div class="hz-rp__top">
     <div class="hz-tabs" role="tablist" aria-label="Sección del reporte">
         @foreach ($tabs as $key => $label)
             <button type="button" role="tab" aria-selected="{{ $tab === $key ? 'true' : 'false' }}" @class(['hz-tabs__tab', 'is-active' => $tab === $key]) wire:click="setTab('{{ $key }}')" data-testid="tab-{{ $key }}">{{ $label }}</button>
         @endforeach
+    </div>
         <span class="hz-rp__range" role="group" aria-label="Periodo">
             @foreach ($labels as $key => $label)
                 <button type="button" @class(['hz-rp__chip', 'is-on' => $range === $key]) wire:click="setRange('{{ $key }}')" aria-pressed="{{ $range === $key ? 'true' : 'false' }}">{{ $label }}</button>
@@ -39,7 +41,7 @@
             @if ($summary['gross'] > 0)
                 <div class="hz-rp__bars" role="img" aria-label="Gráfico de ventas">
                     @foreach ($series as $bucket => $v)
-                        <span class="hz-rp__bar" style="height: {{ max(2, round($v / $max * 100)) }}%" title="{{ $bucket }}: {{ strip_tags(formatAmount($v, true)) }}"></span>
+                        <span class="hz-rp__top" style="height: {{ max(2, round($v / $max * 100)) }}%" title="{{ $bucket }}: {{ strip_tags(formatAmount($v, true)) }}"></span>
                     @endforeach
                 </div>
             @else
@@ -126,6 +128,41 @@
             @else
                 <p class="hz-rp__empty">Aún no se ha enviado ningún aviso en este periodo.</p>
             @endif
+        </section>
+    @elseif ($tab === 'embudo')
+        @php $f = $funnel; $stages = $f['students']; $t = $f['tutors']; @endphp
+        <section class="hz-card hz-dash__card" data-testid="access-funnel">
+            <header class="hz-dash__cardhead">
+                <div><h2>Del acceso al certificado</h2><p>Personas que pidieron acceso como estudiante en el periodo y hasta dónde llegaron. Cada barra es la parte de las solicitudes que alcanzó ese paso.</p></div>
+            </header>
+            @if ($stages[0]['count'] > 0)
+                <ol class="hz-rp__funnel">
+                    @foreach ($stages as $i => $st)
+                        <li data-testid="funnel-{{ $st['key'] }}">
+                            <div class="hz-rp__funnel-top"><strong>{{ $st['label'] }}</strong><span>{{ $st['count'] }}@if ($i > 0) <em>· {{ number_format($st['of_previous'], 0) }} % del paso anterior</em>@endif</span></div>
+                            <div class="hz-rp__funnel-bar" role="img" aria-label="{{ $st['label'] }}: {{ number_format($st['of_total'], 0) }} % de las solicitudes"><i style="width: {{ max($st['count'] > 0 ? 2 : 0, min(100, $st['of_total'])) }}%"></i></div>
+                            <small>{{ $st['hint'] }}</small>
+                        </li>
+                    @endforeach
+                </ol>
+                <div class="hz-rp__funnel-meta">
+                    <span><b>{{ $f['pending'] }}</b> pendientes de revisar</span>
+                    <span><b>{{ $f['rejected'] }}</b> rechazadas</span>
+                    <span>Tiempo mediano hasta revisarla: <b>{{ $f['hours_to_review'] === null ? '—' : $f['hours_to_review'] . ' h' }}</b></span>
+                    <span>Y hasta activar la cuenta: <b>{{ $f['hours_to_activate'] === null ? '—' : $f['hours_to_activate'] . ' h' }}</b></span>
+                </div>
+            @else
+                <p class="hz-rp__empty">Aún no hay solicitudes de estudiantes en este periodo.</p>
+            @endif
+        </section>
+        <section class="hz-card hz-dash__card" data-testid="tutor-funnel">
+            <header class="hz-dash__cardhead"><div><h2>Instructores</h2><p>Solicitudes de instructor del periodo y cuántos ya publicaron un curso</p></div></header>
+            <div class="hz-rp__funnel-meta">
+                <span><b>{{ $t['requested'] }}</b> solicitudes</span>
+                <span><b>{{ $t['approved'] }}</b> aprobadas</span>
+                <span><b>{{ $t['activated'] }}</b> con cuenta activa</span>
+                <span><b>{{ $t['with_course'] }}</b> con un curso publicado</span>
+            </div>
         </section>
     @elseif ($tab === 'busquedas')
         <div class="hz-rp__cols">

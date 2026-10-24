@@ -1,3 +1,7 @@
+@php
+    // Una red social solo se muestra si tiene una dirección real (el '#' de la plantilla daba iconos que no llevan a ningún lado).
+    $socialUrl = fn (string $k) => (($v = trim((string) setting('_general.' . $k))) !== '' && preg_match('#^https?://#i', $v)) ? $v : null;
+@endphp
 @props(['page'=> null])
 @php
     $footerVariations = setting('_front_page_settings.footer_variation_for_pages');
@@ -61,27 +65,27 @@
                             @endif
 
                             @if (
-                                !empty( setting('_general.fb_link')) ||
-                                !empty( setting('_general.insta_link')) ||
-                                !empty(setting('_general.linkedin_link')) ||
-                                !empty(setting('_general.yt_link')) ||
-                                !empty(setting('_general.tiktok_link'))
+                                $socialUrl('fb_link') ||
+                                $socialUrl('insta_link') ||
+                                $socialUrl('linkedin_link') ||
+                                $socialUrl('yt_link') ||
+                                $socialUrl('tiktok_link')
                                 )
                                 <ul class="am-socialmedia" style="display:flex; gap:10px; list-style:none; padding:0; margin:0;">
-                                    @if ( !empty( setting('_general.fb_link')))
-                                        <li><a href="{{ setting('_general.fb_link') }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; color:#fff; transition:0.3s;"><i class="am-icon-facebook"></i></a></li>
+                                    @if ( $socialUrl('fb_link'))
+                                        <li><a href="{{ $socialUrl('fb_link') }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; color:#fff; transition:0.3s;"><i class="am-icon-facebook"></i></a></li>
                                     @endif
-                                    @if ( !empty( setting('_general.insta_link')))
-                                        <li><a href="{{ setting('_general.insta_link') }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; color:#fff; transition:0.3s;"><i class="am-icon-instagram"></i></a></li>
+                                    @if ( $socialUrl('insta_link'))
+                                        <li><a href="{{ $socialUrl('insta_link') }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; color:#fff; transition:0.3s;"><i class="am-icon-instagram"></i></a></li>
                                     @endif
-                                    @if ( !empty( setting('_general.linkedin_link')))
-                                        <li><a href="{{ setting('_general.linkedin_link') }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; color:#fff; transition:0.3s;"><i class="am-icon-linkedin"></i></a></li>
+                                    @if ( $socialUrl('linkedin_link'))
+                                        <li><a href="{{ $socialUrl('linkedin_link') }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; color:#fff; transition:0.3s;"><i class="am-icon-linkedin"></i></a></li>
                                     @endif
-                                    @if ( !empty( setting('_general.yt_link')))
-                                        <li><a href="{{ setting('_general.yt_link') }}" target="_blank" rel="noopener noreferrer" aria-label="YouTube" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; color:#fff; transition:0.3s;"><i class="am-icon-youtube"></i></a></li>
+                                    @if ( $socialUrl('yt_link'))
+                                        <li><a href="{{ $socialUrl('yt_link') }}" target="_blank" rel="noopener noreferrer" aria-label="YouTube" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; color:#fff; transition:0.3s;"><i class="am-icon-youtube"></i></a></li>
                                     @endif
-                                    @if ( !empty( setting('_general.tiktok_link')))
-                                        <li><a href="{{ setting('_general.tiktok_link') }}" target="_blank" rel="noopener noreferrer" aria-label="TikTok" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; color:#fff; transition:0.3s;"><i class="am-icon-tiktok"></i></a></li>
+                                    @if ( $socialUrl('tiktok_link'))
+                                        <li><a href="{{ $socialUrl('tiktok_link') }}" target="_blank" rel="noopener noreferrer" aria-label="TikTok" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; color:#fff; transition:0.3s;"><i class="am-icon-tiktok"></i></a></li>
                                     @endif
                                 </ul>
                             @endif

@@ -268,7 +268,49 @@
 
     window.hzPanel = { pulse: function () { pulse(); }, liveTick: liveTick, go: go, labelTables: labelTables };
 
+
+    /* Nombres accesibles para controles que el tema pinta sin etiqueta (select2 y el editor de texto). */
+    function labelFor(el) {
+        var id = el && el.id, lbl = id ? doc.querySelector('label[for="' + id + '"]') : null;
+        if (!lbl && el) { var group = el.closest('.form-group'); lbl = group ? group.querySelector('label') : null; }
+        return lbl ? lbl.textContent.replace(/\s+/g, ' ').replace('*', '').trim() : '';
+    }
+    function a11y() {
+        doc.querySelectorAll('.select2-selection[role="combobox"]:not([aria-label])').forEach(function (box) {
+            var sel = box.closest('.select2') && box.closest('.select2').previousElementSibling;
+            var name = labelFor(sel) || (sel && (sel.getAttribute('data-placeholder') || sel.getAttribute('aria-label'))) || 'Seleccionar';
+            box.setAttribute('aria-label', name);
+        });
+        doc.querySelectorAll('.note-editable[role="textbox"]:not([aria-label])').forEach(function (ed) {
+            var ta = ed.closest('.note-editor') && ed.closest('.note-editor').previousElementSibling;
+            ed.setAttribute('aria-label', labelFor(ta) || 'Editor de texto');
+        });
+        /* Enlaces y botones que solo traen un icono (editar, eliminar, ver…): se les da nombre según el icono. */
+        var ICONS = [[/chevron-right|arrow-right/, 'Siguiente'], [/chevron-left|arrow-left/, 'Anterior'], [/icon-edit|icon-pen|icon-pencil/, 'Editar'], [/icon-trash|icon-delete|icon-x-circle/, 'Eliminar'], [/icon-eye/, 'Ver'], [/icon-download/, 'Descargar'], [/icon-copy/, 'Copiar'], [/icon-refresh|icon-rotate/, 'Actualizar'], [/icon-more|icon-dots/, 'Más opciones'], [/icon-plus/, 'Agregar'], [/icon-x\b|icon-close/, 'Cerrar'], [/icon-search/, 'Buscar'], [/icon-settings/, 'Ajustes'], [/icon-check/, 'Confirmar']];
+        doc.querySelectorAll('a:not([aria-label]):not([title]), button:not([aria-label]):not([title])').forEach(function (el) {
+            if (el.textContent.trim() !== '' || el.querySelector('img[alt]:not([alt=""]), svg title')) { return; }
+            var icon = el.querySelector('i[class*="icon-"], i[class*="am-icon"]');
+            if (!icon) { return; }
+            for (var i = 0; i < ICONS.length; i++) { if (ICONS[i][0].test(icon.className)) { el.setAttribute('aria-label', ICONS[i][1]); el.setAttribute('title', ICONS[i][1]); return; } }
+        });
+        doc.querySelectorAll('a[data-bs-toggle="dropdown"]:not([aria-label])').forEach(function (a) { if (a.textContent.trim() === '') { a.setAttribute('aria-label', a.getAttribute('title') || 'Opciones'); a.setAttribute('title', a.getAttribute('title') || 'Opciones'); } });
+        doc.querySelectorAll('img:not([alt])').forEach(function (img) { img.setAttribute('alt', ''); });
+        doc.querySelectorAll('[role="progressbar"]:not([aria-label]):not([aria-labelledby])').forEach(function (b) { b.setAttribute('aria-label', 'Progreso'); });
+        doc.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(function (inp) {
+            if ((inp.getAttribute('aria-label') || '').trim() !== '') { return; }
+            var lab = inp.closest('label') || (inp.id && doc.querySelector('label[for="' + inp.id + '"]'));
+            if (lab && lab.textContent.trim() !== '') { return; }
+            var g = inp.closest('.form-group-wrap, .form-group'), txt = '';
+            if (g) { g.querySelectorAll('label').forEach(function (l) { if (!txt && l.textContent.trim() !== '') { txt = l.textContent; } }); }
+            inp.setAttribute('aria-label', (txt || inp.getAttribute('data-id') || inp.name || 'Opción').replace(/\s+/g, ' ').replace(/[_]/g, ' ').trim());
+        });
+        doc.querySelectorAll('select:not([aria-label]):not([id])').forEach(function (s) { if (!s.closest('label') && s.getAttribute('name')) { s.setAttribute('aria-label', s.getAttribute('name').replace(/[_\-.]/g, ' ')); } });
+    }
+    var a11yTimer = null;
+    if (window.MutationObserver) { new MutationObserver(function () { clearTimeout(a11yTimer); a11yTimer = setTimeout(a11y, 300); }).observe(doc.documentElement, { childList: true, subtree: true }); }
+
     function init() {
+        a11y();
         // <html> puede perder sus clases al navegar (el tema pone class="no-js"): se reaplica el estado guardado.
         if (store(true) === '1' && !mobile.matches) { root.classList.add('hz-collapsed'); }
         syncCollapseButtons();

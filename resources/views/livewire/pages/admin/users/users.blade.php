@@ -63,7 +63,7 @@
                                 @endphp
                                 <tr wire:key="user-{{ $single->id }}">
                                     <td data-label="{{ __('general.user') }}">
-                                        <x-panel.user-cell :name="$single->profile->full_name" :email="$single->email" :image="$single->profile->image" :url="$roleName == 'tutor' ? route('tutor-detail', ['slug' => $single->profile->slug]) : null" />
+                                        <x-panel.user-cell :name="$single->profile->full_name" :email="$single->email" :image="$single->profile->image" :url="$roleName == 'tutor' && !isPrivateAcademy() ? route('tutor-detail', ['slug' => $single->profile->slug]) : null" />
                                     </td>
                                     <td data-label="{{ __('admin/general.role') }}">{{ __(ucfirst($roleName)) }}</td>
                                     <td data-label="{{ __('general.created_date') }}">{{ $single->created_at->translatedFormat('d M Y') }}</td>

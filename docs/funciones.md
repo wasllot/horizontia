@@ -59,3 +59,15 @@ Preguntas y respuestas por curso para quien tiene acceso y su instructor: soluci
 
 ## 12. WhatsApp automático
 Ver `docs/whatsapp.md`.
+
+## 13. Reembolsos (garantía)
+El alumno pide la devolución desde **Mis facturas → Solicitar reembolso** con las reglas de la política: dentro de `ACADEMY_REFUND_DAYS` días del pago (se cuenta desde el alta en el curso, porque los pagos en efectivo se aprueban después), con **máximo 20 %** del contenido visto, sin certificado emitido y solo pedidos pagados (los cursos gratis no aplican). El equipo recibe un correo y revisa en **Admin → Finanzas → Reembolsos**: *Aprobar* devuelve el pago por Mercado Pago y retira el acceso (`OrderRefundService`); *Rechazar* exige un motivo que se envía a la persona. Código: `RefundRequestService`, tabla `refund_requests`. Prueba E2E: `tests/e2e-panel/refunds.e2e.mjs`.
+
+## 14. Avisos de certificado y primeros pasos
+Al emitirse un certificado se envía un correo (con el enlace de verificación y «Agregar a LinkedIn»); la emisión en lote de los anteriores (`backfill`) no manda correos. En «Mis cursos» el estudiante ve una lista de **primeros pasos** (perfil, primer curso, primera lección, primer certificado) calculada con su actividad real y que puede ocultar. En Reportes hay un **embudo de acceso**: de la solicitud al certificado.
+
+## 15. Favoritos, video por enlace y avisos de sesiones
+- **Mis favoritos** (`/estudiante/mis-favoritos`): los cursos con corazón del catálogo o de Mis cursos; se pueden quitar desde ahí. (La ruta `/estudiante/favoritos` sigue siendo la de tutores favoritos del marketplace.)
+- **Video promocional por enlace**: en el paso «Medios» del curso se puede pegar un enlace de **YouTube o Vimeo** (sin el límite de 20 MB de la subida); si hay enlace se usa en lugar del archivo subido y se reproduce en la ficha del curso con los dominios de privacidad (`youtube-nocookie`, `player.vimeo.com`). Solo se aceptan esos dos proveedores (`PromoVideo`).
+- **Recordatorio de sesiones en vivo** (`app:send-live-stream-reminders`, cada 15 min): sale una sola vez por sesión (se guarda `reminded_at`, ya no depende de la caché), aunque el planificador se haya atrasado; no se manda si la sesión se programó después de la hora del aviso (ya recibieron el correo de «sesión programada»).
+- El pie de página solo muestra redes sociales con una dirección real (`https://…`).

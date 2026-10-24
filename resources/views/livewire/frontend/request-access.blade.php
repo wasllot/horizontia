@@ -53,19 +53,19 @@
                                     @error('email') <span class="ra-err">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="col-md-6 form-group" style="margin-top: 20px;">
-                                    <label for="ra-phone" style="font-weight: 600; color: #000; margin-bottom: 8px;">Teléfono <small style="font-weight: 400; color: #888;">(opcional)</small></label>
+                                    <label for="ra-phone" style="font-weight: 600; color: #000; margin-bottom: 8px;">Teléfono <small style="font-weight: 400; color: #5f6a80;">(opcional)</small></label>
                                     <input id="ra-phone" type="tel" wire:model="phone" class="form-control" autocomplete="tel" placeholder="55 1234 5678" style="border-radius: 10px; padding: 12px 20px; border: 1px solid #ddd; width: 100%;">
                                     @error('phone') <span class="ra-err">{{ $message }}</span> @enderror
                                 </div>
                                 @if ($type === 'tutor')
                                     <div class="col-md-6 form-group" style="margin-top: 20px;">
-                                        <label for="ra-link" style="font-weight: 600; color: #000; margin-bottom: 8px;">Sitio o LinkedIn <small style="font-weight: 400; color: #888;">(opcional)</small></label>
+                                        <label for="ra-link" style="font-weight: 600; color: #000; margin-bottom: 8px;">Sitio o LinkedIn <small style="font-weight: 400; color: #5f6a80;">(opcional)</small></label>
                                         <input id="ra-link" type="url" wire:model="link" class="form-control" placeholder="https://" style="border-radius: 10px; padding: 12px 20px; border: 1px solid #ddd; width: 100%;">
                                         @error('link') <span class="ra-err">{{ $message }}</span> @enderror
                                     </div>
                                 @endif
                                 <div class="col-12 form-group" style="margin-top: 20px;">
-                                    <label for="ra-msg" style="font-weight: 600; color: #000; margin-bottom: 8px;">{{ $type === 'tutor' ? 'Cuéntanos sobre tu experiencia y qué te gustaría enseñar' : '¿Qué te gustaría aprender?' }} @if ($type !== 'tutor')<small style="font-weight: 400; color: #888;">(opcional)</small>@endif</label>
+                                    <label for="ra-msg" style="font-weight: 600; color: #000; margin-bottom: 8px;">{{ $type === 'tutor' ? 'Cuéntanos sobre tu experiencia y qué te gustaría enseñar' : '¿Qué te gustaría aprender?' }} @if ($type !== 'tutor')<small style="font-weight: 400; color: #5f6a80;">(opcional)</small>@endif</label>
                                     <textarea id="ra-msg" wire:model="message" class="form-control" rows="4" maxlength="1500" placeholder="{{ $type === 'tutor' ? 'Tu trayectoria, los temas que dominas y el tipo de cursos que imaginas…' : 'Temas o cursos que te interesan, tu objetivo…' }}" style="border-radius: 10px; padding: 15px 20px; border: 1px solid #ddd; width: 100%; resize: vertical;"></textarea>
                                     @error('message') <span class="ra-err">{{ $message }}</span> @enderror
                                 </div>

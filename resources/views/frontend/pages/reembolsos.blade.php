@@ -18,7 +18,7 @@
 
 <h2>Cómo solicitarlo</h2>
 <ol>
-  <li>Escríbenos a @if ($email) <a href="mailto:{{ $email }}">{{ $email }}</a>@else nuestro <a href="{{ route('contacto') }}">formulario de contacto</a>@endif desde el correo de tu cuenta indicando el curso y el número de orden.</li>
+  <li>Entra a <strong>Mis facturas</strong> con tu cuenta y pulsa <strong>Solicitar reembolso</strong> en el pedido (aparece mientras estés dentro de la garantía), o bien escríbenos a @if ($email) <a href="mailto:{{ $email }}">{{ $email }}</a>@else nuestro <a href="{{ route('contacto') }}">formulario de contacto</a>@endif desde el correo de tu cuenta indicando el curso y el número de orden.</li>
   <li>Revisaremos tu solicitud y te responderemos en un máximo de 3 días hábiles.</li>
   <li>Si procede, el reembolso se hace al <strong>mismo medio de pago</strong> a través de Mercado Pago.</li>
 </ol>

@@ -182,4 +182,14 @@ class PageBannersTest extends TestCase
         Livewire::actingAs($this->student())->test(PageBanners::class)->assertForbidden();
         $this->actingAs($this->admin())->get(route('admin.page-banners'))->assertOk()->assertSee('Banners de páginas');
     }
+
+    public function test_a_page_without_a_recognizable_hero_keeps_a_single_h1_when_it_has_a_banner(): void
+    {
+        $html = '<section class="pb-themesection"><h1 class="t">Título viejo</h1><p>Texto</p></section>';
+        $out = app(\App\Services\PageBannerService::class)->stripHero($html);
+
+        $this->assertStringNotContainsString('<h1', $out);
+        $this->assertStringContainsString('<h2 class="t">Título viejo</h2>', $out);
+        $this->assertStringContainsString('<p>Texto</p>', $out);
+    }
 }

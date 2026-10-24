@@ -31,11 +31,13 @@ class CourseLiveStream extends Model
         'date_time',
         'duration_minutes',
         'status',
-        'notify_hours_before'
+        'notify_hours_before',
+        'reminded_at',
     ];
 
     protected $casts = [
         'date_time' => 'datetime',
+        'reminded_at' => 'datetime',
     ];
 
     public const STATUS_SCHEDULED = 1;

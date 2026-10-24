@@ -149,3 +149,9 @@ ul.ht-paynote { margin: 0 !important; padding: 4px 22px 22px !important; list-st
 ul.ht-paynote li { list-style: none !important; padding-left: 20px; position: relative; line-height: 1.4; }
 ul.ht-paynote li::marker { content: none; }
 ul.ht-paynote li::before { content: "✓" !important; position: absolute; left: 0; top: 0; color: #1a9a5b; font-weight: 700; }
+
+/* 9. Contraste mínimo (WCAG AA) en textos secundarios del tema y enlaces dentro de párrafos */
+.cr-includes-label, .cr-review-rating > span > em { color: #5f6a80; }
+.bn-sub ~ p a, .bn-wrap > p a, .ht-prose p a { color: #1b4fc4; text-decoration: underline; text-underline-offset: 2px; }
+body .cr-includes-text .cr-includes-label { color: #5f6a80; opacity: 1; }
+body .cr-review-rating > span, body .cr-review-rating > span > em { color: #5f6a80 !important; opacity: 1 !important; }

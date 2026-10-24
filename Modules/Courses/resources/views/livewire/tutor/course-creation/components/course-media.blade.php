@@ -238,6 +238,13 @@
                         @endif
 
                         <x-input-error field_name="promotionalVideo" />
+
+                        <div class="cr-promo-link" style="margin-top: 18px; padding-top: 16px; border-top: 1px dashed #d9deea;">
+                            <label for="promo-video-url" style="font-weight: 600; display: block; margin-bottom: 4px;">O usa un enlace de YouTube o Vimeo <small style="font-weight: 400; color: #5f6a80;">(sin límite de tamaño)</small></label>
+                            <input id="promo-video-url" type="url" class="form-control" wire:model="promoVideoUrl" placeholder="https://vimeo.com/123456789 o https://youtu.be/…" autocomplete="off" data-testid="promo-video-url">
+                            <small style="color: #5f6a80;">Si pones un enlace, se usa en lugar del video subido. Déjalo vacío para quitarlo.</small>
+                            <x-input-error field_name="promoVideoUrl" />
+                        </div>
                     </div>
                 </div>
 

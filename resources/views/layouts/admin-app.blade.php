@@ -75,6 +75,7 @@
                     </div>
                 </header>
                 <main class="hz-content" id="hz-main" tabindex="-1" @if(\App\Support\PanelLive::interval()) data-hz-live="{{ \App\Support\PanelLive::interval() }}" @endif>
+                    <x-panel.page-heading :html="$__env->yieldContent('content') . ($slot ?? '')" />
                     @yield('content')
                     @if(!empty($slot))
                         {{ $slot }}

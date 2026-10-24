@@ -2,7 +2,7 @@
     <style>
         .am-invoice-system .inv-item { max-width: 250px; }
         .am-invoice-system .inv-item strong { display: block; font-weight: 600; color: #14213d; line-height: 1.3; overflow-wrap: anywhere; }
-        .am-invoice-system .inv-item small, .am-invoice-system .inv-muted { color: #7a8296; }
+        .am-invoice-system .inv-item small, .am-invoice-system .inv-muted { color: #5f6a80; }
         .am-invoice-system .inv-free { display: inline-block; padding: 2px 10px; border-radius: 99px; background: #e3f6ea; color: #14703b; font-style: normal; font-weight: 700; font-size: .85rem; }
         .am-invoice-system .inv-meta { display: flex; flex-wrap: wrap; gap: 8px 24px; padding: 0 0 16px; margin-bottom: 16px; border-bottom: 1px solid #e6eaf2; color: #5b6478; font-size: .9rem; }
         .am-invoice-system .inv-meta b { color: #14213d; margin-right: 4px; }

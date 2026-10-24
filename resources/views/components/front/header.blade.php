@@ -18,13 +18,13 @@
             <div class="col-12">
                 <div class="am-header_two_wrap">
                     <strong class="am-logo">
-                        <a href="{{ route('home') }}">
+                        <a href="{{ route('home') }}" aria-label="{{ (setting('_general.site_name') ?: config('app.name')) . ' · Inicio' }}">
                             <x-application-logo />
                         </a>
                     </strong>
                     <nav class="am-navigation navbar-expand-xl">
                         <div class="am-navbar-toggler">
-                            <div class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#tenavbar" aria-expanded="false" aria-label="Toggle navigation" role="button"></div>
+                            <div class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#tenavbar" aria-expanded="false" aria-label="Abrir menú de navegación" role="button"></div>
                             <input type="checkbox" id="checkbox">
                             <label for="checkbox" class="toggler-menu">
                                 <span class="menu-bars" id="menu-bar1"></span>

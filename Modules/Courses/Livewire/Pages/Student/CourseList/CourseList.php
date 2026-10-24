@@ -78,7 +78,14 @@ class CourseList extends Component
 
         $recommended = $this->keyword === '' ? app(\Modules\Courses\Services\CourseRecommendationService::class)->forStudent(Auth::user(), 3) : collect();
 
-        return view('courses::livewire.student.course-list.courselist', compact('courses', 'favCourseIds', 'resume', 'certificates', 'recommended'));
+        $onboarding = $this->keyword === '' ? app(\App\Services\StudentOnboardingService::class)->forStudent(Auth::user()) : null;
+
+        return view('courses::livewire.student.course-list.courselist', compact('courses', 'favCourseIds', 'resume', 'certificates', 'recommended', 'onboarding'));
+    }
+
+    public function dismissOnboarding(): void
+    {
+        app(\App\Services\StudentOnboardingService::class)->dismiss(Auth::user());
     }
 
     public function loadCoursesData() {

@@ -7,6 +7,7 @@ use App\Livewire\Pages\Student\CertificateList;
 use App\Models\CourseCertificate;
 use App\Services\CourseCertificateService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Modules\Courses\Models\Course;
 use Modules\Courses\Models\Curriculum;
@@ -80,6 +81,41 @@ class CertificatesTest extends TestCase
         $this->assertSame(1200, $cert->content_seconds);
     }
 
+    public function test_the_student_gets_one_email_when_the_certificate_is_issued_and_not_for_old_ones(): void
+    {
+        Mail::fake();
+        [$course, $lessons] = $this->courseWithLessons();
+        $svc = app(CourseCertificateService::class);
+        foreach ($lessons as $l) {
+            $this->watch($l);
+        }
+
+        $cert = $svc->issueIfComplete($this->student(), $course);
+        $svc->issueIfComplete($this->student(), $course);   // volver a pedirlo no manda otro correo
+
+        Mail::assertQueued(\App\Mail\CertificateIssuedEmail::class, 1);
+        Mail::assertQueued(\App\Mail\CertificateIssuedEmail::class, fn ($m) => $m->hasTo($this->student()->email) && $m->certificate->is($cert));
+
+        $html = (new \App\Mail\CertificateIssuedEmail($cert))->render();
+        $this->assertStringContainsString($cert->code, $html);
+        $this->assertStringContainsString($cert->url(), $html);
+        $this->assertStringContainsString('linkedin.com/profile/add', $html);
+    }
+
+    public function test_issuing_in_bulk_for_past_completions_sends_no_email(): void
+    {
+        Mail::fake();
+        [$course, $lessons] = $this->courseWithLessons();
+        foreach ($lessons as $l) {
+            $this->watch($l);
+        }
+
+        app(CourseCertificateService::class)->backfill();
+
+        $this->assertTrue(CourseCertificate::where('user_id', $this->student()->id)->where('course_id', $course->id)->exists());
+        Mail::assertNothingQueued();
+    }
+
     public function test_it_is_off_for_in_person_courses_and_when_the_switch_is_off(): void
     {
         [$course, $lessons] = $this->courseWithLessons(1);
@@ -135,6 +171,31 @@ class CertificatesTest extends TestCase
         $cert = $this->makeCert();
         $cert->update(['revoked_at' => now(), 'revoked_reason' => 'Emitido por error']);
         $this->get($cert->url())->assertOk()->assertSee('Certificado revocado')->assertSee('Emitido por error')->assertSee('REVOCADO');
+    }
+
+    public function test_a_valid_certificate_can_be_shared_and_added_to_linkedin(): void
+    {
+        $cert = $this->makeCert();
+        $html = $this->get($cert->url())->assertOk()->assertSee('data-testid="share-linkedin-profile"', false)->assertSee('data-testid="share-whatsapp"', false)->assertSee('data-testid="share-copy"', false)->getContent();
+
+        $this->assertStringContainsString('property="og:title"', $html);
+        $this->assertStringContainsString('property="og:url" content="' . $cert->url() . '"', $html);
+
+        parse_str((string) parse_url($cert->linkedinProfileUrl(), PHP_URL_QUERY), $q);
+        $this->assertSame('CERTIFICATION_NAME', $q['startTask']);
+        $this->assertSame($cert->code, $q['certId']);
+        $this->assertSame($cert->url(), $q['certUrl'], 'LinkedIn gets the public verification link');
+        $this->assertSame((string) $cert->issued_at->year, $q['issueYear']);
+        $this->assertStringStartsWith('https://wa.me/?text=', $cert->whatsappShareUrl());
+        $this->assertStringContainsString(rawurlencode($cert->url()), $cert->linkedinShareUrl());
+    }
+
+    public function test_a_revoked_certificate_cannot_be_shared(): void
+    {
+        $cert = $this->makeCert();
+        $cert->update(['revoked_at' => now(), 'revoked_reason' => 'Emitido por error']);
+
+        $this->get($cert->url())->assertOk()->assertDontSee('share-linkedin-profile', false)->assertDontSee('share-whatsapp', false)->assertDontSee('og:title', false);
     }
 
     public function test_the_verify_form_redirects_to_the_certificate(): void

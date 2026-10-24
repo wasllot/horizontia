@@ -27,6 +27,7 @@ class CourseMedia extends Component
 
     public $thumbnail;
     public $promotionalVideo;
+    public string $promoVideoUrl = '';
 
     public $imageExtensions;
     public $videoExtensions;
@@ -60,6 +61,7 @@ class CourseMedia extends Component
             $this->thumbnailSize = 0;
         }
 
+        $this->promoVideoUrl            = (string) $this->course->promo_video_url;
         $this->coursePromotionalVideo   = $this->course->promotionalVideo;
 
         if ($this->coursePromotionalVideo) {
@@ -167,6 +169,15 @@ class CourseMedia extends Component
         }
 
         $this->validate($rules, (new CourseMediaRequest())->messages(), (new CourseMediaRequest())->attributes());
+
+        // Video promocional por enlace (YouTube/Vimeo): se guarda el enlace canónico; vacío lo quita.
+        $promoUrl = \Modules\Courses\Services\PromoVideo::normalize($this->promoVideoUrl);
+        if (trim($this->promoVideoUrl) !== '' && $promoUrl === null) {
+            $this->addError('promoVideoUrl', 'Pega un enlace de YouTube (watch, youtu.be, shorts) o de Vimeo (vimeo.com/123456789).');
+
+            return;
+        }
+        $this->course->update(['promo_video_url' => $promoUrl]);
         if (!empty($this->thumbnail) && !empty($this->isBase64)) {
             $thumbnailPath = null;
             $bse64 = explode(',', $this->thumbnail);

@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
     <title>{{ $cert ? 'Certificado · ' . $cert->student_name : 'Certificado no encontrado' }} · {{ setting('_general.site_name') ?: config('app.name') }}</title>
+    @if ($cert && $cert->isValid())
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="{{ $cert->student_name }} completó «{{ html_entity_decode($cert->course_title) }}»">
+        <meta property="og:description" content="Certificado verificable emitido por {{ setting('_general.site_name') ?: config('app.name') }} · código {{ $cert->code }}">
+        <meta property="og:url" content="{{ $cert->url() }}">
+        <meta property="og:image" content="{{ asset('images/nuevo/logo-horizontia.png') }}">
+        <meta name="twitter:card" content="summary">
+    @endif
     <x-favicon />
     <style>
         :root { --navy: #14213d; --gold: #fed304; --paper: #fffdf6; --muted: #5b6478; --ok: #1b6b3a; --bad: #b42318; }
@@ -15,6 +23,8 @@
         .status.is-bad { background: #fdecea; color: var(--bad); }
         .btn { display: inline-block; padding: 10px 18px; border: 0; border-radius: 10px; background: var(--gold); color: var(--navy); font: 700 .95rem inherit; cursor: pointer; text-decoration: none; }
         .btn.ghost { background: #fff; border: 1px solid #d5d9e4; }
+        .btn.in { background: #0a66c2; color: #fff; }
+        .actions { display: flex; flex-wrap: wrap; gap: 8px; }
         .sheet { position: relative; width: min(1100px, calc(100% - 32px)); aspect-ratio: 297 / 210; margin: 18px auto 32px; padding: 5%; background: var(--paper); border: 14px solid var(--navy); outline: 3px solid var(--gold); outline-offset: -26px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 10px 40px rgba(20, 33, 61, .18); }
         .sheet img.logo { height: clamp(40px, 7vw, 78px); width: auto; margin-bottom: 1.2%; }
         .kicker { letter-spacing: .28em; text-transform: uppercase; font-size: clamp(.62rem, 1.1vw, .95rem); color: var(--muted); }
@@ -47,7 +57,13 @@
         <span class="status {{ $cert->isValid() ? '' : 'is-bad' }}" data-testid="cert-status">
             {{ $cert->isValid() ? '✓ Certificado auténtico · emitido el ' . dateEs($cert->issued_at) : '✕ Certificado revocado' . ($cert->revoked_reason ? ': ' . $cert->revoked_reason : '') }}
         </span>
-        <span>
+        <span class="actions">
+            @if ($cert->isValid())
+                <a class="btn in" href="{{ $cert->linkedinProfileUrl() }}" target="_blank" rel="noopener" data-testid="share-linkedin-profile">Agregar a LinkedIn</a>
+                <a class="btn ghost" href="{{ $cert->linkedinShareUrl() }}" target="_blank" rel="noopener" data-testid="share-linkedin">Publicar</a>
+                <a class="btn ghost" href="{{ $cert->whatsappShareUrl() }}" target="_blank" rel="noopener" data-testid="share-whatsapp">WhatsApp</a>
+                <button class="btn ghost" type="button" data-testid="share-copy" data-url="{{ $cert->url() }}" onclick="navigator.clipboard.writeText(this.dataset.url).then(()=>{this.textContent='¡Enlace copiado!'})">Copiar enlace</button>
+            @endif
             <button class="btn" type="button" onclick="window.print()">Imprimir o guardar en PDF</button>
             <a class="btn ghost" href="{{ route('certificates.verify') }}">Verificar otro</a>
         </span>

@@ -17,7 +17,7 @@
                     @foreach ($bundle->courses as $c)
                         @php $has = !$remaining->contains('id', $c->id); @endphp
                         <li class="bn-course" data-testid="bundle-course">
-                            <a class="bn-course__img" href="{{ route('courses.course-detail', ['slug' => $c->slug]) }}">
+                            <a class="bn-course__img" href="{{ route('courses.course-detail', ['slug' => $c->slug]) }}" aria-label="{{ html_entity_decode($c->title) }}">
                                 <img src="{{ !empty($c->thumbnail?->path) ? mediaThumb($c->thumbnail->path, 320) : asset('modules/courses/images/course.png') }}" alt="" loading="lazy" width="160" height="90">
                             </a>
                             <div class="bn-course__body">

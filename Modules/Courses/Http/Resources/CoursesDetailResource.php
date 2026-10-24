@@ -76,6 +76,7 @@ class CoursesDetailResource extends JsonResource
                     'url'           => $this->thumbnail?->path ? url(mediaUrl($this->thumbnail?->path)) : url(mediaUrl('placeholder.png')),
                 ];            
             }),
+            'promo_video_url'       => $this->promo_video_url,
             'promotional_video'     => $this->whenLoaded('promotionalVideo', function () {
                 return [    
                     'url'           => !empty($this->promotionalVideo?->path) ? url(mediaUrl($this->promotionalVideo?->path)) : null,

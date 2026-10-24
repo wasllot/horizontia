@@ -138,6 +138,13 @@
 
         </fieldset>
 
+        @if ($errors->has('discount') || $errors->has('final_price'))
+            <div class="alert alert-danger" role="alert" data-testid="pricing-errors" style="margin: 12px 0;">
+                @foreach (array_merge($errors->get('discount'), $errors->get('final_price')) as $message)
+                    <div>{{ $message }}</div>
+                @endforeach
+            </div>
+        @endif
         <div class="am-themeform_footer">
             <a href="{{ courseEditUrl(\Modules\Courses\Models\Course::find($courseId)?->isOnsite() ? 'sessions' : 'media', $courseId) }}" class="am-white-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">

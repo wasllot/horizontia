@@ -436,7 +436,7 @@ function charLeft(contentLength = 0, charSelector) {
         let charLeftHtml = `<div class='tu-input-counter'><span>Characters left:</span><b>${charShow}</b> / <em> ${charLimit}</em></div>`;
         jQuery(charSelector).html(charLeftHtml);
     } else {
-        let charLeftHtml = `<div class='tu-input-counter'><span>Characters count:</span> ${contentLength}</div>`;
+        let charLeftHtml = `<div class='tu-input-counter'><span>Caracteres:</span> ${contentLength}</div>`;
         jQuery(charSelector).html(charLeftHtml);
     }
 }

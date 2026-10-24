@@ -81,7 +81,7 @@ new #[Layout('layouts.guest')] class extends Component
                 <x-application-logo />
             </strong>
             <div class="am-login-right_title">
-                <h2>{{ __('auth.reset_password') }}</h2>
+                <h1>{{ __('auth.reset_password') }}</h1>
                 <h3>{{ __('auth.reset_password_desc') }}</h3>
             </div>
         </x-slot>

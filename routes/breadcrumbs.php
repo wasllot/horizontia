@@ -96,6 +96,10 @@ Breadcrumbs::for($role.'.invoices', function (BreadcrumbTrail $trail) use ($role
     $trail->push(__('sidebar.invoices'), route($role.'.invoices'));
 });
 
+Breadcrumbs::for('student.favourite-courses', function (BreadcrumbTrail $trail) {
+    $trail->push('Mis favoritos', route('student.favourite-courses'));
+});
+
 Breadcrumbs::for('student.favourites', function (BreadcrumbTrail $trail) {
     $trail->push(__('sidebar.favourites'), route('student.favourites'));
 });
@@ -179,6 +183,11 @@ Breadcrumbs::for('admin.page-banners', function (BreadcrumbTrail $trail) {
 Breadcrumbs::for('admin.access-requests', function (BreadcrumbTrail $trail) {
     $trail->parent('admin.insights');
     $trail->push('Solicitudes de acceso', route('admin.access-requests'));
+});
+
+Breadcrumbs::for('admin.refunds', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.insights');
+    $trail->push('Reembolsos', route('admin.refunds'));
 });
 
 Breadcrumbs::for('admin.coupons', function (BreadcrumbTrail $trail) {

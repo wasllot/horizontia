@@ -215,7 +215,7 @@
                             </div>
                             @if(!empty($form->image))
                                 <div class="am-uploadedfile">
-                                    <img src="{{ $form->isBase64 ? $form->image :  url(mediaUrl($form->image )) }}" alt="{{ $form->imageName }}">
+                                    <img src="{{ $form->isBase64 ? $form->image :  url(mediaUrl($form->image )) }}" alt="{{ $form->imageName }}" alt="">
                                     @if( $form->isBase64 )
                                         <span>{{ $form->imageName }}</span>
                                     @else
@@ -324,7 +324,7 @@
                     <div id="crop_img_area">
                         <div class="preloader-outer">
                             <div class="tk-preloader">
-                                <img class="fa-spin" src="{{ asset('images/loader.png') }}">
+                                <img class="fa-spin" src="{{ asset('images/loader.png') }}" alt="">
                             </div>
                         </div>
                     </div>

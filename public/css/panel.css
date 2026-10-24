@@ -1652,6 +1652,14 @@ body.hz .hz-rp__lessons { list-style: none; margin: 8px 0 0; padding: 0; display
 body.hz .hz-rp__lessons li { display: grid; grid-template-columns: minmax(140px, 2fr) minmax(120px, 3fr) 48px 80px; gap: 12px; align-items: center; }
 body.hz .hz-rp__lessons li.is-drop .hz-rp__meter i { background: var(--hz-danger); }
 body.hz .hz-rp__lessons em { color: var(--hz-danger); font-style: normal; font-size: var(--hz-fs-sm); font-weight: 700; }
+body.hz .hz-rp__funnel { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 14px; }
+body.hz .hz-rp__funnel-top { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+body.hz .hz-rp__funnel-top em { color: var(--hz-muted); font-style: normal; font-size: var(--hz-fs-sm); font-weight: 400; }
+body.hz .hz-rp__funnel-bar { height: 12px; border-radius: 999px; background: var(--hz-line); overflow: hidden; margin: 6px 0 4px; }
+body.hz .hz-rp__funnel-bar i { display: block; height: 100%; border-radius: inherit; background: var(--hz-gold-400); }
+body.hz .hz-rp__funnel small { color: var(--hz-muted); }
+body.hz .hz-rp__funnel-meta { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--hz-line); color: var(--hz-muted); }
+body.hz .hz-rp__funnel-meta b { color: var(--hz-navy-800); }
 body.hz .tb-table tr.is-selected td { background: var(--hz-tint); }
 @media (max-width: 700px) { body.hz .hz-rp__lessons li { grid-template-columns: 1fr 48px; } body.hz .hz-rp__lessons .hz-rp__meter--wide { grid-column: 1 / -1; order: 3; } }
 
@@ -1676,3 +1684,31 @@ body.hz .hz-pb__fields { border: 0; padding: 0; margin: 0; }
 body.hz .hz-pb__fields:disabled { opacity: .5; }
 body.hz .hz-ar__detail { margin-top: 8px; padding: 10px 12px; border-radius: var(--hz-r-md); background: var(--hz-tint); font-size: var(--hz-fs-sm); white-space: pre-wrap; }
 body.hz .hz-ar__detail p { margin: 0 0 6px; }
+
+/* ---- 28. Accesibilidad de componentes heredados del tema (contraste y enlaces) ---- */
+body.hz .am-userperinfo_tab > li:not(.am-active) > a { color: var(--hz-muted); }
+body.hz .tu-input-counter > span,
+body.hz .am-form-btns > span,
+body.hz .am-uploadfile em,
+body.hz .am-userperinfo em { color: var(--hz-muted); }
+body.hz .hz-cert__hint a, body.hz .hz-hint a { text-decoration: underline; text-underline-offset: 2px; }
+body.hz .select2-selection__rendered, body.hz .select2-selection__placeholder { color: var(--hz-muted); }
+body.hz .hz-content h2, body.hz .hz-content h3, body.hz .hz-content h4 { overflow-wrap: anywhere; }
+body.hz .hz-set__layout > *, body.hz .hz-mb__grid > * { min-width: 0; }
+@media (max-width: 900px) {
+  body.hz .hz-set__layout { grid-template-columns: minmax(0, 1fr); }
+  body.hz .hz-set__nav { max-width: 100%; }
+  body.hz .hz-mb__grid { grid-template-columns: minmax(0, 1fr); }
+}
+body.hz .tb-dhb-mainheading { flex-wrap: wrap; }
+body.hz .tb-dhb-mainheading > h2, body.hz .tb-dhb-mainheading > h3, body.hz .tb-dhb-mainheading > h4 { min-width: 0; flex: 1 1 260px; }
+body.hz .hz-content .tu-input-counter span, body.hz .hz-content .am-pagination-filter em,
+body.hz .hz-content .am-pagination ul li a, body.hz .hz-content .am-pagination ul li.am-prevpage a { color: var(--hz-muted); }
+body.hz .hz-rp__top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin: 0 0 16px; }
+body.hz .hz-rp__top .hz-tabs { margin: 0; }
+body.hz .select2-container--default .select2-selection--single .select2-selection__rendered,
+body.hz .select2-container--default .select2-selection__placeholder { color: var(--hz-muted); }
+body.hz .hz-content p > a:not([class]), body.hz .hz-content li > a:not([class]):not([href^="#"]) { text-decoration: underline; text-underline-offset: 2px; }
+body.hz span.select2-selection__rendered[role="textbox"], body.hz .select2-container .select2-selection__placeholder { color: var(--hz-muted) !important; }
+body.hz .select2-container--default .select2-search--inline .select2-search__field { color: var(--hz-text) !important; }
+body.hz .am-linkaccount_option_title > span { color: var(--hz-muted); }

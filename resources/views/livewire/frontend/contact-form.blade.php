@@ -24,7 +24,7 @@
         .ht-contact__row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .ht-contact__field { margin: 0 0 18px; }
         .ht-contact__field label { display: flex; justify-content: space-between; margin: 0 0 7px; font-weight: 600; color: #14213d; }
-        .ht-contact__field label small { color: #9aa2b5; font-weight: 400; }
+        .ht-contact__field label small { color: #5f6a80; font-weight: 400; }
         .ht-contact__field :is(input, textarea) { width: 100%; padding: 13px 16px; border: 1.5px solid #dfe3ec; border-radius: 12px; background: #fff; font: inherit; transition: border-color .2s, box-shadow .2s; }
         .ht-contact__field textarea { resize: vertical; min-height: 140px; }
         .ht-contact__field.has-error :is(input, textarea) { border-color: #d93025; }

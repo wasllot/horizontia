@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Casts\OrderStatusCast;
+use App\Models\AccessRequest;
 use App\Models\Coupon;
 use App\Models\CourseCertificate;
 use App\Models\Order;
@@ -156,6 +157,72 @@ class BusinessReportService
             'counts' => $base()->selectRaw('status, COUNT(*) n')->groupBy('status')->pluck('n', 'status')->map(fn ($n) => (int) $n)->all(),
             'optins' => \App\Models\User::whereNotNull('whatsapp_optin_at')->count(),
             'recent' => $base()->orderByDesc('id')->limit($limit)->get(),
+        ];
+    }
+
+    /**
+     * Embudo de acceso por cohorte: personas que pidieron acceso en el periodo y hasta dónde llegaron
+     * (aprobadas → cuenta activada → inscritas → pagaron → empezaron → terminaron), con los tiempos medianos de cada paso.
+     *
+     * @return array{students: array<int, array{key:string,label:string,hint:string,count:int,of_previous:float,of_total:float}>, rejected:int, pending:int, hours_to_review:?float, hours_to_activate:?float, tutors: array<string,int>}
+     */
+    public function accessFunnel(): array
+    {
+        // «Todo» arranca en la primera solicitud (el inicio general sale del primer pedido, que puede ser posterior).
+        $from = $this->range === 'all' && ($first = AccessRequest::min('created_at')) ? CarbonImmutable::parse($first)->startOfDay() : $this->from;
+        $requests = AccessRequest::query()->whereBetween('created_at', [$from, $this->to])->get();
+        $students = $requests->where('type', 'student');
+        $approved = $students->where('status', AccessRequest::APPROVED);
+        $active = $approved->whereNotNull('activated_at');
+        $ids = $active->pluck('user_id')->filter()->unique()->values();
+
+        $enrolled = $ids->isEmpty() ? collect() : Enrollment::where('status', Enrollment::STATUSES['active'])->whereIn('student_id', $ids)->pluck('student_id')->unique();
+        $paid = $ids->isEmpty() ? collect() : Order::where('status', OrderStatusCast::$statuses['complete'])->where('amount', '>', 0)->whereIn('user_id', $ids)->pluck('user_id')->unique();
+        $started = $ids->isEmpty() ? collect() : Watchtime::whereIn('user_id', $ids)->where('duration', '>', 0)->pluck('user_id')->unique();
+        $done = $ids->isEmpty() ? collect() : CourseCertificate::whereIn('user_id', $ids)->pluck('user_id')->unique();
+
+        $stages = [
+            ['requested', 'Solicitudes', 'Personas que pidieron acceso como estudiante', $students->count()],
+            ['approved', 'Aprobadas', 'El equipo aprobó la solicitud', $approved->count()],
+            ['activated', 'Cuenta activada', 'Crearon su contraseña con el enlace del correo', $active->count()],
+            ['enrolled', 'Se inscribieron', 'Tienen al menos un curso (gratis o de pago)', $enrolled->count()],
+            ['paid', 'Pagaron', 'Al menos un pedido pagado', $paid->count()],
+            ['started', 'Empezaron a estudiar', 'Vieron al menos una lección', $started->count()],
+            ['completed', 'Terminaron un curso', 'Recibieron un certificado', $done->count()],
+        ];
+        $total = max(1, $stages[0][3]);
+        $prev = null;
+        $rows = [];
+        foreach ($stages as [$key, $label, $hint, $count]) {
+            $rows[] = ['key' => $key, 'label' => $label, 'hint' => $hint, 'count' => $count,
+                'of_previous' => $prev === null ? 100.0 : ($prev > 0 ? round(min($count, $prev) / $prev * 100, 1) : 0.0), 'of_total' => round($count / $total * 100, 1)];
+            $prev = $count;
+        }
+
+        $median = function (array $values): ?float {
+            sort($values);
+            $n = count($values);
+
+            return $n === 0 ? null : round((($n % 2) ? $values[intdiv($n, 2)] : ($values[$n / 2 - 1] + $values[$n / 2]) / 2) / 3600, 1);
+        };
+        $review = $students->filter(fn ($r) => $r->reviewed_at)->map(fn ($r) => max(0, $r->reviewed_at->getTimestamp() - $r->created_at->getTimestamp()))->values()->all();
+        $activate = $active->filter(fn ($r) => $r->reviewed_at)->map(fn ($r) => max(0, $r->activated_at->getTimestamp() - $r->reviewed_at->getTimestamp()))->values()->all();
+
+        $tutors = $requests->where('type', 'tutor');
+        $tutorUsers = $tutors->where('status', AccessRequest::APPROVED)->pluck('user_id')->filter()->unique();
+
+        return [
+            'students' => $rows,
+            'rejected' => $students->where('status', AccessRequest::REJECTED)->count(),
+            'pending' => $students->where('status', AccessRequest::PENDING)->count(),
+            'hours_to_review' => $median($review),
+            'hours_to_activate' => $median($activate),
+            'tutors' => [
+                'requested' => $tutors->count(),
+                'approved' => $tutors->where('status', AccessRequest::APPROVED)->count(),
+                'activated' => $tutors->where('status', AccessRequest::APPROVED)->whereNotNull('activated_at')->count(),
+                'with_course' => $tutorUsers->isEmpty() ? 0 : Course::whereIn('instructor_id', $tutorUsers)->where('status', Course::STATUSES['active'])->distinct()->count('instructor_id'),
+            ],
         ];
     }
 

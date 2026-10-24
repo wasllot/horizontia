@@ -16,7 +16,7 @@
                     @continue(!in_array($role, $item['accessibility']))
                     @if (($item['group'] ?? null) !== $lastGroup)
                         @php $lastGroup = $item['group'] ?? null; @endphp
-                        <li class="hz-nav__heading" role="presentation">{{ $lastGroup === 'learning' ? ($role === 'tutor' ? __('sidebar.group_teaching') : __('sidebar.group_learning')) : __('sidebar.group_account') }}</li>
+                        <li class="hz-nav__heading">{{ $lastGroup === 'learning' ? ($role === 'tutor' ? __('sidebar.group_teaching') : __('sidebar.group_learning')) : __('sidebar.group_account') }}</li>
                     @endif
                     @php($active = in_array($activeRoute, $item['onActiveRoute']))
                     <li @class(['hz-nav__item', 'is-active' => $active, 'is-open' => $active && !empty($item['children'])])>

@@ -355,7 +355,7 @@
                             <div class="mk-chart" aria-hidden="true">
                                 @foreach ([38, 52, 44, 66, 58, 80, 94] as $h)<i style="height: {{ $h }}%"></i>@endforeach
                             </div>
-                            <div class="mk-between" style="margin: 6px 4px 0; font-size: .7rem; color: #98a0b3"><span>Abr</span><span>May</span><span>Jun</span><span>Jul</span><span>Ago</span><span>Sep</span><span>Oct</span></div>
+                            <div class="mk-between" style="margin: 6px 4px 0; font-size: .7rem; color: #667085"><span>Abr</span><span>May</span><span>Jun</span><span>Jul</span><span>Ago</span><span>Sep</span><span>Oct</span></div>
                             <div class="mk-gen">
                                 <div class="mk-between"><strong style="color: var(--navy)"><x-about.icon name="spark" :size="16" style="vertical-align: -3px" /> Estudio de contenido</strong><span class="mk-pill mk-pill--gold">IA</span></div>
                                 <div class="mk-sk" style="width: 92%"></div><div class="mk-sk" style="width: 74%"></div><div class="mk-sk" style="width: 58%"></div>

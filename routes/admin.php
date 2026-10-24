@@ -53,6 +53,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('comunidad', \App\Livewire\Pages\Admin\Community\Moderation::class)->name('community');
     Route::get('solicitudes-de-acceso', \App\Livewire\Pages\Admin\AccessRequests\AccessRequests::class)->name('access-requests');
     Route::get('cupones', \App\Livewire\Pages\Admin\Coupons\Coupons::class)->name('coupons');
+    Route::get('reembolsos', \App\Livewire\Pages\Admin\Refunds\Refunds::class)->name('refunds');
     Route::get('/estado-del-sistema', \App\Livewire\Pages\Admin\SystemStatus\SystemStatus::class)->name('system-status');
     Route::get('/banners-de-paginas', \App\Livewire\Pages\Admin\PageBanners\PageBanners::class)->name('page-banners');
     Route::get('/paginas-de-curso', \App\Livewire\Pages\Admin\CoursePages\CoursePages::class)->name('course-pages');

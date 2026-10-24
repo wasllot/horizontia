@@ -98,3 +98,6 @@ output.html
 /storage/framework/testing/
 /storage/framework/*.php
 /demo_curso_scorm.zip
+
+# Paquetes sueltos que se arman a mano para subir archivos (pesan GB)
+/public/public.zip

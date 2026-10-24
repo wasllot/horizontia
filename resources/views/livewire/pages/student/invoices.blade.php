@@ -3,6 +3,9 @@
         @include('skeletons.invoices')
     @else
         <div class="am-dbbox_content am-invoicelist">
+            @role('student')
+                @livewire(\App\Livewire\Pages\Student\RefundRequests::class)
+            @endrole
             <div class="am-dbbox_title">
                 @slot('title')
                     {{ __('invoices.invoices') }}

@@ -113,8 +113,8 @@ class Navigation extends Component
             ],
             [
                 'studentSortOrder' => 9,
-                'route' => 'student.favourites',
-                'onActiveRoute' => ['student.favourites'],
+                'route' => isPrivateAcademy() ? 'student.favourite-courses' : 'student.favourites',
+                'onActiveRoute' => ['student.favourites', 'student.favourite-courses'],
                 'title' => __('sidebar.favourites'),
                 'icon'  => '<i class="am-icon-heart-01"></i>',
                 'accessibility' => ['student'],

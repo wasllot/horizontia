@@ -87,6 +87,11 @@ class PageBannerService
         $re = '#^\s*<section class="pb-themesection">((?:(?!<section class="pb-themesection").)*?)<section class="ht-block ht-hero[^"]*">.*?</section>\s*</div>\s*</div>\s*</div>\s*</section>#s';
         $out = preg_replace($re, '', $html, 1, $n);
 
-        return $n === 1 && $out !== null ? $out : $html;
+        if ($n === 1 && $out !== null) {
+            return $out;
+        }
+
+        // Sin un bloque de portada reconocible el banner aporta el único h1 de la página: los del contenido bajan a h2.
+        return preg_replace('#<h1\b([^>]*)>(.*?)</h1>#is', '<h2$1>$2</h2>', $html) ?? $html;
     }
 }

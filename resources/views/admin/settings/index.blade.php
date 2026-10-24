@@ -30,7 +30,7 @@
         <aside class="hz-set__nav" aria-label="Secciones de ajustes">
             <ul class="op-feildlisting nav nav-tabs" role="tablist">
                 @foreach ($pages as $p)
-                    <li>
+                    <li role="presentation">
                         <a class="{{ $loop->first ? 'active' : '' }}" href="#{{ $p['id'] }}" id="{{ $p['id'] }}-tab" data-bs-toggle="tab" data-bs-target="#{{ $p['id'] }}" role="tab" aria-controls="{{ $p['id'] }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}" data-testid="nav-{{ $p['id'] }}">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $icons[$p['icon']] ?? '' !!}</svg>
                             <span>{{ $p['label'] }}</span>
@@ -61,7 +61,7 @@
                             @php $tabs = collect($p['groups'])->groupBy('tab'); @endphp
                             <ul class="op-feildlisting op-feildlistingvtwo nav nav-tabs hz-set__subtabs" role="tablist">
                                 @foreach ($tabs as $tabId => $tabGroups)
-                                    <li><a class="{{ $loop->first ? 'active' : '' }}" href="#" id="{{ $tabId }}-tab" data-bs-toggle="tab" data-bs-target="#{{ $tabId }}" role="tab" aria-controls="{{ $tabId }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}">{{ $tabGroups->first()['tab_title'] }}</a></li>
+                                    <li role="presentation"><a class="{{ $loop->first ? 'active' : '' }}" href="#" id="{{ $tabId }}-tab" data-bs-toggle="tab" data-bs-target="#{{ $tabId }}" role="tab" aria-controls="{{ $tabId }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}">{{ $tabGroups->first()['tab_title'] }}</a></li>
                                 @endforeach
                             </ul>
                             <div class="tab-content">

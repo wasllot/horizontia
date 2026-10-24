@@ -129,10 +129,10 @@
                                 @if(!empty($form->image))
                                     <div class="am-uploadedfile">
                                         @if (method_exists($form?->image,'temporaryUrl'))
-                                            <img src="{{ $form?->image->temporaryUrl() }}">
+                                            <img src="{{ $form?->image->temporaryUrl() }}" alt="">
                                         @else
-                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : url(mediaUrl($form?->image)) }}" />
-                                            <!-- <img src="{{ url(mediaUrl($form?->image)) }}"> -->
+                                            <img src="{{ setting('_general.default_avatar_for_user') ? url(mediaUrl(setting('_general.default_avatar_for_user')[0]['path'])) : url(mediaUrl($form?->image)) }}"  alt=""/>
+                                            <!-- <img src="{{ url(mediaUrl($form?->image)) }}" alt=""> -->
                                         @endif
                                         @if (method_exists($form->image,'temporaryUrl'))
                                             <span>{{ basename(parse_url($form?->image->temporaryUrl(), PHP_URL_PATH)) }}</span>
@@ -178,9 +178,9 @@
                                     @if(!empty($form->identificationCard))
                                         <div class="am-uploadedfile">
                                             @if (method_exists($form->identificationCard,'temporaryUrl'))
-                                                <img src="{{ $form->identificationCard->temporaryUrl() }}">
+                                                <img src="{{ $form->identificationCard->temporaryUrl() }}" alt="">
                                             @else
-                                                <img src="{{ url(mediaUrl($form->identificationCard)) }}">
+                                                <img src="{{ url(mediaUrl($form->identificationCard)) }}" alt="">
                                             @endif
 
                                             @if (method_exists($form->identificationCard,'temporaryUrl'))
@@ -247,9 +247,9 @@
                                     @if(!empty($form->transcript))
                                         <div class="am-uploadedfile">
                                             @if (method_exists($form->transcript,'temporaryUrl'))
-                                                <img src="{{ $form->transcript->temporaryUrl() }}">
+                                                <img src="{{ $form->transcript->temporaryUrl() }}" alt="">
                                             @else
-                                                <img src="{{ url(mediaUrl($form->transcript)) }}">
+                                                <img src="{{ url(mediaUrl($form->transcript)) }}" alt="">
                                             @endif
 
                                             @if (method_exists($form->transcript,'temporaryUrl'))

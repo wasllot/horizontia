@@ -131,6 +131,12 @@ class CoursePricing extends Component {
                     'final_price' => 0,
                 ];
             } else {
+                // Lo que llega del navegador no se da por bueno: el precio sin comas, el descuento vacío vale 0 y el precio final se calcula aquí.
+                // (Antes, un descuento vacío o un precio final sin calcular hacían fallar la validación sin mostrar nada y «Guardar y continuar» parecía no hacer caso.)
+                $this->price    = is_string($this->price) ? str_replace([',', ' '], '', $this->price) : $this->price;
+                $this->discount = (!$this->discountAllowed || $this->discount === '' || $this->discount === null) ? 0 : $this->discount;
+                $this->calculatefinal_price();
+
                 $validatedData = $this->validate(
                     (new CoursePriceRequest())->rules(),
                     (new CoursePriceRequest())->messages(),

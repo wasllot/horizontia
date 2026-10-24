@@ -3,7 +3,7 @@
     <div class="am-norecord-wrap">
         @if(!empty($image))
             <figure>
-                <img src="{{ $image }}">
+                <img src="{{ $image }}" alt="" role="presentation">
             </figure>
         @endif
         @if(!empty($title))
