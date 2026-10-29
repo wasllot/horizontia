@@ -43,19 +43,20 @@
 
 @section('content')
 <div class="evp">
-    <header class="evp-sub">
+    @include('events.icons')
+    <header class="evp-sub {{ $onLanding ? 'evp-sub--dark' : '' }}">
         <div class="evp-wrap">
             <a class="evp-sub__name" href="{{ $event->url() }}" aria-label="Astrofest, inicio del evento">
                 <img src="{{ $logo }}" alt="Astrofest® {{ $event->name }}" width="200" height="52">
             </a>
             @if ($dates)<span class="evp-sub__date">{{ $dates }} · {{ $event->venue_city ?: 'Estado de México' }}</span>@endif
             <div class="evp-sub__r">
-                <button type="button" class="evp-icon" id="evRed" aria-pressed="false" aria-label="Modo luz roja" title="Modo luz roja">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg>
+                <button type="button" class="evp-icon evp-icon--label" id="evRed" aria-pressed="false" aria-label="Modo luz roja" title="Modo luz roja: pinta la página en rojo para no deslumbrarte de noche">
+                    <svg class="ev-i" aria-hidden="true"><use href="#i-bulb"/></svg><span>Luz roja</span>
                 </button>
                 @if ($state === 'open' || $cartCount > 0)
                     <a class="evp-icon" href="{{ $event->url('carrito') }}" aria-label="Carrito, {{ $cartCount }} {{ $cartCount === 1 ? 'entrada' : 'entradas' }}">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.4 12.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.5L21.5 8H6"/></svg>
+                        <svg class="ev-i" aria-hidden="true"><use href="#i-cart"/></svg>
                         @if ($cartCount > 0)<b>{{ $cartCount }}</b>@endif
                     </a>
                 @endif
@@ -84,6 +85,15 @@
                     @if ($event->contact_email && $event->contact_whatsapp) · @endif
                     @if ($event->contact_whatsapp)<a href="https://wa.me/{{ preg_replace('/\D+/', '', $event->contact_whatsapp) }}" rel="noopener" target="_blank">WhatsApp {{ $event->contact_whatsapp }}</a>@endif
                 </p>
+            @endif
+            @php
+                $credits = collect(json_decode((string) @file_get_contents(public_path('images/eventos/stock/credits.json')), true) ?: [])->filter(fn ($c) => !empty($usedImages) && in_array($c['key'], $usedImages, true));
+            @endphp
+            @if ($credits->isNotEmpty())
+                <details class="evp-credits"><summary>Créditos de las imágenes</summary>
+                    <p>Las fotografías son ilustrativas y provienen de Wikimedia Commons con licencia libre:</p>
+                    <ul>@foreach ($credits as $c)<li><a href="{{ $c['url'] }}" target="_blank" rel="noopener">{{ \Illuminate\Support\Str::of($c['title'])->beforeLast('.')->limit(60) }}</a> · {{ $c['author'] ?: 'Autor/a no indicado/a' }} · {{ $c['license'] }}</li>@endforeach</ul>
+                </details>
             @endif
             <nav class="evp-orgs__links" aria-label="Información legal">
                 <a href="{{ $event->url('politicas') }}">Políticas del evento</a>

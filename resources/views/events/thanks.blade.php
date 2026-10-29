@@ -3,6 +3,7 @@
 @section('body')
 @php $money = fn ($v) => '$' . number_format((float) $v, fmod((float) $v, 1) ? 2 : 0); @endphp
 <div class="ev-page"><div class="ev-narrow">
+    @include('events.steps', ['step' => $order->isPaid() ? 5 : 3])
     @if ($order->isPaid())
         @if ($event->asset('galileo'))<img class="ev-char ev-char--card" src="{{ $event->asset('galileo') }}" alt="Galileo, mascota de Astrofest, un sabio de barba gris con catalejo" width="170" height="170">@endif
         <h1>¡Listo, {{ \Illuminate\Support\Str::of($order->name)->explode(' ')->first() }}! Tu lugar está apartado</h1>
@@ -14,6 +15,12 @@
             </div>
         @endforeach
         <p class="ev-hint">Total pagado: {{ $money($order->total) }} MXN · IVA incluido ({{ $money($order->iva) }}). Compra #{{ $order->id }}.</p>
+        <div class="ev-actions">
+            <a class="ev-btn ev-btn--sm" href="{{ $event->url('evento.ics') }}">Agregar al calendario</a>
+            <a class="ev-btn ev-btn--ghost ev-btn--sm" href="https://wa.me/?text={{ rawurlencode('¡Voy a ' . $event->name . '! Aparta tu lugar: ' . $event->url()) }}" target="_blank" rel="noopener" data-ev-track="share_whatsapp">Invitar por WhatsApp</a>
+            @if ($event->venue_map_url)<a class="ev-btn ev-btn--ghost ev-btn--sm" href="{{ $event->venue_map_url }}" target="_blank" rel="noopener">Cómo llegar</a>@endif
+            <button type="button" class="ev-btn ev-btn--ghost ev-btn--sm" onclick="window.print()">Imprimir boletos</button>
+        </div>
         @if ($event->start_at)<p>Nos vemos el <strong>{{ $event->local($event->start_at)->locale('es')->translatedFormat('l j \d\e F') }}</strong> desde las {{ $event->local($event->start_at)->format('H:i') }} h{{ $event->venue_name ? ' en ' . $event->venue_name : '' }}.</p>@endif
     @elseif ($order->status === 'pending')
         <h1>Tu pago está pendiente</h1>

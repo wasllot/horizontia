@@ -451,4 +451,51 @@ class EventTicketSalesTest extends TestCase
         \Livewire\Livewire::actingAs($this->student())->test(\App\Livewire\Pages\Admin\Events\Events::class)->assertForbidden();
         $this->actingAs($this->student())->get(route('admin.events'))->assertForbidden();
     }
+
+    public function test_landing_uses_only_images_that_exist_and_credits_the_free_license_photos(): void
+    {
+        $e = $this->event();
+        $html = $this->get($e->url())->assertOk()->getContent();
+
+        preg_match_all('#/images/eventos/[\w\-/]+\.(?:webp|png|svg|jpg)#', $html, $m);
+        $this->assertNotEmpty($m[0]);
+        foreach (array_unique($m[0]) as $path) {
+            $this->assertFileExists(public_path(ltrim($path, '/')), "falta la imagen {$path}");
+        }
+        $this->assertStringContainsString('Créditos de las imágenes', $html);
+        $this->assertStringContainsString('Wikimedia', $html);
+        $this->assertStringContainsString('imagen ilustrativa', $html);
+    }
+
+    public function test_landing_has_the_reviewed_sections_and_accessible_tabs(): void
+    {
+        $html = $this->get($this->event()->url())->assertOk()->getContent();
+
+        foreach (['role="tablist"', 'Compra tranquilo', 'Ciencia en un minuto', 'Lo que verás por los telescopios', 'Imprimir lista', 'Kit de bienvenida, rally y diploma', 'Antes de ir', 'Pago seguro con Mercado Pago', 'id="evBar"'] as $needle) {
+            $this->assertStringContainsString($needle, $html, "falta: $needle");
+        }
+        $this->assertSame(1, substr_count($html, '<h1'), 'un solo H1');
+    }
+
+    public function test_calendar_file_has_the_event_dates_in_utc(): void
+    {
+        $e = $this->event(['start_at' => '2026-12-12 21:00:00', 'end_at' => '2026-12-13 19:00:00', 'venue_address' => 'Autopista México–Tuxpan, km 27']);
+        $res = $this->get($e->url('evento.ics'))->assertOk();
+        $this->assertStringContainsString('text/calendar', $res->headers->get('Content-Type'));
+        $ics = str_replace("\r\n ", '', $res->getContent());
+        $this->assertStringContainsString('DTSTART:20261212T210000Z', $ics);
+        $this->assertStringContainsString('DTEND:20261213T190000Z', $ics);
+        $this->assertStringContainsString('SUMMARY:Astrofest® Prueba', $ics);
+        $this->assertStringContainsString('LOCATION:Club Campestre\, Autopista México–Tuxpan\, km 27', $ics);
+    }
+
+    public function test_checkout_shows_the_steps_and_keeps_optional_questions_collapsed(): void
+    {
+        $e = $this->event();
+        $this->cartWith($e, 2);
+        $html = $this->get($e->url('pago'))->assertOk()->getContent();
+        $this->assertStringContainsString('aria-label="Pasos de la compra"', $html);
+        $this->assertStringContainsString('Datos opcionales', $html);
+        $this->assertStringContainsString('Resumen: 2 entradas', $html);
+    }
 }

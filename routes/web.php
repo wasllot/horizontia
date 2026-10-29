@@ -65,6 +65,7 @@ Route::middleware(['locale', 'maintenance'])->prefix('eventos/{slug}')->where(['
     Route::get('pago', [$c, 'checkout'])->name('checkout');
     Route::post('pago', [$c, 'placeOrder'])->middleware('throttle:12,1')->name('checkout.store');
     Route::get('gracias', [$c, 'thanks'])->name('thanks');
+    Route::get('evento.ics', [$c, 'ics'])->name('ics');
     Route::get('boleto/{code}.png', [$c, 'qr'])->where('code', '[A-Za-z0-9\-]+')->name('qr');
     Route::get('{any}', [$c, 'missing'])->where('any', '.*')->name('missing');
 });

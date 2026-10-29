@@ -28,7 +28,7 @@ class EventContent
                 'text' => 'Aparta tu lugar y mira hacia arriba con nosotros.',
             ],
             'rooms' => [
-                'text' => '¿Prefieres dormir en habitación? El hotel da tarifa especial a asistentes de Astrofest®. Reserva directamente con el hotel; aquí compras tu entrada.',
+                'text' => 'El hotel da tarifa especial a asistentes de Astrofest®. Reserva directamente con el hotel; aquí compras tu entrada.',
             ],
             'sold_out' => 'Agotado',
         ];

@@ -76,8 +76,8 @@ class Event extends Model
 
     /** Archivos por defecto (tomados del flyer del cliente); lo que se sube en el panel los reemplaza. */
     public const DEFAULT_ASSETS = [
-        'logo' => 'images/eventos/astrofest-logo.png', 'galileo' => 'images/eventos/galileo.png', 'telescopio' => 'images/eventos/telescopio.png',
-        'fama' => 'images/eventos/fama.png', 'club' => 'images/eventos/club.png',
+        'logo' => 'images/eventos/astrofest-logo.webp', 'galileo' => 'images/eventos/galileo.webp', 'telescopio' => 'images/eventos/telescopio.webp',
+        'fama' => 'images/eventos/fama.webp', 'club' => 'images/eventos/club.webp',
     ];
 
     public function asset(string $key): ?string

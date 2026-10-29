@@ -7,7 +7,11 @@
     $invoiceAsked = (bool) old('wants_invoice');
 @endphp
 <div class="ev-page"><div class="ev-wrap">
+    @include('events.steps', ['step' => 2])
     <h1>Tus datos y pago</h1>
+    <details class="ev-more ev-sumtop"><summary>Resumen: {{ $quantity }} {{ $quantity === 1 ? 'entrada' : 'entradas' }} · {{ $money($quote['total']) }} MXN</summary>
+        <p style="margin:0">{{ $quantity }} × {{ $money($quote['unit']) }} · IVA incluido ({{ $money($quote['iva']) }}). <a href="{{ $event->url('carrito') }}">Cambiar cantidad</a></p>
+    </details>
     @if (session('event_error'))<p class="ev-alert" role="alert">{{ session('event_error') }}</p>@endif
     @if ($errors->any())<p class="ev-alert" role="alert">Revisa los campos marcados para continuar.</p>@endif
 
@@ -30,10 +34,15 @@
                     <div class="ev-field"><label for="att{{ $i }}">Asistente {{ $i + 1 }}</label><input id="att{{ $i }}" name="attendees[{{ $i }}]" type="text" value="{{ $f('attendees.' . $i) }}" required data-first="{{ $i === 0 ? '1' : '0' }}">@error('attendees.' . $i)<p class="ev-err">{{ $message }}</p>@enderror</div>
                 @endfor
                 @error('attendees')<p class="ev-err">{{ $message }}</p>@enderror
+                <details class="ev-more" @if ($errors->hasAny(['minors', 'has_telescope', 'heard_from']) || old('minors') || old('heard_from')) open @endif>
+                    <summary>Datos opcionales (menores, telescopio, cómo te enteraste)</summary>
+                    <div class="ev-form">
                 <div class="ev-field"><label for="minors">¿Cuántos menores de {{ (int) (data_get($event->content, 'minors_age') ?: 6) }} años los acompañan? <small>(no pagan)</small></label><input id="minors" name="minors" type="number" min="0" max="20" value="{{ $f('minors', 0) }}"></div>
-                <div class="ev-field"><label for="has_telescope">¿Traes telescopio?</label>
+                    <div class="ev-field"><label for="has_telescope">¿Traes telescopio?</label>
                     <select id="has_telescope" name="has_telescope"><option value="">Prefiero no decir</option><option value="si" @selected($f('has_telescope') === 'si')>Sí</option><option value="no" @selected($f('has_telescope') === 'no')>No</option></select></div>
-                <div class="ev-field"><label for="heard_from">¿Cómo te enteraste de Astrofest?</label><input id="heard_from" name="heard_from" type="text" maxlength="120" value="{{ $f('heard_from') }}"></div>
+                    <div class="ev-field"><label for="heard_from">¿Cómo te enteraste de Astrofest?</label><input id="heard_from" name="heard_from" type="text" maxlength="120" value="{{ $f('heard_from') }}"></div>
+                    </div>
+                </details>
             </fieldset>
 
             <fieldset class="ev-card" style="display:grid;gap:14px;border:1px solid var(--ev-line)">

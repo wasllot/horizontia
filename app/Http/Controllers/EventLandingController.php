@@ -237,6 +237,35 @@ class EventLandingController extends Controller
         return response(QrCode::png($ticket->code, 8), 200, ['Content-Type' => 'image/png', 'Cache-Control' => 'private, max-age=3600', 'X-Robots-Tag' => 'noindex']);
     }
 
+    /** Archivo de calendario (.ics) con las fechas del evento. */
+    public function ics(string $slug)
+    {
+        $event = $this->resolve($slug);
+        abort_unless($event->start_at, 404);
+        $esc = fn (string $t) => str_replace(["\\", ';', ',', "\r\n", "\n"], ['\\\\', '\\;', '\\,', '\\n', '\\n'], $t);
+        $fold = function (string $line) {
+            $out = '';
+            while (strlen($line) > 73) {
+                $out .= substr($line, 0, 73) . "\r\n ";
+                $line = substr($line, 73);
+            }
+
+            return $out . $line;
+        };
+        $fmt = fn ($d) => $d->copy()->utc()->format('Ymd\THis\Z');
+        $lines = [
+            'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Horizontia//Eventos//ES', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+            'BEGIN:VEVENT', 'UID:' . $event->slug . '@' . parse_url(url('/'), PHP_URL_HOST), 'DTSTAMP:' . $fmt(now()),
+            'DTSTART:' . $fmt($event->start_at), 'DTEND:' . $fmt($event->end_at ?: $event->start_at->copy()->addHours(2)),
+            'SUMMARY:' . $esc($event->name),
+            'LOCATION:' . $esc(trim($event->venue_name . ', ' . ($event->venue_address ?: $event->venue_city), ', ')),
+            'DESCRIPTION:' . $esc('Lleva tu clave de acceso o código QR. Más información: ' . $event->url()),
+            'URL:' . $event->url(), 'END:VEVENT', 'END:VCALENDAR',
+        ];
+
+        return response(implode("\r\n", array_map($fold, $lines)) . "\r\n", 200, ['Content-Type' => 'text/calendar; charset=utf-8', 'Content-Disposition' => 'attachment; filename="' . $event->slug . '.ics"']);
+    }
+
     // ---- Apoyo ----
 
     private function shared(Event $event): array
