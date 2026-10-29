@@ -514,3 +514,15 @@ body.ev-red .evp .evf { background:#000; } body.ev-red .evp .evf__chip { backgro
 @media (max-width:700px) { .ev-night + .ev-day { padding-top:210px; } .ev-day::after { top:70px; height:140px; } }
 .ev-rail-head { flex-wrap:wrap; gap:16px 20px; } .ev-rail-count { white-space:nowrap; }
 @media (max-width:700px) { .ev-photo--wide img { aspect-ratio:4/3; } }
+
+/* Pasos de la compra: una sola línea, conectados */
+.evp ol.ev-steps { display:flex; flex-wrap:nowrap; align-items:center; gap:0; width:100%; max-width:640px; margin:0 0 30px; padding:0; list-style:none; counter-reset:s; }
+.evp ol.ev-steps > li { flex:0 0 auto; width:auto !important; margin:0; padding:0; display:flex; align-items:center; gap:10px; counter-increment:s; font:500 .7rem Roboto,sans-serif; letter-spacing:.16em; text-transform:uppercase; color:var(--on-mute); white-space:nowrap; }
+.evp ol.ev-steps > li::before { content:counter(s); flex:none; width:30px; height:30px; border-radius:50%; border:1px solid rgba(255,255,255,.3); display:grid; place-items:center; font-size:.8rem; letter-spacing:0; background:rgba(255,255,255,.04); transition:background .4s, border-color .4s; }
+.evp ol.ev-steps > li:not(:last-child) { flex:1 1 auto; }
+.evp ol.ev-steps > li:not(:last-child)::after { content:""; flex:1 1 16px; min-width:14px; height:1px; margin:0 14px; background:rgba(255,255,255,.22); }
+.evp ol.ev-steps > li.is-done { color:var(--on); } .evp ol.ev-steps > li.is-done::before { content:"✓"; background:var(--gold); border-color:var(--gold); color:var(--navy); font-weight:700; }
+.evp ol.ev-steps > li.is-done:not(:last-child)::after { background:linear-gradient(90deg,var(--gold),rgba(254,211,4,.35)); }
+.evp ol.ev-steps > li.is-now { color:#fff; } .evp ol.ev-steps > li.is-now::before { background:#fff; border-color:#fff; color:var(--navy); box-shadow:0 0 0 5px rgba(255,255,255,.12); font-weight:700; }
+@media (max-width:640px) { .evp ol.ev-steps > li > span { display:none; } .evp ol.ev-steps > li.is-now > span { display:inline; } .evp ol.ev-steps > li:not(:last-child)::after { margin:0 8px; } .evp ol.ev-steps > li { gap:8px; } }
+.ev-sum dl { column-gap:0; } .ev-sum dd { padding-left:14px; }
