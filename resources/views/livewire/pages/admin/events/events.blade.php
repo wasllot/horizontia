@@ -79,6 +79,7 @@
             </div>
             <label class="hz-ct__check"><input type="checkbox" wire:model="hide.rooms"> <span>Ocultar el bloque y la pregunta de habitaciones</span></label>
             <label class="hz-ct__check"><input type="checkbox" wire:model="hide.map"> <span>Ocultar el botón de mapa</span></label>
+            <label class="hz-ct__check"><input type="checkbox" wire:model="hide.partners"> <span>Ocultar los logotipos de FAMA y del Club Campestre (por ejemplo, mientras no haya permiso de uso)</span></label>
 
             <h3>Textos <small>(vacío = texto por defecto de la guía)</small></h3>
             <div class="hz-bn__row">

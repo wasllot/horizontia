@@ -1,6 +1,6 @@
 @extends('events.layout', ['metaTitle' => 'Tus datos y pago · ' . $event->name, 'canonical' => $event->url('pago')])
 
-@section('content')
+@section('body')
 @php
     $money = fn ($v) => '$' . number_format((float) $v, fmod((float) $v, 1) ? 2 : 0);
     $f = fn ($k, $d = '') => old($k, $d);
@@ -74,6 +74,7 @@
 @endsection
 
 @push('scripts')
+<script>
 (function () {
     var cb = document.getElementById('wantsInvoice'), box = document.getElementById('invoiceBox');
     cb.addEventListener('change', function () { box.style.display = cb.checked ? 'grid' : 'none'; });
@@ -82,4 +83,5 @@
     document.getElementById('evCheckout').addEventListener('submit', function () { var b = document.getElementById('evPay'); b.classList.add('is-off'); b.setAttribute('aria-disabled', 'true'); b.textContent = 'Un momento…'; });
     evPush('begin_checkout', { value: {{ (float) $quote['total'] }}, currency: 'MXN' });
 })();
+</script>
 @endpush

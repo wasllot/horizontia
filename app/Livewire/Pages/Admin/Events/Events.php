@@ -87,7 +87,7 @@ class Events extends Component
         foreach (['hero.title', 'hero.subtitle', 'hero.cta', 'seo.title', 'seo.description', 'seo.h1', 'closing.title', 'closing.text', 'rooms.text', 'transport'] as $k) {
             data_set($this->t, $k, (string) data_get($e->content, 'text.' . $k, ''));
         }
-        $this->hide = ['rooms' => data_get($e->content, 'hide.rooms') === true, 'map' => data_get($e->content, 'hide.map') === true];
+        $this->hide = ['rooms' => data_get($e->content, 'hide.rooms') === true, 'map' => data_get($e->content, 'hide.map') === true, 'partners' => data_get($e->content, 'hide.partners') === true];
         $this->assets = (array) $e->assets;
         $this->formOpen = true;
     }

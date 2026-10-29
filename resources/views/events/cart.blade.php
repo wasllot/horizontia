@@ -1,6 +1,6 @@
 @extends('events.layout', ['metaTitle' => 'Tu carrito · ' . $event->name, 'canonical' => $event->url('carrito')])
 
-@section('content')
+@section('body')
 @php $money = fn ($v) => '$' . number_format((float) $v, fmod((float) $v, 1) ? 2 : 0); @endphp
 <div class="ev-page"><div class="ev-wrap">
     <h1>Tu carrito</h1>

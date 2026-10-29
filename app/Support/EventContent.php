@@ -21,13 +21,14 @@ class EventContent
                 'subtitle' => 'Una noche de telescopios, fogata y estrellas fugaces a los pies de la Ciudad de los Dioses. Ven a cazar Gemínidas en Teotihuacán, a una hora de la CDMX.',
                 'cta' => 'Aparta tu lugar',
                 'secondary' => '¿Qué vamos a ver?',
+                'host' => 'Con la astrónoma Luz Calderón',
             ],
             'closing' => [
                 'title' => '¿Cuándo fue la última vez que viste caer una estrella?',
                 'text' => 'Aparta tu lugar y mira hacia arriba con nosotros.',
             ],
             'rooms' => [
-                'text' => '¿Prefieres dormir en habitación? Reserva directamente con el hotel. Compra aquí tu entrada Astrofest® y el hotel te descuenta la parte del camping.',
+                'text' => '¿Prefieres dormir en habitación? El hotel da tarifa especial a asistentes de Astrofest®. Reserva directamente con el hotel; aquí compras tu entrada.',
             ],
             'sold_out' => 'Agotado',
         ];

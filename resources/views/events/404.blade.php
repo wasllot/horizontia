@@ -5,7 +5,7 @@
 @endphp
 @extends('events.layout', ['metaTitle' => 'Página no encontrada · Astrofest®', 'metaDescription' => 'Esta página se perdió en el espacio.', 'canonical' => $event->url()])
 
-@section('content')
+@section('body')
 <div class="ev-page"><div class="ev-narrow" style="text-align:center;display:grid;gap:14px;justify-items:center">
     @if ($event->asset('galileo'))<img class="ev-char ev-char--card" src="{{ $event->asset('galileo') }}" alt="Galileo, mascota de Astrofest, un sabio de barba gris con catalejo" width="190" height="190">@endif
     <h1>Esta página se perdió en el espacio</h1>

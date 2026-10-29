@@ -1,6 +1,6 @@
 @extends('events.layout', ['metaTitle' => 'Confirmación de compra · ' . $event->name, 'canonical' => $event->url('gracias')])
 
-@section('content')
+@section('body')
 @php $money = fn ($v) => '$' . number_format((float) $v, fmod((float) $v, 1) ? 2 : 0); @endphp
 <div class="ev-page"><div class="ev-narrow">
     @if ($order->isPaid())
@@ -31,6 +31,8 @@
 
 @if (!empty($pixel))
 @push('scripts')
+<script>
 evPush('purchase', { transaction_id: @json('EV-' . $order->id), value: {{ (float) $order->total }}, currency: 'MXN', quantity: {{ (int) $order->quantity }} });
+</script>
 @endpush
 @endif

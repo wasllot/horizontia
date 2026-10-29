@@ -7,7 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
+    {{-- Las páginas con su propio SEO (p. ej. eventos) ponen sus metas en @push('styles') y activan $ownMeta. --}}
+    @if (empty($ownMeta))
     <x-meta-content :pageTitle="$pageTitle ?? null" :page="$page ?? null" :pageDescription="$pageDescription ?? null" :pageKeywords="$pageKeywords ?? null" :metaImage="$metaImage ?? null" :type="$ogType ?? 'website'"/>
+    @endif
     
     @vite([
             'public/css/bootstrap.min.css',
@@ -59,7 +62,9 @@
 <body class="am-bodywrap @if( !empty(setting('_general.enable_rtl')) || !empty(session()->get('rtl')) ) am-rtl @endif">
     <x-gtm-body />
     <a class="ht-skip" href="#main-content">Saltar al contenido</a>
+    @if (empty($bare))
     <x-front.header :page="$page?? null"/>
+    @endif
     <main class="am-main" id="main-content" tabindex="-1">
         @isset($htCourse)
             <x-front.course-subnav :course="$htCourse" :links="$htCourseLinks" />
@@ -67,9 +72,11 @@
         @yield('content')
         {{ $slot ?? '' }}
     </main>
-    <x-popups />
+    @if (empty($bare))<x-popups />@endif
         <x-front.cookie-banner />
+    @if (empty($bare))
     <x-front.footer :page="$page?? null" />
+    @endif
     @if(session('impersonated_name'))
         <div class="am-impersonation-bar">
             <span>{{ __('general.impersonating') }} <strong>{{ session('impersonated_name') }}</strong></span>

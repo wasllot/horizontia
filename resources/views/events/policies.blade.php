@@ -1,6 +1,6 @@
 @extends('events.layout', ['metaTitle' => 'Políticas del evento · ' . $event->name, 'canonical' => $event->url('politicas')])
 
-@section('content')
+@section('body')
 <div class="ev-page"><div class="ev-narrow">
     <h1>Políticas del evento</h1>
     @if ($event->policiesReady())

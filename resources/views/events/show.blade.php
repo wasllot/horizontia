@@ -31,7 +31,7 @@
 </script>
 @endpush
 
-@section('content')
+@section('body')
 
 {{-- 1 · Portada --}}
 <section class="ev-hero" aria-labelledby="ev-h1">
@@ -40,6 +40,7 @@
     <span class="ev-shoot" aria-hidden="true"></span><span class="ev-shoot" aria-hidden="true"></span><span class="ev-shoot" aria-hidden="true"></span>
     <div class="ev-wrap">
         <p class="ev-supra">{{ $event->text('hero.supra') }}</p>
+        <p class="ev-host">{{ $event->text('hero.host') }}</p>
         <h1 class="ev-h1" id="ev-h1">{{ $event->text('seo.h1') }}</h1>
         <h2 class="ev-hero__title">{{ $event->text('hero.title') }}</h2>
         <p class="ev-lead">{{ $event->text('hero.subtitle') }}</p>
@@ -55,7 +56,12 @@
             <p class="ev-count" id="evCount" data-start="{{ $start->toIso8601String() }}" aria-live="off"><span id="evCountText">&nbsp;</span></p>
         @endif
     </div>
-    @if ($event->asset('galileo'))<img class="ev-hero__char" src="{{ $event->asset('galileo') }}" alt="Galileo, mascota de Astrofest, un sabio de barba gris con catalejo" width="330" height="330">@endif
+    @if ($event->asset('galileo') || $event->asset('telescopio'))
+        <div class="ev-hero__chars" aria-hidden="false">
+            @if ($event->asset('galileo'))<img src="{{ $event->asset('galileo') }}" alt="Galileo, mascota de Astrofest, un sabio de barba gris con catalejo" width="265" height="350">@endif
+            @if ($event->asset('telescopio'))<img src="{{ $event->asset('telescopio') }}" alt="Telescopio, mascota de Astrofest, un telescopio con brazos y zapatos" width="250" height="303">@endif
+        </div>
+    @endif
 </section>
 
 {{-- 2 · Franja de datos --}}
@@ -90,6 +96,7 @@
 <section class="ev-sec ev-sec--mid" id="que-vamos-a-ver" aria-labelledby="h-ver">
     <div class="ev-wrap">
         <h2 id="h-ver">¿Qué vamos a ver en el cielo?</h2>
+        <p class="ev-lead-dark"><strong>Una noche para mirar hacia arriba.</strong> Cada diciembre la Tierra cruza el polvo que dejó el asteroide Faetón, y el cielo se llena de estrellas fugaces. ¡Y este año, sin Luna que estorbe!</p>
         <h3>Las Gemínidas: polvo de un asteroide que se enciende</h3>
         <p>Cada diciembre, la Tierra cruza una nube de polvo que dejó a su paso un asteroide llamado 3200 Faetón. Esos granitos, muchos del tamaño de un grano de arena, chocan contra la atmósfera a unos 35 kilómetros por segundo y se calientan tanto que brillan: eso es una estrella fugaz. Se llaman Gemínidas porque, si sigues sus trazos hacia atrás, todas parecen salir de un mismo punto en la constelación de Géminis, muy cerca de sus dos estrellas más brillantes, Cástor y Pólux. A ese punto se le llama radiante. Son una de las lluvias más bonitas del año porque sus meteoros suelen ser brillantes y pasar con calma por el cielo.</p>
         <h3 style="margin-top:26px">¿Por qué el 12 de diciembre de 2026 es una gran noche?</h3>
@@ -131,11 +138,12 @@
                 <h3>Sábado {{ $start?->format('j') ?? '12' }} de diciembre</h3>
                 <ol class="ev-time">
                     @foreach ([
-                        ['15:00', 'Check-in y registro', 'Recibe tu pulsera y tu kit. Instala tu casa de campaña o entra a tu habitación. Puedes llegar antes a comer al restaurante del hotel.'],
+                        ['15:00', 'Check-in en el hotel', 'Instala tu casa de campaña o entra a tu habitación. Puedes llegar antes a comer al restaurante del hotel.'],
+                        ['16:00', 'Registro del evento', 'Recibe tu pulsera y tu kit. Muestra tu clave de acceso.'],
                         ['17:00', 'Bienvenida: ¿qué veremos esta noche?', 'Luz Calderón nos explica qué son las Gemínidas, las reglas de la noche y arranca el rally.'],
                         ['17:45', 'Atardecer', 'Momento fotográfico mientras el Sol se despide.'],
                         ['18:15', 'Conferencia: Teotihuacán y el cielo', 'En el auditorio. Arqueoastronomía y la observación del cielo en Mesoamérica.'],
-                        ['19:00', 'Taller de cielo', 'Constelaciones, cómo orientarse y cómo usar un telescopio. Primera mirada a la Luna creciente y a Saturno.'],
+                        ['19:00', 'Iniciamos: taller de cielo', 'Constelaciones, cómo orientarse y cómo usar un telescopio. Primera mirada a la Luna creciente y a Saturno.'],
                         ['20:00', 'Cena', 'Tiempo para cenar en el restaurante o en la zona de snacks (no incluida).'],
                         ['20:30', 'Música temática', 'Ambiente musical inspirado en el espacio.'],
                         ['21:00', 'Fogata', 'Bombones y plática alrededor del fuego, lejos de la zona de telescopios.'],
@@ -154,8 +162,8 @@
                     @foreach ([
                         ['07:00', 'Café al amanecer', 'Ver salir el Sol después de una noche de estrellas.'],
                         ['08:00', 'Desayuno', 'Buffet en el restaurante del hotel (no incluido).'],
-                        ['10:00', 'Observación del Sol', 'Manchas solares con filtros especiales.'],
-                        ['12:00', 'Clausura', 'Premios del rally, entrega de diplomas y foto de grupo. Check-out.'],
+                        ['10:00', 'Observación solar y premiación', 'Manchas solares con filtros especializados y seguros.'],
+                        ['12:00', 'Concluye el evento', 'Premios del rally, entrega de diplomas y foto de grupo. Check-out.'],
                         ['Después', 'Visita a la zona arqueológica', 'Por tu cuenta, con los horarios y reglas de la zona.'],
                     ] as [$h, $t, $d])
                         <li><time>{{ $h }}</time><b>{{ $t }}</b><span>{{ $d }}</span></li>
@@ -173,9 +181,11 @@
         @if (session('event_error'))<p class="ev-alert" role="alert">{{ session('event_error') }}</p>@endif
         <div class="ev-grid ev-grid--2" style="align-items:start">
             <div class="ev-ticket">
+                @if ($event->asset('telescopio'))<img class="ev-ticket__char" src="{{ $event->asset('telescopio') }}" alt="" aria-hidden="true" loading="lazy" width="110" height="133">@endif
                 @if ($event->hasPrice())
-                    <div class="ev-ticket__price">{{ $money($event->price) }} MXN<small>por persona · IVA incluido · incluye camping para 1 persona</small></div>
+                    <div class="ev-ticket__price">{{ $money($event->price) }} MXN<small>por persona · IVA incluido · experiencia completa + camping con tu casa de campaña</small></div>
                 @endif
+                @if ($state === 'open' && $available !== null)<p style="margin:0"><span class="ev-pill">¡Cupo limitado!</span></p>@endif
                 @foreach ($quote['discounts'] as $d)<p style="margin:0"><span class="ev-pill ev-pill--tag">{{ $d['label'] }} −{{ rtrim(rtrim(number_format($d['percent'], 2), '0'), '.') }} %</span></p>@endforeach
 
                 @if ($state === 'open')
@@ -215,7 +225,7 @@
                     <li>Observación del Sol el domingo por la mañana.</li>
                     <li>Pulsera coleccionable, Pasaporte Astrofest®, mapa del cielo de diciembre, stickers y celofán rojo para tu linterna.</li>
                     <li>Diploma de participación.</li>
-                    <li>Camping para 1 persona, con baños, vestidores y regaderas de la zona.</li>
+                    <li>Camping para 1 persona (con tu casa de campaña), con baños, vestidores y regaderas de la zona: un lugar seguro para acampar.</li>
                 </ul>
                 <h3 style="margin-top:20px">No incluye</h3>
                 <ul class="ev-list ev-list--no">
@@ -265,6 +275,10 @@
 <section class="ev-sec ev-sec--mid" id="que-traer" aria-labelledby="h-traer">
     <div class="ev-wrap">
         <h2 id="h-traer">Qué traer y reglas de oro</h2>
+        <div class="ev-callout">
+            @if ($event->asset('galileo'))<img src="{{ $event->asset('galileo') }}" alt="" aria-hidden="true" loading="lazy" width="120" height="158">@endif
+            <div><h3>¿Tienes telescopio? ¡Tráetelo!</h3><p>Si no, observa con los nuestros.</p></div>
+        </div>
         <div class="ev-grid ev-grid--2">
             <div>
                 <h3>Tu mochila de cazador de estrellas</h3>
@@ -295,6 +309,19 @@
     </div>
 </section>
 
+{{-- Plan Nube --}}
+<section class="ev-sec" id="plan-nube" aria-labelledby="h-nube">
+    <div class="ev-wrap">
+        <h2 id="h-nube">Astrofest depende del cielo, y el cielo no depende de nosotros</h2>
+        <div class="ev-grid ev-grid--3">
+            <article class="ev-card"><div class="ico" aria-hidden="true">☁</div><h3>¿Nublado?</h3><p>La fiesta sigue con nuestro Plan Nube (charlas, planetario o proyección y fogata) y te llevas un crédito para la próxima edición.</p></article>
+            <article class="ev-card"><div class="ico" aria-hidden="true">⛈</div><h3>¿Clima peligroso?</h3><p>Reprogramamos o cancelamos por tu seguridad. Tú eliges: nueva fecha, o crédito.</p></article>
+            <article class="ev-card"><div class="ico" aria-hidden="true">❄</div><h3>¿Frío?</h3><p>Es parte de la aventura, no es motivo de cancelación. ¡Ven abrigado!</p></article>
+        </div>
+        <p style="margin-top:16px"><a href="{{ $event->url('politicas') }}">Consulta la política completa del evento</a></p>
+    </div>
+</section>
+
 {{-- 9 · Kit, rally y diploma --}}
 <section class="ev-sec" id="kit" aria-labelledby="h-kit">
     <div class="ev-wrap">
@@ -318,7 +345,10 @@
                 <p>Divulgadora de la ciencia con muchos años de trayectoria y una comunidad enorme que la sigue. Ha organizado noches de estrellas con cientos de asistentes y es la voz que te guiará toda la noche: da la bienvenida, imparte conferencias y te enseña a leer el cielo.</p>
             </article>
             <article class="ev-card">
-                @if ($event->asset('galileo'))<img class="ev-char ev-char--card" src="{{ $event->asset('galileo') }}" alt="Galileo, mascota de Astrofest, un sabio de barba gris con catalejo" loading="lazy" width="190" height="190">@endif
+                <div class="ev-duo">
+                    @if ($event->asset('galileo'))<img src="{{ $event->asset('galileo') }}" alt="Galileo, mascota de Astrofest, un sabio de barba gris con catalejo" loading="lazy" width="265" height="350">@endif
+                    @if ($event->asset('telescopio'))<img src="{{ $event->asset('telescopio') }}" alt="Telescopio, mascota de Astrofest, un telescopio con brazos y zapatos" loading="lazy" width="250" height="303">@endif
+                </div>
                 <h3>Galileo y Telescopio · Tus guías del cielo</h3>
                 <p>Galileo es un sabio curioso que nunca deja de hacer preguntas, y Telescopio, su compañero inquieto, siempre está señalando algo nuevo en el cielo. Los encontrarás en el pasaporte, en el diploma y en los stickers de tu kit.</p>
             </article>
@@ -367,6 +397,7 @@
 @endsection
 
 @push('scripts')
+<script>
 (function () {
     // Contador: noches que faltan, con la zona horaria del evento.
     var c = document.getElementById('evCount');
@@ -392,4 +423,5 @@
         evPush('view_item', { value: p.unit, currency: 'MXN' });
     }
 })();
+</script>
 @endpush

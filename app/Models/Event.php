@@ -74,9 +74,19 @@ class Event extends Model
         return data_get($this->content, 'hide.' . $block) !== true;
     }
 
+    /** Archivos por defecto (tomados del flyer del cliente); lo que se sube en el panel los reemplaza. */
+    public const DEFAULT_ASSETS = [
+        'logo' => 'images/eventos/astrofest-logo.png', 'galileo' => 'images/eventos/galileo.png', 'telescopio' => 'images/eventos/telescopio.png',
+        'fama' => 'images/eventos/fama.png', 'club' => 'images/eventos/club.png',
+    ];
+
     public function asset(string $key): ?string
     {
-        $path = data_get($this->assets, $key);
+        // Los logotipos de los aliados (FAMA, Club) salen salvo que el panel los oculte.
+        if (in_array($key, ['fama', 'club'], true) && !$this->show('partners')) {
+            return null;
+        }
+        $path = data_get($this->assets, $key) ?: (self::DEFAULT_ASSETS[$key] ?? null);
 
         return $path ? asset($path) : null;
     }
