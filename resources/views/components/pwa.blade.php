@@ -6,5 +6,5 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="{{ \Illuminate\Support\Str::limit(setting('_general.site_name') ?: config('app.name'), 12, '') }}">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link rel="apple-touch-icon" href="{{ asset('images/pwa/apple-touch-icon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset(request()->routeIs('event.*') ? 'images/favicon/apple-touch-icon.png' : 'images/pwa/apple-touch-icon.png') }}">
 @endif

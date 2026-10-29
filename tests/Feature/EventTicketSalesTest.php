@@ -511,4 +511,16 @@ class EventTicketSalesTest extends TestCase
         $this->assertStringContainsString('Datos opcionales', $html);
         $this->assertStringContainsString('Resumen: 2 entradas', $html);
     }
+
+    public function test_event_pages_use_the_horizontia_favicon(): void
+    {
+        $e = $this->event();
+        $html = $this->get($e->url())->assertOk()->getContent();
+        $this->assertStringContainsString('images/favicon/favicon-32.png', $html);
+        $this->assertStringContainsString('favicon.ico', $html);
+        foreach (['favicon-16.png', 'favicon-32.png', 'favicon-192.png', 'apple-touch-icon.png'] as $f) {
+            $this->assertFileExists(public_path('images/favicon/' . $f));
+        }
+        $this->assertGreaterThan(1000, filesize(public_path('favicon.ico')));
+    }
 }
