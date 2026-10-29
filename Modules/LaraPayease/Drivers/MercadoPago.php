@@ -102,6 +102,58 @@ class MercadoPago extends BasePaymentDriver
             && abs((float) ($payment['transaction_amount'] ?? 0) - $expected['amount']) < 0.01;
     }
 
+    /**
+     * Checkout Pro para una compra que no es un Order de cursos (p. ej. entradas de un evento, sin cuenta de usuario).
+     * Monto, moneda y referencia salen siempre de la base de datos, nunca de la petición.
+     *
+     * @return array{url: ?string, preference: array}
+     */
+    public function createReferencedCheckout(string $reference, string $title, float $amount, array $payer, string $returnUrl, string $notificationUrl, int $expiryMinutes): array
+    {
+        $unit = round((float) $this->chargeableAmount($amount), 2);
+        $payload = [
+            'items' => [[
+                'id'          => $reference,
+                'title'       => Str::limit($title, 250, ''),
+                'quantity'    => 1,
+                'currency_id' => strtoupper($this->getCurrency()),
+                'unit_price'  => $unit,
+            ]],
+            'payer'              => array_filter($payer),
+            'external_reference' => $reference,
+            'back_urls'          => ['success' => $returnUrl, 'pending' => $returnUrl, 'failure' => $returnUrl],
+            'auto_return'        => 'approved',
+            'notification_url'   => $notificationUrl,
+            'binary_mode'        => !empty($this->keys['binary_mode'] ?? null),
+            'expires'            => true,
+            'expiration_date_to' => now()->addMinutes($expiryMinutes)->format('Y-m-d\TH:i:s.vP'),
+        ];
+        $max = (int) ($this->keys['max_installments'] ?? 0);
+        if ($max >= 1 && $max <= 24) {
+            $payload['payment_methods'] = ['installments' => $max];
+        }
+
+        $preference = $this->client()
+            ->withHeaders(['X-Idempotency-Key' => (string) Str::uuid()])
+            ->post('/checkout/preferences', $payload)
+            ->throw()
+            ->json();
+
+        $url = $this->getMode() === 'test'
+            ? ($preference['sandbox_init_point'] ?? $preference['init_point'] ?? null)
+            : ($preference['init_point'] ?? null);
+
+        return ['url' => $url, 'preference' => $preference];
+    }
+
+    /** ¿El pago que reporta Mercado Pago corresponde a esta referencia, monto y moneda? */
+    public function paymentMatchesReference(array $payment, string $reference, float $amount): bool
+    {
+        return (string) ($payment['external_reference'] ?? '') === $reference
+            && strtoupper((string) ($payment['currency_id'] ?? '')) === strtoupper($this->getCurrency())
+            && abs((float) ($payment['transaction_amount'] ?? 0) - round((float) $this->chargeableAmount($amount), 2)) < 0.01;
+    }
+
     public function createPreference(Order $order): array
     {
         $charge = $this->expectedCharge($order);

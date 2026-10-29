@@ -190,6 +190,11 @@ Breadcrumbs::for('admin.refunds', function (BreadcrumbTrail $trail) {
     $trail->push('Reembolsos', route('admin.refunds'));
 });
 
+Breadcrumbs::for('admin.events', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.insights');
+    $trail->push('Eventos', route('admin.events'));
+});
+
 Breadcrumbs::for('admin.coupons', function (BreadcrumbTrail $trail) {
     $trail->parent('admin.insights');
     $trail->push('Cupones', route('admin.coupons'));

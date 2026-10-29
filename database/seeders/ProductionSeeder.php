@@ -37,7 +37,7 @@ class ProductionSeeder extends Seeder
 
         // Páginas legales/informativas y menús en español (se pueden reemplazar después importando tu configuración).
         // Sin Artisan::call(): una llamada anidada reemplaza Artisan::output() y se perdería el mensaje con la contraseña generada.
-        foreach ([['academy:pages', ['--prune' => true]], ['academy:menus', []], ['academy:categories', []]] as [$command, $args]) {
+        foreach ([['academy:pages', ['--prune' => true]], ['academy:menus', []], ['academy:categories', []], ['events:astrofest', []]] as [$command, $args]) {
             $this->command ? $this->command->callSilent($command, $args) : Artisan::call($command, $args);
         }
 

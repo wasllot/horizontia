@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Astrofest Gemínidas 2026 · Datos para publicar</title>
+<style>
+:root { --bg:#f4f6fb; --card:#fff; --ink:#14213d; --muted:#5b6478; --line:#d9deea; --gold:#fed304; --gold-d:#6b5300; --ok:#14703b; --ok-bg:#e3f6ea; --warn:#8a4b00; --warn-bg:#fff1d6; --focus:#2563eb; }
+* { box-sizing: border-box; }
+body { margin:0; font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:var(--ink); background:var(--bg); }
+.wrap { max-width:820px; margin:0 auto; padding:0 16px 120px; }
+header.top { padding:32px 0 20px; }
+header.top .tag { display:inline-block; padding:4px 12px; border-radius:99px; background:#fff7cc; color:var(--gold-d); font-size:.78rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+h1 { font-size:clamp(1.6rem,4vw,2.2rem); line-height:1.15; margin:12px 0 8px; }
+header.top p { margin:0; color:var(--muted); max-width:62ch; }
+.bar { position:sticky; top:0; z-index:5; background:rgba(244,246,251,.94); backdrop-filter:blur(8px); padding:10px 0; border-bottom:1px solid var(--line); margin:0 -16px 18px; padding-inline:16px; }
+.bar .row { max-width:820px; margin:0 auto; display:flex; align-items:center; gap:14px; }
+.meter { flex:1; height:10px; border-radius:99px; background:#e4e8f2; overflow:hidden; }
+.meter i { display:block; height:100%; width:0; background:linear-gradient(90deg,#ffe45c,var(--gold)); transition:width .3s; }
+.bar small { color:var(--muted); font-weight:600; white-space:nowrap; }
+.saved { font-size:.8rem; color:var(--muted); }
+.notice { background:var(--warn-bg); color:var(--warn); border-radius:12px; padding:12px 16px; font-size:.93rem; margin:0 0 18px; }
+section.sec { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:22px 20px 8px; margin-bottom:18px; }
+section.sec > h2 { font-size:1.22rem; margin:0 0 4px; display:flex; gap:10px; align-items:center; }
+section.sec > h2 .n { width:30px; height:30px; border-radius:50%; background:var(--gold); color:var(--ink); display:inline-flex; align-items:center; justify-content:center; font-size:.9rem; flex:none; }
+section.sec > p.lead { margin:0 0 14px; color:var(--muted); font-size:.95rem; }
+.q { padding:16px 0; border-top:1px solid #edf0f6; }
+.q:first-of-type { border-top:0; }
+.q > label, .q > fieldset > legend { font-weight:650; display:block; margin-bottom:4px; padding:0; }
+fieldset { border:0; margin:0; padding:0; min-width:0; }
+.hint { color:var(--muted); font-size:.88rem; margin:0 0 8px; }
+.who { display:inline-block; font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:99px; background:#eef1f9; color:var(--muted); margin-left:6px; vertical-align:middle; }
+input[type=text],input[type=email],input[type=tel],input[type=url],input[type=number],input[type=date],textarea,select { width:100%; font:inherit; color:inherit; padding:11px 13px; border:1.5px solid var(--line); border-radius:11px; background:#fff; }
+textarea { min-height:96px; resize:vertical; }
+input:focus,textarea:focus,select:focus,button:focus-visible,summary:focus-visible { outline:3px solid var(--focus); outline-offset:1px; border-color:var(--focus); }
+.opts { display:grid; gap:8px; }
+.opt { display:flex; gap:10px; align-items:flex-start; padding:10px 12px; border:1.5px solid var(--line); border-radius:11px; cursor:pointer; background:#fff; }
+.opt:has(input:checked) { border-color:#caa800; background:#fffbe0; }
+.opt input { margin-top:4px; flex:none; accent-color:#caa800; width:18px; height:18px; }
+.opt span { flex:1; }
+.pend { margin-top:8px; display:flex; align-items:center; gap:8px; font-size:.88rem; color:var(--muted); cursor:pointer; }
+.pend input { width:16px; height:16px; accent-color:#8a4b00; }
+.q.is-pending { background:linear-gradient(90deg,var(--warn-bg),transparent 40%); margin-inline:-20px; padding-inline:20px; }
+.q.is-pending .pend { color:var(--warn); font-weight:600; }
+.q.is-done > label::after, .q.is-done > fieldset > legend::after { content:" ✓"; color:var(--ok); }
+.note { background:#eef3ff; border-radius:12px; padding:12px 14px; font-size:.92rem; color:#27407a; margin:14px 0; }
+.actions { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:22px 20px; }
+.actions h2 { margin:0 0 6px; font-size:1.22rem; }
+.btns { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0; }
+button.btn { font:inherit; font-weight:700; padding:12px 20px; border-radius:12px; border:0; cursor:pointer; background:var(--gold); color:var(--ink); }
+button.btn.ghost { background:#fff; border:1.5px solid var(--line); }
+button.btn:hover { filter:brightness(.97); }
+#summary { width:100%; min-height:220px; font:13px/1.5 ui-monospace,Menlo,Consolas,monospace; background:#fafbfe; }
+.status { min-height:1.4em; color:var(--ok); font-weight:600; margin:6px 0 0; }
+.hidden { display:none !important; }
+.todo { color:var(--warn); font-weight:600; }
+@media print { .bar,.btns,.pend,.actions .btns { display:none !important; } body { background:#fff; } section.sec { break-inside:avoid; border-color:#ccc; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span class="tag">Astrofest® Gemínidas 2026</span>
+    <h1>Datos que necesitamos para publicar la página y abrir las ventas</h1>
+    <p>Responde lo que ya sepas. Lo que todavía no esté definido, márcalo con <strong>«Aún no lo sé»</strong>: así sabemos qué falta y de quién depende. Tu avance se guarda solo en este dispositivo; puedes cerrar y volver cuando quieras.</p>
+  </header>
+
+  <div class="bar"><div class="row">
+    <div class="meter" role="progressbar" aria-label="Avance del formulario" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="meterFill"></i></div>
+    <small id="meterText">0 de 0</small>
+    <span class="saved" id="savedAt" aria-live="polite"></span>
+  </div></div>
+
+  <p class="notice"><strong>Por seguridad:</strong> en este formulario <u>no</u> escribas contraseñas, tokens ni claves de Mercado Pago. Esas se cargan directamente en el panel del sitio, sin pasar por correo ni chat.</p>
+
+  <form id="form" novalidate></form>
+
+  <div class="actions" id="actions">
+    <h2>Enviar respuestas</h2>
+    <p class="hint" id="actionsHint">Cuando termines (o quieras mandar un avance), elige cómo enviarlas. Todo se genera en tu navegador; nada se sube a ningún servidor.</p>
+    <div class="btns">
+      <button type="button" class="btn" id="btnCopy">Copiar respuestas</button>
+      <button type="button" class="btn ghost" id="btnTxt">Descargar .txt</button>
+      <button type="button" class="btn ghost" id="btnJson">Descargar archivo de respaldo (.json)</button>
+      <button type="button" class="btn ghost" id="btnWa">Enviar por WhatsApp</button>
+      <button type="button" class="btn ghost" id="btnMail">Enviar por correo</button>
+      <button type="button" class="btn ghost" id="btnPrint">Imprimir / PDF</button>
+    </div>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+    <label for="summary" class="hint">Vista previa de lo que se enviará</label>
+    <textarea id="summary" readonly></textarea>
+    <div class="btns">
+      <button type="button" class="btn ghost" id="btnImport">Cargar un respaldo (.json)</button>
+      <button type="button" class="btn ghost" id="btnReset">Borrar todo y empezar de nuevo</button>
+      <input type="file" id="fileImport" accept="application/json,.json" class="hidden">
+    </div>
+  </div>
+</div>
+
+<script>
+/* ------------------------------------------------------------------
+   Configuración de envío (quien reparte el formulario puede completar esto):
+   SEND_EMAIL = correo que recibe las respuestas; SEND_WHATSAPP = número con lada, solo dígitos (ej. 5215512345678).
+   ------------------------------------------------------------------ */
+const SEND_EMAIL = '';
+const SEND_WHATSAPP = '';
+const STORE_KEY = 'astrofest-datos-v1';
+
+const ARCHIVO = [['si', 'Ya lo envié'], ['luego', 'Lo envío después'], ['no', 'No existe todavía']];
+const SINO = [['si', 'Sí'], ['no', 'No']];
+
+const SECTIONS = [
+  { id: 'quien', title: 'Quién responde', lead: 'Para saber a quién preguntar si surge una duda.', qs: [
+    { id: 'nombre', label: 'Nombre completo', type: 'text', nopend: true },
+    { id: 'rol', label: 'Cargo o relación con el evento', type: 'text', nopend: true },
+    { id: 'contacto_resp', label: 'Correo o teléfono para dudas', type: 'text', nopend: true },
+  ]},
+
+  { id: 'pagos', title: 'Cobro con Mercado Pago', lead: 'El sitio ya cobra con Mercado Pago: no hace falta crear nada nuevo, solo decidir a nombre de quién se cobra.', qs: [
+    { id: 'mp_cuenta', label: '¿El cobro de Astrofest entra a la misma cuenta de Mercado Pago que ya usa el sitio?', type: 'radio', opts: [['misma', 'Sí, la misma cuenta actual'], ['otra', 'No, debe entrar a otra cuenta distinta']] },
+    { id: 'mp_otra_nota', type: 'note', showIf: { mp_cuenta: 'otra' }, text: 'Si es otra cuenta, el Access Token y la Public Key de <b>producción</b> los carga la persona titular directamente en el panel del sitio (Ajustes → Pagos). No los mandes por correo ni por chat.' },
+    { id: 'mp_razon', label: 'Nombre o razón social de la empresa a cuyo nombre se cobra', type: 'text', who: 'Óscar / Administración' },
+    { id: 'mp_factura', label: '¿Quién emite la factura a los asistentes?', type: 'text', hint: 'Persona o empresa, y si es la misma que cobra.', who: 'Óscar / Administración' },
+    { id: 'mp_metodos', label: '¿Qué formas de pago se habilitan además de tarjeta?', type: 'check', hint: 'Esto decide cuánto tiempo se guarda un lugar mientras la persona paga.', opts: [['efectivo', 'Efectivo (tienda de conveniencia)'], ['transferencia', 'Transferencia (SPEI)'], ['solo_tarjeta', 'Solo tarjeta']] },
+  ]},
+
+  { id: 'politicas', title: 'Políticas del evento', lead: 'Sin estas políticas no se abren las ventas: el pago exige que la persona las acepte. Puedes pegar el texto aquí o indicar que enviarás un documento.', who: 'Luz', qs: [
+    { id: 'pol_clima', label: 'Política de clima («Plan Nube»)', type: 'textarea', hint: 'Qué pasa si se nubla, si hay clima peligroso o frío; cómo se entrega el crédito o la nueva fecha; plazos para elegir.', who: 'Luz' },
+    { id: 'pol_cancel_reembolso', label: 'Cancelaciones por parte del asistente: ¿hay reembolso?', type: 'radio', opts: [['total', 'Reembolso total'], ['parcial', 'Reembolso parcial'], ['credito', 'Solo crédito para otra edición'], ['no', 'Sin reembolso']], who: 'Luz' },
+    { id: 'pol_cancel_detalle', label: 'Plazos y condiciones de cancelación', type: 'textarea', hint: 'Hasta cuántos días antes, porcentaje, cómo se solicita.', who: 'Luz' },
+    { id: 'pol_transferible', label: '¿Se puede transferir la entrada a otra persona?', type: 'radio', opts: SINO, who: 'Luz' },
+    { id: 'pol_reglamento', label: 'Reglamento y responsabilidad', type: 'textarea', hint: 'Reglas del evento, responsabilidad de los organizadores y asistentes, menores de edad, fogatas, láseres, etc.', who: 'Luz' },
+    { id: 'pol_privacidad', label: 'Aviso de privacidad aplicable al evento', type: 'radio', opts: [['general', 'Sirve el aviso de privacidad actual de Horizontia'], ['propio', 'Hay uno específico para el evento (lo envío)']] },
+    { id: 'pol_abogado', label: '¿Un abogado validó las políticas (en especial el «crédito» sin reembolso por clima)?', type: 'radio', opts: [['si', 'Sí, ya validadas'], ['proceso', 'En proceso'], ['no', 'Aún no']], hint: 'Recomendado antes de cobrar.' },
+  ]},
+
+  { id: 'cupo', title: 'Cupo y límites de compra', lead: '', qs: [
+    { id: 'cupo_total', label: 'Cupo máximo de entradas', type: 'number', hint: 'El camping es limitado. Al llegar a este número la página muestra «Agotado». Déjalo vacío si no habrá límite.' },
+    { id: 'cupo_por_compra', label: 'Máximo de entradas por compra', type: 'number', hint: 'Por ejemplo, 10.' },
+    { id: 'cierre_ventas', label: 'Fecha en que se cierran las ventas', type: 'date', hint: 'El documento menciona unos 5 días antes del evento.' },
+    { id: 'menores_edad', label: 'Menores que no pagan: ¿desde qué edad pagan?', type: 'radio', opts: [['6', 'Menores de 6 años no pagan (flyer nuevo)'], ['4', 'Menores de 4 años no pagan (versión anterior)'], ['otra', 'Otra']], who: 'Luz' },
+    { id: 'menores_otra', label: 'Indica la edad', type: 'text', showIf: { menores_edad: 'otra' } },
+  ]},
+
+  { id: 'contacto', title: 'Contacto del evento', lead: 'Aparece en el pie de página y en el correo de confirmación.', qs: [
+    { id: 'contacto_correo', label: 'Correo de contacto del evento', type: 'email' },
+    { id: 'contacto_wa', label: 'WhatsApp del evento (con lada)', type: 'tel' },
+    { id: 'redes', label: 'Cuentas de redes del evento (si ya existen)', type: 'textarea', hint: 'Instagram, TikTok, etc. Si aún no existen, no se mostrarán íconos de redes.' },
+  ]},
+
+  { id: 'hotel', title: 'Hotel (Club Campestre Teotihuacán)', lead: 'Algunos datos solo los puede confirmar el hotel.', who: 'Hotel', qs: [
+    { id: 'hotel_municipio', label: 'Municipio correcto de la dirección', type: 'radio', hint: 'El flyer y la guía no coinciden.', opts: [['pirámides', 'San Martín de las Pirámides, Méx. (flyer)'], ['juan', 'San Juan Teotihuacán, Edo. de México (guía)']], who: 'Hotel' },
+    { id: 'hotel_direccion', label: 'Dirección completa', type: 'textarea', hint: 'La del flyer es «Autopista México–Tuxpan, salida km 27, 55851».' },
+    { id: 'hotel_maps', label: 'Enlace de Google Maps (pin del hotel)', type: 'url', hint: 'Abre Google Maps, busca el hotel, pulsa «Compartir» y pega aquí el enlace.' },
+    { id: 'hotel_fotos', label: 'Fotos oficiales del hotel', type: 'radio', opts: ARCHIVO },
+    { id: 'hotel_descuento_monto', label: 'Monto del descuento de camping para quien reserva habitación', type: 'text', hint: 'La guía calculaba el camping en $500 por persona. ¿Es ese monto? ¿Incluye IVA?' },
+    { id: 'hotel_descuento_mecanismo', label: '¿Cómo aplica el hotel el descuento?', type: 'radio', opts: [['codigo', 'Con un código'], ['comprobante', 'Mostrando el comprobante de Astrofest'], ['lista', 'Con una lista de asistentes que enviamos al hotel']] },
+    { id: 'hotel_orden', label: '¿La entrada debe comprarse antes de reservar la habitación?', type: 'radio', opts: [['antes', 'Antes'], ['despues', 'Puede ser después'], ['indistinto', 'Es indistinto']] },
+    { id: 'hotel_boton', label: 'El botón «Reservar habitación en el hotel» debe llevar a…', type: 'check', opts: [['motor', 'El motor de reservas del hotel'], ['wa', 'Su WhatsApp'], ['tel', 'Su teléfono']] },
+    { id: 'hotel_enlace', label: 'Enlace de reservas definitivo', type: 'url', hint: 'El enlace actual es live.ipms247.com/booking/book-rooms-hoteloviedoteotihuacan-es-Spanish y redirige a letsbook.me. ¿Es el definitivo?' },
+    { id: 'hotel_wa', label: '¿El teléfono del hotel (+52 55 4766 8637) recibe WhatsApp?', type: 'radio', opts: [['si', 'Sí'], ['no', 'No, solo llamadas'], ['otro', 'Hay otro número de WhatsApp']] },
+    { id: 'hotel_wa_otro', label: 'Número de WhatsApp del hotel', type: 'tel', showIf: { hotel_wa: 'otro' } },
+    { id: 'hotel_csv', label: '¿El hotel necesita recibir el reporte de compras (lista de asistentes)?', type: 'radio', opts: SINO },
+    { id: 'hotel_csv_correo', label: 'Correo del hotel para el reporte', type: 'email', showIf: { hotel_csv: 'si' } },
+    { id: 'hotel_servicios', label: 'Servicios por confirmar con el hotel', type: 'check', hint: 'Marca los que SÍ existen y se pueden publicar.', opts: [['vigilancia', 'Vigilancia toda la noche'], ['medico', 'Servicio médico o paramédico'], ['agua', 'Agua caliente en regaderas del camping'], ['carga', 'Puntos de carga para celulares'], ['snacks', 'Venta de snacks, café y tiendita'], ['restobar', 'Restobar nocturno'], ['cafe', 'Café y pan nocturno (00:00)']] },
+    { id: 'hotel_transporte', label: 'Ruta de transporte público verificada (si quieren publicarla)', type: 'textarea', hint: 'Líneas, paradas, tiempos y costos. Si no está verificada, no se publica.' },
+  ]},
+
+  { id: 'diseno', title: 'Archivos de diseño', lead: 'Por cada archivo indica si ya lo enviaste. Si no existe todavía, usamos uno provisional.', who: 'Diseño', qs: [
+    { id: 'ar_logo_svg', label: 'Logotipo de Astrofest® en vector (SVG)', type: 'radio', opts: ARCHIVO },
+    { id: 'ar_logo_h', label: 'Versión horizontal sin fondo para el encabezado', type: 'radio', opts: ARCHIVO },
+    { id: 'ar_personajes', label: 'Galileo y Telescopio en PNG con fondo transparente (poses sueltas)', type: 'radio', opts: ARCHIVO },
+    { id: 'ar_og', label: 'Imagen para compartir en redes (1200 × 630 px)', type: 'radio', opts: ARCHIVO },
+    { id: 'ar_hero', label: 'Imagen principal del evento (1920 × 800 px escritorio y 1080 × 1350 px móvil)', type: 'radio', opts: ARCHIVO },
+    { id: 'ar_fama', label: 'Logotipo de FAMA (Físicos Astrónomos Mexicanos y Asociados)', type: 'radio', opts: ARCHIVO },
+    { id: 'ar_club', label: 'Logotipo del Club Campestre Teotihuacán', type: 'radio', opts: ARCHIVO },
+    { id: 'ar_horizontia', label: 'Logotipo de Horizontia en versión negativa (para fondo oscuro)', type: 'radio', opts: ARCHIVO },
+    { id: 'ar_permiso', label: '¿FAMA y el Club Campestre autorizaron usar su logotipo en la página?', type: 'radio', opts: [['si', 'Sí, ambos'], ['uno', 'Solo uno'], ['no', 'Aún no'], ['proceso', 'En trámite']], hint: 'Sin autorización no se publican sus logotipos.' },
+    { id: 'ar_version_logo', label: '¿Qué versión del logo de Astrofest usa la web?', type: 'radio', opts: [['con', 'Con «Gemínidas 2026» (como pide la guía)'], ['sin', 'Solo «Astrofest» (como en la portada del flyer)']] },
+  ]},
+
+  { id: 'luz', title: 'Contenido y programa', lead: 'Lo valida quien conduce el evento antes de publicarse.', who: 'Luz', qs: [
+    { id: 'luz_foto', label: 'Foto y semblanza oficial de Luz Calderón', type: 'radio', opts: ARCHIVO, hint: 'Mientras tanto se publica el texto con una ilustración de Galileo.' },
+    { id: 'luz_astronomia', label: 'Validación de las afirmaciones astronómicas', type: 'radio', hint: 'Máximo de las Gemínidas la noche del 13 al 14 de diciembre; Luna nueva el 9 de diciembre y creciente el día 12; radiante en su punto más alto hacia las 2:00 h; 35 km/s; asteroide 3200 Faetón; Nebulosa de Orión a 1,300 años luz; Saturno visible esa noche.', opts: [['si', 'Todo correcto'], ['cambios', 'Correcto con cambios (los indico abajo)'], ['pendiente', 'Aún sin revisar']] },
+    { id: 'luz_astronomia_nota', label: 'Cambios o correcciones astronómicas', type: 'textarea', showIf: { luz_astronomia: 'cambios' } },
+    { id: 'hor_sabado', label: 'Horario del sábado', type: 'textarea', hint: 'El documento dice check-in 15:00, bienvenida 17:00 y conferencia 18:15; el flyer dice registro 16:00 e inicio 19:00. Indica el horario definitivo (¿check-in del hotel y registro del evento son cosas distintas?).' },
+    { id: 'hor_domingo', label: '¿El café (07:00) y el desayuno (08:00) del domingo forman parte del programa?', type: 'radio', hint: 'El flyer solo menciona observación solar a las 10:00 y cierre a las 12:00.', opts: [['si', 'Sí, van en el programa'], ['no', 'No, solo observación y clausura']] },
+    { id: 'rifa', label: 'AstroRifa: ¿en qué consiste y cómo se participa?', type: 'textarea' },
+    { id: 'rifa_permiso', label: '¿La AstroRifa cuenta con el permiso de la autoridad correspondiente?', type: 'radio', hint: 'En México los sorteos suelen requerir permiso de la Secretaría de Gobernación. Si no está confirmado, la web no la menciona.', opts: [['si', 'Sí, tiene permiso'], ['tramite', 'En trámite'], ['no', 'No / no aplica (se quita del sitio)']] },
+    { id: 'incluye_momentos', label: '¿En qué momento del programa ocurren el DJ en vivo, el Planetario Móvil y la AstroRifa?', type: 'textarea' },
+  ]},
+
+  { id: 'negocio', title: 'Decisiones de negocio', lead: '', qs: [
+    { id: 'preventa', label: 'Preventa del 15 % (vencía el 31 de octubre): ¿qué se hace?', type: 'radio', opts: [['no', 'Ya no habrá preventa'], ['total', 'Se extiende y aplica al precio completo de $1,740'], ['parte', 'Se extiende y aplica solo a una parte (la indico abajo)'], ['otra', 'Otra condición']], hint: 'Mientras no se decida, queda apagada.' },
+    { id: 'preventa_detalle', label: 'Detalle de la preventa (a qué monto aplica y hasta qué fecha)', type: 'textarea', showIf: { preventa: ['total', 'parte', 'otra'] } },
+    { id: 'desc_grupo', label: '¿Habrá descuento por grupo (la guía menciona 10 % adicional por grupo de 4)?', type: 'radio', opts: [['si', 'Sí'], ['no', 'No']] },
+    { id: 'desc_grupo_detalle', label: 'Condiciones del descuento por grupo', type: 'text', showIf: { desc_grupo: 'si' } },
+    { id: 'redir_eventos', label: 'Mientras Astrofest sea el único evento, ¿la página /eventos debe llevar directamente a su página?', type: 'radio', opts: [['si', 'Sí, redirigir (recomendado)'], ['no', 'No, dejar /eventos como está']] },
+    { id: 'cursos_prueba', label: 'Los cursos de prueba que se ven en la home («QA TEST…», «Curso de prueba»)', type: 'radio', opts: [['retirar', 'Es producción: hay que retirarlos'], ['pruebas', 'Es un ambiente de pruebas: se ignoran']] },
+    { id: 'factura_si', label: '¿Se factura a quien lo pida?', type: 'radio', opts: SINO },
+    { id: 'factura_datos', label: 'Datos fiscales que se piden al comprador', type: 'check', showIf: { factura_si: 'si' }, opts: [['rfc', 'RFC'], ['razon', 'Nombre o razón social'], ['regimen', 'Régimen fiscal'], ['uso', 'Uso del CFDI'], ['cp', 'Código postal fiscal'], ['correo', 'Correo para la factura']] },
+    { id: 'facturas_resp', label: '¿Quién gestiona esas solicitudes de factura y en qué plazo?', type: 'text', showIf: { factura_si: 'si' } },
+  ]},
+
+  { id: 'extra', title: 'Algo más', lead: '', qs: [
+    { id: 'comentarios', label: 'Comentarios, dudas o cambios que quieras comunicarnos', type: 'textarea', nopend: true },
+  ]},
+];
+
+/* ---------------------------------------------------------------- */
+const $ = (s, r = document) => r.querySelector(s);
+let state = { v: {}, p: {}, savedAt: null };
+SECTIONS.forEach(s => s.qs.forEach(q => { q.sec = s; }));
+const allQs = SECTIONS.flatMap(s => s.qs);
+const byId = Object.fromEntries(allQs.map(q => [q.id, q]));
+
+function load() { try { const s = JSON.parse(localStorage.getItem(STORE_KEY) || 'null'); if (s && s.v) state = { v: s.v, p: s.p || {}, savedAt: s.savedAt || null }; } catch (e) {} }
+function save() { state.savedAt = new Date().toISOString(); try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} const el = $('#savedAt'); if (el) el.textContent = 'Guardado ' + new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }); }
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const isVisible = q => !q.showIf || Object.entries(q.showIf).every(([k, want]) => { const v = state.v[k]; const list = Array.isArray(want) ? want : [want]; return Array.isArray(v) ? v.some(x => list.includes(x)) : list.includes(v); });
+const hasValue = v => Array.isArray(v) ? v.length > 0 : (v !== undefined && v !== null && String(v).trim() !== '');
+const answered = q => hasValue(state.v[q.id]) || !!state.p[q.id];
+
+function renderQ(q, n) {
+  if (q.type === 'note') return `<div class="note" data-q="${q.id}">${q.text}</div>`;
+  const who = q.who || q.sec.who ? `<span class="who">${esc(q.who || q.sec.who)}</span>` : '';
+  const hint = q.hint ? `<p class="hint" id="h-${q.id}">${esc(q.hint)}</p>` : '';
+  const desc = q.hint ? ` aria-describedby="h-${q.id}"` : '';
+  let body = '';
+  const val = state.v[q.id];
+  if (q.type === 'radio' || q.type === 'check') {
+    const kind = q.type === 'radio' ? 'radio' : 'checkbox';
+    body = `<div class="opts">${q.opts.map(([k, t]) => `<label class="opt"><input type="${kind}" name="${q.id}" value="${esc(k)}" ${(Array.isArray(val) ? val.includes(k) : val === k) ? 'checked' : ''}><span>${esc(t)}</span></label>`).join('')}</div>`;
+    return `<div class="q" data-q="${q.id}"><fieldset${desc}><legend>${esc(q.label)}${who}</legend>${hint}${body}${pend(q)}</fieldset></div>`;
+  }
+  if (q.type === 'textarea') body = `<textarea id="f-${q.id}" name="${q.id}"${desc}>${esc(val || '')}</textarea>`;
+  else body = `<input id="f-${q.id}" name="${q.id}" type="${q.type}" ${q.type === 'number' ? 'min="0" inputmode="numeric"' : ''} value="${esc(val || '')}"${desc}>`;
+  return `<div class="q" data-q="${q.id}"><label for="f-${q.id}">${esc(q.label)}${who}</label>${hint}${body}${pend(q)}</div>`;
+}
+const pend = q => q.nopend ? '' : `<label class="pend"><input type="checkbox" data-pend="${q.id}" ${state.p[q.id] ? 'checked' : ''}> Aún no lo sé / lo confirmo después</label>`;
+
+function render() {
+  $('#form').innerHTML = SECTIONS.map((s, i) => `<section class="sec" id="s-${s.id}"><h2><span class="n">${i + 1}</span>${esc(s.title)}</h2>${s.lead ? `<p class="lead">${esc(s.lead)}</p>` : ''}${s.qs.map(renderQ).join('')}</section>`).join('');
+  refresh();
+}
+
+function refresh() {
+  let total = 0, done = 0;
+  allQs.forEach(q => {
+    if (q.type === 'note') return;
+    const el = $(`[data-q="${q.id}"]`); if (!el) return;
+    const vis = isVisible(q);
+    el.classList.toggle('hidden', !vis);
+    if (!vis) return;
+    total++;
+    const ok = answered(q); if (ok) done++;
+    el.classList.toggle('is-done', hasValue(state.v[q.id]));
+    el.classList.toggle('is-pending', !!state.p[q.id] && !hasValue(state.v[q.id]));
+  });
+  allQs.filter(q => q.type === 'note').forEach(q => { const el = $(`[data-q="${q.id}"]`); if (el) el.classList.toggle('hidden', !isVisible(q)); });
+  const pct = total ? Math.round(done * 100 / total) : 0;
+  $('#meterFill').style.width = pct + '%';
+  $('.meter').setAttribute('aria-valuenow', pct);
+  $('#meterText').textContent = `${done} de ${total}`;
+  $('#summary').value = buildText();
+}
+
+function labelFor(q, v) {
+  if (!q.opts) return String(v);
+  const t = k => (q.opts.find(o => o[0] === k) || [k, k])[1];
+  return Array.isArray(v) ? v.map(t).join('; ') : t(v);
+}
+
+function buildText() {
+  const lines = ['ASTROFEST® GEMÍNIDAS 2026 · DATOS PARA PUBLICAR', 'Generado: ' + new Date().toLocaleString('es-MX'), ''];
+  let pending = [];
+  SECTIONS.forEach((s, i) => {
+    const body = [];
+    s.qs.forEach(q => {
+      if (q.type === 'note' || !isVisible(q)) return;
+      const v = state.v[q.id];
+      if (hasValue(v)) body.push(`• ${q.label}\n   → ${labelFor(q, v).replace(/\n/g, '\n     ')}`);
+      else if (state.p[q.id]) { body.push(`• ${q.label}\n   → PENDIENTE${(q.who || s.who) ? ' (' + (q.who || s.who) + ')' : ''}`); pending.push(q); }
+      else body.push(`• ${q.label}\n   → (sin responder)`);
+    });
+    lines.push(`${i + 1}. ${s.title.toUpperCase()}`, ...body, '');
+  });
+  if (pending.length) { lines.push('PENDIENTES (' + pending.length + ')'); pending.forEach(q => lines.push(`- ${q.label}${(q.who || q.sec.who) ? ' [' + (q.who || q.sec.who) + ']' : ''}`)); }
+  return lines.join('\n');
+}
+
+function say(msg) { const s = $('#status'); s.textContent = msg; clearTimeout(say.t); say.t = setTimeout(() => s.textContent = '', 4000); }
+function download(name, mime, content) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([content], { type: mime })); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 500); }
+
+$('#form').addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.pend) { state.p[t.dataset.pend] = t.checked; }
+  else if (t.type === 'checkbox') { state.v[t.name] = [...document.querySelectorAll(`input[name="${t.name}"]:checked`)].map(i => i.value); }
+  else if (t.type === 'radio') { state.v[t.name] = t.value; if (state.p[t.name]) state.p[t.name] = false; const c = document.querySelector(`[data-pend="${t.name}"]`); if (c) c.checked = false; }
+  else if (t.name) { state.v[t.name] = t.value; if (t.value.trim() && state.p[t.name]) { state.p[t.name] = false; const c = document.querySelector(`[data-pend="${t.name}"]`); if (c) c.checked = false; } }
+  save(); refresh();
+});
+$('#btnCopy').onclick = async () => { const text = buildText(); try { await navigator.clipboard.writeText(text); say('Copiado. Pégalo en un correo o mensaje.'); } catch (e) { $('#summary').select(); document.execCommand('copy'); say('Copiado.'); } };
+$('#btnTxt').onclick = () => { download('astrofest-datos.txt', 'text/plain;charset=utf-8', buildText()); say('Archivo descargado.'); };
+$('#btnJson').onclick = () => { download('astrofest-datos.json', 'application/json', JSON.stringify({ v: state.v, p: state.p, savedAt: state.savedAt }, null, 2)); say('Respaldo descargado: envíalo junto con tus respuestas si quieres poder retomarlas.'); };
+$('#btnWa').onclick = () => { const url = 'https://wa.me/' + (SEND_WHATSAPP || '') + '?text=' + encodeURIComponent(buildText()); window.open(url, '_blank', 'noopener'); };
+$('#btnMail').onclick = () => { location.href = 'mailto:' + SEND_EMAIL + '?subject=' + encodeURIComponent('Astrofest Gemínidas 2026 · datos para publicar') + '&body=' + encodeURIComponent(buildText()); say('Si el correo se abre cortado, usa «Copiar respuestas» y pégalo.'); };
+$('#btnPrint').onclick = () => window.print();
+$('#btnImport').onclick = () => $('#fileImport').click();
+$('#fileImport').onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { try { const s = JSON.parse(r.result); if (!s.v) throw 0; state = { v: s.v, p: s.p || {}, savedAt: s.savedAt }; save(); render(); say('Respaldo cargado.'); } catch (x) { say('Ese archivo no es un respaldo válido.'); } }; r.readAsText(f); e.target.value = ''; };
+$('#btnReset').onclick = () => { if (confirm('¿Borrar todas las respuestas de este dispositivo?')) { state = { v: {}, p: {}, savedAt: null }; try { localStorage.removeItem(STORE_KEY); } catch (e) {} render(); $('#savedAt').textContent = ''; } };
+
+load(); render();
+if (state.savedAt) $('#savedAt').textContent = 'Avance recuperado';
+</script>
+</body>
+</html>

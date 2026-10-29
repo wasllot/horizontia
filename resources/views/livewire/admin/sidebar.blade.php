@@ -27,6 +27,7 @@ new class extends Component
             ['group' => 'academy', 'title' => 'Rutas de aprendizaje', 'icon' => 'icon-git-branch', 'routes' => ['admin.learning-paths' => 'Rutas de aprendizaje']],
             ['group' => 'academy', 'title' => 'Estudio de contenido', 'icon' => 'icon-cpu', 'routes' => ['admin.content-studio' => 'Estudio de contenido']],
             ['group' => 'academy', 'title' => 'Comunidad', 'icon' => 'icon-message-circle', 'routes' => ['admin.community' => 'Comunidad']],
+            ['group' => 'academy', 'title' => 'Eventos', 'icon' => 'icon-calendar', 'routes' => ['admin.events' => 'Eventos']],
             ['group' => 'academy', 'title' => 'Certificados', 'icon' => 'icon-award', 'routes' => ['admin.certificates' => 'Certificados']],
             ['group' => 'academy', 'title' => __('sidebar.contacts'), 'icon' => 'icon-inbox', 'routes' => ['admin.leads' => __('sidebar.contacts')]],
             ['group' => 'content', 'title' => __('sidebar.blog'), 'icon' => 'icon-edit-3', 'routes' => [

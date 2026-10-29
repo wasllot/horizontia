@@ -52,6 +52,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('estudio-de-contenido', \App\Livewire\Pages\Common\ContentStudio\ContentStudio::class)->name('content-studio');
     Route::get('comunidad', \App\Livewire\Pages\Admin\Community\Moderation::class)->name('community');
     Route::get('solicitudes-de-acceso', \App\Livewire\Pages\Admin\AccessRequests\AccessRequests::class)->name('access-requests');
+    Route::get('eventos', \App\Livewire\Pages\Admin\Events\Events::class)->name('events');
+    Route::get('eventos/{event}/compras.csv', \App\Http\Controllers\Admin\EventOrdersExportController::class)->whereNumber('event')->name('events.export');
     Route::get('cupones', \App\Livewire\Pages\Admin\Coupons\Coupons::class)->name('coupons');
     Route::get('reembolsos', \App\Livewire\Pages\Admin\Refunds\Refunds::class)->name('refunds');
     Route::get('/estado-del-sistema', \App\Livewire\Pages\Admin\SystemStatus\SystemStatus::class)->name('system-status');

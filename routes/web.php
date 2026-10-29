@@ -53,6 +53,21 @@ Route::get('/', function () {
 })->middleware(['locale', 'maintenance'])->name('home');
 
 Route::get('/eventos', [\App\Http\Controllers\EventsController::class, 'index'])->middleware(['locale', 'maintenance'])->name('events');
+
+// Páginas de evento con entrada única (Astrofest…): aisladas del resto del sitio, compra como invitado.
+Route::middleware(['locale', 'maintenance'])->prefix('eventos/{slug}')->where(['slug' => '[a-z0-9][a-z0-9\-]*'])->name('event.')->group(function () {
+    $c = \App\Http\Controllers\EventLandingController::class;
+    Route::get('/', [$c, 'show'])->name('show');
+    Route::get('politicas', [$c, 'policies'])->name('policies');
+    Route::get('carrito', [$c, 'cart'])->name('cart');
+    Route::post('carrito', [$c, 'cartAdd'])->middleware('throttle:30,1')->name('cart.add');
+    Route::post('carrito/actualizar', [$c, 'cartUpdate'])->middleware('throttle:60,1')->name('cart.update');
+    Route::get('pago', [$c, 'checkout'])->name('checkout');
+    Route::post('pago', [$c, 'placeOrder'])->middleware('throttle:12,1')->name('checkout.store');
+    Route::get('gracias', [$c, 'thanks'])->name('thanks');
+    Route::get('boleto/{code}.png', [$c, 'qr'])->where('code', '[A-Za-z0-9\-]+')->name('qr');
+    Route::get('{any}', [$c, 'missing'])->where('any', '.*')->name('missing');
+});
 Route::view('/contacto', 'frontend.contacto')->middleware(['locale', 'maintenance'])->name('contacto');
 Route::view('/nosotros', 'frontend.nosotros')->middleware(['locale', 'maintenance'])->name('about');
 

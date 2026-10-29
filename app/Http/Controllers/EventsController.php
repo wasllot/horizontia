@@ -16,6 +16,12 @@ class EventsController extends Controller
 {
     public function index(Request $request, SeoService $seo, EventsCatalog $catalog)
     {
+        // Mientras haya un solo evento con página propia, /eventos lleva a él (302: no es un cambio permanente para Google).
+        $featured = \App\Models\Event::where('redirect_events_index', true)->whereIn('status', [\App\Models\Event::PUBLISHED])->orderBy('start_at')->first();
+        if ($featured && !$request->query()) {
+            return redirect($featured->url(), 302);
+        }
+
         $tz = (string) config('academy.timezone', 'America/Mexico_City');
         $city = trim((string) $request->query('ciudad', ''));
         $month = preg_match('/^\d{4}-\d{2}$/', (string) $request->query('mes', '')) ? (string) $request->query('mes') : '';

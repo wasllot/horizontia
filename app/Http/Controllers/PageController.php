@@ -63,6 +63,13 @@ class PageController extends Controller
             $add(route($name), $priority);
         }
         $add(route('events'), '0.8');
+        // Páginas de evento con venta propia: el evento y sus políticas son indexables; carrito, pago y gracias nunca.
+        \App\Models\Event::whereIn('status', [\App\Models\Event::PUBLISHED, \App\Models\Event::FINISHED])->get(['slug', 'updated_at', 'policies_html'])->each(function ($ev) use ($add) {
+            $add($ev->url(), '0.9', $ev->updated_at);
+            if ($ev->policiesReady()) {
+                $add($ev->url('politicas'), '0.4', $ev->updated_at);
+            }
+        });
         // Any other published page made with the page builder.
         Page::where('status', 'published')->whereNotIn('slug', array_keys($fixed) + ['/'])->orderBy('slug')->get(['slug', 'updated_at'])
             ->each(fn ($p) => $add(url($p->slug), '0.5', $p->updated_at));

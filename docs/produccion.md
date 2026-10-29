@@ -61,3 +61,11 @@ Reembolsos: **Admin → Inscripciones → icono de reembolso** (con Mercado Pago
 
 ## 9. Primera etapa: lo que se muestra al público
 Agrega al `.env` del servidor (ya vienen apagados por defecto, así que solo hace falta si quieres encender algo): `ACADEMY_PUBLIC_COURSES`, `ACADEMY_PUBLIC_HOW_IT_WORKS`, `ACADEMY_PUBLIC_FAQ`, `ACADEMY_HERO_BUTTONS` y `ACADEMY_INSTRUCTOR_REQUESTS` (ver `docs/funciones.md` §16). Define también `ACADEMY_LEGAL_NAME=Horizontia`. Para las categorías del cliente importa `database/sql/2026-10-29-categorias.sql` (phpMyAdmin) y limpia cachés.
+
+## 10. Evento Astrofest (venta de entradas)
+1. Sube el código y los archivos nuevos (`public/css/event.css`, `public/images/eventos/`, `public/uploads/events/`; esta última carpeta debe poder escribirse: ahí se guardan los logotipos que subas desde el panel).
+2. phpMyAdmin → importa `database/sql/2026-10-30-evento-astrofest.sql` (crea las tablas y el evento con las ventas **apagadas**; repetirlo es seguro).
+3. Mercado Pago de producción configurado (Ajustes → Pagos, ver §5). El pago de eventos usa el mismo webhook.
+4. Administración → **Eventos** → Astrofest: captura **políticas del evento**, cupo, correo y WhatsApp de contacto, dirección/mapa/enlace del hotel y sube los logotipos e imágenes (SVG del logotipo, personajes, imagen para redes). Cuando la lista «Para vender entradas hace falta» esté completa, activa **Activar las ventas**.
+5. Haz una **compra de prueba real** (1 y varias entradas, celular y escritorio) y comprueba el correo con QR. Después envía la URL a Search Console («Solicitar indexación»).
+6. El planificador (`schedule:run`) debe estar activo: libera los lugares de pagos que no se completaron. Sin worker de colas no sale el correo con las entradas (§2); «Reenviar confirmación» está en Eventos → Compras.

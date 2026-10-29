@@ -21,6 +21,7 @@ class EventsPageTest extends TestCase
         parent::setUp();
         $this->ensurePlatformFixtures();
         config(['academy.timezone' => 'America/Mexico_City']);
+        \App\Models\Event::query()->update(['redirect_events_index' => false]);   // el índice no debe redirigir al evento de entrada única
     }
 
     protected function tearDown(): void

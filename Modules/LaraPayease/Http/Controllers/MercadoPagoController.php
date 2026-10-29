@@ -105,6 +105,11 @@ class MercadoPagoController extends Controller
      */
     protected function settle(MercadoPago $driver, array $payment): string
     {
+        // Las entradas de eventos (referencia «EV-…») se compran como invitado y se liquidan aparte.
+        if (\App\Services\Events\EventPaymentSettler::owns($payment['external_reference'] ?? null)) {
+            return app(\App\Services\Events\EventPaymentSettler::class)->settle($driver, $payment);
+        }
+
         $order = Order::find($payment['external_reference'] ?? null);
         if (empty($order) || $order->payment_method !== 'mercadopago') {
             Log::warning('Mercado Pago: payment without a matching order', ['payment_id' => $payment['id'] ?? null]);

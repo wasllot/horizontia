@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\Event;
+use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
+
+/**
+ * Crea el evento Astrofest Gemínidas 2026 con lo que ya está confirmado. Lo pendiente (políticas, cupo, mapa, hotel, contacto)
+ * queda vacío y por tanto oculto, y las ventas apagadas hasta que se capture en Admin → Eventos. Es seguro repetirlo: no pisa lo editado.
+ */
+class SeedAstrofestEvent extends Command
+{
+    protected $signature = 'events:astrofest';
+
+    protected $description = 'Crea el evento Astrofest Gemínidas 2026 si no existe';
+
+    public function handle(): int
+    {
+        $tz = (string) config('academy.timezone', 'America/Mexico_City');
+        $local = fn (string $d) => Carbon::parse($d, $tz)->timezone(config('app.timezone'));
+
+        $event = Event::firstOrCreate(['slug' => 'astrofest-geminidas-2026'], [
+            'name' => 'Astrofest® Gemínidas 2026',
+            'status' => Event::PUBLISHED,
+            'start_at' => $local('2026-12-12 15:00'),
+            'end_at' => $local('2026-12-13 13:00'),
+            'countdown_from' => $local('2026-12-01 00:00'),
+            'venue_name' => 'Club Campestre Teotihuacán',
+            'venue_city' => 'Estado de México',
+            'price' => 1740,
+            'iva_rate' => 16,
+            'max_per_order' => 10,
+            'sales_enabled' => false,
+            'hold_minutes' => 45,
+            'offline_hold_hours' => 72,
+            'discounts' => [
+                'early_bird' => ['enabled' => false, 'label' => 'Preventa', 'percent' => 15, 'starts_at' => null, 'ends_at' => '2026-10-31'],
+                'group' => ['enabled' => false, 'label' => 'Descuento por grupo', 'percent' => 10, 'min_qty' => 4, 'starts_at' => null, 'ends_at' => null],
+            ],
+            'content' => ['minors_age' => 6],
+            'redirect_events_index' => true,
+        ]);
+
+        $this->info($event->wasRecentlyCreated ? 'Evento Astrofest creado (ventas apagadas hasta capturar políticas y activar).' : 'El evento Astrofest ya existía: no se modificó.');
+
+        return self::SUCCESS;
+    }
+}

@@ -10,6 +10,7 @@ Artisan::command('inspire', function () {
 use Illuminate\Support\Facades\Schedule;
 Schedule::command('app:send-live-stream-reminders')->everyFifteenMinutes();
 Schedule::command('app:send-onsite-reminders')->hourly();
+Schedule::call(fn () => app(\App\Services\Events\EventSales::class)->expireStale())->everyTenMinutes()->name('events-expire-orders');   // libera los lugares de pagos que no se completaron
 Schedule::command('app:send-cart-reminders')->hourly()->withoutOverlapping();
 Schedule::command('app:send-progress-reminders')->hourly()->withoutOverlapping();
 Schedule::command('app:publish-live-recordings')->everyTenMinutes()->withoutOverlapping();
