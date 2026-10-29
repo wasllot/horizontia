@@ -33,6 +33,9 @@
         <meta property="og:image" content="{{ $seo['image'] }}">
         <meta name="twitter:image" content="{{ $seo['image'] }}">
     @endif
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap">
+    <script>document.documentElement.classList.add('ev-js');</script>
     <link rel="stylesheet" href="{{ asset('css/event.css') }}?v={{ @filemtime(public_path('css/event.css')) }}">
     <script>
     window.dataLayer = window.dataLayer || [];
@@ -44,7 +47,8 @@
 @section('content')
 <div class="evp">
     @include('events.icons')
-    <header class="evp-sub {{ $onLanding ? 'evp-sub--dark' : '' }}">
+    <div class="ev-progress" id="evProgress" aria-hidden="true"></div>
+    <header class="evp-sub {{ $onLanding ? 'evp-sub--float' : 'evp-sub--solid' }}" id="evHead">
         <div class="evp-wrap">
             <a class="evp-sub__name" href="{{ $event->url() }}" aria-label="Astrofest, inicio del evento">
                 <img src="{{ $logo }}" alt="Astrofest® {{ $event->name }}" width="200" height="52">
@@ -111,6 +115,9 @@
     function setRed(on) { b.classList.toggle('ev-red', on); red.setAttribute('aria-pressed', on ? 'true' : 'false'); try { localStorage.setItem('ev_red', on ? '1' : '0'); } catch (e) {} }
     try { if (localStorage.getItem('ev_red') === '1') setRed(true); } catch (e) {}
     red.addEventListener('click', function () { setRed(!b.classList.contains('ev-red')); });
+    var head = document.getElementById('evHead'), prog = document.getElementById('evProgress'), tick = false;
+    var onScroll = function () { var y = window.scrollY || 0, h = document.documentElement; if (head) head.classList.toggle('is-stuck', y > 40); if (prog) prog.style.transform = 'scaleX(' + Math.min(1, y / Math.max(1, h.scrollHeight - h.clientHeight)) + ')'; tick = false; };
+    window.addEventListener('scroll', function () { if (!tick) { tick = true; requestAnimationFrame(onScroll); } }, { passive: true }); onScroll();
     document.addEventListener('click', function (e) { var t = e.target.closest('[data-ev-track]'); if (t) evPush(t.getAttribute('data-ev-track')); });
 })();
 @if (session('event_pixel')) evPush(@json(session('event_pixel')), { value: {{ (float) ($event->price ?? 0) }}, currency: 'MXN' }); @endif

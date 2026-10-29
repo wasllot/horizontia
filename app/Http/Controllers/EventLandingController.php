@@ -275,6 +275,7 @@ class EventLandingController extends Controller
         return [
             'event' => $event, 'state' => $state, 'sales' => $this->sales,
             'available' => $this->sales->available($event), 'maxQuantity' => $this->sales->maxQuantity($event),
+            'sold' => (int) EventOrder::where('event_id', $event->id)->where('status', EventOrder::PAID)->sum('quantity'),   // prueba social real, nunca inventada
             'cartCount' => $this->cartQuantity($event),
         ];
     }

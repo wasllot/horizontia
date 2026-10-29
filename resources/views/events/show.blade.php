@@ -3,7 +3,7 @@
 @php
     $money = fn ($v) => '$' . number_format((float) $v, fmod((float) $v, 1) ? 2 : 0);
     $img = fn (string $k) => asset('images/eventos/stock/' . $k . '.webp');
-    $usedImages = ['hero-geminids', 'telescopios', 'moon', 'saturn', 'orion-nebula', 'pleiades', 'albireo', 'sun', 'teotihuacan-sol', 'teotihuacan-calzada', 'campfire', 'star-party'];
+    $usedImages = ['lago-moke', 'lago-reflejo', 'admirando-galaxia', 'la-silla', 'atardecer', 'amanecer', 'hero-geminids', 'telescopios', 'moon', 'saturn', 'orion-nebula', 'pleiades', 'albireo', 'sun', 'teotihuacan-sol', 'teotihuacan-calzada', 'campfire'];
     $start = $event->local($event->start_at);
     $end = $event->local($event->end_at);
     $cd = $event->local($event->countdown_from);
@@ -11,9 +11,9 @@
     $hotelUrl = $event->hotel_booking_url;
     $earlyActive = collect($quote['discounts'])->first(fn ($d) => str_contains(mb_strtolower($d['label']), 'preventa'));
     $pricing = ['unit' => (float) $event->price, 'rules' => collect((array) $event->discounts)->filter(fn ($r) => !empty($r['enabled']) && (float) ($r['percent'] ?? 0) > 0)->map(fn ($r, $k) => ['key' => $k, 'percent' => (float) $r['percent'], 'min' => $k === 'group' ? (int) ($r['min_qty'] ?? 4) : 1])->values()->all(), 'iva' => (float) $event->iva_rate];
-    $dateLong = $start ? $start->locale('es')->translatedFormat('l j \d\e F \d\e Y') : '';
     $weekend = $start && $end ? 'Sáb ' . $start->format('j') . ' – dom ' . $end->format('j') . ' ' . $start->locale('es')->translatedFormat('M Y') : '';
     $icon = fn (string $n) => '<svg class="ev-i" aria-hidden="true"><use href="#i-' . $n . '"/></svg>';
+    $takenNow = $event->capacity ? max(0, (int) $event->capacity - (int) $available) : null;
 
     $sat = [
         ['15:00', 'Check-in en el hotel', 'Instala tu casa de campaña o entra a tu habitación.', 'tent'],
@@ -47,10 +47,11 @@
         ['sun', 'El Sol (domingo)', 'Con filtros seguros veremos manchas solares. ¡Nunca mires al Sol sin filtro!'],
     ];
     $alts = ['moon' => 'Luna creciente delgada sobre un cielo negro', 'saturn' => 'Saturno con sus anillos y auroras en el polo', 'orion-nebula' => 'Nebulosa de Orión fotografiada por el telescopio Hubble', 'pleiades' => 'Cúmulo estelar de las Pléyades, estrellas azules', 'albireo' => 'Albireo, estrella doble de un punto azul y otro anaranjado', 'sun' => 'Disco del Sol con manchas solares'];
+    $heroImg = $event->asset('hero_desktop') ?: $img('lago-moke');
 @endphp
 
 @push('head')
-<link rel="preload" as="image" href="{{ $img('hero-geminids') }}" fetchpriority="high">
+<link rel="preload" as="image" href="{{ $heroImg }}" fetchpriority="high">
 <script type="application/ld+json">
 {!! json_encode(array_filter([
     '@context' => 'https://schema.org', '@type' => 'Event',
@@ -60,7 +61,7 @@
     'eventStatus' => 'https://schema.org/EventScheduled',
     'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
     'location' => array_filter(['@type' => 'Place', 'name' => $event->venue_name, 'address' => array_filter(['@type' => 'PostalAddress', 'streetAddress' => $event->venue_address, 'addressLocality' => $event->venue_city, 'addressCountry' => 'MX'])]),
-    'image' => $event->asset('og') ? [$event->asset('og')] : [$img('hero-geminids')],
+    'image' => $event->asset('og') ? [$event->asset('og')] : [$heroImg],
     'offers' => $event->hasPrice() ? ['@type' => 'Offer', 'priceCurrency' => 'MXN', 'price' => (string) (float) $event->price, 'url' => $event->url(), 'availability' => $state === 'sold_out' ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock'] : null,
     'performer' => ['@type' => 'Person', 'name' => 'Luz Calderón'],
     'organizer' => ['@type' => 'Organization', 'name' => 'Horizontia', 'url' => url('/')],
@@ -70,41 +71,41 @@
 
 @section('body')
 
-{{-- 1 · Portada --}}
-<section class="ev-hero" aria-labelledby="ev-h1">
-    <div class="ev-hero__img" style="background-image:url('{{ $event->asset('hero_desktop') ?: $img('hero-geminids') }}')" role="presentation"></div>
+{{-- ACTO I · Portada: la Vía Láctea sobre el lago, fundida con el encabezado y con la sección siguiente --}}
+<section class="ev-hero" aria-labelledby="ev-h1" id="evHero">
+    <div class="ev-hero__bg" data-par="0.18" style="--img:url('{{ $heroImg }}')" role="presentation"></div>
     <div class="ev-stars" aria-hidden="true"></div>
     <span class="ev-shoot" aria-hidden="true"></span><span class="ev-shoot" aria-hidden="true"></span><span class="ev-shoot" aria-hidden="true"></span>
-    <div class="ev-wrap">
-        <h1 class="ev-supra" id="ev-h1">{{ $event->text('seo.h1') }}</h1>
-        <h2 class="ev-hero__title">{{ $event->text('hero.title') }}</h2>
-        <p class="ev-lead">{{ $event->text('hero.subtitle') }}</p>
-        <p class="ev-chips">
-            @if ($start)<span class="ev-pill">{{ ucfirst($start->locale('es')->translatedFormat('l j \d\e F')) }} · desde las {{ $start->format('H:i') }} h</span>@endif
-            @if ($event->hasPrice())<span class="ev-chip">{{ $money($event->price) }} MXN · IVA incluido</span>@endif
-            @if ($state === 'open' && $available !== null)<span class="ev-chip ev-chip--hot">¡Cupo limitado!</span>@endif
-            @if ($earlyActive)<span class="ev-pill ev-pill--tag">{{ $earlyActive['label'] }} −{{ rtrim(rtrim(number_format($earlyActive['percent'], 2), '0'), '.') }} %</span>@endif
-        </p>
-        <div class="ev-cta">
-            @if ($state === 'open')<a class="ev-btn" href="#entrada" data-ev-track="cta_hero">{{ $event->text('hero.cta') }}</a>@endif
+    <div class="ev-hero__in">
+        <p class="ev-hero__kicker" style="--d:.1s">{{ $event->text('hero.supra') }}</p>
+        <h1 id="ev-h1" class="ev-hero__brand" style="--d:.25s"><img src="{{ $event->asset('logo') }}" alt="{{ $event->text('seo.h1') }}" width="900" height="234" fetchpriority="high"></h1>
+        <h2 class="ev-hero__q" style="--d:.5s">{{ $event->text('hero.title') }}</h2>
+        @if ($start)<p class="ev-hero__when" style="--d:.7s">{{ $start->locale('es')->translatedFormat('l j \d\e F \d\e Y') }}<span aria-hidden="true">✦</span>{{ $event->venue_name }}</p>@endif
+        <p class="ev-hero__sub" style="--d:.85s">{{ $event->text('hero.host') }}. {{ $event->text('hero.subtitle') }}</p>
+        <div class="ev-cta" style="--d:1s">
+            @if ($state === 'open')<a class="ev-btn ev-btn--glow" href="#entrada" data-ev-track="cta_hero">{{ $event->text('hero.cta') }}</a>@endif
             <a class="ev-btn ev-btn--ghost" href="#que-vamos-a-ver">{{ $event->text('hero.secondary') }}</a>
         </div>
-        <p class="ev-meta">{{ $event->text('hero.supra') }} · {{ $event->text('hero.host') }} · {{ $event->venue_name }}</p>
+        <p class="ev-hero__price" style="--d:1.15s">
+            @if ($event->hasPrice())<span>{{ $money($event->price) }} MXN · IVA incluido</span>@endif
+            @if ($state === 'open' && $available !== null)<span class="is-hot">¡Cupo limitado!</span>@endif
+            @if ($earlyActive)<span class="is-hot">{{ $earlyActive['label'] }} −{{ rtrim(rtrim(number_format($earlyActive['percent'], 2), '0'), '.') }} %</span>@endif
+        </p>
         @if ($cd && $start && !$event->isFinished() && now()->gte($cd))
             <p class="ev-count" id="evCount" data-start="{{ $start->toIso8601String() }}" aria-live="off"><span id="evCountText">&nbsp;</span></p>
         @endif
     </div>
-    @if ($event->asset('galileo') || $event->asset('telescopio'))
-        <div class="ev-hero__chars">
-            @if ($event->asset('galileo'))<img src="{{ $event->asset('galileo') }}" alt="Galileo, mascota de Astrofest, un sabio de barba gris con catalejo" width="265" height="350">@endif
-            @if ($event->asset('telescopio'))<img src="{{ $event->asset('telescopio') }}" alt="Telescopio, mascota de Astrofest, un telescopio con brazos y zapatos" width="250" height="303">@endif
-        </div>
-    @endif
+    <div class="ev-hero__chars">
+        @if ($event->asset('galileo'))<img class="is-l" src="{{ $event->asset('galileo') }}" alt="Galileo, mascota de Astrofest, un sabio de barba gris con catalejo" width="265" height="350">@endif
+        @if ($event->asset('telescopio'))<img class="is-r" src="{{ $event->asset('telescopio') }}" alt="Telescopio, mascota de Astrofest, un telescopio con brazos y zapatos" width="250" height="303">@endif
+    </div>
+    <a class="ev-scroll" href="#datos" aria-label="Ir al contenido"><span></span></a>
+    <button type="button" class="ev-wish" id="evWish" aria-live="polite"><span>✦</span> Pide un deseo</button>
 </section>
 
-{{-- 2 · Datos clave --}}
-<section class="ev-facts" aria-label="Datos clave">
-    <div class="ev-wrap"><ul>
+{{-- Datos clave: una tarjeta de vidrio que cabalga entre la portada y lo que sigue --}}
+<section class="ev-facts" id="datos" aria-label="Datos clave">
+    <div class="ev-wrap"><ul data-reveal>
         @if ($weekend)<li>{!! $icon('calendar') !!}<span>Fecha</span><b>{{ $weekend }}</b></li>@endif
         @if ($start)<li>{!! $icon('clock') !!}<span>Check-in</span><b>{{ $start->format('H:i') }} h</b></li>@endif
         @if ($event->venue_name)<li>{!! $icon('pin') !!}<span>Lugar</span><b>{{ $event->venue_name }}</b></li>@endif
@@ -113,59 +114,62 @@
     </ul></div>
 </section>
 
-{{-- 3 · Qué incluye (resumen visual) --}}
-<section class="ev-incl" aria-label="Lo que incluye la experiencia">
-    <div class="ev-wrap"><ul>
-        @foreach ([['telescope', 'Telescopios'], ['mic', 'Conferencias'], ['trophy', 'Rally astronómico'], ['music', 'Música temática'], ['flame', 'Fogatas y CampingZone'], ['dome', 'Planetario móvil'], ['headphones', 'DJ en vivo'], ['gift', 'AstroRifa']] as [$i, $t])
-            <li><span class="ev-incl__ico">{!! $icon($i) !!}</span>{{ $t }}</li>
-        @endforeach
-    </ul></div>
-</section>
-
-{{-- 4 · ¿Qué es Astrofest®? --}}
-<section class="ev-sec" id="que-es" aria-labelledby="h-que-es">
+{{-- ACTO II · Imagina --}}
+<section class="ev-sec ev-night ev-story" id="que-es" aria-labelledby="h-que-es">
+    @include('events.constellation', ['kind' => 'gem'])
     <div class="ev-wrap">
         <div class="ev-split">
-            <div>
-                <h2 id="h-que-es">¿Qué es Astrofest®?</h2>
-                <p>Imagina esto: cae la tarde sobre Teotihuacán, el cielo se pinta de naranja detrás de los cerros y, una a una, se encienden las primeras estrellas. Apagamos las luces, prendemos linternas rojas y, durante toda la noche, miramos hacia arriba juntos.</p>
-                <p>No es una excursión ni un campamento cualquiera: es una noche diseñada momento a momento para que te enamores del cielo, con astrónomos, telescopios, fogata, música y la cacería de estrellas fugaces de las Gemínidas.</p>
+            <div data-reveal>
+                <p class="ev-eyebrow">Una noche distinta</p>
+                <h2 id="h-que-es">¿Qué es <em>Astrofest®</em>?</h2>
+                <p class="ev-big">Cae la tarde sobre Teotihuacán, el cielo se pinta de naranja detrás de los cerros y, una a una, se encienden las primeras estrellas.</p>
+                <p>Apagamos las luces, prendemos linternas rojas y, durante toda la noche, miramos hacia arriba juntos. No es una excursión ni un campamento cualquiera: es una noche diseñada momento a momento para que te enamores del cielo, con astrónomos, telescopios, fogata, música y la cacería de estrellas fugaces de las Gemínidas.</p>
                 <p><strong>No necesitas saber nada de astronomía.</strong> Si tienes un telescopio guardado en el clóset, tráelo: te ayudamos a usarlo y serás el héroe de la noche.</p>
             </div>
-            <figure class="ev-photo">
-                <img src="{{ $img('telescopios') }}" alt="Personas observando el cielo nocturno junto a un telescopio" width="1200" height="806" loading="lazy">
+            <figure class="ev-arch" data-reveal style="--d:.15s">
+                <img src="{{ $img('telescopios') }}" alt="Personas observando el cielo nocturno junto a un telescopio" width="1200" height="806" loading="lazy" data-par="-0.05">
                 <figcaption>Observación guiada con telescopios · imagen ilustrativa</figcaption>
+                <img class="ev-arch__moon" src="{{ $img('saturn') }}" alt="" aria-hidden="true" width="140" height="140" loading="lazy">
             </figure>
         </div>
-        <div class="ev-grid ev-grid--4" style="margin-top:30px">
-            <article class="ev-card"><div class="ico">{!! $icon('star') !!}</div><h3>Ciencia de verdad</h3><p>Astrónomos y divulgadores te explican el cielo con palabras sencillas. Sin humo, sin promesas exageradas.</p></article>
-            <article class="ev-card"><div class="ico">{!! $icon('map') !!}</div><h3>Teotihuacán y el cielo</h3><p>Una de las ciudades más grandes de la antigüedad se trazó mirando al Sol y a las estrellas.</p></article>
-            <article class="ev-card"><div class="ico">{!! $icon('eye-off') !!}</div><h3>La noche de la luz roja</h3><p>Apagamos reflectores y pantallas para que tus ojos vean muchas más estrellas.</p></article>
-            <article class="ev-card"><div class="ico">{!! $icon('users') !!}</div><h3>Para toda la familia</h3><p>Rally con premios, diploma para todos y actividades para chicos y grandes. Menores de {{ $minorsAge }} años no pagan.</p></article>
-        </div>
-        <div class="ev-paper" style="margin-top:22px"><h3>Una marca para coleccionar</h3><p>Astrofest® Gemínidas 2026 es la primera edición de una nueva temporada de noches de estrellas. Cada lluvia de meteoros tendrá su propia pulsera, parche, playera y mapa del cielo. Guarda tu pulsera: será tu pase de coleccionista.</p></div>
+        <ul class="ev-pillars" data-reveal>
+            <li>{!! $icon('star') !!}<b>Ciencia de verdad</b><span>Astrónomos y divulgadores te explican el cielo con palabras sencillas. Sin humo, sin promesas exageradas.</span></li>
+            <li>{!! $icon('map') !!}<b>Teotihuacán y el cielo</b><span>Una de las ciudades más grandes de la antigüedad se trazó mirando al Sol y a las estrellas.</span></li>
+            <li>{!! $icon('eye-off') !!}<b>La noche de la luz roja</b><span>Apagamos reflectores y pantallas para que tus ojos vean muchas más estrellas.</span></li>
+            <li>{!! $icon('users') !!}<b>Para toda la familia</b><span>Rally con premios, diploma para todos y actividades para chicos y grandes. Menores de {{ $minorsAge }} años no pagan.</span></li>
+        </ul>
+        <ul class="ev-incl" aria-label="Lo que incluye la experiencia" data-reveal>
+            @foreach ([['telescope', 'Telescopios'], ['mic', 'Conferencias'], ['trophy', 'Rally astronómico'], ['music', 'Música temática'], ['flame', 'Fogatas y CampingZone'], ['dome', 'Planetario móvil'], ['headphones', 'DJ en vivo'], ['gift', 'AstroRifa']] as [$i, $t])
+                <li><span class="ev-incl__ico">{!! $icon($i) !!}</span>{{ $t }}</li>
+            @endforeach
+        </ul>
+        <p class="ev-mark" data-reveal><b>Una marca para coleccionar.</b> Astrofest® Gemínidas 2026 es la primera edición de una nueva temporada de noches de estrellas. Cada lluvia de meteoros tendrá su propia pulsera, parche, playera y mapa del cielo. Guarda tu pulsera: será tu pase de coleccionista.</p>
     </div>
 </section>
 
-{{-- 5 · ¿Qué vamos a ver? --}}
-<section class="ev-sec ev-sec--mid" id="que-vamos-a-ver" aria-labelledby="h-ver">
+{{-- ACTO III · Lo que verás --}}
+<section class="ev-sec ev-night ev-see" id="que-vamos-a-ver" aria-labelledby="h-ver">
+    <div class="ev-bg" style="background-image:url('{{ $img('la-silla') }}')" data-par="0.08" role="presentation"></div>
     <div class="ev-wrap">
-        <h2 id="h-ver">¿Qué vamos a ver en el cielo?</h2>
-        <p class="ev-lead-dark"><strong>Una noche para mirar hacia arriba.</strong> Cada diciembre la Tierra cruza el polvo que dejó el asteroide Faetón, y el cielo se llena de estrellas fugaces. ¡Y este año, sin Luna que estorbe!</p>
+        <div data-reveal>
+            <p class="ev-eyebrow">Lo que verás</p>
+            <h2 id="h-ver">¿Qué vamos a <em>ver</em> en el cielo?</h2>
+            <p class="ev-big"><strong>Una noche para mirar hacia arriba.</strong> Cada diciembre la Tierra cruza el polvo que dejó el asteroide Faetón, y el cielo se llena de estrellas fugaces. ¡Y este año, sin Luna que estorbe!</p>
+        </div>
 
         <ul class="ev-stats" aria-label="Por qué el 12 de diciembre es una gran noche">
-            <li><strong>9 dic</strong><span><b>Luna nueva.</b> El día 12 solo un creciente delgado que se oculta temprano: cielo oscuro el resto de la noche.</span></li>
-            <li><strong>13–14 dic</strong><span><b>Máximo de las Gemínidas.</b> La noche del 12 es la víspera y ya tiene mucha actividad… y cae en sábado.</span></li>
-            <li><strong>2:00 h</strong><span><b>El radiante en su punto más alto.</b> La gran observación será de medianoche a las 2:00.</span></li>
+            <li data-reveal><strong><span data-count="9">9</span> dic</strong><span><b>Luna nueva.</b> El día 12 solo un creciente delgado que se oculta temprano: cielo oscuro el resto de la noche.</span></li>
+            <li data-reveal style="--d:.12s"><strong><span data-count="13">13</span>–<span data-count="14">14</span> dic</strong><span><b>Máximo de las Gemínidas.</b> La noche del 12 es la víspera y ya tiene mucha actividad… y cae en sábado.</span></li>
+            <li data-reveal style="--d:.24s"><strong><span data-count="2">2</span>:00 h</strong><span><b>El radiante en su punto más alto.</b> La gran observación será de medianoche a las 2:00.</span></li>
         </ul>
 
-        <details class="ev-acc">
+        <details class="ev-acc" data-reveal>
             <summary>Ciencia en un minuto: ¿qué son las Gemínidas?</summary>
             <p>Cada diciembre la Tierra cruza una nube de polvo que dejó un asteroide llamado 3200 Faetón. Esos granitos, muchos del tamaño de un grano de arena, chocan contra la atmósfera a unos 35 kilómetros por segundo y se calientan tanto que brillan: eso es una estrella fugaz. Se llaman Gemínidas porque, si sigues sus trazos hacia atrás, todas parecen salir de un punto en la constelación de Géminis, cerca de Cástor y Pólux: el <em>radiante</em>.</p>
         </details>
-        <p class="ev-honest">{!! $icon('shield') !!}<span><strong>Un compromiso honesto:</strong> no prometemos un número exacto de estrellas fugaces por hora; el cielo tiene sus propios planes. Teotihuacán no es un cielo de alta montaña porque la CDMX está cerca, pero las Gemínidas son brillantes y se ven muy bien desde aquí.</span></p>
+        <p class="ev-honest" data-reveal>{!! $icon('shield') !!}<span><strong>Un compromiso honesto:</strong> no prometemos un número exacto de estrellas fugaces por hora; el cielo tiene sus propios planes. Teotihuacán no es un cielo de alta montaña porque la CDMX está cerca, pero las Gemínidas son brillantes y se ven muy bien desde aquí.</span></p>
 
-        <div class="ev-rail-head">
+        <div class="ev-rail-head" data-reveal>
             <h3>Lo que verás por los telescopios</h3>
             <div class="ev-rail-btns"><button type="button" class="evp-icon" data-rail="-1" aria-label="Anterior">{!! $icon('chev-l') !!}</button><button type="button" class="evp-icon" data-rail="1" aria-label="Siguiente">{!! $icon('chev-r') !!}</button></div>
         </div>
@@ -187,21 +191,35 @@
             @endforeach
         </div>
 
-        <div class="ev-feature">
+        <div class="ev-feature" data-reveal>
             <figure class="ev-photo"><img src="{{ $img('teotihuacan-sol') }}" alt="Pirámide del Sol en Teotihuacán bajo un cielo despejado" width="1400" height="917" loading="lazy"><figcaption>Pirámide del Sol, Teotihuacán · imagen ilustrativa</figcaption></figure>
             <div>
+                <p class="ev-eyebrow">Mesoamérica</p>
                 <h3>Teotihuacán y el cielo</h3>
                 <p>La Ciudad de los Dioses no se construyó al azar. Sus calzadas y pirámides guardan alineaciones con el Sol y las estrellas que los arqueoastrónomos siguen estudiando. En Astrofest® escucharás cómo observaban el cielo los pueblos de Mesoamérica… mientras ves caer estrellas fugaces en el mismo cielo que ellos miraban.</p>
             </div>
         </div>
+
+        @if ($state === 'open')
+            <div class="ev-band" data-reveal>
+                <p><b>{{ $start ? ucfirst($start->locale('es')->translatedFormat('l j \d\e F')) : 'Sábado 12 de diciembre' }}</b> · a 1 hora de la CDMX · {{ $money($event->price) }} MXN con camping incluido</p>
+                <a class="ev-btn ev-btn--glow" href="#entrada" data-ev-track="cta_band">{{ $event->text('hero.cta') }}</a>
+            </div>
+        @endif
     </div>
 </section>
 
-{{-- 6 · Programa --}}
-<section class="ev-sec" id="programa" aria-labelledby="h-programa">
+{{-- ACTO IV · La noche, hora por hora (el cielo cambia: atardecer → noche → amanecer) --}}
+<section class="ev-sec ev-night ev-prog" id="programa" aria-labelledby="h-programa">
+    <div class="ev-bg ev-bg--top" style="background-image:url('{{ $img('atardecer') }}')" role="presentation"></div>
+    <div class="ev-bg ev-bg--bottom" style="background-image:url('{{ $img('amanecer') }}')" role="presentation"></div>
+    @include('events.constellation', ['kind' => 'orion'])
     <div class="ev-wrap">
-        <h2 id="h-programa">Programa de la noche</h2>
-        <p class="ev-muted">Programa sujeto a cambios por clima. Todo ocurre dentro del hotel.</p>
+        <div data-reveal>
+            <p class="ev-eyebrow">Hora por hora</p>
+            <h2 id="h-programa">Programa de la <em>noche</em></h2>
+            <p class="ev-muted">Programa sujeto a cambios por clima. Todo ocurre dentro del hotel.</p>
+        </div>
         <div class="ev-tabs" id="evTabs">
             <div class="ev-tabs__list" role="tablist" aria-label="Días del programa">
                 <button type="button" role="tab" id="tab-sab" aria-controls="pan-sab" aria-selected="true">Sábado {{ $start?->format('j') ?? '12' }}</button>
@@ -210,9 +228,9 @@
             @foreach ([['sab', 'Sábado ' . ($start?->format('j') ?? '12') . ' de diciembre', $sat], ['dom', 'Domingo ' . ($end?->format('j') ?? '13') . ' de diciembre', $sun]] as [$id, $title, $rows])
                 <div class="ev-tabs__panel" role="tabpanel" id="pan-{{ $id }}" aria-labelledby="tab-{{ $id }}">
                     <h3 class="ev-tabs__h">{{ $title }}</h3>
-                    <ol class="ev-time">
+                    <ol class="ev-time" data-line>
                         @foreach ($rows as $r)
-                            <li class="{{ !empty($r[4]) ? 'is-hl' : '' }}"><span class="ev-time__ico">{!! $icon($r[3]) !!}</span><time>{{ $r[0] }}</time><b>{{ $r[1] }}</b><span>{{ $r[2] }}</span></li>
+                            <li class="{{ !empty($r[4]) ? 'is-hl' : '' }}" data-reveal><span class="ev-time__ico">{!! $icon($r[3]) !!}</span><time>{{ $r[0] }}</time><b>{{ $r[1] }}</b><span>{{ $r[2] }}</span></li>
                         @endforeach
                     </ol>
                 </div>
@@ -221,56 +239,49 @@
     </div>
 </section>
 
-{{-- 7 · Entrada + Plan Nube --}}
-<section class="ev-sec ev-sec--mid" id="entrada" aria-labelledby="h-entrada">
+{{-- Kit: lo que te llevas (ancla el valor antes del precio) --}}
+<section class="ev-sec ev-night ev-kitsec" id="kit" aria-labelledby="h-kit">
     <div class="ev-wrap">
-        <h2 id="h-entrada">Tu entrada a Astrofest®</h2>
-        @if (session('event_error'))<p class="ev-alert" role="alert">{{ session('event_error') }}</p>@endif
-        <div class="ev-grid ev-grid--2" style="align-items:start">
-            <div class="ev-ticket">
-                @if ($event->asset('telescopio'))<img class="ev-ticket__char" src="{{ $event->asset('telescopio') }}" alt="" aria-hidden="true" loading="lazy" width="110" height="133">@endif
-                @if ($event->hasPrice())
-                    <div class="ev-ticket__price">{{ $money($event->price) }} MXN<small>por persona</small></div>
-                    <p class="ev-tags"><span>{!! $icon('check') !!} IVA incluido</span><span>{!! $icon('check') !!} Camping incluido</span>@if ($state === 'open' && $available !== null)<span class="is-hot">¡Cupo limitado!</span>@endif</p>
-                @endif
-                @foreach ($quote['discounts'] as $d)<p style="margin:0"><span class="ev-pill ev-pill--tag">{{ $d['label'] }} −{{ rtrim(rtrim(number_format($d['percent'], 2), '0'), '.') }} %</span></p>@endforeach
+        <div data-reveal>
+            <p class="ev-eyebrow">Tu recuerdo</p>
+            <h2 id="h-kit">Kit de bienvenida, rally y <em>diploma</em></h2>
+        </div>
+        <div class="ev-kit-grid">
+            <article class="ev-kit" data-reveal>
+                <svg viewBox="0 0 320 130" role="img" aria-label="Ilustración de la pulsera coleccionable"><rect x="10" y="38" width="300" height="54" rx="27" fill="#14213d"/><rect x="10" y="38" width="300" height="54" rx="27" fill="none" stroke="#fed304" stroke-width="3"/><text x="160" y="72" text-anchor="middle" font-family="Georgia,serif" font-size="19" font-weight="700" fill="#fed304" textLength="214" lengthAdjust="spacingAndGlyphs">ASTROFEST · 2026</text><circle cx="40" cy="65" r="9" fill="#fed304"/><circle cx="280" cy="65" r="9" fill="#fed304"/></svg>
+                <h3>Pulsera coleccionable</h3><p>De acceso: cada edición tendrá la suya. Guárdala, será tu pase de coleccionista.</p>
+            </article>
+            <article class="ev-kit" data-reveal style="--d:.12s">
+                <svg viewBox="0 0 320 130" role="img" aria-label="Ilustración del Pasaporte Astrofest"><rect x="100" y="8" width="120" height="114" rx="10" fill="#14213d" stroke="#fed304" stroke-width="2"/><circle cx="160" cy="48" r="18" fill="none" stroke="#fed304" stroke-width="3"/><path d="M160 36l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#fed304"/><text x="160" y="92" text-anchor="middle" font-family="Georgia,serif" font-size="11" font-weight="700" fill="#fff" letter-spacing="1.5">PASAPORTE</text><text x="160" y="106" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#fed304" letter-spacing="2">ASTROFEST</text></svg>
+                <h3>Pasaporte Astrofest®</h3><p>Anota tus estrellas fugaces, consigue sellos durante la noche y sigue el mapa del cielo de diciembre.</p>
+            </article>
+            <article class="ev-kit" data-reveal style="--d:.24s">
+                <svg viewBox="0 0 320 130" role="img" aria-label="Ilustración del diploma de astrónomo"><rect x="50" y="10" width="220" height="110" rx="6" fill="#fffae3" stroke="#fed304" stroke-width="4"/><rect x="60" y="20" width="200" height="90" rx="3" fill="none" stroke="#14213d" stroke-width="1.2"/><text x="160" y="48" text-anchor="middle" font-family="Georgia,serif" font-size="16" font-weight="700" fill="#14213d" textLength="176" lengthAdjust="spacingAndGlyphs">Diploma de astrónomo</text><path d="M110 66h100" stroke="#14213d" stroke-width="1"/><text x="160" y="62" text-anchor="middle" font-family="Georgia,serif" font-size="12" font-style="italic" fill="#5b6478">con tu nombre</text><circle cx="160" cy="90" r="11" fill="#fed304"/><path d="M160 83l2.5 5 5.5.7-4 3.8 1 5.5-5-2.7-5 2.7 1-5.5-4-3.8 5.5-.7z" fill="#14213d"/></svg>
+                <h3>Diploma de astrónomo</h3><p>Todos los participantes se llevan un diploma con su nombre, firmado por los organizadores. Se guarda por años.</p>
+            </article>
+        </div>
+        <p class="ev-mark" data-reveal><b>El rally de las estrellas.</b> Desde la bienvenida te contamos cómo participar; durante las conferencias y la observación soltamos pistas sobre el cielo y el domingo, en la clausura, ¡premiamos a los ganadores! Tu kit también trae stickers de Galileo y Telescopio, y celofán rojo para convertir cualquier lámpara en linterna de astrónomo.</p>
+    </div>
+</section>
 
-                @if ($state === 'open')
-                    <form method="post" action="{{ $event->url('carrito') }}" id="evBuy" data-pricing='@json($pricing)'>
-                        @csrf
-                        <div class="ev-field">
-                            <label for="evQty">¿Cuántas entradas?</label>
-                            <div class="ev-qty">
-                                <button type="button" data-step="-1" aria-label="Quitar una entrada">−</button>
-                                <input id="evQty" name="quantity" type="number" min="1" max="{{ $maxQuantity }}" value="1" inputmode="numeric">
-                                <button type="button" data-step="1" aria-label="Agregar una entrada">+</button>
-                            </div>
-                            @if ($available !== null && $available <= 10)<p class="ev-hint" style="margin-top:8px">Quedan {{ $available }} {{ $available === 1 ? 'lugar' : 'lugares' }}.</p>@endif
-                        </div>
-                        <p class="ev-total" style="margin:14px 0">Total: <strong id="evTotal">{{ $money($quote['total']) }}</strong> MXN <span class="ev-hint" id="evSaving"></span></p>
-                        <button type="submit" class="ev-btn ev-btn--block" data-ev-track="add_to_cart_click">Agregar al carrito</button>
-                        <p class="ev-secure">{!! $icon('shield') !!}<span>Pago seguro con Mercado Pago. Tarjeta y otros medios disponibles. <a href="{{ $event->url('politicas') }}">Políticas y cancelaciones</a></span></p>
-                    </form>
-                @elseif ($state === 'sold_out')
-                    <button type="button" class="ev-btn is-off" disabled aria-disabled="true">{{ $event->text('sold_out') }}</button>
-                    <p class="ev-hint">Las entradas se agotaron. Gracias por tu interés.</p>
-                @elseif ($state === 'ended')
-                    <p class="ev-soon">Las ventas ya cerraron.</p>
-                @elseif ($state === 'not_yet' && $event->sales_open_at)
-                    <p class="ev-soon">Las entradas salen a la venta el {{ $event->local($event->sales_open_at)->locale('es')->translatedFormat('j \d\e F \a \l\a\s H:i') }} h.</p>
-                @elseif ($state === 'finished')
-                    <p class="ev-soon"><strong>Edición finalizada.</strong> Gracias por mirar hacia arriba con nosotros. Pronto anunciaremos la próxima lluvia de estrellas.</p>
-                @else
-                    <p class="ev-soon">Las entradas estarán disponibles muy pronto.</p>
-                @endif
-
-                <ul class="ev-sumlist">
-                    <li>{!! $icon('mic') !!} Conferencias, taller de cielo y observación guiada</li>
-                    <li>{!! $icon('flame') !!} Fogata, música, DJ en vivo, planetario y rally</li>
-                    <li>{!! $icon('gift') !!} Pulsera, pasaporte, mapa del cielo y diploma</li>
-                    <li>{!! $icon('tent') !!} Camping para 1 persona, con tu casa de campaña</li>
+{{-- ACTO V · Tu lugar: el momento cumbre --}}
+<section class="ev-sec ev-night ev-tick" id="entrada" aria-labelledby="h-entrada">
+    <div class="ev-bg" style="background-image:url('{{ $img('admirando-galaxia') }}')" data-par="0.08" role="presentation"></div>
+    <div class="ev-wrap">
+        <div class="ev-tick__grid">
+            <div class="ev-tick__copy">
+                <div data-reveal>
+                    <p class="ev-eyebrow">Tu lugar bajo las estrellas</p>
+                    <h2 id="h-entrada">Tu entrada a <em>Astrofest®</em></h2>
+                    <p class="ev-big">Una sola entrada. Toda la experiencia.</p>
+                </div>
+                <ul class="ev-value" data-reveal>
+                    <li>{!! $icon('mic') !!}<span>Conferencias, taller de cielo y observación guiada con telescopios</span></li>
+                    <li>{!! $icon('flame') !!}<span>Fogata, música temática, DJ en vivo, Planetario Móvil y rally con premios</span></li>
+                    <li>{!! $icon('gift') !!}<span>Pulsera coleccionable, Pasaporte, mapa del cielo, stickers y diploma</span></li>
+                    <li>{!! $icon('tent') !!}<span>Camping para 1 persona con tu casa de campaña: baños, vestidores y regaderas</span></li>
                 </ul>
-                <details class="ev-acc ev-acc--sm">
+                <details class="ev-acc ev-acc--sm" data-reveal>
                     <summary>Ver todo lo que incluye y lo que no</summary>
                     <ul class="ev-list">
                         <li>Conferencias magistrales en el auditorio y taller de cielo.</li>
@@ -287,10 +298,8 @@
                     </ul>
                     <p class="ev-hint" style="margin-top:10px">Menores de {{ $minorsAge }} años no pagan. Cada persona de {{ $minorsAge }} años o más necesita su entrada.</p>
                 </details>
-            </div>
 
-            <div class="ev-side">
-                <div class="ev-calm" id="plan-nube">
+                <div class="ev-calm" id="plan-nube" data-reveal>
                     <h3>Compra tranquilo: Astrofest depende del cielo</h3>
                     <p class="ev-muted" style="margin:0 0 12px">…y el cielo no depende de nosotros. Por eso hay Plan Nube.</p>
                     <ul>
@@ -300,8 +309,54 @@
                     </ul>
                     <a href="{{ $event->url('politicas') }}">Consulta la política completa</a>
                 </div>
+            </div>
+
+            <div class="ev-ticket" data-reveal style="--d:.15s">
+                @if (session('event_error'))<p class="ev-alert" role="alert">{{ session('event_error') }}</p>@endif
+                <p class="ev-ticket__label">Entrada general · Astrofest® Gemínidas 2026</p>
+                @if ($event->hasPrice())
+                    <div class="ev-ticket__price">{{ $money($event->price) }} <small>MXN por persona</small></div>
+                    <p class="ev-tags"><span>{!! $icon('check') !!} IVA incluido</span><span>{!! $icon('check') !!} Camping incluido</span></p>
+                @endif
+                @foreach ($quote['discounts'] as $d)<p style="margin:0"><span class="ev-pill ev-pill--tag">{{ $d['label'] }} −{{ rtrim(rtrim(number_format($d['percent'], 2), '0'), '.') }} %</span></p>@endforeach
+
+                @if ($state === 'open' && $event->capacity)
+                    <div class="ev-meter" role="group" aria-label="Lugares apartados">
+                        <div class="ev-meter__bar"><i style="--w:{{ min(100, round($takenNow * 100 / max(1, $event->capacity))) }}%"></i></div>
+                        <p><strong>¡Cupo limitado!</strong> @if ($available !== null && $available <= 30) Quedan {{ $available }} {{ $available === 1 ? 'lugar' : 'lugares' }}. @else Los lugares se apartan en orden de pago. @endif</p>
+                    </div>
+                @endif
+                @if ($state === 'open' && $sold >= 10)<p class="ev-proof">{!! $icon('users') !!} Ya hay <strong>{{ $sold }}</strong> personas con su lugar apartado.</p>@endif
+
+                @if ($state === 'open')
+                    <form method="post" action="{{ $event->url('carrito') }}" id="evBuy" data-pricing='@json($pricing)'>
+                        @csrf
+                        <div class="ev-field">
+                            <label for="evQty">¿Cuántas entradas?</label>
+                            <div class="ev-qty">
+                                <button type="button" data-step="-1" aria-label="Quitar una entrada">−</button>
+                                <input id="evQty" name="quantity" type="number" min="1" max="{{ $maxQuantity }}" value="1" inputmode="numeric">
+                                <button type="button" data-step="1" aria-label="Agregar una entrada">+</button>
+                            </div>
+                        </div>
+                        <p class="ev-total">Total <strong id="evTotal">{{ $money($quote['total']) }}</strong> <small>MXN</small> <span class="ev-hint" id="evSaving"></span></p>
+                        <button type="submit" class="ev-btn ev-btn--glow ev-btn--block" data-ev-track="add_to_cart_click">Agregar al carrito</button>
+                        <p class="ev-secure">{!! $icon('shield') !!}<span>Pago seguro con Mercado Pago. Tarjeta y otros medios disponibles. <a href="{{ $event->url('politicas') }}">Políticas y cancelaciones</a></span></p>
+                    </form>
+                @elseif ($state === 'sold_out')
+                    <button type="button" class="ev-btn is-off" disabled aria-disabled="true">{{ $event->text('sold_out') }}</button>
+                    <p class="ev-hint">Las entradas se agotaron. Gracias por tu interés.</p>
+                @elseif ($state === 'ended')
+                    <p class="ev-soon">Las ventas ya cerraron.</p>
+                @elseif ($state === 'not_yet' && $event->sales_open_at)
+                    <p class="ev-soon">Las entradas salen a la venta el {{ $event->local($event->sales_open_at)->locale('es')->translatedFormat('j \d\e F \a \l\a\s H:i') }} h.</p>
+                @elseif ($state === 'finished')
+                    <p class="ev-soon"><strong>Edición finalizada.</strong> Gracias por mirar hacia arriba con nosotros. Pronto anunciaremos la próxima lluvia de estrellas.</p>
+                @else
+                    <p class="ev-soon">Las entradas estarán disponibles muy pronto.</p>
+                @endif
                 @if ($event->show('rooms') && $hotelUrl)
-                    <div class="ev-card ev-rooms">
+                    <div class="ev-rooms">
                         <h3>¿Prefieres habitación?</h3>
                         <p>{{ $event->text('rooms.text') }}</p>
                         <div class="ev-cta" style="margin:0">
@@ -316,12 +371,14 @@
     </div>
 </section>
 
-{{-- 8 · El lugar --}}
-<section class="ev-sec" id="lugar" aria-labelledby="h-lugar">
+{{-- El lugar --}}
+<section class="ev-sec ev-night ev-place" id="lugar" aria-labelledby="h-lugar">
+    <div class="ev-bg" style="background-image:url('{{ $img('lago-reflejo') }}')" data-par="0.06" role="presentation"></div>
     <div class="ev-wrap">
         <div class="ev-split ev-split--rev">
-            <div>
-                <h2 id="h-lugar">El lugar y cómo llegar</h2>
+            <div class="ev-glass" data-reveal>
+                <p class="ev-eyebrow">Cómo llegar</p>
+                <h2 id="h-lugar">El <em>lugar</em></h2>
                 <p><strong>{{ $event->venue_name }}</strong>{{ $event->venue_city ? ' · ' . $event->venue_city : '' }}. Un hotel de campo con lago, jardines amplios, capilla, auditorio y restaurante, a pocos minutos de las pirámides.</p>
                 @if ($event->venue_address)<p class="ev-address">{!! $icon('pin') !!}<span>{{ $event->venue_address }}</span></p>@endif
                 <div class="ev-route">
@@ -331,31 +388,31 @@
                 @if (trim((string) data_get($event->content, 'text.transport')))<p><strong>En transporte público:</strong> {{ data_get($event->content, 'text.transport') }}</p>@endif
                 @if ($event->venue_map_url && $event->show('map'))<p><a class="ev-btn ev-btn--ghost" href="{{ $event->venue_map_url }}" target="_blank" rel="noopener" data-ev-track="click_map">{!! $icon('map') !!} Abrir en Google Maps</a></p>@endif
             </div>
-            <figure class="ev-photo">
+            <figure class="ev-photo ev-photo--tilt" data-reveal style="--d:.15s">
                 <img src="{{ $img('teotihuacan-calzada') }}" alt="Zona arqueológica de Teotihuacán a pocos minutos del hotel" width="1400" height="949" loading="lazy">
                 <figcaption>Teotihuacán, a pocos minutos · imagen ilustrativa</figcaption>
             </figure>
         </div>
-        <div class="ev-grid ev-grid--3" style="margin-top:28px">
-            <article class="ev-card"><div class="ico">{!! $icon('tent') !!}</div><h3>Zona de camping</h3><p>Jardín amplio frente a la capilla con baños, vestidores y regaderas exclusivos.</p></article>
-            <article class="ev-card"><div class="ico">{!! $icon('moon') !!}</div><h3>Habitaciones</h3><p>Se reservan directamente con el hotel (hacienda, campestre y estándar, todas con baño privado y toallas).</p></article>
-            <article class="ev-card"><div class="ico">{!! $icon('mic') !!}</div><h3>Auditorio</h3><p>Para 300 personas: las conferencias son bajo techo y lejos del frío.</p></article>
-            <article class="ev-card"><div class="ico">{!! $icon('cash') !!}</div><h3>Restaurante Don José</h3><p>Desayuno buffet de $350 (8:00 a 14:00 h) y comida a la carta. El restobar abre por la noche.</p></article>
-            <article class="ev-card"><div class="ico">{!! $icon('car') !!}</div><h3>Estacionamiento</h3><p>$60 por día; se paga directamente en el hotel. Tu coche queda resguardado.</p></article>
-            <article class="ev-card"><div class="ico">{!! $icon('flame') !!}</div><h3>Fogatas</h3><p>Área controlada y separada de casas de campaña y telescopios.</p></article>
-        </div>
-        <figure class="ev-photo ev-photo--wide" style="margin-top:22px"><img src="{{ $img('campfire') }}" alt="Fogata encendida de noche" width="1000" height="666" loading="lazy"><figcaption>Fogata en área controlada, lejos de los telescopios · imagen ilustrativa</figcaption></figure>
+        <ul class="ev-amen" data-reveal>
+            <li>{!! $icon('tent') !!}<b>Zona de camping</b><span>Jardín amplio frente a la capilla con baños, vestidores y regaderas exclusivos.</span></li>
+            <li>{!! $icon('moon') !!}<b>Habitaciones</b><span>Se reservan directamente con el hotel (hacienda, campestre y estándar, todas con baño privado y toallas).</span></li>
+            <li>{!! $icon('mic') !!}<b>Auditorio</b><span>Para 300 personas: las conferencias son bajo techo y lejos del frío.</span></li>
+            <li>{!! $icon('cash') !!}<b>Restaurante Don José</b><span>Desayuno buffet de $350 (8:00 a 14:00 h) y comida a la carta. El restobar abre por la noche.</span></li>
+            <li>{!! $icon('car') !!}<b>Estacionamiento</b><span>$60 por día; se paga directamente en el hotel. Tu coche queda resguardado.</span></li>
+            <li>{!! $icon('flame') !!}<b>Fogatas</b><span>Área controlada y separada de casas de campaña y telescopios.</span></li>
+        </ul>
+        <figure class="ev-photo ev-photo--wide" data-reveal><img src="{{ $img('campfire') }}" alt="Fogata encendida de noche" width="1000" height="666" loading="lazy"><figcaption>Fogata en área controlada, lejos de los telescopios · imagen ilustrativa</figcaption></figure>
     </div>
 </section>
 
-{{-- 9 · Qué traer y reglas de oro --}}
-<section class="ev-sec ev-sec--mid" id="que-traer" aria-labelledby="h-traer">
+{{-- ACTO VI · Prepárate (el día: lo práctico) --}}
+<section class="ev-sec ev-day" id="que-traer" aria-labelledby="h-traer">
     <div class="ev-wrap">
-        <div class="ev-head-row">
-            <h2 id="h-traer">Qué traer y reglas de oro</h2>
+        <div class="ev-head-row" data-reveal>
+            <div><p class="ev-eyebrow">Prepárate</p><h2 id="h-traer">Qué traer y <em>reglas de oro</em></h2></div>
             <button type="button" class="ev-btn ev-btn--ghost ev-btn--sm" id="evPrint">{!! $icon('printer') !!} Imprimir lista</button>
         </div>
-        <div class="ev-twin">
+        <div class="ev-twin" data-reveal>
             <div class="ev-callout">
                 @if ($event->asset('galileo'))<img src="{{ $event->asset('galileo') }}" alt="" aria-hidden="true" loading="lazy" width="96" height="127">@endif
                 <div><h3>¿Tienes telescopio? ¡Tráetelo!</h3><p>Si no, observa con los nuestros.</p></div>
@@ -366,21 +423,15 @@
             </div>
         </div>
         <div class="ev-grid ev-grid--2">
-            <div>
-                <h3>Tu mochila de cazador de estrellas</h3>
-                <ul class="ev-list ev-list--box">
-                    <li>Ropa de invierno en capas, gorro, guantes, bufanda y cobija.</li>
-                    <li>Linterna con luz roja (o el celofán rojo de tu kit sobre una lámpara).</li>
-                    <li>Para camping: casa de campaña, sleeping bag y aislante o colchón inflable.</li>
-                    <li>Silla plegable o tapete para recostarte a ver el cielo.</li>
-                    <li>Termo para bebidas calientes.</li>
-                    <li>Binoculares o tu propio telescopio, si tienes.</li>
-                    <li>Batería portátil para tu celular.</li>
-                    <li>Gorra y bloqueador para la observación solar del domingo.</li>
-                    <li>Tu comprobante o clave de compra e identificación.</li>
+            <div data-reveal>
+                <h3>Tu mochila de cazador de estrellas <small class="ev-check-count" id="evCheckCount" aria-live="polite"></small></h3>
+                <ul class="ev-list ev-list--box ev-checklist" id="evChecklist">
+                    @foreach (['Ropa de invierno en capas, gorro, guantes, bufanda y cobija.', 'Linterna con luz roja (o el celofán rojo de tu kit sobre una lámpara).', 'Para camping: casa de campaña, sleeping bag y aislante o colchón inflable.', 'Silla plegable o tapete para recostarte a ver el cielo.', 'Termo para bebidas calientes.', 'Binoculares o tu propio telescopio, si tienes.', 'Batería portátil para tu celular.', 'Gorra y bloqueador para la observación solar del domingo.', 'Tu comprobante o clave de compra e identificación.'] as $n => $item)
+                        <li><label><input type="checkbox" data-k="{{ $n }}"><span>{{ $item }}</span></label></li>
+                    @endforeach
                 </ul>
             </div>
-            <div>
+            <div data-reveal style="--d:.12s">
                 <h3>Las reglas de oro de la noche</h3>
                 <ol class="ev-rules">
                     <li><b>Solo luz roja.</b> Tus ojos tardan 20–30 minutos en acostumbrarse a la oscuridad y una sola luz blanca lo arruina.</li>
@@ -394,40 +445,21 @@
     </div>
 </section>
 
-{{-- 10 · Kit, rally y diploma --}}
-<section class="ev-sec" id="kit" aria-labelledby="h-kit">
+{{-- Equipo --}}
+<section class="ev-sec ev-day ev-day--alt" id="equipo" aria-labelledby="h-equipo">
     <div class="ev-wrap">
-        <h2 id="h-kit">Kit de bienvenida, rally y diploma</h2>
-        <div class="ev-grid ev-grid--3">
-            <article class="ev-card ev-kit">
-                <svg viewBox="0 0 320 130" role="img" aria-label="Ilustración de la pulsera coleccionable"><rect x="10" y="38" width="300" height="54" rx="27" fill="#14213d"/><rect x="10" y="38" width="300" height="54" rx="27" fill="none" stroke="#fed304" stroke-width="3"/><text x="160" y="72" text-anchor="middle" font-family="Georgia,serif" font-size="19" font-weight="700" fill="#fed304" letter-spacing="3">ASTROFEST · 2026</text><circle cx="40" cy="65" r="9" fill="#fed304"/><circle cx="280" cy="65" r="9" fill="#fed304"/></svg>
-                <h3>Pulsera coleccionable</h3><p>De acceso: cada edición tendrá la suya. Guárdala, será tu pase de coleccionista.</p>
-            </article>
-            <article class="ev-card ev-kit">
-                <svg viewBox="0 0 320 130" role="img" aria-label="Ilustración del Pasaporte Astrofest"><rect x="100" y="8" width="120" height="114" rx="10" fill="#14213d"/><circle cx="160" cy="48" r="18" fill="none" stroke="#fed304" stroke-width="3"/><path d="M160 36l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#fed304"/><text x="160" y="92" text-anchor="middle" font-family="Georgia,serif" font-size="11" font-weight="700" fill="#fff" letter-spacing="1.5">PASAPORTE</text><text x="160" y="106" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#fed304" letter-spacing="2">ASTROFEST</text></svg>
-                <h3>Pasaporte Astrofest®</h3><p>Anota tus estrellas fugaces, consigue sellos durante la noche y sigue el mapa del cielo de diciembre.</p>
-            </article>
-            <article class="ev-card ev-kit">
-                <svg viewBox="0 0 320 130" role="img" aria-label="Ilustración del diploma de astrónomo"><rect x="50" y="10" width="220" height="110" rx="6" fill="#fffae3" stroke="#fed304" stroke-width="4"/><rect x="60" y="20" width="200" height="90" rx="3" fill="none" stroke="#14213d" stroke-width="1.2"/><text x="160" y="48" text-anchor="middle" font-family="Georgia,serif" font-size="16" font-weight="700" fill="#14213d">Diploma de astrónomo</text><path d="M110 66h100" stroke="#14213d" stroke-width="1"/><text x="160" y="62" text-anchor="middle" font-family="Georgia,serif" font-size="12" font-style="italic" fill="#5b6478">con tu nombre</text><circle cx="160" cy="90" r="11" fill="#fed304"/><path d="M160 83l2.5 5 5.5.7-4 3.8 1 5.5-5-2.7-5 2.7 1-5.5-4-3.8 5.5-.7z" fill="#14213d"/></svg>
-                <h3>Diploma de astrónomo</h3><p>Todos los participantes se llevan un diploma con su nombre, firmado por los organizadores. Se guarda por años.</p>
-            </article>
+        <div data-reveal>
+            <p class="ev-eyebrow">Tus guías</p>
+            <h2 id="h-equipo">Quiénes te <em>acompañan</em></h2>
         </div>
-        <p style="margin-top:18px"><strong>El rally de las estrellas.</strong> Desde la bienvenida te contamos cómo participar; durante las conferencias y la observación soltamos pistas sobre el cielo y el domingo, en la clausura, ¡premiamos a los ganadores! Tu kit también trae stickers de Galileo y Telescopio, y celofán rojo para convertir cualquier lámpara en linterna de astrónomo.</p>
-    </div>
-</section>
-
-{{-- 11 · Quiénes te acompañan --}}
-<section class="ev-sec ev-sec--mid" id="equipo" aria-labelledby="h-equipo">
-    <div class="ev-wrap">
-        <h2 id="h-equipo">Quiénes te acompañan</h2>
         <div class="ev-team">
-            <article class="ev-card ev-team__lead">
+            <article class="ev-card ev-team__lead" data-reveal>
                 @if ($event->asset('luz'))<img class="ev-team__photo" src="{{ $event->asset('luz') }}" alt="Luz Calderón, astrónoma y anfitriona" loading="lazy" width="220" height="220">
                 @else<div class="ev-team__avatar" aria-hidden="true">{!! $icon('star') !!}</div>@endif
                 <div><p class="ev-eyebrow">Anfitriona</p><h3>Luz Calderón · Astrónoma</h3>
                 <p>Divulgadora de la ciencia con muchos años de trayectoria y una comunidad enorme que la sigue. Ha organizado noches de estrellas con cientos de asistentes y es la voz que te guiará toda la noche: da la bienvenida, imparte conferencias y te enseña a leer el cielo.</p></div>
             </article>
-            <article class="ev-card">
+            <article class="ev-card" data-reveal style="--d:.12s">
                 <div class="ev-duo">
                     @if ($event->asset('galileo'))<img src="{{ $event->asset('galileo') }}" alt="Galileo, mascota de Astrofest, un sabio de barba gris con catalejo" loading="lazy" width="265" height="350">@endif
                     @if ($event->asset('telescopio'))<img src="{{ $event->asset('telescopio') }}" alt="Telescopio, mascota de Astrofest, un telescopio con brazos y zapatos" loading="lazy" width="250" height="303">@endif
@@ -435,7 +467,7 @@
                 <h3>Galileo y Telescopio</h3>
                 <p>Tus guías del cielo: Galileo nunca deja de hacer preguntas y Telescopio siempre señala algo nuevo. Los encontrarás en el pasaporte, el diploma y los stickers.</p>
             </article>
-            <article class="ev-card">
+            <article class="ev-card" data-reveal style="--d:.24s">
                 <div class="ico">{!! $icon('telescope') !!}</div>
                 <h3>Equipo de telescopios</h3>
                 <p>Jóvenes astrónomos al pie del cañón toda la noche, operando los telescopios y resolviendo tus dudas.</p>
@@ -444,10 +476,13 @@
     </div>
 </section>
 
-{{-- 12 · Preguntas frecuentes --}}
-<section class="ev-sec" id="preguntas" aria-labelledby="h-faq">
+{{-- Preguntas frecuentes --}}
+<section class="ev-sec ev-day" id="preguntas" aria-labelledby="h-faq">
     <div class="ev-wrap">
-        <h2 id="h-faq">Preguntas frecuentes</h2>
+        <div data-reveal>
+            <p class="ev-eyebrow">Resolvemos tus dudas</p>
+            <h2 id="h-faq">Preguntas <em>frecuentes</em></h2>
+        </div>
         @php
             $faq = [
                 'Antes de ir' => [
@@ -478,7 +513,7 @@
         @endphp
         <div class="ev-faq-cols">
             @foreach ($cols as $ci => $group)
-                <div class="ev-faq">
+                <div class="ev-faq" data-reveal style="--d:{{ $ci * .12 }}s">
                     @foreach ($group as $name => $items)
                         <h3>{{ $name }}</h3>
                         @foreach ($items as $ii => [$q, $a])
@@ -491,16 +526,18 @@
     </div>
 </section>
 
-{{-- 13 · Cierre --}}
-<section class="ev-sec ev-close" aria-labelledby="h-cierre" style="background-image:linear-gradient(rgba(20,33,61,.86),rgba(20,33,61,.92)),url('{{ $img('hero-geminids') }}')">
-    <div class="ev-narrow">
-        @if ($event->asset('galileo'))<img class="ev-char" src="{{ $event->asset('galileo') }}" alt="Galileo, mascota de Astrofest, un sabio de barba gris con catalejo" loading="lazy" width="150" height="198" style="width:120px">@endif
+{{-- ACTO FINAL · Amanecer: la última llamada --}}
+<section class="ev-sec ev-night ev-final" aria-labelledby="h-cierre">
+    <div class="ev-bg" style="background-image:url('{{ $img('amanecer') }}')" data-par="0.06" role="presentation"></div>
+    <div class="ev-narrow" data-reveal>
+        @if ($event->asset('galileo'))<img class="ev-final__char" src="{{ $event->asset('galileo') }}" alt="Galileo, mascota de Astrofest, un sabio de barba gris con catalejo" loading="lazy" width="150" height="198">@endif
+        <p class="ev-eyebrow">Mira hacia arriba</p>
         <h2 id="h-cierre">{{ $event->text('closing.title') }}</h2>
-        <p class="ev-muted">{{ $event->text('closing.text') }}</p>
-        @if ($event->hasPrice())<p class="ev-close__price">{{ $money($event->price) }} MXN <small>por persona · IVA incluido · camping incluido</small></p>@endif
-        @if ($state === 'open' && $available !== null && $available <= 30)<p class="ev-chip ev-chip--hot">Quedan {{ $available }} {{ $available === 1 ? 'lugar' : 'lugares' }}</p>@endif
+        <p class="ev-big">{{ $event->text('closing.text') }}</p>
+        @if ($event->hasPrice())<p class="ev-final__price">{{ $money($event->price) }} MXN <small>por persona · IVA incluido · camping incluido</small></p>@endif
+        @if ($state === 'open' && $available !== null && $available <= 30)<p class="ev-pill">Quedan {{ $available }} {{ $available === 1 ? 'lugar' : 'lugares' }}</p>@endif
         <div class="ev-cta" style="justify-content:center">
-            @if ($state === 'open')<a class="ev-btn" href="#entrada" data-ev-track="cta_closing">{{ $event->text('hero.cta') }}</a>@endif
+            @if ($state === 'open')<a class="ev-btn ev-btn--glow" href="#entrada" data-ev-track="cta_closing">{{ $event->text('hero.cta') }}</a>@endif
             @if ($event->contact_whatsapp)<a class="ev-btn ev-btn--ghost" href="https://wa.me/{{ preg_replace('/\D+/', '', $event->contact_whatsapp) }}" target="_blank" rel="noopener" data-ev-track="click_whatsapp">{!! $icon('whatsapp') !!} Escríbenos por WhatsApp</a>@endif
         </div>
     </div>
@@ -509,7 +546,7 @@
 @if ($state === 'open' && $event->hasPrice())
     <div class="ev-bar" id="evBar" hidden>
         <div><small>Por persona</small><strong>{{ $money($event->price) }} MXN</strong></div>
-        <a class="ev-btn ev-btn--sm" href="#entrada" data-ev-track="cta_sticky">{{ $event->text('hero.cta') }}</a>
+        <a class="ev-btn ev-btn--sm ev-btn--glow" href="#entrada" data-ev-track="cta_sticky">{{ $event->text('hero.cta') }}</a>
     </div>
 @endif
 @endsection
@@ -517,7 +554,9 @@
 @push('scripts')
 <script>
 (function () {
-    // Contador: noches que faltan, con la zona horaria del evento.
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Contador de noches (zona horaria del evento)
     var c = document.getElementById('evCount');
     if (c) {
         var tz = 'America/Mexico_City', start = new Date(c.getAttribute('data-start'));
@@ -527,15 +566,17 @@
         tick(); setInterval(tick, 60000);
     }
 
-    // Selector de cantidad con total al instante
+    // Selector de cantidad: el total se anima al cambiar
     var f = document.getElementById('evBuy');
     if (f) {
-        var p = JSON.parse(f.getAttribute('data-pricing')), q = document.getElementById('evQty'), out = document.getElementById('evTotal'), sv = document.getElementById('evSaving');
+        var p = JSON.parse(f.getAttribute('data-pricing')), q = document.getElementById('evQty'), out = document.getElementById('evTotal'), sv = document.getElementById('evSaving'), shown = null;
         var fmt = function (n) { return '$' + n.toLocaleString('es-MX', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }); };
+        var paint = function (to) { if (reduce || shown === null) { out.textContent = fmt(to); shown = to; return; } var from = shown, t0 = performance.now(); shown = to;
+            var step = function (t) { var k = Math.min(1, (t - t0) / 380), e = 1 - Math.pow(1 - k, 3); out.textContent = fmt(from + (to - from) * e); if (k < 1) requestAnimationFrame(step); else out.textContent = fmt(to); }; requestAnimationFrame(step); };
         var calc = function () {
             var max = parseInt(q.max, 10) || 1, n = Math.min(max, Math.max(1, parseInt(q.value, 10) || 1)); q.value = n;
             var sub = p.unit * n, pct = 0; p.rules.forEach(function (r) { if (n >= r.min) pct += r.percent; }); pct = Math.min(100, pct);
-            var tot = Math.round(sub * (100 - pct)) / 100; out.textContent = fmt(tot); sv.textContent = pct ? '(ahorras ' + fmt(Math.round(sub * pct) / 100) + ')' : '';
+            var tot = Math.round(sub * (100 - pct)) / 100; paint(tot); sv.textContent = pct ? '(ahorras ' + fmt(Math.round(sub * pct) / 100) + ')' : '';
         };
         f.addEventListener('click', function (e) { var s = e.target.getAttribute('data-step'); if (s) { q.value = (parseInt(q.value, 10) || 1) + parseInt(s, 10); calc(); } });
         q.addEventListener('input', calc); calc();
@@ -547,21 +588,58 @@
     if (tabs) {
         tabs.classList.add('is-tabs');
         var btns = [].slice.call(tabs.querySelectorAll('[role=tab]')), panels = [].slice.call(tabs.querySelectorAll('[role=tabpanel]'));
-        var show = function (i, focus) { btns.forEach(function (b, j) { b.setAttribute('aria-selected', j === i ? 'true' : 'false'); b.tabIndex = j === i ? 0 : -1; panels[j].hidden = j !== i; }); if (focus) btns[i].focus(); };
+        var show = function (i, focus) { btns.forEach(function (b, j) { b.setAttribute('aria-selected', j === i ? 'true' : 'false'); b.tabIndex = j === i ? 0 : -1; panels[j].hidden = j !== i; if (j === i) { [].slice.call(panels[j].querySelectorAll('[data-reveal]')).forEach(function (el) { el.classList.add('is-in'); }); } }); if (focus) btns[i].focus(); };
         btns.forEach(function (b, i) { b.addEventListener('click', function () { show(i); }); b.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); show((i + (e.key === 'ArrowRight' ? 1 : btns.length - 1)) % btns.length, true); } }); });
         show(0);
     }
 
     // Carrusel de objetos
     var rail = document.getElementById('evRail');
-    if (rail) { [].slice.call(document.querySelectorAll('[data-rail]')).forEach(function (b) { b.addEventListener('click', function () { rail.scrollBy({ left: parseInt(b.getAttribute('data-rail'), 10) * Math.min(rail.clientWidth * .8, 420), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }); }); }
+    if (rail) { [].slice.call(document.querySelectorAll('[data-rail]')).forEach(function (b) { b.addEventListener('click', function () { rail.scrollBy({ left: parseInt(b.getAttribute('data-rail'), 10) * Math.min(rail.clientWidth * .8, 420), behavior: reduce ? 'auto' : 'smooth' }); }); }); }
+
+    // Aparición suave de lo que entra a la vista + constelaciones que se dibujan + cifras que cuentan
+    var root = document.documentElement;
+    var count = function (el) { var to = parseInt(el.getAttribute('data-count'), 10); if (reduce || isNaN(to) || el.__done) return; el.__done = true; var t0 = null; var step = function (t) { if (t0 === null) t0 = t; var k = Math.min(1, (t - t0) / 1200); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); }; el.textContent = '0'; requestAnimationFrame(step); };
+    var items = [].slice.call(document.querySelectorAll('[data-reveal], .ev-const'));
+    if ('IntersectionObserver' in window && !reduce) {
+        var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (!e.isIntersecting) return; e.target.classList.add('is-in'); [].slice.call(e.target.querySelectorAll('[data-count]')).forEach(count); io.unobserve(e.target); }); }, { rootMargin: '0px 0px -10% 0px', threshold: .12 });
+        items.forEach(function (el) { io.observe(el); });
+    } else { items.forEach(function (el) { el.classList.add('is-in'); }); }
+
+    // Línea del programa que se va dibujando con tu avance (meta-gradiente: «ya casi llegas»)
+    var lines = [].slice.call(document.querySelectorAll('[data-line]'));
+    // Parallax muy suave (solo transform; apagado con «reducir movimiento»)
+    var par = [].slice.call(document.querySelectorAll('[data-par]')), ticking = false;
+    var frame = function () {
+        var vh = innerHeight;
+        par.forEach(function (el) { var host = el.closest('section') || el, r = host.getBoundingClientRect(); if (r.bottom < -100 || r.top > vh + 100) return; var k = parseFloat(el.getAttribute('data-par')) || 0; el.style.setProperty('--py', ((r.top + r.height / 2 - vh / 2) * k * -1).toFixed(1) + 'px'); });
+        lines.forEach(function (ol) { var r = ol.getBoundingClientRect(); ol.style.setProperty('--p', Math.max(0, Math.min(1, (vh * .62 - r.top) / Math.max(1, r.height))).toFixed(3)); });
+        ticking = false;
+    };
+    if (!reduce) { addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true }); addEventListener('resize', frame); }
+    frame();
 
     // Barra fija de compra en celular: solo cuando ni la portada ni la entrada están a la vista
     var bar = document.getElementById('evBar');
     if (bar && 'IntersectionObserver' in window) {
         var seen = { hero: true, entrada: false }, upd = function () { bar.hidden = seen.hero || seen.entrada; };
-        var io = new IntersectionObserver(function (es) { es.forEach(function (e) { seen[e.target.getAttribute('data-k')] = e.isIntersecting; }); upd(); });
-        [['.ev-hero', 'hero'], ['#entrada', 'entrada']].forEach(function (a) { var el = document.querySelector(a[0]); if (el) { el.setAttribute('data-k', a[1]); io.observe(el); } });
+        var io2 = new IntersectionObserver(function (es) { es.forEach(function (e) { seen[e.target.getAttribute('data-k')] = e.isIntersecting; }); upd(); });
+        [['.ev-hero', 'hero'], ['#entrada', 'entrada']].forEach(function (a) { var el = document.querySelector(a[0]); if (el) { el.setAttribute('data-k', a[1]); io2.observe(el); } });
+    }
+
+    // «Pide un deseo»: una estrella fugaz cruza la portada
+    var wish = document.getElementById('evWish'), hero = document.getElementById('evHero');
+    if (wish && hero) {
+        var launch = function (x, y) { if (reduce) return; var s = document.createElement('i'); s.className = 'ev-meteor'; s.style.left = x + 'px'; s.style.top = y + 'px'; hero.appendChild(s); setTimeout(function () { s.remove(); }, 1500); };
+        wish.addEventListener('click', function () { var r = hero.getBoundingClientRect(); launch(r.width * (.5 + Math.random() * .35), r.height * (.12 + Math.random() * .25)); wish.innerHTML = '<span>✦</span> ¡Deseo pedido!'; setTimeout(function () { wish.innerHTML = '<span>✦</span> Pide un deseo'; }, 2400); evPush('wish'); });
+    }
+
+    // Lista de «qué traer» con casillas que se recuerdan en tu dispositivo
+    var cl = document.getElementById('evChecklist'), cc = document.getElementById('evCheckCount');
+    if (cl) {
+        var key = 'ev-lista-' + @json($event->slug), saved = {}; try { saved = JSON.parse(localStorage.getItem(key) || '{}'); } catch (e) {}
+        var boxes = [].slice.call(cl.querySelectorAll('input')), upc = function () { var n = boxes.filter(function (b) { return b.checked; }).length; cc.textContent = n ? n + ' de ' + boxes.length + ' listo' + (n === 1 ? '' : 's') : ''; };
+        boxes.forEach(function (b) { b.checked = !!saved[b.getAttribute('data-k')]; b.addEventListener('change', function () { saved[b.getAttribute('data-k')] = b.checked; try { localStorage.setItem(key, JSON.stringify(saved)); } catch (e) {} upc(); }); }); upc();
     }
 
     // Imprimir solo la lista de «qué traer»

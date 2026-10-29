@@ -471,7 +471,7 @@ class EventTicketSalesTest extends TestCase
     {
         $html = $this->get($this->event()->url())->assertOk()->getContent();
 
-        foreach (['role="tablist"', 'Compra tranquilo', 'Ciencia en un minuto', 'Lo que verás por los telescopios', 'Imprimir lista', 'Kit de bienvenida, rally y diploma', 'Antes de ir', 'Pago seguro con Mercado Pago', 'id="evBar"'] as $needle) {
+        foreach (['role="tablist"', 'Compra tranquilo', 'Ciencia en un minuto', 'Lo que verás por los telescopios', 'Imprimir lista', 'Kit de bienvenida, rally y', 'Antes de ir', 'Pago seguro con Mercado Pago', 'id="evBar"'] as $needle) {
             $this->assertStringContainsString($needle, $html, "falta: $needle");
         }
         $this->assertSame(1, substr_count($html, '<h1'), 'un solo H1');
