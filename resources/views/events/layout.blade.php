@@ -75,36 +75,47 @@
 
     @yield('body')
 
-    <aside class="evp-orgs" aria-label="Organizadores y contacto">
+    <footer class="evf" aria-label="Organizadores y contacto">
         <div class="evp-wrap">
-            <div class="evp-orgs__row">
-                <span>Organiza</span>
-                <img src="{{ asset('images/nuevo/logo-horizontia.png') }}" alt="Horizontia" height="34" loading="lazy" style="height:34px;width:auto">
-                @if ($event->asset('fama'))<img src="{{ $event->asset('fama') }}" alt="FAMA, Físicos Astrónomos Mexicanos y Asociados" loading="lazy">@endif
-                @if ($event->asset('club'))<img src="{{ $event->asset('club') }}" alt="Club Campestre Teotihuacán" loading="lazy">@endif
+            <div class="evf__grid">
+                <div class="evf__org">
+                    <p class="evf__label">Organiza</p>
+                    <img class="evf__logo" src="{{ asset('images/nuevo/Logo-Horizontia-footer.png') }}" alt="Horizontia" width="165" height="52" loading="lazy">
+                    @if ($event->asset('fama') || $event->asset('club'))
+                        <p class="evf__label evf__label--sp">Con el respaldo de</p>
+                        <div class="evf__chips">
+                            @if ($event->asset('fama'))<span class="evf__chip"><img src="{{ $event->asset('fama') }}" alt="FAMA, Físicos Astrónomos Mexicanos y Asociados" loading="lazy"></span>@endif
+                            @if ($event->asset('club'))<span class="evf__chip"><img src="{{ $event->asset('club') }}" alt="Club Campestre Teotihuacán" loading="lazy"></span>@endif
+                        </div>
+                    @endif
+                </div>
+                @if ($event->contact_email || $event->contact_whatsapp)
+                    <div class="evf__contact">
+                        <p class="evf__label">Contacto del evento</p>
+                        @if ($event->contact_email)<a href="mailto:{{ $event->contact_email }}"><svg class="ev-i" aria-hidden="true"><use href="#i-mail"/></svg>{{ $event->contact_email }}</a>@endif
+                        @if ($event->contact_whatsapp)<a href="https://wa.me/{{ preg_replace('/\D+/', '', $event->contact_whatsapp) }}" rel="noopener" target="_blank"><svg class="ev-i" aria-hidden="true"><use href="#i-whatsapp"/></svg>{{ $event->contact_whatsapp }}</a>@endif
+                    </div>
+                @endif
+                <nav class="evf__legal" aria-label="Información legal">
+                    <p class="evf__label">Información</p>
+                    <a href="{{ $event->url('politicas') }}">Políticas del evento</a>
+                    <a href="{{ route('legal.privacy') }}" rel="noopener">Aviso de privacidad</a>
+                </nav>
             </div>
-            @if ($event->contact_email || $event->contact_whatsapp)
-                <p>Contacto del evento:
-                    @if ($event->contact_email)<a href="mailto:{{ $event->contact_email }}">{{ $event->contact_email }}</a>@endif
-                    @if ($event->contact_email && $event->contact_whatsapp) · @endif
-                    @if ($event->contact_whatsapp)<a href="https://wa.me/{{ preg_replace('/\D+/', '', $event->contact_whatsapp) }}" rel="noopener" target="_blank">WhatsApp {{ $event->contact_whatsapp }}</a>@endif
-                </p>
-            @endif
             @php
                 $credits = collect(json_decode((string) @file_get_contents(public_path('images/eventos/stock/credits.json')), true) ?: [])->filter(fn ($c) => !empty($usedImages) && in_array($c['key'], $usedImages, true));
             @endphp
-            @if ($credits->isNotEmpty())
-                <details class="evp-credits"><summary>Créditos de las imágenes</summary>
-                    <p>Las fotografías son ilustrativas y provienen de Wikimedia Commons con licencia libre:</p>
-                    <ul>@foreach ($credits as $c)<li><a href="{{ $c['url'] }}" target="_blank" rel="noopener">{{ \Illuminate\Support\Str::of($c['title'])->beforeLast('.')->limit(60) }}</a> · {{ $c['author'] ?: 'Autor/a no indicado/a' }} · {{ $c['license'] }}</li>@endforeach</ul>
-                </details>
-            @endif
-            <nav class="evp-orgs__links" aria-label="Información legal">
-                <a href="{{ $event->url('politicas') }}">Políticas del evento</a>
-                <a href="{{ route('legal.privacy') }}" rel="noopener">Aviso de privacidad</a>
-            </nav>
+            <div class="evf__base">
+                <span>© {{ now()->year }} Horizontia · Astrofest® {{ $event->name !== 'Astrofest® Gemínidas 2026' ? '' : 'Gemínidas 2026' }}</span>
+                @if ($credits->isNotEmpty())
+                    <details class="evf__credits"><summary>Fotografías</summary>
+                        <p>Imágenes ilustrativas de Wikimedia Commons con licencia libre.</p>
+                        <ul>@foreach ($credits as $c)<li><a href="{{ $c['url'] }}" target="_blank" rel="noopener">{{ \Illuminate\Support\Str::of($c['title'])->beforeLast('.')->limit(50) }}</a> · {{ $c['author'] ?: 'Autor/a no indicado/a' }} · {{ $c['license'] }}</li>@endforeach</ul>
+                    </details>
+                @endif
+            </div>
         </div>
-    </aside>
+    </footer>
 </div>
 @endsection
 

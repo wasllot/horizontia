@@ -462,7 +462,7 @@ class EventTicketSalesTest extends TestCase
         foreach (array_unique($m[0]) as $path) {
             $this->assertFileExists(public_path(ltrim($path, '/')), "falta la imagen {$path}");
         }
-        $this->assertStringContainsString('Créditos de las imágenes', $html);
+        $this->assertStringContainsString('Wikimedia Commons', $html);
         $this->assertStringContainsString('Wikimedia', $html);
         $this->assertStringContainsString('imagen ilustrativa', $html);
     }
@@ -471,7 +471,7 @@ class EventTicketSalesTest extends TestCase
     {
         $html = $this->get($this->event()->url())->assertOk()->getContent();
 
-        foreach (['role="tablist"', 'Compra tranquilo', 'Ciencia en un minuto', 'Lo que verás por los telescopios', 'Imprimir lista', 'Kit de bienvenida, rally y', 'Antes de ir', 'Pago seguro con Mercado Pago', 'id="evBar"'] as $needle) {
+        foreach (['role="tablist"', 'Compra tranquilo', 'Ciencia en un minuto', 'Lo que verás en la noche', 'Imprimir lista', 'Kit de bienvenida, rally y', 'Antes de ir', 'Pago seguro con Mercado Pago', 'id="evBar"'] as $needle) {
             $this->assertStringContainsString($needle, $html, "falta: $needle");
         }
         $this->assertSame(1, substr_count($html, '<h1'), 'un solo H1');

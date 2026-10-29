@@ -38,13 +38,13 @@
         ['Después', 'Visita a la zona arqueológica', 'Por tu cuenta, con los horarios y reglas de la zona.', 'map'],
     ];
     $objects = [
-        ['moon', 'La Luna creciente', 'Al atardecer sus cráteres y montañas se ven con relieve. Parece que la estás tocando.'],
-        ['saturn', 'Saturno', 'El planeta de los anillos. Verlo por primera vez en un telescopio no se olvida.'],
-        ['orion-nebula', 'La Nebulosa de Orión', 'Una cuna de estrellas a unos 1,300 años luz.'],
-        ['pleiades', 'Cúmulos de estrellas', 'Familias de estrellas nacidas juntas, como las Pléyades: diamantes azules.'],
-        ['albireo', 'Estrellas dobles', 'Puntos de luz que, con telescopio, se separan en dos soles de colores distintos.'],
-        [null, 'Constelaciones de invierno', 'Con un puntero de luz verde (solo del astrónomo) encontrarás Orión, Géminis, Cástor, Pólux y Proción.'],
-        ['sun', 'El Sol (domingo)', 'Con filtros seguros veremos manchas solares. ¡Nunca mires al Sol sin filtro!'],
+        ['moon', 'La Luna creciente', 'Satélite natural', 'Al atardecer sus cráteres y montañas se ven con relieve. Parece que la estás tocando.'],
+        ['saturn', 'Saturno', 'Planeta', 'El planeta de los anillos. Verlo por primera vez en un telescopio no se olvida.'],
+        ['orion-nebula', 'La Nebulosa de Orión', 'Nebulosa', 'Una cuna de estrellas a unos 1,300 años luz.'],
+        ['pleiades', 'Cúmulos de estrellas', 'Cúmulo abierto', 'Familias de estrellas nacidas juntas, como las Pléyades: diamantes azules.'],
+        ['albireo', 'Estrellas dobles', 'Dos soles en uno', 'Puntos de luz que, con telescopio, se separan en dos soles de colores distintos.'],
+        [null, 'Constelaciones de invierno', 'A simple vista', 'Con un puntero de luz verde (solo del astrónomo) encontrarás Orión, Géminis, Cástor, Pólux y Proción.'],
+        ['sun', 'El Sol', 'Domingo por la mañana', 'Con filtros seguros veremos manchas solares. ¡Nunca mires al Sol sin filtro!'],
     ];
     $alts = ['moon' => 'Luna creciente delgada sobre un cielo negro', 'saturn' => 'Saturno con sus anillos y auroras en el polo', 'orion-nebula' => 'Nebulosa de Orión fotografiada por el telescopio Hubble', 'pleiades' => 'Cúmulo estelar de las Pléyades, estrellas azules', 'albireo' => 'Albireo, estrella doble de un punto azul y otro anaranjado', 'sun' => 'Disco del Sol con manchas solares'];
     $heroImg = $event->asset('hero_desktop') ?: $img('lago-moke');
@@ -128,7 +128,7 @@
             </div>
             <figure class="ev-arch" data-reveal style="--d:.15s">
                 <img src="{{ $img('telescopios') }}" alt="Personas observando el cielo nocturno junto a un telescopio" width="1200" height="806" loading="lazy" data-par="-0.05">
-                <figcaption>Observación guiada con telescopios · imagen ilustrativa</figcaption>
+                <figcaption><b>Observación guiada</b><span>Con telescopios · imagen ilustrativa</span></figcaption>
                 <img class="ev-arch__moon" src="{{ $img('saturn') }}" alt="" aria-hidden="true" width="140" height="140" loading="lazy">
             </figure>
         </div>
@@ -170,29 +170,33 @@
         <p class="ev-honest" data-reveal>{!! $icon('shield') !!}<span><strong>Un compromiso honesto:</strong> no prometemos un número exacto de estrellas fugaces por hora; el cielo tiene sus propios planes. Teotihuacán no es un cielo de alta montaña porque la CDMX está cerca, pero las Gemínidas son brillantes y se ven muy bien desde aquí.</span></p>
 
         <div class="ev-rail-head" data-reveal>
-            <h3>Lo que verás por los telescopios</h3>
-            <div class="ev-rail-btns"><button type="button" class="evp-icon" data-rail="-1" aria-label="Anterior">{!! $icon('chev-l') !!}</button><button type="button" class="evp-icon" data-rail="1" aria-label="Siguiente">{!! $icon('chev-r') !!}</button></div>
+            <div><p class="ev-eyebrow">Por el telescopio</p><h3>Lo que verás en la noche</h3></div>
+            <div class="ev-rail-ui"><span class="ev-rail-count" id="evRailCount" aria-live="polite">01 / {{ str_pad(count($objects), 2, '0', STR_PAD_LEFT) }}</span><button type="button" class="ev-arrow" data-rail="-1" aria-label="Anterior">{!! $icon('chev-l') !!}</button><button type="button" class="ev-arrow" data-rail="1" aria-label="Siguiente">{!! $icon('chev-r') !!}</button></div>
         </div>
-        <div class="ev-rail" id="evRail" tabindex="0" role="region" aria-label="Objetos que veremos: desliza para ver más">
-            @foreach ($objects as [$k, $t, $d])
-                <article class="ev-obj">
-                    @if ($k)
-                        <img src="{{ $img($k) }}" alt="{{ $alts[$k] }}" width="720" height="540" loading="lazy">
-                    @else
-                        <svg class="ev-obj__map" viewBox="0 0 720 540" role="img" aria-label="Mapa de las constelaciones de Orión y Géminis" preserveAspectRatio="xMidYMid slice">
-                            <rect width="720" height="540" fill="#0b1230"/>
-                            <g stroke="#fed304" stroke-opacity=".55" stroke-width="2" fill="none"><path d="M250 120l70 90-20 130M320 210l80 14 70-30M400 224l-10 130M470 194l60-86M300 340l-70 100M390 354l60 90"/><path d="M520 90l40 120M560 210l30 140" stroke="#7fd3ff"/></g>
-                            <g fill="#fff"><circle cx="250" cy="120" r="7"/><circle cx="470" cy="194" r="6"/><circle cx="320" cy="210" r="5"/><circle cx="400" cy="224" r="6"/><circle cx="470" cy="226" r="5"/><circle cx="300" cy="340" r="6"/><circle cx="390" cy="354" r="9"/><circle cx="530" cy="108" r="5"/><circle cx="230" cy="440" r="5"/><circle cx="450" cy="444" r="5"/><circle cx="560" cy="210" r="7" fill="#7fd3ff"/><circle cx="520" cy="90" r="6" fill="#7fd3ff"/><circle cx="590" cy="350" r="4"/><circle cx="120" cy="300" r="3"/><circle cx="650" cy="470" r="3"/><circle cx="90" cy="90" r="3"/></g>
-                            <g fill="#cfe6ff" font-family="Roboto,sans-serif" font-size="22"><text x="262" y="112">Betelgeuse</text><text x="406" y="388">Rigel</text><text x="456" y="96" fill="#7fd3ff">Cástor</text><text x="568" y="236" fill="#7fd3ff">Pólux</text></g>
-                        </svg>
-                    @endif
-                    <div class="ev-obj__body"><h4>{{ $t }}</h4><p>{{ $d }}</p></div>
-                </article>
-            @endforeach
+        <div class="ev-rail-wrap" id="evRailWrap">
+            <div class="ev-rail" id="evRail" tabindex="0" role="region" aria-label="Objetos que veremos: desliza para ver más">
+                @foreach ($objects as $n => [$k, $t, $tag, $d])
+                    <article class="ev-obj">
+                        @if ($k)
+                            <img class="{{ in_array($k, ['moon', 'saturn', 'albireo'], true) ? 'is-contain' : '' }}" src="{{ $img($k) }}" alt="{{ $alts[$k] }}" width="720" height="540" loading="lazy" draggable="false">
+                        @else
+                            <svg class="ev-obj__map" viewBox="0 0 720 540" role="img" aria-label="Mapa de las constelaciones de Orión y Géminis" preserveAspectRatio="xMidYMid slice">
+                                <rect width="720" height="540" fill="#0b1230"/>
+                                <g stroke="#fed304" stroke-opacity=".55" stroke-width="2" fill="none"><path d="M250 120l70 90-20 130M320 210l80 14 70-30M400 224l-10 130M470 194l60-86M300 340l-70 100M390 354l60 90"/><path d="M520 90l40 120M560 210l30 140" stroke="#7fd3ff"/></g>
+                                <g fill="#fff"><circle cx="250" cy="120" r="7"/><circle cx="470" cy="194" r="6"/><circle cx="320" cy="210" r="5"/><circle cx="400" cy="224" r="6"/><circle cx="470" cy="226" r="5"/><circle cx="300" cy="340" r="6"/><circle cx="390" cy="354" r="9"/><circle cx="530" cy="108" r="5"/><circle cx="230" cy="440" r="5"/><circle cx="450" cy="444" r="5"/><circle cx="560" cy="210" r="7" fill="#7fd3ff"/><circle cx="520" cy="90" r="6" fill="#7fd3ff"/><circle cx="590" cy="350" r="4"/><circle cx="120" cy="300" r="3"/><circle cx="650" cy="470" r="3"/><circle cx="90" cy="90" r="3"/></g>
+                                <g fill="#cfe6ff" font-family="Roboto,sans-serif" font-size="22"><text x="262" y="112">Betelgeuse</text><text x="406" y="388">Rigel</text><text x="456" y="96" fill="#7fd3ff">Cástor</text><text x="568" y="236" fill="#7fd3ff">Pólux</text></g>
+                            </svg>
+                        @endif
+                        <span class="ev-obj__n" aria-hidden="true">{{ str_pad($n + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                        <div class="ev-obj__body"><span class="ev-obj__tag">{{ $tag }}</span><h4>{{ $t }}</h4><p>{{ $d }}</p></div>
+                    </article>
+                @endforeach
+            </div>
         </div>
+        <div class="ev-rail-bar" aria-hidden="true"><i id="evRailBar"></i></div>
 
         <div class="ev-feature" data-reveal>
-            <figure class="ev-photo"><img src="{{ $img('teotihuacan-sol') }}" alt="Pirámide del Sol en Teotihuacán bajo un cielo despejado" width="1400" height="917" loading="lazy"><figcaption>Pirámide del Sol, Teotihuacán · imagen ilustrativa</figcaption></figure>
+            <figure class="ev-photo"><img src="{{ $img('teotihuacan-sol') }}" alt="Pirámide del Sol en Teotihuacán bajo un cielo despejado" width="1400" height="917" loading="lazy"><figcaption><b>Pirámide del Sol</b><span>Teotihuacán · imagen ilustrativa</span></figcaption></figure>
             <div>
                 <p class="ev-eyebrow">Mesoamérica</p>
                 <h3>Teotihuacán y el cielo</h3>
@@ -390,7 +394,7 @@
             </div>
             <figure class="ev-photo ev-photo--tilt" data-reveal style="--d:.15s">
                 <img src="{{ $img('teotihuacan-calzada') }}" alt="Zona arqueológica de Teotihuacán a pocos minutos del hotel" width="1400" height="949" loading="lazy">
-                <figcaption>Teotihuacán, a pocos minutos · imagen ilustrativa</figcaption>
+                <figcaption><b>Teotihuacán, a pocos minutos</b><span>Zona arqueológica · imagen ilustrativa</span></figcaption>
             </figure>
         </div>
         <ul class="ev-amen" data-reveal>
@@ -401,7 +405,7 @@
             <li>{!! $icon('car') !!}<b>Estacionamiento</b><span>$60 por día; se paga directamente en el hotel. Tu coche queda resguardado.</span></li>
             <li>{!! $icon('flame') !!}<b>Fogatas</b><span>Área controlada y separada de casas de campaña y telescopios.</span></li>
         </ul>
-        <figure class="ev-photo ev-photo--wide" data-reveal><img src="{{ $img('campfire') }}" alt="Fogata encendida de noche" width="1000" height="666" loading="lazy"><figcaption>Fogata en área controlada, lejos de los telescopios · imagen ilustrativa</figcaption></figure>
+        <figure class="ev-photo ev-photo--wide" data-reveal><img src="{{ $img('campfire') }}" alt="Fogata encendida de noche" width="1000" height="666" loading="lazy"><figcaption><b>La fogata</b><span>Área controlada, lejos de los telescopios · imagen ilustrativa</span></figcaption></figure>
     </div>
 </section>
 
@@ -593,9 +597,28 @@
         show(0);
     }
 
-    // Carrusel de objetos
+    // Carrusel de objetos: flechas, arrastre con el mouse, contador y barra de avance
     var rail = document.getElementById('evRail');
-    if (rail) { [].slice.call(document.querySelectorAll('[data-rail]')).forEach(function (b) { b.addEventListener('click', function () { rail.scrollBy({ left: parseInt(b.getAttribute('data-rail'), 10) * Math.min(rail.clientWidth * .8, 420), behavior: reduce ? 'auto' : 'smooth' }); }); }); }
+    if (rail) {
+        var cards = [].slice.call(rail.children), bar = document.getElementById('evRailBar'), cnt = document.getElementById('evRailCount'), wrap = document.getElementById('evRailWrap');
+        var prev = document.querySelector('[data-rail="-1"]'), next = document.querySelector('[data-rail="1"]');
+        var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+        var upd = function () {
+            var max = rail.scrollWidth - rail.clientWidth, x = rail.scrollLeft;
+            bar.style.transform = 'scaleX(' + (max > 0 ? Math.max(.08, Math.min(1, (x + rail.clientWidth * .5) / rail.scrollWidth + .0)) : 1) + ')';
+            var mid = x + rail.clientWidth / 2, idx = 0, best = 1e9; cards.forEach(function (c, i) { var d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - rail.offsetLeft - mid); if (d < best) { best = d; idx = i; } });
+            cnt.textContent = pad(x >= max - 4 ? cards.length : idx + 1) + ' / ' + pad(cards.length);
+            prev.disabled = x <= 4; next.disabled = x >= max - 4; wrap.classList.toggle('at-start', x <= 4); wrap.classList.toggle('at-end', x >= max - 4);
+        };
+        var step = function (dir) { rail.scrollBy({ left: dir * (cards[0].offsetWidth + 20), behavior: reduce ? 'auto' : 'smooth' }); };
+        prev.addEventListener('click', function () { step(-1); }); next.addEventListener('click', function () { step(1); });
+        rail.addEventListener('scroll', function () { requestAnimationFrame(upd); }, { passive: true }); addEventListener('resize', upd); upd();
+        rail.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight') { e.preventDefault(); step(1); } if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); } });
+        var down = false, sx = 0, sl = 0, moved = 0;
+        rail.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse') return; down = true; moved = 0; sx = e.clientX; sl = rail.scrollLeft; rail.classList.add('is-drag'); });
+        addEventListener('pointermove', function (e) { if (!down) return; moved = Math.abs(e.clientX - sx); rail.scrollLeft = sl - (e.clientX - sx); });
+        addEventListener('pointerup', function () { if (!down) return; down = false; rail.classList.remove('is-drag'); });
+    }
 
     // Aparición suave de lo que entra a la vista + constelaciones que se dibujan + cifras que cuentan
     var root = document.documentElement;
