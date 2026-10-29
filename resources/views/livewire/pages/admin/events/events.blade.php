@@ -46,6 +46,7 @@
                 <div><label for="ev-offline">Reserva en efectivo/SPEI (horas)</label><input id="ev-offline" type="number" min="1" class="form-control" wire:model="f.offline_hold_hours"></div>
             </div>
             <label class="hz-ct__check"><input type="checkbox" wire:model="f.sales_enabled"> <span><b>Activar las ventas</b> (interruptor maestro: sin políticas ni precio la página sigue mostrando «Próximamente»)</span></label>
+            <label class="hz-ct__check"><input type="checkbox" wire:model="f.noindex"> <span><b>No indexar</b> (pide a Google que no muestre el evento ni sus políticas, y los saca del mapa del sitio). Déjalo activo hasta que el cliente apruebe; desactívalo para publicar y solicita la indexación en Search Console.</span></label>
             <label class="hz-ct__check"><input type="checkbox" wire:model="f.redirect_events_index"> <span>Que <code>/eventos</code> lleve directo a este evento (redirección 302, mientras sea el único)</span></label>
 
             <h3>Descuentos <small>(se suman si aplican los dos; apagados por defecto)</small></h3>

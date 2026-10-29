@@ -42,7 +42,7 @@ class SeedAstrofestEvent extends Command
                 'early_bird' => ['enabled' => false, 'label' => 'Preventa', 'percent' => 15, 'starts_at' => null, 'ends_at' => '2026-10-31'],
                 'group' => ['enabled' => false, 'label' => 'Descuento por grupo', 'percent' => 10, 'min_qty' => 4, 'starts_at' => null, 'ends_at' => null],
             ],
-            'content' => ['minors_age' => 6],
+            'content' => ['minors_age' => 6, 'noindex' => true],   // sin indexar hasta que el cliente apruebe
             'redirect_events_index' => true,
         ]);
 

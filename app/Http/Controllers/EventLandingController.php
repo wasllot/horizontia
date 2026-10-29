@@ -48,14 +48,14 @@ class EventLandingController extends Controller
         $event = $this->resolve($slug);
         $this->rememberUtm($request, $event);
 
-        return view('events.show', $this->shared($event) + ['quote' => $this->sales->quote($event, 1)]);
+        return view('events.show', $this->shared($event) + ['noindex' => !$event->indexable(), 'quote' => $this->sales->quote($event, 1)]);
     }
 
     public function policies(string $slug)
     {
         $event = $this->resolve($slug);
 
-        return view('events.policies', $this->shared($event) + ['noindex' => !$event->policiesReady()]);
+        return view('events.policies', $this->shared($event) + ['noindex' => !$event->policiesReady() || !$event->indexable()]);
     }
 
     // ---- Carrito ----

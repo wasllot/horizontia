@@ -109,7 +109,7 @@ INSERT INTO `events` (`slug`, `name`, `status`, `start_at`, `end_at`, `countdown
 SELECT 'astrofest-geminidas-2026', 'Astrofest® Gemínidas 2026', 'published', '2026-12-12 21:00:00', '2026-12-13 19:00:00', '2026-12-01 06:00:00',
        'Club Campestre Teotihuacán', 'Estado de México', 'Autopista México–Tuxpan, salida km 27, 55851 San Martín de las Pirámides, Méx.', '+52 55 4766 8637', 'https://clubcampestreteotihuacan.com/', 1740.00, 16.00, 10, 0, 45, 72,
        '{"early_bird":{"enabled":false,"label":"Preventa","percent":15,"starts_at":null,"ends_at":"2026-10-31"},"group":{"enabled":false,"label":"Descuento por grupo","percent":10,"min_qty":4,"starts_at":null,"ends_at":null}}',
-       '{"minors_age":6}', 1, NOW(), NOW()
+       '{"minors_age":6,"noindex":true}', 1, NOW(), NOW()
 WHERE NOT EXISTS (SELECT 1 FROM `events` WHERE `slug` = 'astrofest-geminidas-2026');
 
 -- Registro en `migrations` (un lote nuevo; no duplica si ya estaba)

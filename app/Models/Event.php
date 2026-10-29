@@ -91,6 +91,12 @@ class Event extends Model
         return $path ? asset($path) : null;
     }
 
+    /** Buscadores: un evento puede quedar «No indexar» mientras el cliente lo aprueba. Si no se ha definido, es indexable. */
+    public function indexable(): bool
+    {
+        return data_get($this->content, 'noindex') !== true;
+    }
+
     public function policiesReady(): bool
     {
         return trim(strip_tags((string) $this->policies_html)) !== '';

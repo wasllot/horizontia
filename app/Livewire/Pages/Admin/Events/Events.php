@@ -51,7 +51,7 @@ class Events extends Component
     public function create(): void
     {
         $this->resetForm();
-        $this->f = ['name' => '', 'slug' => '', 'status' => Event::DRAFT, 'price' => '', 'iva_rate' => 16, 'max_per_order' => 10, 'hold_minutes' => 45, 'offline_hold_hours' => 72, 'sales_enabled' => false, 'redirect_events_index' => false, 'minors_age' => 6];
+        $this->f = ['name' => '', 'slug' => '', 'status' => Event::DRAFT, 'price' => '', 'iva_rate' => 16, 'max_per_order' => 10, 'hold_minutes' => 45, 'offline_hold_hours' => 72, 'sales_enabled' => false, 'redirect_events_index' => false, 'minors_age' => 6, 'noindex' => true];
         $this->d = $this->emptyDiscounts();
         $this->formOpen = true;
     }
@@ -75,7 +75,7 @@ class Events extends Component
             'price' => (string) (float) $e->price, 'iva_rate' => (string) (float) $e->iva_rate, 'capacity' => $e->capacity === null ? '' : (string) $e->capacity, 'max_per_order' => $e->max_per_order,
             'sales_enabled' => (bool) $e->sales_enabled, 'sales_open_at' => $this->localInput($e->sales_open_at), 'sales_close_at' => $this->localInput($e->sales_close_at),
             'hold_minutes' => $e->hold_minutes, 'offline_hold_hours' => $e->offline_hold_hours, 'redirect_events_index' => (bool) $e->redirect_events_index,
-            'minors_age' => (int) (data_get($e->content, 'minors_age') ?: 6), 'policies_html' => (string) $e->policies_html,
+            'minors_age' => (int) (data_get($e->content, 'minors_age') ?: 6), 'noindex' => data_get($e->content, 'noindex') === true, 'policies_html' => (string) $e->policies_html,
         ];
         $d = $this->emptyDiscounts();
         foreach (['early_bird', 'group'] as $k) {
@@ -133,7 +133,7 @@ class Events extends Component
             data_set($nested, $k, $v);
         }
         $existing = $this->editingId ? Event::findOrFail($this->editingId)->content : [];
-        $content = array_merge((array) $existing, ['minors_age' => (int) $this->f['minors_age'], 'text' => $nested, 'hide' => array_filter($this->hide)]);
+        $content = array_merge((array) $existing, ['minors_age' => (int) $this->f['minors_age'], 'noindex' => (bool) ($this->f['noindex'] ?? false), 'text' => $nested, 'hide' => array_filter($this->hide)]);
 
         $discounts = [];
         foreach ($this->d as $k => $r) {

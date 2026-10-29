@@ -393,6 +393,19 @@ class EventTicketSalesTest extends TestCase
         $this->assertSame(['hola@astrofest.test'], collect($mail->envelope()->replyTo)->map->address->all());
     }
 
+    public function test_noindex_switch_hides_the_event_from_search_engines_and_the_sitemap(): void
+    {
+        $e = $this->event(['content' => ['noindex' => true]]);
+        $this->get($e->url())->assertOk()->assertSee('noindex, nofollow', false);
+        $this->get($e->url('politicas'))->assertOk()->assertSee('noindex, nofollow', false);
+        $sitemap = $this->get('/sitemap.xml')->getContent();
+        $this->assertStringNotContainsString($e->url(), $sitemap);
+
+        $e->update(['content' => ['noindex' => false]]);
+        $this->get($e->url())->assertSee('index, follow', false);
+        $this->assertStringContainsString($e->url(), $this->get('/sitemap.xml')->getContent());
+    }
+
     public function test_finished_event_shows_edition_finished_and_does_not_sell(): void
     {
         $e = $this->event(['status' => Event::FINISHED]);
