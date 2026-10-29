@@ -244,7 +244,7 @@ test('diseño tonal: menú agrupado, filas en bloques sin bordes y tarjeta por p
     try {
         await s.page.goto(BASE + '/admin/usuarios', { waitUntil: 'networkidle' });
         const headings = await s.page.$$eval('.hz-nav__heading', (h) => h.map((x) => x.textContent.trim()));
-        assert.deepEqual(headings, ['Academia', 'Contenido', 'Negocio', 'Sistema'], 'el menú debe estar agrupado');
+        assert.deepEqual(headings, ['Aprendizaje', 'Contenido', 'Negocio', 'Sistema'], 'el menú debe estar agrupado');
         // Una fila es un bloque tonal: fondo distinto del de la tarjeta, sin borde visible y esquinas redondeadas.
         const row = await s.page.evaluate(() => {
             const td = document.querySelector('table tbody tr td');

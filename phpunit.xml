@@ -20,6 +20,12 @@
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
+        <!-- La suite prueba la plataforma completa; las pruebas de «primera etapa» apagan estos interruptores a propósito. -->
+        <env name="ACADEMY_PUBLIC_COURSES" value="true"/>
+        <env name="ACADEMY_PUBLIC_HOW_IT_WORKS" value="true"/>
+        <env name="ACADEMY_PUBLIC_FAQ" value="true"/>
+        <env name="ACADEMY_HERO_BUTTONS" value="true"/>
+        <env name="ACADEMY_INSTRUCTOR_REQUESTS" value="true"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_STORE" value="array"/>
         <!-- <env name="DB_CONNECTION" value="sqlite"/> -->

@@ -66,7 +66,7 @@
                 @endif
             </ul>
 
-            <p class="ht-contact__faq">¿Buscas algo rápido? Quizá ya está en las <a href="{{ route('legal.faq') }}">preguntas frecuentes</a>. @if (\App\Services\AccessRequestService::enabled())Y si quieres entrar a la academia, <a href="{{ route('access.request') }}">solicita tu acceso</a>.@endif</p>
+            <p class="ht-contact__faq">@if (config('academy.public_faq'))¿Buscas algo rápido? Quizá ya está en las <a href="{{ route('legal.faq') }}">preguntas frecuentes</a>. @else¿Tienes una duda? Escríbenos y te respondemos en menos de 24 horas hábiles. @endif@if (\App\Services\AccessRequestService::enabled())Y si quieres entrar a la plataforma, <a href="{{ route('access.request') }}">solicita tu acceso</a>.@endif</p>
         </div>
 
         <div class="ht-contact__card ht-rise" style="--d: .12s">

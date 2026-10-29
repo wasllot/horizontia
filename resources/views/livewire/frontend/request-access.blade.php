@@ -2,11 +2,11 @@
     <div class="container">
         <div class="row align-items-start">
             <div class="col-lg-5 mb-5 mb-lg-0">
-                <h2 style="font-size: 2.3rem; font-weight: 800; color: #000; margin-bottom: 18px;">Pide tu acceso a la academia</h2>
+                <h2 style="font-size: 2.3rem; font-weight: 800; color: #000; margin-bottom: 18px;">Pide tu acceso a la plataforma</h2>
                 <p style="font-size: 1.08rem; color: #555; line-height: 1.6; margin-bottom: 26px;">Para cuidar la calidad y la seguridad de todos, las cuentas se crean después de revisar cada solicitud. Cuéntanos quién eres y te respondemos por correo.</p>
 
                 <ol style="list-style: none; padding: 0; margin: 0; display: grid; gap: 18px;">
-                    @foreach ([['1', 'Envía tu solicitud', 'Elige si quieres aprender o enseñar y llena el formulario.'], ['2', 'La revisamos', 'Normalmente en uno o dos días hábiles; te avisamos por correo.'], ['3', 'Crea tu contraseña', 'Con el enlace del correo activas tu cuenta y entras.']] as [$n, $t, $d])
+                    @foreach ([['1', 'Envía tu solicitud', ($instructorOn ? 'Elige si quieres aprender o enseñar y llena el formulario.' : 'Llena el formulario con tus datos de contacto.')], ['2', 'La revisamos', 'Normalmente en uno o dos días hábiles; te avisamos por correo.'], ['3', 'Crea tu contraseña', 'Con el enlace del correo activas tu cuenta y entras.']] as [$n, $t, $d])
                         <li style="display: flex; gap: 14px; align-items: flex-start;">
                             <span style="flex: none; width: 38px; height: 38px; border-radius: 50%; background: #F4C430; color: #000; display: grid; place-items: center; font-weight: 800;">{{ $n }}</span>
                             <span><strong style="display: block; color: #000; font-size: 1.05rem;">{{ $t }}</strong><span style="color: #666;">{{ $d }}</span></span>
@@ -27,6 +27,7 @@
                         </div>
                     @else
                         <form wire:submit.prevent="submit" class="am-themeform" novalidate>
+                            @if ($instructorOn)
                             <fieldset style="border: 0; padding: 0; margin: 0 0 22px;">
                                 <legend style="font-weight: 700; color: #000; font-size: 1rem; margin-bottom: 10px;">¿Qué quieres hacer?</legend>
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -40,6 +41,7 @@
                                     @endforeach
                                 </div>
                             </fieldset>
+                            @endif
 
                             <div class="row">
                                 <div class="col-md-6 form-group">

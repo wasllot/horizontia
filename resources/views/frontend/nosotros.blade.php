@@ -3,6 +3,10 @@
     $refundDays = config('academy.refund_days');
     $banner = app(\App\Services\PageBannerService::class)->system('nosotros');
     $accessOn = \App\Services\AccessRequestService::enabled();
+    $showCourses = (bool) config('academy.public_courses');   // primera etapa: qué partes ve el público todavía (config/academy.php)
+    $showHow = (bool) config('academy.public_how_it_works');
+    $showFaq = (bool) config('academy.public_faq');
+    $instructorOn = $accessOn && config('academy.instructor_requests');
     $requestUrl = $accessOn ? route('access.request') : route('login');
     $stats = \Illuminate\Support\Facades\Cache::remember('home_stats', 600, fn () => [
         'courses' => \Modules\Courses\Models\Course::where('status', \Modules\Courses\Models\Course::STATUSES['active'])->count(),
@@ -29,11 +33,13 @@
                 <div class="ht-reveal">
                     <span class="ab-eyebrow">Quiénes somos</span>
                     <h2>Aprender también es avanzar con calma</h2>
-                    <p><strong>{{ $name }}</strong> es una academia en línea privada: cursos diseñados por instructores especialistas, con contenido en video, lecturas, ejercicios y evaluaciones, y certificado al terminar.</p>
+                    <p><strong>{{ $name }}</strong> es una plataforma de aprendizaje en línea privada: cursos diseñados por instructores especialistas, con contenido en video, lecturas, ejercicios y evaluaciones, y certificado al terminar.</p>
                     <p>Creemos que el talento florece cuando la mente está en calma. Por eso combinamos contenido práctico con un ritmo humano: sin prisas, con acompañamiento y a tu medida.</p>
                     <div class="ab-stats">
+                        @if ($showCourses)
                         <div><b data-count="{{ max(1, (int) $stats['courses']) }}">{{ $stats['courses'] }}</b><span>cursos disponibles</span></div>
                         <div><b data-count="{{ max(1, (int) $stats['instructors']) }}">{{ $stats['instructors'] }}</b><span>instructores</span></div>
+                        @endif
                         <div><b>100&nbsp;%</b><span>a tu ritmo</span></div>
                     </div>
                 </div>
@@ -50,7 +56,7 @@
             <div class="ab-wrap">
                 <div class="ab-head ht-reveal">
                     <span class="ab-eyebrow">Lo que nos distingue</span>
-                    <h2>Una academia pensada para que sí termines lo que empiezas</h2>
+                    <h2>Una plataforma pensada para que sí termines lo que empiezas</h2>
                     <p class="ab-lead">Menos ruido, más práctica y alguien que te acompaña en cada paso.</p>
                 </div>
                 <div class="ab-grid3">
@@ -78,6 +84,7 @@
         </section>
 
         {{-- 3. Recorrido por la plataforma (mockups) --}}
+        @if ($showHow)
         <section class="ab-sec ab-tour" id="como-funciona" aria-labelledby="ab-tour-title">
             <div class="ab-wrap">
                 <div class="ab-head ht-reveal">
@@ -261,6 +268,7 @@
                 </div>
             </div>
         </section>
+        @endif
 
         {{-- 4. Dentro de la plataforma (bento con mini-mockups) --}}
         <section class="ab-sec ab-sec--soft" aria-labelledby="ab-bento-title">
@@ -344,7 +352,12 @@
                         <li><span class="mk-ico"><x-about.icon name="chart" :size="18" /></span><div><strong>Mira cómo avanzan tus alumnos</strong><span>Inscripciones, avance y dudas pendientes, en un tablero claro.</span></div></li>
                         <li><span class="mk-ico"><x-about.icon name="chat" :size="18" /></span><div><strong>Acompaña sin esfuerzo</strong><span>Responde en la comunidad del curso y por mensajes directos.</span></div></li>
                     </ul>
-                    <a class="ab-btn ab-btn--ghost" href="{{ $accessOn ? route('access.request', ['como' => 'instructor']) : route('contacto') }}">{{ $accessOn ? 'Quiero ser instructor' : 'Escríbenos' }} <x-about.icon name="arrow" :size="18" /></a>
+                    @if ($instructorOn)
+                        <a class="ab-btn ab-btn--ghost" href="{{ route('access.request', ['como' => 'instructor']) }}">Quiero ser instructor <x-about.icon name="arrow" :size="18" /></a>
+                    @else
+                        <p style="color: var(--muted); margin-bottom: 14px">Los instructores se integran por invitación: si te interesa colaborar, escríbenos.</p>
+                        <a class="ab-btn ab-btn--ghost" href="{{ route('contacto') }}">Escríbenos <x-about.icon name="arrow" :size="18" /></a>
+                    @endif
                 </div>
                 <div class="ht-reveal" style="--d: .12s">
                     <div class="mk">
@@ -385,6 +398,7 @@
         </section>
 
         {{-- 7. Preguntas frecuentes --}}
+        @if ($showFaq)
         <section class="ab-sec" aria-labelledby="ab-faq-title">
             <div class="ab-wrap">
                 <div class="ab-head ht-reveal">
@@ -393,7 +407,7 @@
                 </div>
                 <div class="ab-faq ht-reveal">
                     @foreach ([
-                        ['¿Puedo registrarme por mi cuenta?', $accessOn ? 'No. Por ser una academia privada, cada persona pide su acceso como estudiante o instructor. Revisamos la solicitud y, al aprobarla, te enviamos un correo para elegir tu contraseña.' : 'No. Por ser una academia privada, el equipo crea las cuentas. Escríbenos desde la página de contacto y te ayudamos.'],
+                        ['¿Puedo registrarme por mi cuenta?', $accessOn ? 'No. Por ser una plataforma privada, cada persona pide su acceso como estudiante o instructor. Revisamos la solicitud y, al aprobarla, te enviamos un correo para elegir tu contraseña.' : 'No. Por ser una plataforma privada, el equipo crea las cuentas. Escríbenos desde la página de contacto y te ayudamos.'],
                         ['¿Cómo y en qué moneda pago?', 'Pagas en pesos mexicanos (MXN) con Mercado Pago: tarjeta, efectivo o transferencia. Tu curso se activa cuando se aprueba el pago.'],
                         ['¿Qué pasa si el curso no es lo que esperaba?', 'Puedes solicitar un reembolso dentro de los primeros ' . $refundDays . ' días, según las condiciones de nuestra política de reembolsos.'],
                         ['¿Recibo un certificado?', 'Sí. Al completar un curso en línea recibes un certificado con código único y una página pública para verificarlo.'],
@@ -406,15 +420,16 @@
                 <p class="ab-more"><a class="ab-btn ab-btn--ghost" href="{{ route('legal.faq') }}">Ver todas las preguntas <x-about.icon name="arrow" :size="18" /></a></p>
             </div>
         </section>
+        @endif
 
         {{-- 8. Llamado a la acción --}}
         <div class="ab-cta-wrap">
             <section class="ab-cta ht-reveal">
                 <h2>¿Listo para aprender a tu ritmo?</h2>
-                <p>Explora el catálogo y empieza hoy. Si tienes dudas, estamos a un mensaje de distancia.</p>
+                <p>{{ $showCourses ? 'Explora el catálogo y empieza hoy. ' : '' }}Si tienes dudas, estamos a un mensaje de distancia.</p>
                 <div class="ab-cta__btns">
-                    <a class="ab-btn ab-btn--gold" href="{{ route('courses.search-courses') }}">Ver cursos <x-about.icon name="arrow" :size="18" /></a>
-                    @if ($accessOn)<a class="ab-btn ab-btn--line" href="{{ route('access.request') }}">Solicitar acceso</a>@endif
+                    @if ($showCourses)<a class="ab-btn ab-btn--gold" href="{{ route('courses.search-courses') }}">Ver cursos <x-about.icon name="arrow" :size="18" /></a>@endif
+                    @if ($accessOn)<a class="ab-btn {{ $showCourses ? 'ab-btn--line' : 'ab-btn--gold' }}" href="{{ route('access.request') }}">Solicitar acceso</a>@endif
                     <a class="ab-btn ab-btn--line" href="{{ route('contacto') }}">Contacto</a>
                 </div>
             </section>

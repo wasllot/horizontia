@@ -19,7 +19,7 @@
     <header class="hz-seo__head">
         <div>
             <h2>Ajustes</h2>
-            <p>Configura tu academia. Cada página se guarda por separado con su botón «Guardar cambios».</p>
+            <p>Configura tu plataforma. Cada página se guarda por separado con su botón «Guardar cambios».</p>
         </div>
         @if (Route::has('admin.config-transfer'))
             <a class="hz-btn hz-btn--secondary hz-btn--sm" href="{{ route('admin.config-transfer') }}">Exportar / importar</a>

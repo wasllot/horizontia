@@ -1,3 +1,4 @@
+@props(['quote' => 'welcome'])
 <link rel="stylesheet" href="{{ asset('css/auth.css') }}?v={{ @filemtime(public_path('css/auth.css')) }}">
 <div class="am-main-login ht-auth">
     <aside class="ht-auth__aside" style="--ht-auth-img: url('{{ webpAsset('images/nuevo/sign-in-horizontia.jpg') }}')">
@@ -6,9 +7,8 @@
         </div>
 
         <div class="ht-auth__aside-bottom">
-            <div class="ht-auth__title">
-                <h2>{{ __('auth.login_left_h2') }}</h2>
-                <span>{{ __('auth.login_left_span') }}</span>
+            <div class="ht-auth__title ht-auth__title--quote">
+                <h2>{{ __($quote === 'login' ? 'auth.quote_login' : 'auth.quote_welcome') }}</h2>
             </div>
 
             {{-- Simulación (decorativa) de lo que verás dentro: retomar un curso con tu avance guardado. --}}

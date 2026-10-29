@@ -281,7 +281,7 @@ class SearchCourses extends Component
             'suggestion' => $suggestion,
         ] + $this->facets())->extends('layouts.frontend-app', [
             'pageTitle'       => 'Catálogo de cursos',
-            'pageDescription' => 'Explora los cursos en línea de la academia: filtra por categoría, nivel, duración o precio y empieza a aprender hoy.',
+            'pageDescription' => 'Explora los cursos en línea de la plataforma: filtra por categoría, nivel, duración o precio y empieza a aprender hoy.',
         ]);
     }
 

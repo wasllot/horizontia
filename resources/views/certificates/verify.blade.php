@@ -114,7 +114,7 @@
     <section class="sec faq" aria-labelledby="faq">
         <h2 id="faq" class="serif">Preguntas frecuentes</h2>
         <details><summary>No encuentro mi código o no funciona</summary><p>Revisa que no haya espacios de más y que los caracteres coincidan. Si el problema continúa, escríbenos y lo revisamos.</p></details>
-        <details><summary>¿Qué significa que un certificado esté revocado?</summary><p>Que la academia lo dejó sin efecto (por ejemplo, si se emitió por error). La página lo indica con el motivo y deja de ser un comprobante válido.</p></details>
+        <details><summary>¿Qué significa que un certificado esté revocado?</summary><p>Que la plataforma lo dejó sin efecto (por ejemplo, si se emitió por error). La página lo indica con el motivo y deja de ser un comprobante válido.</p></details>
         <details><summary>¿Quién puede consultar un certificado?</summary><p>Cualquier persona con el código, sin necesidad de iniciar sesión. Por eso mostramos únicamente los datos del documento, nunca información de contacto.</p></details>
     </section>
 </main>

@@ -1,6 +1,8 @@
 <main class="tb-main am-dispute-system am-invoice-system">
     <style>
-        .am-invoice-system .inv-item { max-width: 250px; }
+        .am-invoice-system .am-disputelist { max-height: none; overflow: visible; }   /* las filas con el título del curso son más altas: la lista crece en vez de mostrar una barra interna */
+        .am-invoice-system .inv-item { max-width: 200px; }
+        .am-invoice-system .tb-table th, .am-invoice-system .tb-table td { padding-inline: 10px; }
         .am-invoice-system .inv-item strong { display: block; font-weight: 600; color: #14213d; line-height: 1.3; overflow-wrap: anywhere; }
         .am-invoice-system .inv-item small, .am-invoice-system .inv-muted { color: #5f6a80; }
         .am-invoice-system .inv-free { display: inline-block; padding: 2px 10px; border-radius: 99px; background: #e3f6ea; color: #14703b; font-style: normal; font-weight: 700; font-size: .85rem; }

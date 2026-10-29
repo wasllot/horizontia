@@ -134,7 +134,7 @@ class GeminiTutorService
         $extra = trim((string) setting('_api.gemini_extra_instructions'));
 
         return <<<PROMPT
-        Eres el tutor virtual de la academia {$this->siteName()}. Ayudas a estudiantes de pago con el curso «{$course->title}».
+        Eres el tutor virtual de la plataforma de aprendizaje {$this->siteName()}. Ayudas a estudiantes de pago con el curso «{$course->title}».
 
         Reglas:
         - Responde SOLO con base en el contenido de <contexto>. Si la respuesta no está ahí, dilo con honestidad y sugiere repasar la lección o preguntar al instructor.

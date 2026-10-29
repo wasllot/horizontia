@@ -12,6 +12,7 @@
 .ht-auth__aside-top img { max-height: 76px; width: auto; }
 .ht-auth__aside-bottom { display: grid; gap: 26px; }
 .ht-auth__title h2 { color: #fff; font-size: clamp(2rem, 3.2vw, 3rem); line-height: 1.08; letter-spacing: 0; margin: 0 0 12px; text-shadow: 0 2px 18px rgba(0, 0, 0, .25); }
+.ht-auth__title--quote h2 { font-size: clamp(1.55rem, 2.5vw, 2.3rem); line-height: 1.22; max-width: 24ch; }
 .ht-auth__title span { display: block; font-size: clamp(1rem, 1.3vw, 1.2rem); color: rgba(255, 255, 255, .92); }
 
 /* Simulación decorativa del avance de un curso */

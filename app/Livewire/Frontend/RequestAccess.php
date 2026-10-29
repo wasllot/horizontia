@@ -22,19 +22,19 @@ class RequestAccess extends Component
     public function mount(): void
     {
         abort_unless(AccessRequestService::enabled(), 404);
-        $this->type = request()->query('como') === 'instructor' ? 'tutor' : 'student';
+        $this->type = (request()->query('como') === 'instructor' && AccessRequestService::instructorRequestsEnabled()) ? 'tutor' : 'student';
     }
 
     public function choose(string $type): void
     {
-        $this->type = $type === 'tutor' ? 'tutor' : 'student';
+        $this->type = ($type === 'tutor' && AccessRequestService::instructorRequestsEnabled()) ? 'tutor' : 'student';
         $this->resetValidation();
     }
 
     public function submit(AccessRequestService $service): void
     {
         $rules = [
-            'type' => 'required|in:student,tutor',
+            'type' => AccessRequestService::instructorRequestsEnabled() ? 'required|in:student,tutor' : 'required|in:student',
             'name' => 'required|string|min:3|max:120',
             'email' => 'required|email:rfc|max:150',
             'phone' => 'nullable|string|max:30',
@@ -69,6 +69,6 @@ class RequestAccess extends Component
 
     public function render()
     {
-        return view('livewire.frontend.request-access');
+        return view('livewire.frontend.request-access', ['instructorOn' => AccessRequestService::instructorRequestsEnabled()]);
     }
 }

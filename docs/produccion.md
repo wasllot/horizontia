@@ -58,3 +58,6 @@ Reembolsos: **Admin → Inscripciones → icono de reembolso** (con Mercado Pago
 6. **Cursos y rutas**: los cursos no viajan en la exportación; créalos (o restaura la base de datos) antes de importar *Rutas de aprendizaje* o cupones limitados a cursos.
 7. **Credenciales**: Mercado Pago, Gemini, Zoom, WhatsApp (Meta) y almacenamiento se capturan a mano en el sitio de producción (Ajustes). No las exportes.
 8. **Verifica**: Administración → Estado del sistema (planificador y cola con latido reciente) y `php artisan academy:preflight`. Revisa `/nosotros`, `/contacto`, `/solicitar-acceso`, `/iniciar-sesion` y una compra de prueba.
+
+## 9. Primera etapa: lo que se muestra al público
+Agrega al `.env` del servidor (ya vienen apagados por defecto, así que solo hace falta si quieres encender algo): `ACADEMY_PUBLIC_COURSES`, `ACADEMY_PUBLIC_HOW_IT_WORKS`, `ACADEMY_PUBLIC_FAQ`, `ACADEMY_HERO_BUTTONS` y `ACADEMY_INSTRUCTOR_REQUESTS` (ver `docs/funciones.md` §16). Define también `ACADEMY_LEGAL_NAME=Horizontia`. Para las categorías del cliente importa `database/sql/2026-10-29-categorias.sql` (phpMyAdmin) y limpia cachés.

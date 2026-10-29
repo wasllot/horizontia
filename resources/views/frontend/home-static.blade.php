@@ -4,6 +4,8 @@
     <div class="page-home-page ht-home">
         <!-- Section start -->
         @php
+            // Primera etapa de lanzamiento (config/academy.php): qué partes ve el público todavía.
+            $show = ['courses' => (bool) config('academy.public_courses'), 'how' => (bool) config('academy.public_how_it_works'), 'faq' => (bool) config('academy.public_faq'), 'hero' => (bool) config('academy.hero_buttons')];
             $requestUrl = \App\Services\AccessRequestService::enabled() ? route('access.request') : route('login');
             $homeStats = \Illuminate\Support\Facades\Cache::remember('home_stats', 600, fn () => [
                 'courses' => \Modules\Courses\Models\Course::where('status', \Modules\Courses\Models\Course::STATUSES['active'])->count(),
@@ -57,16 +59,22 @@
                             <h1>Aprende hoy para un futuro más <em>brillante</em></h1>
                             @if (isPrivateAcademy())
                                 <p class="ht-hero__lead">Cursos en línea con instructores expertos: aprende a tu ritmo, resuelve evaluaciones, obtén tu certificado y recibe ayuda de un tutor con IA.</p>
+                                @if ($show['hero'])
                                 <div class="ht-hero__btns">
+                                    @if ($show['courses'])
                                     <a href="{{ route('courses.search-courses') }}" class="am-btn ht-hero__btn ht-hero__btn--main" style="background-color: #fed304; color: #000;">VER CURSOS <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+                                    @endif
                                     @if (\App\Services\AccessRequestService::enabled())
                                         <a href="{{ $requestUrl }}" class="ht-hero__btn ht-hero__btn--ghost">Solicitar acceso</a>
                                     @endif
-                                    <a href="{{ route('how-it-works') }}" class="ht-hero__how">Cómo funciona</a>
+                                    @if ($show['how'])<a href="{{ route('how-it-works') }}" class="ht-hero__how">Cómo funciona</a>@endif
                                 </div>
-                                <ul class="ht-hero__proof" aria-label="La academia en cifras">
+                                @endif
+                                <ul class="ht-hero__proof" aria-label="La plataforma en cifras">
+                                    @if ($show['courses'])
                                     <li><b>{{ $homeStats['courses'] }}</b>cursos</li>
                                     <li><b>{{ $homeStats['instructors'] }}</b>instructores</li>
+                                    @endif
                                     <li><b>100&nbsp;%</b>a tu ritmo</li>
                                 </ul>
                             @else
@@ -77,7 +85,7 @@
                     </div>
                 </div>
             </div>
-            <a class="ht-hero__cue" href="#pasos" aria-label="Ir a la siguiente sección"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+            <a class="ht-hero__cue" href="{{ $show['how'] ? '#pasos' : '#que-ofrece' }}" aria-label="Ir a la siguiente sección"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
         </section>
 
         <!-- Banner Strip -->
@@ -114,6 +122,7 @@
             ];
         @endphp
 
+        @if ($show['how'])
         <!-- Pasos -->
         <section class="am-steps-section ht-steps2" id="pasos" aria-labelledby="ht-steps-title">
             <style>
@@ -177,9 +186,10 @@
                 </li>
             </ol>
         </section>
+        @endif
 
         <!-- Qué ofrece Horizontia -->
-        <section class="am-about-section ht-about" style="background-image: url('{{ webpAsset('images/nuevo/fondo-horizontia-amarillo.jpg') }}');">
+        <section class="am-about-section ht-about" id="que-ofrece" style="background-image: url('{{ webpAsset('images/nuevo/fondo-horizontia-amarillo.jpg') }}');">
             <style>
                 .ht-about { padding: 100px 0; background-size: cover; background-position: center; overflow: hidden; }
                 .ht-about__wrap { max-width: 1240px; margin: 0 auto; padding: 0 20px; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(24px, 4vw, 56px); align-items: center; }
@@ -212,15 +222,20 @@
             <div class="ht-about__wrap">
                 <div class="ht-about__card ht-reveal">
                     <h2>Qué ofrece Horizontia</h2>
-                    <p class="ht-about__lead">{{ isPrivateAcademy() ? 'Nuestra misión es ayudarte a alcanzar tus objetivos académicos y profesionales con cursos prácticos creados por instructores especialistas.' : 'Nuestra misión es conectarte con tutores expertos para que alcances tus objetivos.' }} Una plataforma intuitiva donde encuentras:</p>
+                    @if (isPrivateAcademy())
+                        <p class="ht-about__lead">Nuestro objetivo es crear cursos de calidad con los temas que atiendan las necesidades actuales de desarrollo humano, además de ciencia y cultura, ayudando a las personas a ser más conscientes y con herramientas para una vida mejor.</p>
+                        <p class="ht-about__lead" style="margin-top: -10px"><strong>Te ofrecemos una plataforma fácil de usar donde encontrarás:</strong></p>
+                    @else
+                        <p class="ht-about__lead">Nuestra misión es conectarte con tutores expertos para que alcances tus objetivos. Una plataforma intuitiva donde puedes encontrar:</p>
+                    @endif
                     <ul class="ht-about__list">
                         @php
                             $ico = fn ($d) => '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14213d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $d . '</svg>';
                             $features = isPrivateAcademy() ? [
-                                ['Cursos a tu ritmo', 'Videos, lecturas y ejercicios disponibles cuando tú quieras.', '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'],
-                                ['Evaluaciones y certificado', 'Mide tu avance y obtén un certificado verificable al terminar.', '<circle cx="12" cy="9" r="6"/><path d="M8.5 14.2 7 22l5-3 5 3-1.5-7.8"/>'],
-                                ['Tutor con IA', 'Resuelve dudas de cada lección con pistas y explicaciones.', '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>'],
-                                ['Pagos seguros', 'Paga con Mercado Pago: tarjeta, efectivo o transferencia.', '<rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/>'],
+                                ['Cursos autogestionables', 'Temas selectos con videos, secciones y actividades interactivas.', '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'],
+                                ['Sesiones grupales', 'Por videoconferencia, con tu instructor y tu grupo.', '<rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="m16 10.5 5-3v9l-5-3z"/>'],
+                                ['Webinars con expertos', 'Acceso a webinars de los diferentes temas.', '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'],
+                                ['Pagos seguros y verificados', 'Paga con Mercado Pago: tarjeta, efectivo o transferencia.', '<rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/>'],
                             ] : [
                                 ['Tutorías 1 a 1', 'Sesiones personalizadas adaptadas a tu ritmo.', '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'],
                                 ['Gran variedad de temas', 'Desde idiomas hasta desarrollo profesional.', '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'],
@@ -233,8 +248,10 @@
                         @endforeach
                     </ul>
                     <div class="ht-about__stats">
+                        @if ($show['courses'])
                         <div><b data-count="{{ max(1, (int) $homeStats['courses']) }}">{{ $homeStats['courses'] }}</b><span>cursos disponibles</span></div>
                         <div><b data-count="{{ max(1, (int) $homeStats['instructors']) }}">{{ $homeStats['instructors'] }}</b><span>instructores</span></div>
+                        @endif
                         <div><b>100&nbsp;%</b><span>a tu ritmo</span></div>
                     </div>
                     <a class="ht-about__cta" href="{{ $requestUrl }}">{{ \App\Services\AccessRequestService::enabled() ? 'Solicitar acceso' : 'Únete ahora' }} <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
@@ -299,9 +316,40 @@
                             <li>Cursos en línea, sesiones en vivo y talleres presenciales</li>
                             <li>Certificado verificable al terminar cada curso</li>
                         </ul>
-                        <a class="ht-split__cta" href="{{ \App\Services\AccessRequestService::enabled() ? route('access.request', ['como' => 'instructor']) : route('contacto') }}">Quiero enseñar en Horizontia →</a>
+                        @if (\App\Services\AccessRequestService::instructorRequestsEnabled())
+                            <a class="ht-split__cta" href="{{ route('access.request', ['como' => 'instructor']) }}">Quiero enseñar en Horizontia →</a>
+                        @else
+                            <a class="ht-split__cta" href="{{ route('contacto', ['asunto' => 'teach']) }}">Colabora con nosotros →</a>
+                        @endif
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- Temática Horizontia -->
+        <section class="ht-tem" aria-labelledby="ht-tem-title" style="background-image: url('{{ asset('images/design/new-sunburst-bg.jpg') }}');">
+            <style>
+                .ht-tem { position: relative; padding: var(--ht-pad, 90px) 0; background-size: cover; background-position: center; color: #fff; text-align: center; }
+                .ht-tem::before { content: ""; position: absolute; inset: 0; background: rgba(22, 22, 24, .86); }
+                .ht-tem .container { position: relative; z-index: 1; }
+                .ht-tem__ico { display: inline-flex; width: 64px; height: 64px; align-items: center; justify-content: center; color: #fff; margin-bottom: 6px; }
+                .ht-tem h2 { margin: 0 0 8px; color: #fff; font-size: var(--ht-h2, clamp(1.9rem, 3.8vw, 2.7rem)); }
+                .ht-tem__rule { display: block; width: 64px; height: 2px; margin: 0 auto 30px; background: #fed304; border-radius: 2px; }
+                .ht-tem ul { list-style: none; margin: 0 auto; padding: 0; max-width: 880px; display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 16px; }
+                .ht-tem li { display: inline-flex; align-items: center; gap: 12px; padding: 14px 22px; border-radius: 999px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(254, 211, 4, .35); color: #fed304; font-size: 1.12rem; font-weight: 600; transition: transform .25s, background .25s; }
+                .ht-tem li::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #fed304; flex: 0 0 10px; }
+                .ht-tem li:hover { transform: translateY(-3px); background: rgba(255, 255, 255, .14); }
+                @media (max-width: 600px) { .ht-tem li { font-size: 1rem; padding: 12px 18px; } }
+            </style>
+            <div class="container">
+                <span class="ht-tem__ico" aria-hidden="true"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H12v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H12v16h5.5A2.5 2.5 0 0 1 20 21.5z"/></svg></span>
+                <h2 id="ht-tem-title" class="ht-reveal">Temática Horizontia</h2>
+                <span class="ht-tem__rule" aria-hidden="true"></span>
+                <ul class="ht-reveal" style="--d: .1s">
+                    @foreach (['Bienestar y estilo de vida', 'Desarrollo Profesional y Laboral', 'Tecnología con aplicación práctica', 'Emprendimiento y negocios', 'Ciencias y artes'] as $theme)
+                        <li>{{ $theme }}</li>
+                    @endforeach
+                </ul>
             </div>
         </section>
 
@@ -317,7 +365,9 @@
               ->withAvg('ratings', 'rating')
               ->withCount('enrollments')
               ->latest()->take(12)->get();
+            if (!$show['courses']) { $homeCourses = collect(); }
         @endphp
+        @if ($show['courses'])
         <section class="ht-cc" aria-labelledby="ht-cc-title" style="background-image: url('{{ asset('images/design/new-sunburst-bg.jpg') }}');">
             <style>
                 .ht-cc { background-color: #1a1a1a; background-size: cover; background-position: center; padding: 84px 0 90px; color: #fff; }
@@ -437,6 +487,7 @@
                 @endif
             </div>
         </section>
+        @endif
 
         @php $homeEvents = app(\App\Services\Pages\EventsCatalog::class)->next(3); @endphp
         @if ($homeEvents->isNotEmpty())
@@ -460,10 +511,10 @@
             </section>
         @endif
 
-        @if (isPrivateAcademy())
+        @if (isPrivateAcademy() && $show['faq'])
         @php
             $faqs = [
-                ['¿Cómo entro a la academia?', 'Las cuentas no se crean solas: pide tu acceso en «Solicitar acceso» (como estudiante o como instructor). Cuando lo aprobemos recibirás un correo con un enlace para elegir tu contraseña.'],
+                ['¿Cómo entro a la plataforma?', 'Las cuentas no se crean solas: pide tu acceso en «Solicitar acceso» (como estudiante o como instructor). Cuando lo aprobemos recibirás un correo con un enlace para elegir tu contraseña.'],
                 ['¿Cómo me inscribo en un curso?', 'Con tu cuenta activa, elige el curso y págalo. El acceso se activa en cuanto se aprueba el pago; si el curso es gratuito, la inscripción es inmediata.'],
                 ['¿Puedo enseñar en Horizontia?', 'Sí. Pide acceso como instructor contándonos tu experiencia y lo que te gustaría enseñar; nuestro equipo revisa cada solicitud.'],
                 ['¿Cómo puedo pagar?', 'Con Mercado Pago: tarjeta, efectivo o transferencia. El pago es seguro y no guardamos los datos de tu tarjeta.'],
@@ -513,7 +564,7 @@
                     'name' => setting('_general.site_name') ?: 'Horizontia',
                     'url' => url('/'),
                     'logo' => asset('images/nuevo/logo-horizontia.png'),
-                    'description' => 'Academia en línea con cursos prácticos de instructores especialistas.',
+                    'description' => 'Plataforma de aprendizaje en línea con cursos prácticos de instructores especialistas.',
                 ];
                 $courseList = [
                     '@context' => 'https://schema.org',
@@ -581,7 +632,7 @@
                 <h2>Horizontia</h2>
                 <p>Cursos prácticos de instructores especialistas, con certificado al terminar. Empieza hoy a construir tu siguiente paso.</p>
                 <div class="ht-close__btns">
-                    <a class="ht-close__btn" href="{{ route('courses.search-courses') }}">Explorar cursos</a>
+                    @if ($show['courses'])<a class="ht-close__btn" href="{{ route('courses.search-courses') }}">Explorar cursos</a>@endif
                     @if (\App\Services\AccessRequestService::enabled())
                         <a class="ht-close__btn ht-close__btn--ghost" href="{{ route('access.request') }}">Solicitar acceso</a>
                     @endif

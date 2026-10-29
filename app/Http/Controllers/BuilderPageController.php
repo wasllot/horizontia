@@ -20,6 +20,8 @@ class BuilderPageController extends Controller
     {
         $slug = trim($any ?? $request->path(), '/');
         abort_if($slug === '' || str_starts_with($slug, 'admin/'), 404);
+        // Primera etapa (config/academy.php): estas páginas no se muestran todavía; vuelven al encender su interruptor.
+        abort_if((!config('academy.public_how_it_works') && $slug === 'como-funciona') || (!config('academy.public_faq') && $slug === 'preguntas-frecuentes'), 404);
         view()->share(['htCourse' => null, 'htCourseLinks' => null]);   // never inherit a previous course page's context
 
         return $this->render($this->find($slug, (bool) $request->query('preview') && auth()->user()?->hasRole('admin')));

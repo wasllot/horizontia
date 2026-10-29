@@ -78,7 +78,7 @@ class ContactPageTest extends TestCase
 
         $page->set('subject', 'Mi propio asunto')->call('pick', 'access')->assertSet('subject', 'Mi propio asunto')->assertSet('topic', 'access');
         $page->call('pick', 'inventado')->assertSet('topic', 'access');
-        Livewire::withQueryParams(['asunto' => 'teach'])->test(ContactForm::class)->assertSet('topic', 'teach')->assertSet('subject', 'Quiero enseñar en la academia');
+        Livewire::withQueryParams(['asunto' => 'teach'])->test(ContactForm::class)->assertSet('topic', 'teach')->assertSet('subject', 'Quiero enseñar en la plataforma');
     }
 
     public function test_a_valid_message_is_saved_mailed_and_confirmed(): void

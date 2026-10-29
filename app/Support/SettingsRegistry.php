@@ -65,10 +65,10 @@ class SettingsRegistry
         return [
             [
                 'id' => 'sitio', 'label' => 'Sitio', 'icon' => 'globe',
-                'desc' => 'El nombre de tu academia, su correo y las imágenes de marca.',
+                'desc' => 'El nombre de tu plataforma, su correo y las imágenes de marca.',
                 'groups' => [
                     ['section' => '_general', 'title' => 'Identidad', 'fields' => [
-                        self::f('general_settings', 'site_name', ['label_title' => 'Nombre de la academia', 'field_desc' => 'Aparece en el encabezado, los correos y el título de cada pestaña.', 'placeholder' => 'Ej. Horizontia']),
+                        self::f('general_settings', 'site_name', ['label_title' => 'Nombre de la plataforma', 'field_desc' => 'Aparece en el encabezado, los correos y el título de cada pestaña.', 'placeholder' => 'Ej. Horizontia']),
                         self::f('general_settings', 'site_email', ['label_title' => 'Correo de contacto', 'field_desc' => 'Dirección que se muestra al público y recibe los mensajes del formulario de contacto.', 'placeholder' => 'contacto@tudominio.com']),
                         self::f('general_settings', 'enable_multi_language', ['label_title' => 'Selector de idioma', 'field_desc' => 'Muestra el selector de idioma en el encabezado. Apágalo si tu academia es solo en español.']),
                     ]],
@@ -141,7 +141,7 @@ class SettingsRegistry
             ],
             [
                 'id' => 'correo', 'label' => 'Correo', 'icon' => 'mail',
-                'desc' => 'Cómo se ven y desde dónde salen los correos de la academia.',
+                'desc' => 'Cómo se ven y desde dónde salen los correos de la plataforma.',
                 'tabs' => true,
                 'groups' => [
                     ['tab' => 'correo-remitente', 'tab_title' => 'Remitente', 'section' => '_email', 'title' => 'Identidad de los correos', 'fields' => [

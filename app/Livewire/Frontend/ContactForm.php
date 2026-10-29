@@ -16,7 +16,7 @@ class ContactForm extends Component
         'courses' => ['Cursos', 'Quiero información sobre un curso'],
         'payments' => ['Pagos', 'Tengo una duda sobre un pago o factura'],
         'access' => ['Mi cuenta', 'Necesito ayuda con mi acceso o mi cuenta'],
-        'teach' => ['Quiero enseñar', 'Quiero enseñar en la academia'],
+        'teach' => ['Quiero enseñar', 'Quiero enseñar en la plataforma'],
         'other' => ['Otro', ''],
     ];
     public const PER_HOUR = 5;

@@ -78,7 +78,7 @@ return array (
   'badges' => 'Insignias',
   'categories' => 'Categorías',
   'purchased_subscriptions' => 'Compradas',
-    'group_academy' => 'Academia',
+    'group_academy' => 'Aprendizaje',
     'group_content' => 'Contenido',
     'group_business' => 'Negocio',
     'group_system' => 'Sistema',

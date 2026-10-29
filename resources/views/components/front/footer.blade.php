@@ -33,7 +33,7 @@
                             </strong>
                             <p style="color:#d1d5db; line-height:1.6; margin-bottom:1.5rem;">
                                 @if (isPrivateAcademy())
-                                    Horizontia es una academia en línea con cursos prácticos de instructores especialistas: aprende a tu ritmo, resuelve evaluaciones y obtén tu certificado.
+                                    Horizontia es una plataforma de aprendizaje en línea con cursos prácticos de instructores especialistas: aprende a tu ritmo, resuelve evaluaciones y obtén tu certificado.
                                 @else
                                     Horizontia es la plataforma líder de tutorías en línea, dedicada a conectar a cada estudiante con el tutor perfecto. Con una amplia red de profesionales calificados, brindamos apoyo educativo excepcional en todas las materias.
                             

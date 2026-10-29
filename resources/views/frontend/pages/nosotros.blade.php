@@ -3,8 +3,8 @@
     $email = config('academy.contact_email') ?: setting('_front_page_settings.footer_email');
     $refundDays = config('academy.refund_days');
 @endphp
-<x-front.page title="Nosotros" description="Una academia en línea para aprender a tu ritmo, con instructores que acompañan.">
-<p><strong>{{ $name }}</strong> es una academia en línea privada: cursos diseñados por instructores especialistas, con contenido en video, lecturas, ejercicios y evaluaciones, y certificado al terminar.</p>
+<x-front.page title="Nosotros" description="Una plataforma de aprendizaje en línea para aprender a tu ritmo, con instructores que acompañan.">
+<p><strong>{{ $name }}</strong> es una plataforma de aprendizaje en línea privada: cursos diseñados por instructores especialistas, con contenido en video, lecturas, ejercicios y evaluaciones, y certificado al terminar.</p>
 
 <h2>Lo que nos distingue</h2>
 <ul>

@@ -39,7 +39,7 @@ new #[Layout('layouts.guest')] class extends Component {
     {{ __('auth.login') }}
     @endslot
     <!-- Search Header Start -->
-    <x-auth-card>
+    <x-auth-card quote="login">
         <x-slot name="logo">
             <strong>
                 <a href="{{ url('/') }}">
@@ -53,7 +53,7 @@ new #[Layout('layouts.guest')] class extends Component {
         <x-auth-session-status class="mb-4" :status="session('status')" />
         <x-slot name="formHeader">
             <div class="am-login-right_title">
-                <span class="ht-auth__eyebrow">Acceso a la academia</span>
+                <span class="ht-auth__eyebrow">Acceso a la plataforma</span>
                 <h1>¡Bienvenido!</h1>
                 <h3>Ingresa tus credenciales para continuar capacitándote con los mejores.</h3>
             </div>

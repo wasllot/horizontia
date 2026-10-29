@@ -127,11 +127,22 @@ class MenuService
             if (isPrivateAcademy() && (Str::startsWith($path, ['/buscar-tutores', '/find-tutors', '/tutor/']))) {
                 continue;
             }
+            if ($this->hiddenInFirstStage($path)) {
+                continue;
+            }
             $item['children'] = $this->visible($item['children'] ?? []);
             $out[] = $item;
         }
 
         return $out;
+    }
+
+    /** Enlaces que la primera etapa oculta al público (ver config/academy.php): el catálogo, «Cómo funciona» y las preguntas frecuentes. */
+    private function hiddenInFirstStage(string $path): bool
+    {
+        return (!config('academy.public_courses') && ($path === '/cursos' || $path === '/search-courses' || $path === '/courses'))
+            || (!config('academy.public_how_it_works') && in_array($path, ['/como-funciona', '/how-it-works'], true))
+            || (!config('academy.public_faq') && in_array($path, ['/preguntas-frecuentes', '/faq'], true));
     }
 
     private function defaultHeader(): array

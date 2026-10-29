@@ -124,7 +124,7 @@
     "@type": "WebSite",
     "name": "{{ $siteTitle }}",
     "url": "{{ $siteUrl }}",
-    "description": "{{ $seoDescription ? Str::limit(strip_tags($seoDescription), 160) : 'Academia en línea con cursos prácticos' }}",
+    "description": "{{ $seoDescription ? Str::limit(strip_tags($seoDescription), 160) : 'Plataforma de aprendizaje en línea con cursos prácticos' }}",
     "potentialAction": {
         "@type": "SearchAction",
         "target": {

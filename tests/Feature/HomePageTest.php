@@ -38,9 +38,9 @@ class HomePageTest extends TestCase
     public function test_copy_follows_the_academy_mode_flag(): void
     {
         config(['academy.private_mode' => true]);
-        $this->get('/')->assertSee('VER CURSOS')->assertSee('Evaluaciones y certificado')->assertDontSee('Tutorías 1 a 1');
+        $this->get('/')->assertSee('VER CURSOS')->assertSee('Cursos autogestionables')->assertDontSee('Tutorías 1 a 1');
 
         config(['academy.private_mode' => false]);
-        $this->get('/')->assertSee('CONTÁCTANOS')->assertSee('Tutorías 1 a 1')->assertDontSee('Evaluaciones y certificado');
+        $this->get('/')->assertSee('CONTÁCTANOS')->assertSee('Tutorías 1 a 1')->assertDontSee('Cursos autogestionables');
     }
 }

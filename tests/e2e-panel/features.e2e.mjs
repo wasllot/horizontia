@@ -216,7 +216,7 @@ test('PWA: manifiesto válido, service worker activo y página sin conexión', a
 
 test('banners de páginas: el admin cambia título, subtítulo e imagen y se ve en la página pública', async () => {
     const s = await session(browser, 'admin');
-    const key = php(`echo 'page:' . App\\Models\\SitePage::where('slug', 'como-funciona')->value('id');`);
+    const key = php(`echo 'page:' . App\\Models\\SitePage::where('slug', 'terminos-y-condiciones')->value('id');`);
     try {
         const { page } = s;
         await page.goto(`${BASE}/admin/banners-de-paginas`, { waitUntil: 'networkidle' });
@@ -234,7 +234,7 @@ test('banners de páginas: el admin cambia título, subtítulo e imagen y se ve 
         const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
         await ctx.addCookies([{ name: 'cookie_consent', value: '1', url: BASE }]);
         const pub = await ctx.newPage();
-        await pub.goto(`${BASE}/como-funciona`, { waitUntil: 'networkidle' });
+        await pub.goto(`${BASE}/terminos-y-condiciones`, { waitUntil: 'networkidle' });
         assert.match(await pub.getByTestId('page-banner').innerText(), /Conoce nuestra academia/);
         assert.equal(await pub.getByTestId('page-banner').locator('h1').count(), 1);
         assert.equal(await pub.locator('h1').count(), 1, 'una sola portada: la original se reemplaza');
@@ -253,14 +253,13 @@ test('solicitar acceso: la persona pide acceso, el admin aprueba y puede crear s
     await ctx.addCookies([{ name: 'cookie_consent', value: '1', url: BASE }]);
     const page = await ctx.newPage();
     try {
+        // Primera etapa: la portada no trae guía de pasos ni botones; el acceso se pide desde el encabezado.
         await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
-        await page.locator('#pasos').screenshot({ path: `${SHOTS}/feat-home-step.png` });
-        await page.locator('#pasos').getByRole('link', { name: /^Solicitar/ }).first().click();
+        await page.locator('header').getByRole('link', { name: 'Solicitar acceso' }).first().click();
         await page.waitForURL(/solicitar-acceso/);
-        await page.getByTestId('type-tutor').click();
-        await page.locator('#ra-name').fill(`E2E ${TAG} Instructor`);
+        assert.equal(await page.getByTestId('type-tutor').count(), 0, 'los instructores entran por invitación: no hay opción «Quiero enseñar»');
+        await page.locator('#ra-name').fill(`E2E ${TAG} Alumno`);
         await page.locator('#ra-email').fill(email);
-        await page.locator('#ra-msg').fill('Soy consultor con diez años de experiencia y quiero enseñar ventas B2B.');
         await page.locator('#solicitar input[type=checkbox]').check();
         await page.screenshot({ path: `${SHOTS}/feat-access-form.png`, fullPage: true });
         await page.getByTestId('access-submit').click();

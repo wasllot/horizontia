@@ -21,6 +21,9 @@ return [
     'forget_right_h3'               => 'No te preocupes, te ayudaremos a restablecerla',
     'back_to_sign_in'               => 'Volver a Iniciar Sesión',
     'login_left_h2'                 => '¡Sí! ¡Estamos progresando!',
+    // Frases del panel de marca de las pantallas de acceso (las eligió el cliente).
+    'quote_login'                   => 'Las sociedades cambian cuando las personas desarrollan la capacidad de observarse, comprenderse y evolucionar.',
+    'quote_welcome'                 => 'La conciencia convierte el conocimiento en sabiduría y la experiencia en aprendizaje.',
     'login_left_span'               => 'cada minuto y cada segundo',
     'email_placeholder'             => 'Dirección de correo electrónico',
     'your_email_placeholder'        => 'Tu dirección de correo electrónico',

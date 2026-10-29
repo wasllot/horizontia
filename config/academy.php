@@ -21,7 +21,13 @@ return [
     // Certificados verificables al terminar un curso en línea (ACADEMY_CERTIFICATES=false para apagarlos).
     'certificates'  => (bool) env('ACADEMY_CERTIFICATES', true),
     'private_mode'  => (bool) env('ACADEMY_PRIVATE_MODE', false),
-    'legal_name'    => env('ACADEMY_LEGAL_NAME', env('APP_NAME', 'Horizontia')),
+    // Primera etapa de lanzamiento: qué ve el público. Cada interruptor se enciende (=true) cuando esa parte esté lista; todo sigue funcionando por dentro.
+    'public_courses'      => (bool) env('ACADEMY_PUBLIC_COURSES', false),        // enlace «Cursos», carrusel de la portada, botón «Ver cursos» y cifras de cursos/instructores
+    'public_how_it_works' => (bool) env('ACADEMY_PUBLIC_HOW_IT_WORKS', false),   // página «Cómo funciona», sus enlaces y la guía de pasos de la portada
+    'public_faq'          => (bool) env('ACADEMY_PUBLIC_FAQ', false),            // página «Preguntas frecuentes», sus enlaces y los bloques de preguntas
+    'hero_buttons'        => (bool) env('ACADEMY_HERO_BUTTONS', false),          // botones de la portada (Ver cursos, Solicitar acceso, Cómo funciona)
+    'instructor_requests' => (bool) env('ACADEMY_INSTRUCTOR_REQUESTS', false),  // opción «Quiero enseñar» al pedir acceso (los instructores entran por invitación)
+    'legal_name'    => env('ACADEMY_LEGAL_NAME') ?: ((env('APP_NAME') && env('APP_NAME') !== 'Laravel') ? env('APP_NAME') : 'Horizontia'),
     'contact_email' => env('ACADEMY_CONTACT_EMAIL'),
     'address'       => env('ACADEMY_ADDRESS'),
     'jurisdiction'  => env('ACADEMY_JURISDICTION', 'México'),

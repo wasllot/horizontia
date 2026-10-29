@@ -51,7 +51,7 @@ class AccessRequestsTest extends TestCase
 
     public function test_the_public_page_exists_and_registration_now_points_to_it(): void
     {
-        $this->get('/solicitar-acceso')->assertOk()->assertSee('Pide tu acceso a la academia')->assertSee('Quiero aprender')->assertSee('Quiero enseñar');
+        $this->get('/solicitar-acceso')->assertOk()->assertSee('Pide tu acceso a la plataforma')->assertSee('Quiero aprender')->assertSee('Quiero enseñar');
         $this->get('/registro')->assertRedirect('/solicitar-acceso');
         $this->get('/iniciar-sesion')->assertOk()->assertSee('Solicita acceso');
     }
@@ -62,7 +62,7 @@ class AccessRequestsTest extends TestCase
 
         $this->assertStringContainsString('Solicita tu acceso', $html);
         $this->assertStringContainsString(route('access.request'), $html);
-        $this->assertStringContainsString('¿Cómo entro a la academia?', $html);
+        $this->assertStringContainsString('¿Cómo entro a la plataforma?', $html);
         $this->assertStringNotContainsString('Crea tu cuenta rápidamente', $html);
         $this->assertStringNotContainsString('>Regístrate<', $html);
     }

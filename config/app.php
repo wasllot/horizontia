@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Horizontia'),
+    'name' => (env('APP_NAME') && env('APP_NAME') !== 'Laravel') ? env('APP_NAME') : 'Horizontia',   // «Laravel» es el valor de fábrica del .env: nunca debe verse como nombre del sitio
 
     /*
     |--------------------------------------------------------------------------

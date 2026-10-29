@@ -33,14 +33,14 @@ class PanelTonalUiTest extends TestCase
     {
         $html = $this->actingAs($this->admin())->get('/admin/estadisticas')->assertOk()->getContent();
 
-        foreach (['Academia', 'Contenido', 'Negocio', 'Sistema'] as $group) {
+        foreach (['Aprendizaje', 'Contenido', 'Negocio', 'Sistema'] as $group) {
             $this->assertStringContainsString('class="hz-nav__heading">' . $group . '</li>', $html, "group $group");
         }
         foreach (['Leads &amp; Contactos', 'Usuarios y Perfiles', 'Finanzas y Pagos', 'Sistema y Plataforma', 'Ajustes Generales'] as $old) {
             $this->assertStringNotContainsString($old, $html, "old sidebar title $old");
         }
         // Groups appear in a fixed order.
-        $this->assertTrue(strpos($html, '>Academia</li>') < strpos($html, '>Contenido</li>'));
+        $this->assertTrue(strpos($html, '>Aprendizaje</li>') < strpos($html, '>Contenido</li>'));
         $this->assertTrue(strpos($html, '>Contenido</li>') < strpos($html, '>Negocio</li>'));
         $this->assertTrue(strpos($html, '>Negocio</li>') < strpos($html, '>Sistema</li>'));
         // Courses open the academy group, before users.

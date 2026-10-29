@@ -797,5 +797,5 @@ return array (
   'gemini_daily_limit' => 'Mensajes por alumno al día',
   'gemini_daily_limit_desc' => 'Controla el costo. 0 = sin límite diario.',
   'gemini_extra_instructions' => 'Instrucciones adicionales',
-  'gemini_extra_instructions_placeholder' => 'Opcional: tono, nombre de la academia, temas a evitar…',
+  'gemini_extra_instructions_placeholder' => 'Opcional: tono, nombre de la plataforma, temas a evitar…',
 );

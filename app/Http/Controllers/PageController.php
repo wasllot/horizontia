@@ -41,7 +41,10 @@ class PageController extends Controller
 
     public function sitemap(): Response
     {
-        $urls = [[route('home'), '1.0', null], [route('courses.search-courses'), '0.9', null], [route('blogs'), '0.6', null], [route('contacto'), '0.4', null]];
+        $urls = [[route('home'), '1.0', null], [route('blogs'), '0.6', null], [route('contacto'), '0.4', null]];
+        if (config('academy.public_courses')) {
+            $urls[] = [route('courses.search-courses'), '0.9', null];
+        }
 
         // URLs an admin marked noindex in Admin > SEO never go in the sitemap.
         $noindex = SeoEntry::where('match_type', 'path')->where('is_active', true)->where('robots', 'like', '%noindex%')->pluck('match_value')->map(fn ($p) => '/' . trim($p, '/'))->all();
@@ -54,6 +57,9 @@ class PageController extends Controller
         $fixed = [];
         foreach (self::PAGES as $name => [$uri, , $priority]) {
             $fixed[$uri] = true;
+            if ((!config('academy.public_how_it_works') && $uri === 'como-funciona') || (!config('academy.public_faq') && $uri === 'preguntas-frecuentes')) {
+                continue;   // ocultas en la primera etapa: tampoco van al mapa del sitio
+            }
             $add(route($name), $priority);
         }
         $add(route('events'), '0.8');

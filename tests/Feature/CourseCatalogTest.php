@@ -178,6 +178,6 @@ class CourseCatalogTest extends TestCase
 
     public function test_page_has_seo_title_and_description(): void
     {
-        $this->get('/cursos')->assertOk()->assertSee('Catálogo de cursos', false)->assertSee('Explora los cursos en línea de la academia', false);
+        $this->get('/cursos')->assertOk()->assertSee('Catálogo de cursos', false)->assertSee('Explora los cursos en línea de la plataforma', false);
     }
 }

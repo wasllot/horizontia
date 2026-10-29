@@ -15,7 +15,7 @@ class PageBannerService
     /** Páginas fijas de la aplicación (no se editan con el editor visual) cuyo banner también se puede cambiar. */
     public const SYSTEM = [
         'contacto' => ['label' => 'Contacto', 'title' => 'Hablemos', 'subtitle' => 'Resolvemos tus dudas sobre cursos, pagos y acceso. Normalmente respondemos en menos de 24 horas.', 'url' => '/contacto', 'image' => 'images/nuevo/banner-contacto.jpg'],
-        'nosotros' => ['label' => 'Nosotros', 'title' => 'Nosotros', 'subtitle' => 'Una academia en línea para aprender a tu ritmo, con instructores que acompañan.', 'url' => '/nosotros', 'image' => 'images/nuevo/banner-nosotros.jpg'],
+        'nosotros' => ['label' => 'Nosotros', 'title' => 'Nosotros', 'subtitle' => 'Una plataforma de aprendizaje en línea para aprender a tu ritmo, con instructores que acompañan.', 'url' => '/nosotros', 'image' => 'images/nuevo/banner-nosotros.jpg'],
         'solicitar-acceso' => ['label' => 'Solicitar acceso', 'title' => 'Solicitar acceso', 'subtitle' => 'Pide tu cuenta como estudiante o como instructor.', 'url' => '/solicitar-acceso', 'image' => 'images/nuevo/banner-acceso.jpg'],
     ];
 
@@ -48,6 +48,11 @@ class PageBannerService
         $def = self::SYSTEM[$name];
         $banner = $this->find('system:' . $name);
         $on = $banner && $banner->enabled && trim((string) $banner->title) !== '';
+
+        // El subtítulo de fábrica de «Solicitar acceso» solo habla de instructores cuando esa opción está abierta.
+        if ($name === 'solicitar-acceso' && !\App\Services\AccessRequestService::instructorRequestsEnabled()) {
+            $def['subtitle'] = 'Pide tu cuenta para aprender en Horizontia.';
+        }
 
         return [
             'title' => $on ? $banner->title : $def['title'],

@@ -24,6 +24,12 @@ class AccessRequestService
 {
     public const PER_HOUR = 5;
 
+    /** «Quiero enseñar»: en la primera etapa los instructores entran por invitación y se dan de alta por dentro (config/academy.php). */
+    public static function instructorRequestsEnabled(): bool
+    {
+        return self::enabled() && (bool) config('academy.instructor_requests');
+    }
+
     public static function enabled(): bool
     {
         return (bool) config('academy.access_requests', true);
@@ -57,7 +63,7 @@ class AccessRequestService
         // Una solicitud pendiente del mismo correo no se duplica (se actualiza con lo último que escribió).
         $request = AccessRequest::where('email', $email)->where('status', AccessRequest::PENDING)->first() ?? new AccessRequest(['email' => $email, 'status' => AccessRequest::PENDING]);
         $request->fill([
-            'type' => $data['type'] === 'tutor' ? 'tutor' : 'student',
+            'type' => ($data['type'] === 'tutor' && self::instructorRequestsEnabled()) ? 'tutor' : 'student',
             'name' => mb_substr(trim(strip_tags($data['name'])), 0, 120),
             'phone' => $data['phone'] ? mb_substr(preg_replace('/[^\d+\s().\-]/', '', $data['phone']), 0, 30) : null,
             'message' => $data['message'] ? mb_substr(trim(strip_tags($data['message'])), 0, 1500) : null,
