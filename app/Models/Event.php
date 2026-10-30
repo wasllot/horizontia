@@ -77,7 +77,7 @@ class Event extends Model
     /** Archivos por defecto (tomados del flyer del cliente); lo que se sube en el panel los reemplaza. */
     public const DEFAULT_ASSETS = [
         'logo' => 'images/eventos/astrofest-logo.webp', 'galileo' => 'images/eventos/galileo.webp', 'telescopio' => 'images/eventos/telescopio.webp',
-        'fama' => 'images/eventos/fama.webp', 'club' => 'images/eventos/club.webp',
+        'fama' => 'images/eventos/fama.webp', 'club' => 'images/eventos/club.webp', 'luz' => 'images/eventos/luz-calderon.webp',
     ];
 
     public function asset(string $key): ?string
@@ -88,7 +88,13 @@ class Event extends Model
         }
         $path = data_get($this->assets, $key) ?: (self::DEFAULT_ASSETS[$key] ?? null);
 
-        return $path ? asset($path) : null;
+        if (!$path) {
+            return null;
+        }
+        $file = public_path($path);
+        $version = is_file($file) ? '?v=' . filemtime($file) : '';
+
+        return asset($path) . $version;
     }
 
     /** Buscadores: un evento puede quedar «No indexar» mientras el cliente lo aprueba. Si no se ha definido, es indexable. */

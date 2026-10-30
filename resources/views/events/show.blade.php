@@ -63,7 +63,7 @@
     'location' => array_filter(['@type' => 'Place', 'name' => $event->venue_name, 'address' => array_filter(['@type' => 'PostalAddress', 'streetAddress' => $event->venue_address, 'addressLocality' => $event->venue_city, 'addressCountry' => 'MX'])]),
     'image' => $event->asset('og') ? [$event->asset('og')] : [$heroImg],
     'offers' => $event->hasPrice() ? ['@type' => 'Offer', 'priceCurrency' => 'MXN', 'price' => (string) (float) $event->price, 'url' => $event->url(), 'availability' => $state === 'sold_out' ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock'] : null,
-    'performer' => ['@type' => 'Person', 'name' => 'Luz Calderón'],
+    'performer' => ['@type' => 'Person', 'name' => 'Luz Calderón', 'jobTitle' => 'Física y divulgadora de la astronomía', 'sameAs' => ['https://www.facebook.com/share/1KQd11UfYr/']],
     'organizer' => ['@type' => 'Organization', 'name' => 'Horizontia', 'url' => url('/')],
 ]), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
 </script>
@@ -78,7 +78,7 @@
     <span class="ev-shoot" aria-hidden="true"></span><span class="ev-shoot" aria-hidden="true"></span><span class="ev-shoot" aria-hidden="true"></span>
     <div class="ev-hero__in">
         <p class="ev-hero__kicker" style="--d:.1s">{{ $event->text('hero.supra') }}</p>
-        <h1 id="ev-h1" class="ev-hero__brand" style="--d:.25s"><img src="{{ $event->asset('logo') }}" alt="{{ $event->text('seo.h1') }}" width="900" height="234" fetchpriority="high"></h1>
+        <h1 id="ev-h1" class="ev-hero__brand" style="--d:.25s"><img src="{{ $event->asset('logo') }}" alt="{{ $event->text('seo.h1') }}" width="1800" height="469" fetchpriority="high"></h1>
         <h2 class="ev-hero__q" style="--d:.5s">{{ $event->text('hero.title') }}</h2>
         @if ($start)<p class="ev-hero__when" style="--d:.7s">{{ $start->locale('es')->translatedFormat('l j \d\e F \d\e Y') }}<span aria-hidden="true">✦</span>{{ $event->venue_name }}</p>@endif
         <p class="ev-hero__sub" style="--d:.85s">{{ $event->text('hero.host') }}. {{ $event->text('hero.subtitle') }}</p>
@@ -121,7 +121,7 @@
         <div class="ev-split">
             <div data-reveal>
                 <p class="ev-eyebrow">Una noche distinta</p>
-                <h2 id="h-que-es">¿Qué es <em>Astrofest®</em>?</h2>
+                <h2 id="h-que-es">¿Qué es <em>Astrofest</em>?</h2>
                 <p class="ev-big">Cae la tarde sobre Teotihuacán, el cielo se pinta de naranja detrás de los cerros y, una a una, se encienden las primeras estrellas.</p>
                 <p>Apagamos las luces, prendemos linternas rojas y, durante toda la noche, miramos hacia arriba juntos. No es una excursión ni un campamento cualquiera: es una noche diseñada momento a momento para que te enamores del cielo, con astrónomos, telescopios, fogata, música y la cacería de estrellas fugaces de las Gemínidas.</p>
                 <p><strong>No necesitas saber nada de astronomía.</strong> Si tienes un telescopio guardado en el clóset, tráelo: te ayudamos a usarlo y serás el héroe de la noche.</p>
@@ -143,7 +143,7 @@
                 <li><span class="ev-incl__ico">{!! $icon($i) !!}</span>{{ $t }}</li>
             @endforeach
         </ul>
-        <p class="ev-mark" data-reveal><b>Una marca para coleccionar.</b> Astrofest® Gemínidas 2026 es la primera edición de una nueva temporada de noches de estrellas. Cada lluvia de meteoros tendrá su propia pulsera, parche, playera y mapa del cielo. Guarda tu pulsera: será tu pase de coleccionista.</p>
+        <p class="ev-mark" data-reveal><b>Una marca para coleccionar.</b> Astrofest Gemínidas 2026 es la primera edición de una nueva temporada de noches de estrellas. Cada lluvia de meteoros tendrá su propia pulsera, parche, playera y mapa del cielo. Guarda tu pulsera: será tu pase de coleccionista.</p>
     </div>
 </section>
 
@@ -200,7 +200,7 @@
             <div>
                 <p class="ev-eyebrow">Mesoamérica</p>
                 <h3>Teotihuacán y el cielo</h3>
-                <p>La Ciudad de los Dioses no se construyó al azar. Sus calzadas y pirámides guardan alineaciones con el Sol y las estrellas que los arqueoastrónomos siguen estudiando. En Astrofest® escucharás cómo observaban el cielo los pueblos de Mesoamérica… mientras ves caer estrellas fugaces en el mismo cielo que ellos miraban.</p>
+                <p>La Ciudad de los Dioses no se construyó al azar. Sus calzadas y pirámides guardan alineaciones con el Sol y las estrellas que los arqueoastrónomos siguen estudiando. En Astrofest escucharás cómo observaban el cielo los pueblos de Mesoamérica… mientras ves caer estrellas fugaces en el mismo cielo que ellos miraban.</p>
             </div>
         </div>
 
@@ -257,7 +257,7 @@
             </article>
             <article class="ev-kit" data-reveal style="--d:.12s">
                 <svg viewBox="0 0 320 130" role="img" aria-label="Ilustración del Pasaporte Astrofest"><rect x="100" y="8" width="120" height="114" rx="10" fill="#14213d" stroke="#fed304" stroke-width="2"/><circle cx="160" cy="48" r="18" fill="none" stroke="#fed304" stroke-width="3"/><path d="M160 36l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#fed304"/><text x="160" y="92" text-anchor="middle" font-family="Georgia,serif" font-size="11" font-weight="700" fill="#fff" letter-spacing="1.5">PASAPORTE</text><text x="160" y="106" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#fed304" letter-spacing="2">ASTROFEST</text></svg>
-                <h3>Pasaporte Astrofest®</h3><p>Anota tus estrellas fugaces, consigue sellos durante la noche y sigue el mapa del cielo de diciembre.</p>
+                <h3>Pasaporte Astrofest</h3><p>Anota tus estrellas fugaces, consigue sellos durante la noche y sigue el mapa del cielo de diciembre.</p>
             </article>
             <article class="ev-kit" data-reveal style="--d:.24s">
                 <svg viewBox="0 0 320 130" role="img" aria-label="Ilustración del diploma de astrónomo"><rect x="50" y="10" width="220" height="110" rx="6" fill="#fffae3" stroke="#fed304" stroke-width="4"/><rect x="60" y="20" width="200" height="90" rx="3" fill="none" stroke="#14213d" stroke-width="1.2"/><text x="160" y="48" text-anchor="middle" font-family="Georgia,serif" font-size="16" font-weight="700" fill="#14213d" textLength="176" lengthAdjust="spacingAndGlyphs">Diploma de astrónomo</text><path d="M110 66h100" stroke="#14213d" stroke-width="1"/><text x="160" y="62" text-anchor="middle" font-family="Georgia,serif" font-size="12" font-style="italic" fill="#5b6478">con tu nombre</text><circle cx="160" cy="90" r="11" fill="#fed304"/><path d="M160 83l2.5 5 5.5.7-4 3.8 1 5.5-5-2.7-5 2.7 1-5.5-4-3.8 5.5-.7z" fill="#14213d"/></svg>
@@ -276,7 +276,7 @@
             <div class="ev-tick__copy">
                 <div data-reveal>
                     <p class="ev-eyebrow">Tu lugar bajo las estrellas</p>
-                    <h2 id="h-entrada">Tu entrada a <em>Astrofest®</em></h2>
+                    <h2 id="h-entrada">Tu entrada a <em>Astrofest</em></h2>
                     <p class="ev-big">Una sola entrada. Toda la experiencia.</p>
                 </div>
                 <ul class="ev-value" data-reveal>
@@ -292,7 +292,7 @@
                         <li>Observación con telescopios guiada por astrónomos, caza de Gemínidas y gran observación de madrugada.</li>
                         <li>Fogata, música temática, DJ en vivo, shows en Planetario Móvil, rally con pistas y premios y AstroRifa.</li>
                         <li>Observación del Sol el domingo por la mañana.</li>
-                        <li>Pulsera coleccionable, Pasaporte Astrofest®, mapa del cielo de diciembre, stickers y celofán rojo para tu linterna.</li>
+                        <li>Pulsera coleccionable, Pasaporte Astrofest, mapa del cielo de diciembre, stickers y celofán rojo para tu linterna.</li>
                         <li>Diploma de participación.</li>
                         <li>Camping para 1 persona (con tu casa de campaña), con baños, vestidores y regaderas: un lugar seguro para acampar.</li>
                     </ul>
@@ -317,7 +317,7 @@
 
             <div class="ev-ticket" data-reveal style="--d:.15s">
                 @if (session('event_error'))<p class="ev-alert" role="alert">{{ session('event_error') }}</p>@endif
-                <p class="ev-ticket__label">Entrada general · Astrofest® Gemínidas 2026</p>
+                <p class="ev-ticket__label">Entrada general · Astrofest Gemínidas 2026</p>
                 @if ($event->hasPrice())
                     <div class="ev-ticket__price">{{ $money($event->price) }} <small>MXN por persona</small></div>
                     <p class="ev-tags"><span>{!! $icon('check') !!} IVA incluido</span><span>{!! $icon('check') !!} Camping incluido</span></p>
@@ -457,11 +457,25 @@
             <h2 id="h-equipo">Quiénes te <em>acompañan</em></h2>
         </div>
         <div class="ev-team">
-            <article class="ev-card ev-team__lead" data-reveal>
-                @if ($event->asset('luz'))<img class="ev-team__photo" src="{{ $event->asset('luz') }}" alt="Luz Calderón, astrónoma y anfitriona" loading="lazy" width="220" height="220">
-                @else<div class="ev-team__avatar" aria-hidden="true">{!! $icon('star') !!}</div>@endif
-                <div><p class="ev-eyebrow">Anfitriona</p><h3>Luz Calderón · Astrónoma</h3>
-                <p>Divulgadora de la ciencia con muchos años de trayectoria y una comunidad enorme que la sigue. Ha organizado noches de estrellas con cientos de asistentes y es la voz que te guiará toda la noche: da la bienvenida, imparte conferencias y te enseña a leer el cielo.</p></div>
+            <article class="ev-card ev-host" data-reveal>
+                <div class="ev-host__who">
+                    @if ($event->asset('luz'))<img class="ev-team__photo ev-host__photo" src="{{ $event->asset('luz') }}" alt="Fís. Luz Calderón, maestra del curso y anfitriona de Astrofest" loading="lazy" width="640" height="640">
+                    @else<div class="ev-team__avatar ev-host__photo" aria-hidden="true">{!! $icon('star') !!}</div>@endif
+                    <p class="ev-eyebrow">Maestra del curso</p>
+                    <h3>Fís. Luz Calderón</h3>
+                    <p class="ev-host__role">Física y divulgadora de la astronomía</p>
+                    <a class="ev-btn ev-btn--sm ev-host__fb" href="https://www.facebook.com/share/1KQd11UfYr/" target="_blank" rel="noopener noreferrer" data-ev-track="host_facebook">{!! $icon('facebook') !!}Sigue a Luz en Facebook</a>
+                </div>
+                <div class="ev-host__main">
+                    <p class="ev-host__lead">Estudió la licenciatura en Física y la maestría en Ciencias en la Universidad Nacional Autónoma de México. Es la voz que te guiará toda la noche: da la bienvenida, imparte las conferencias y te enseña a leer el cielo.</p>
+                    <ul class="ev-host__stats" aria-label="Lo más destacado de su trayectoria">
+                        <li><b>+500</b><span>conferencias de divulgación en astronomía desde 1982</span></li>
+                        <li><b>2006</b><span>participó en la votación de la reunión astronómica internacional que determinó si Plutón continuaba siendo planeta</span></li>
+                        <li><b>2013</b><span>colabora en Radio Fórmula con una sección de astronomía en «La Mujer Actual», con Jannette Arceo</span></li>
+                        <li><b>Eclipses</b><span>de Sol y tránsitos de planetas interiores registrados, además de congresos a los que ha asistido en diferentes partes del mundo</span></li>
+                    </ul>
+                    <p class="ev-host__belief">Luz considera que un pueblo más educado es un pueblo más consciente; por eso cree que su aportación a esa educación es su pasión por compartir su conocimiento.</p>
+                </div>
             </article>
             <article class="ev-card" data-reveal style="--d:.12s">
                 <div class="ev-duo">
@@ -490,7 +504,7 @@
         @php
             $faq = [
                 'Antes de ir' => [
-                    ['¿Necesito saber de astronomía?', 'Para nada. Astrofest® está pensado para que cualquiera disfrute: te explicamos todo con palabras sencillas.'],
+                    ['¿Necesito saber de astronomía?', 'Para nada. Astrofest está pensado para que cualquiera disfrute: te explicamos todo con palabras sencillas.'],
                     ['¿Hace mucho frío?', 'Sí: la temperatura puede bajar a 6–7 °C o menos. Trae ropa de invierno en capas, gorro, guantes y cobija.'],
                     ['¿Puedo llevar mi telescopio o binoculares?', '¡Claro! Es más, te lo recomendamos. Nuestro equipo te ayuda a usarlo.'],
                     ['¿A qué hora puedo llegar?', 'El check-in en el hotel es desde las ' . ($start?->format('H:i') ?? '15:00') . ' h y el registro del evento a las 16:00. Puedes llegar antes a comer al restaurante.'],
@@ -511,7 +525,7 @@
                 ],
             ];
             if ($event->show('rooms') && $hotelUrl) {
-                $faq['Boletos y pagos'][] = ['¿Puedo compartir habitación con mis amigos o familia?', 'Las habitaciones se reservan directamente con el hotel desde el botón «Reservar habitación en el hotel». Aquí compras tu entrada de Astrofest®. Cada persona necesita su entrada.'];
+                $faq['Boletos y pagos'][] = ['¿Puedo compartir habitación con mis amigos o familia?', 'Las habitaciones se reservan directamente con el hotel desde el botón «Reservar habitación en el hotel». Aquí compras tu entrada de Astrofest. Cada persona necesita su entrada.'];
             }
             $cols = [array_slice($faq, 0, 2, true), array_slice($faq, 2, 2, true)];
         @endphp

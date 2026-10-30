@@ -105,7 +105,7 @@
                 $credits = collect(json_decode((string) @file_get_contents(public_path('images/eventos/stock/credits.json')), true) ?: [])->filter(fn ($c) => !empty($usedImages) && in_array($c['key'], $usedImages, true));
             @endphp
             <div class="evf__base">
-                <span>© {{ now()->year }} Horizontia · Astrofest® {{ $event->name !== 'Astrofest® Gemínidas 2026' ? '' : 'Gemínidas 2026' }}</span>
+                <span>© {{ now()->year }} Horizontia · {{ str_replace('®', '', $event->name) }}</span>
                 @if ($credits->isNotEmpty())
                     <details class="evf__credits"><summary>Fotografías</summary>
                         <p>Imágenes ilustrativas de Wikimedia Commons con licencia libre.</p>

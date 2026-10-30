@@ -10,9 +10,9 @@ class EventContent
     {
         return [
             'seo' => [
-                'title' => 'Astrofest® Gemínidas 2026 · Lluvia de estrellas Teotihuacán',
+                'title' => 'Astrofest Gemínidas 2026 · Lluvia de estrellas Teotihuacán',
                 'description' => 'Noche de telescopios, fogata y estrellas fugaces en Teotihuacán. Sábado 12 de diciembre de 2026, a una hora de la CDMX. Camping y hotel.',
-                'h1' => 'Astrofest® Gemínidas 2026: una noche bajo la lluvia de estrellas en Teotihuacán',
+                'h1' => 'Astrofest Gemínidas 2026: una noche bajo la lluvia de estrellas en Teotihuacán',
                 'keywords' => 'lluvia de estrellas Gemínidas 2026, Teotihuacán, observación astronómica CDMX, camping astronómico, Astrofest',
             ],
             'hero' => [
@@ -28,7 +28,7 @@ class EventContent
                 'text' => 'Aparta tu lugar y mira hacia arriba con nosotros.',
             ],
             'rooms' => [
-                'text' => 'El hotel da tarifa especial a asistentes de Astrofest®. Reserva directamente con el hotel; aquí compras tu entrada.',
+                'text' => 'El hotel da tarifa especial a asistentes de Astrofest. Reserva directamente con el hotel; aquí compras tu entrada.',
             ],
             'sold_out' => 'Agotado',
         ];

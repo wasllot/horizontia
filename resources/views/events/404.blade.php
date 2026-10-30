@@ -1,9 +1,9 @@
 @php
-    $event = $event ?? new \App\Models\Event(['name' => 'Astrofest®', 'slug' => 'astrofest-geminidas-2026']);
+    $event = $event ?? new \App\Models\Event(['name' => 'Astrofest', 'slug' => 'astrofest-geminidas-2026']);
     $state = 'soon';
     $noindex = true;
 @endphp
-@extends('events.layout', ['metaTitle' => 'Página no encontrada · Astrofest®', 'metaDescription' => 'Esta página se perdió en el espacio.', 'canonical' => $event->url()])
+@extends('events.layout', ['metaTitle' => 'Página no encontrada · Astrofest', 'metaDescription' => 'Esta página se perdió en el espacio.', 'canonical' => $event->url()])
 
 @section('body')
 <div class="ev-page"><div class="ev-narrow" style="text-align:center;display:grid;gap:14px;justify-items:center">

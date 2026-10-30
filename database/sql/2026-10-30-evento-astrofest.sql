@@ -106,12 +106,15 @@ CREATE TABLE IF NOT EXISTS `event_tickets` (
 -- Evento Astrofest (solo si no existe; no pisa lo que ya se editó)
 INSERT INTO `events` (`slug`, `name`, `status`, `start_at`, `end_at`, `countdown_from`, `venue_name`, `venue_city`, `venue_address`, `hotel_phone`, `hotel_booking_url`, `price`, `iva_rate`,
                       `max_per_order`, `sales_enabled`, `hold_minutes`, `offline_hold_hours`, `discounts`, `content`, `redirect_events_index`, `created_at`, `updated_at`)
-SELECT 'astrofest-geminidas-2026', 'Astrofest® Gemínidas 2026', 'published', '2026-12-12 21:00:00', '2026-12-13 19:00:00', '2026-12-01 06:00:00',
+SELECT 'astrofest-geminidas-2026', 'Astrofest Gemínidas 2026', 'published', '2026-12-12 21:00:00', '2026-12-13 19:00:00', '2026-12-01 06:00:00',
        'Club Campestre Teotihuacán', 'Estado de México', 'Autopista México–Tuxpan, salida km 27, 55851 San Martín de las Pirámides, Méx.', '+52 55 4766 8637', 'https://clubcampestreteotihuacan.com/', 1740.00, 16.00, 10, 0, 45, 72,
        '{"early_bird":{"enabled":false,"label":"Preventa","percent":15,"starts_at":null,"ends_at":"2026-10-31"},"group":{"enabled":false,"label":"Descuento por grupo","percent":10,"min_qty":4,"starts_at":null,"ends_at":null}}',
        '{"minors_age":6,"noindex":true}', 1, NOW(), NOW()
 FROM DUAL
 WHERE NOT EXISTS (SELECT 1 FROM `events` WHERE `slug` = 'astrofest-geminidas-2026');
+
+-- La marca aún no está registrada: quita el «®» del nombre si una importación anterior lo dejó
+UPDATE `events` SET `name` = 'Astrofest Gemínidas 2026' WHERE `slug` = 'astrofest-geminidas-2026' AND `name` = 'Astrofest® Gemínidas 2026';
 
 -- Registro en `migrations` (un lote nuevo; no duplica si ya estaba)
 INSERT INTO `migrations` (`migration`, `batch`)

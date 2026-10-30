@@ -22,7 +22,7 @@ class SeedAstrofestEvent extends Command
         $local = fn (string $d) => Carbon::parse($d, $tz)->timezone(config('app.timezone'));
 
         $event = Event::firstOrCreate(['slug' => 'astrofest-geminidas-2026'], [
-            'name' => 'Astrofest® Gemínidas 2026',
+            'name' => 'Astrofest Gemínidas 2026',
             'status' => Event::PUBLISHED,
             'start_at' => $local('2026-12-12 15:00'),
             'end_at' => $local('2026-12-13 13:00'),
