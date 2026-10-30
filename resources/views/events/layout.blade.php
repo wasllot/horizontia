@@ -7,7 +7,6 @@
     ];
     $onLanding = $onLanding ?? false;
     $cartCount = $cartCount ?? 0;
-    $logo = $event->asset('logo');
     $startLocal = $event->local($event->start_at);
     $dates = $startLocal ? $startLocal->format('j') . ($event->end_at ? ' y ' . $event->local($event->end_at)->format('j') : '') . ' de ' . $startLocal->locale('es')->translatedFormat('F') : '';
 @endphp
@@ -50,8 +49,8 @@
     <div class="ev-progress" id="evProgress" aria-hidden="true"></div>
     <header class="evp-sub {{ $onLanding ? 'evp-sub--float' : 'evp-sub--solid' }}" id="evHead">
         <div class="evp-wrap">
-            <a class="evp-sub__name" href="{{ $event->url() }}" aria-label="Astrofest, inicio del evento">
-                <img src="{{ $logo }}" alt="Astrofest® {{ $event->name }}" width="200" height="52">
+            <a class="evp-sub__name" href="{{ $event->url() }}" aria-label="Horizontia, inicio del evento {{ $event->name }}">
+                <img src="{{ asset('images/eventos/horizontia-logo.webp') }}" alt="Horizontia" width="1223" height="785">
             </a>
             @if ($dates)<span class="evp-sub__date">{{ $dates }} · {{ $event->venue_city ?: 'Estado de México' }}</span>@endif
             <div class="evp-sub__r">

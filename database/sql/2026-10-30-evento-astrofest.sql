@@ -110,6 +110,7 @@ SELECT 'astrofest-geminidas-2026', 'Astrofest® Gemínidas 2026', 'published', '
        'Club Campestre Teotihuacán', 'Estado de México', 'Autopista México–Tuxpan, salida km 27, 55851 San Martín de las Pirámides, Méx.', '+52 55 4766 8637', 'https://clubcampestreteotihuacan.com/', 1740.00, 16.00, 10, 0, 45, 72,
        '{"early_bird":{"enabled":false,"label":"Preventa","percent":15,"starts_at":null,"ends_at":"2026-10-31"},"group":{"enabled":false,"label":"Descuento por grupo","percent":10,"min_qty":4,"starts_at":null,"ends_at":null}}',
        '{"minors_age":6,"noindex":true}', 1, NOW(), NOW()
+FROM DUAL
 WHERE NOT EXISTS (SELECT 1 FROM `events` WHERE `slug` = 'astrofest-geminidas-2026');
 
 -- Registro en `migrations` (un lote nuevo; no duplica si ya estaba)
