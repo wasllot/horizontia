@@ -540,3 +540,9 @@ body.ev-red .evp .evf { background:#000; } body.ev-red .evp .evf__chip { backgro
 .evp ol.ev-steps > li.is-now { color:#fff; } .evp ol.ev-steps > li.is-now::before { background:#fff; border-color:#fff; color:var(--navy); box-shadow:0 0 0 5px rgba(255,255,255,.12); font-weight:700; }
 @media (max-width:640px) { .evp ol.ev-steps > li > span { display:none; } .evp ol.ev-steps > li.is-now > span { display:inline; } .evp ol.ev-steps > li:not(:last-child)::after { margin:0 8px; } .evp ol.ev-steps > li { gap:8px; } }
 .ev-sum dl { column-gap:0; } .ev-sum dd { padding-left:14px; }
+
+/* Redes en el pie */
+.evf__social ul { display:flex; flex-wrap:wrap; gap:10px; margin:0; padding:0; list-style:none; } .evf__social li { list-style:none; }
+.evp .evf__social a { width:44px; height:44px; justify-content:center; border-radius:50%; border:1px solid var(--line); background:rgba(255,255,255,.04); font-size:1.15rem; }
+.evp .evf__social a:hover { background:var(--gold); border-color:var(--gold); color:var(--navy); transform:translateY(-3px); } .evp .evf__social a:hover .ev-i { color:var(--navy); }
+@media (min-width:860px) { .evf__grid { grid-template-columns:1.3fr 1fr .8fr .8fr; } }

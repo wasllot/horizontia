@@ -70,15 +70,12 @@
             <input id="ev-va" class="form-control" wire:model="f.venue_address">
             <div class="hz-bn__row">
                 <div><label for="ev-map">Enlace de Google Maps</label><input id="ev-map" type="url" class="form-control" wire:model="f.venue_map_url" placeholder="https://maps.app.goo.gl/…"><small class="hz-en__err" aria-live="polite">{{ $errors->first('f.venue_map_url') }}</small></div>
-                <div><label for="ev-hb">Enlace de reservas del hotel</label><input id="ev-hb" type="url" class="form-control" wire:model="f.hotel_booking_url" placeholder="https://…"><small class="hz-bn__save">Sin enlace no aparece el botón «Reservar habitación».</small><small class="hz-en__err" aria-live="polite">{{ $errors->first('f.hotel_booking_url') }}</small></div>
             </div>
             <div class="hz-bn__row">
-                <div><label for="ev-hp">Teléfono del hotel</label><input id="ev-hp" class="form-control" wire:model="f.hotel_phone"></div>
-                <div><label for="ev-hw">WhatsApp del hotel</label><input id="ev-hw" class="form-control" wire:model="f.hotel_whatsapp"></div>
                 <div><label for="ev-ce">Correo del evento</label><input id="ev-ce" type="email" class="form-control" wire:model="f.contact_email"><small class="hz-en__err" aria-live="polite">{{ $errors->first('f.contact_email') }}</small></div>
                 <div><label for="ev-cw">WhatsApp del evento</label><input id="ev-cw" class="form-control" wire:model="f.contact_whatsapp"></div>
             </div>
-            <label class="hz-ct__check"><input type="checkbox" wire:model="hide.rooms"> <span>Ocultar el bloque y la pregunta de habitaciones</span></label>
+            <label class="hz-ct__check"><input type="checkbox" wire:model="hide.rooms"> <span>Ocultar el bloque «¿Prefieres habitación?», la pregunta de habitaciones y el aviso del correo</span></label>
             <label class="hz-ct__check"><input type="checkbox" wire:model="hide.map"> <span>Ocultar el botón de mapa</span></label>
             <label class="hz-ct__check"><input type="checkbox" wire:model="hide.partners"> <span>Ocultar los logotipos de FAMA y del Club Campestre (por ejemplo, mientras no haya permiso de uso)</span></label>
 
@@ -97,6 +94,8 @@
             <textarea id="t-hs" class="form-control" rows="2" wire:model="t.hero.subtitle"></textarea>
             <label for="t-rm">Texto de la sección de habitación</label>
             <textarea id="t-rm" class="form-control" rows="2" wire:model="t.rooms.text"></textarea>
+            <label for="t-rc">Código de habitación con el hotel <small>(sale en el correo de confirmación; vacío = el correo avisa que se compartirá en breve)</small></label>
+            <input id="t-rc" class="form-control" wire:model="t.rooms.code" maxlength="60" placeholder="Ej. ASTROFEST26">
             <label for="t-tr">Cómo llegar en transporte público <small>(solo se muestra si lo escribes y está verificado)</small></label>
             <textarea id="t-tr" class="form-control" rows="2" wire:model="t.transport"></textarea>
             <div class="hz-bn__row">

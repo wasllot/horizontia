@@ -30,8 +30,6 @@ class SeedAstrofestEvent extends Command
             'venue_name' => 'Club Campestre Teotihuacán',
             'venue_city' => 'Estado de México',
             'venue_address' => 'Autopista México–Tuxpan, salida km 27, 55851 San Martín de las Pirámides, Méx.',
-            'hotel_phone' => '+52 55 4766 8637',
-            'hotel_booking_url' => 'https://clubcampestreteotihuacan.com/',
             'price' => 1740,
             'iva_rate' => 16,
             'max_per_order' => 10,

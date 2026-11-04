@@ -8,7 +8,6 @@
     $end = $event->local($event->end_at);
     $cd = $event->local($event->countdown_from);
     $minorsAge = (int) (data_get($event->content, 'minors_age') ?: 6);
-    $hotelUrl = $event->hotel_booking_url;
     $earlyActive = collect($quote['discounts'])->first(fn ($d) => str_contains(mb_strtolower($d['label']), 'preventa'));
     $pricing = ['unit' => (float) $event->price, 'rules' => collect((array) $event->discounts)->filter(fn ($r) => !empty($r['enabled']) && (float) ($r['percent'] ?? 0) > 0)->map(fn ($r, $k) => ['key' => $k, 'percent' => (float) $r['percent'], 'min' => $k === 'group' ? (int) ($r['min_qty'] ?? 4) : 1])->values()->all(), 'iva' => (float) $event->iva_rate];
     $weekend = $start && $end ? 'Sáb ' . $start->format('j') . ' – dom ' . $end->format('j') . ' ' . $start->locale('es')->translatedFormat('M Y') : '';
@@ -64,7 +63,7 @@
     'image' => $event->asset('og') ? [$event->asset('og')] : [$heroImg],
     'offers' => $event->hasPrice() ? ['@type' => 'Offer', 'priceCurrency' => 'MXN', 'price' => (string) (float) $event->price, 'url' => $event->url(), 'availability' => $state === 'sold_out' ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock'] : null,
     'performer' => ['@type' => 'Person', 'name' => 'Luz Calderón', 'jobTitle' => 'Física y divulgadora de la astronomía', 'sameAs' => ['https://www.facebook.com/share/1KQd11UfYr/']],
-    'organizer' => ['@type' => 'Organization', 'name' => 'Horizontia', 'url' => url('/')],
+    'organizer' => ['@type' => 'Organization', 'name' => 'Horizontia', 'url' => url('/'), 'sameAs' => array_values(array_filter((array) config('academy.social')))],
 ]), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
 </script>
 @endpush
@@ -359,15 +358,10 @@
                 @else
                     <p class="ev-soon">Las entradas estarán disponibles muy pronto.</p>
                 @endif
-                @if ($event->show('rooms') && $hotelUrl)
+                @if ($event->show('rooms'))
                     <div class="ev-rooms">
                         <h3>¿Prefieres habitación?</h3>
                         <p>{{ $event->text('rooms.text') }}</p>
-                        <div class="ev-cta" style="margin:0">
-                            <a class="ev-btn ev-btn--ghost ev-btn--sm" href="{{ $hotelUrl }}" target="_blank" rel="noopener" data-ev-track="click_reserve_room">Reservar habitación en el hotel</a>
-                            @if ($event->hotel_whatsapp)<a class="ev-btn ev-btn--ghost ev-btn--sm" href="https://wa.me/{{ preg_replace('/\D+/', '', $event->hotel_whatsapp) }}" target="_blank" rel="noopener" data-ev-track="click_reserve_room">WhatsApp del hotel</a>@endif
-                            @if ($event->hotel_phone)<a class="ev-btn ev-btn--ghost ev-btn--sm" href="tel:{{ preg_replace('/[^\d+]/', '', $event->hotel_phone) }}" data-ev-track="click_reserve_room">Llamar: {{ $event->hotel_phone }}</a>@endif
-                        </div>
                     </div>
                 @endif
             </div>
@@ -524,8 +518,8 @@
                     ['¿Puedo visitar las pirámides?', 'Sí, por tu cuenta, el domingo después del evento, con los horarios y reglas de la zona arqueológica.'],
                 ],
             ];
-            if ($event->show('rooms') && $hotelUrl) {
-                $faq['Boletos y pagos'][] = ['¿Puedo compartir habitación con mis amigos o familia?', 'Las habitaciones se reservan directamente con el hotel desde el botón «Reservar habitación en el hotel». Aquí compras tu entrada de Astrofest. Cada persona necesita su entrada.'];
+            if ($event->show('rooms')) {
+                $faq['Boletos y pagos'][] = ['¿Puedo compartir habitación con mis amigos o familia?', 'Sí. Al inscribirte recibes por correo un código para reservar directamente con el hotel, a un precio especial. Cada persona necesita su entrada de Astrofest.'];
             }
             $cols = [array_slice($faq, 0, 2, true), array_slice($faq, 2, 2, true)];
         @endphp

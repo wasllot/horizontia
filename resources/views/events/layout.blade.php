@@ -95,6 +95,13 @@
                         @if ($event->contact_whatsapp)<a href="https://wa.me/{{ preg_replace('/\D+/', '', $event->contact_whatsapp) }}" rel="noopener" target="_blank"><svg class="ev-i" aria-hidden="true"><use href="#i-whatsapp"/></svg>{{ $event->contact_whatsapp }}</a>@endif
                     </div>
                 @endif
+                @php $socials = array_filter(['facebook' => 'Facebook', 'instagram' => 'Instagram', 'youtube' => 'YouTube', 'linkedin' => 'LinkedIn'], fn ($l, $k) => preg_match('#^https?://#i', (string) config('academy.social.' . $k)), ARRAY_FILTER_USE_BOTH); @endphp
+                @if ($socials)
+                    <div class="evf__social">
+                        <p class="evf__label">Síguenos</p>
+                        <ul>@foreach ($socials as $k => $label)<li><a href="{{ config('academy.social.' . $k) }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $label }} de Horizontia" data-ev-track="social_{{ $k }}"><svg class="ev-i" aria-hidden="true"><use href="#i-{{ $k }}"/></svg></a></li>@endforeach</ul>
+                    </div>
+                @endif
                 <nav class="evf__legal" aria-label="Información legal">
                     <p class="evf__label">Información</p>
                     <a href="{{ $event->url('politicas') }}">Políticas del evento</a>

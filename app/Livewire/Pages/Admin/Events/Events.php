@@ -70,7 +70,7 @@ class Events extends Component
             'name' => $e->name, 'slug' => $e->slug, 'status' => $e->status,
             'start_at' => $this->localInput($e->start_at), 'end_at' => $this->localInput($e->end_at), 'countdown_from' => $this->localInput($e->countdown_from),
             'venue_name' => (string) $e->venue_name, 'venue_city' => (string) $e->venue_city, 'venue_address' => (string) $e->venue_address, 'venue_map_url' => (string) $e->venue_map_url,
-            'hotel_booking_url' => (string) $e->hotel_booking_url, 'hotel_phone' => (string) $e->hotel_phone, 'hotel_whatsapp' => (string) $e->hotel_whatsapp,
+            
             'contact_email' => (string) $e->contact_email, 'contact_whatsapp' => (string) $e->contact_whatsapp,
             'price' => (string) (float) $e->price, 'iva_rate' => (string) (float) $e->iva_rate, 'capacity' => $e->capacity === null ? '' : (string) $e->capacity, 'max_per_order' => $e->max_per_order,
             'sales_enabled' => (bool) $e->sales_enabled, 'sales_open_at' => $this->localInput($e->sales_open_at), 'sales_close_at' => $this->localInput($e->sales_close_at),
@@ -84,7 +84,7 @@ class Events extends Component
             $d[$k]['enabled'] = !empty($r['enabled']);
         }
         $this->d = $d;
-        foreach (['hero.title', 'hero.subtitle', 'hero.cta', 'seo.title', 'seo.description', 'seo.h1', 'closing.title', 'closing.text', 'rooms.text', 'transport'] as $k) {
+        foreach (['hero.title', 'hero.subtitle', 'hero.cta', 'seo.title', 'seo.description', 'seo.h1', 'closing.title', 'closing.text', 'rooms.text', 'rooms.code', 'transport'] as $k) {
             data_set($this->t, $k, (string) data_get($e->content, 'text.' . $k, ''));
         }
         $this->hide = ['rooms' => data_get($e->content, 'hide.rooms') === true, 'map' => data_get($e->content, 'hide.map') === true, 'partners' => data_get($e->content, 'hide.partners') === true];
@@ -111,7 +111,7 @@ class Events extends Component
             'f.slug' => ['required', 'string', 'max:120', \Illuminate\Validation\Rule::unique('events', 'slug')->ignore($this->editingId)],
             'f.status' => 'required|in:draft,published,finished',
             'f.start_at' => 'nullable|date', 'f.end_at' => 'nullable|date|after_or_equal:f.start_at', 'f.countdown_from' => 'nullable|date',
-            'f.venue_map_url' => 'nullable|url|max:500', 'f.hotel_booking_url' => 'nullable|url|max:500',
+            'f.venue_map_url' => 'nullable|url|max:500',
             'f.contact_email' => 'nullable|email|max:160',
             'f.price' => 'required|numeric|min:0|max:1000000', 'f.iva_rate' => 'required|numeric|min:0|max:100',
             'f.capacity' => 'nullable|integer|min:1|max:100000', 'f.max_per_order' => 'required|integer|min:1|max:50',
@@ -122,7 +122,7 @@ class Events extends Component
             'uploads.*' => 'nullable|file|mimes:png,jpg,jpeg,webp,svg|max:4096',
         ], [
             'f.name.required' => 'Escribe el nombre del evento.', 'f.slug.unique' => 'Ya existe un evento con esa dirección.', 'f.price.required' => 'Indica el precio (con IVA incluido).',
-            'f.end_at.after_or_equal' => 'El fin no puede ser anterior al inicio.', 'f.venue_map_url.url' => 'Pega un enlace completo (https://…).', 'f.hotel_booking_url.url' => 'Pega un enlace completo (https://…).',
+            'f.end_at.after_or_equal' => 'El fin no puede ser anterior al inicio.', 'f.venue_map_url.url' => 'Pega un enlace completo (https://…).',
             'uploads.*.mimes' => 'Sube una imagen PNG, JPG, WebP o SVG.', 'uploads.*.max' => 'Cada archivo puede pesar hasta 4 MB.',
         ]);
 
@@ -145,7 +145,6 @@ class Events extends Component
             'name' => trim($this->f['name']), 'slug' => $this->f['slug'], 'status' => $this->f['status'],
             'start_at' => $this->fromInput($this->f['start_at'] ?? null), 'end_at' => $this->fromInput($this->f['end_at'] ?? null), 'countdown_from' => $this->fromInput($this->f['countdown_from'] ?? null),
             'venue_name' => $this->clean('venue_name'), 'venue_city' => $this->clean('venue_city'), 'venue_address' => $this->clean('venue_address'), 'venue_map_url' => $this->clean('venue_map_url'),
-            'hotel_booking_url' => $this->clean('hotel_booking_url'), 'hotel_phone' => $this->clean('hotel_phone'), 'hotel_whatsapp' => $this->clean('hotel_whatsapp'),
             'contact_email' => $this->clean('contact_email'), 'contact_whatsapp' => $this->clean('contact_whatsapp'),
             'price' => round((float) $this->f['price'], 2), 'iva_rate' => round((float) $this->f['iva_rate'], 2),
             'capacity' => filled($this->f['capacity'] ?? null) ? (int) $this->f['capacity'] : null, 'max_per_order' => (int) $this->f['max_per_order'],

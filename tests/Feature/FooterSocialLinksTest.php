@@ -17,6 +17,7 @@ class FooterSocialLinksTest extends TestCase
     {
         parent::setUp();
         $this->ensurePlatformFixtures();
+        config(['academy.social' => []]);   // sin respaldo oficial: estas pruebas miden solo lo que se captura en Ajustes
         foreach (['fb_link', 'insta_link', 'linkedin_link', 'yt_link', 'tiktok_link'] as $k) {
             Settings::set('_general', $k, '');
         }
@@ -42,5 +43,19 @@ class FooterSocialLinksTest extends TestCase
         Settings::set('_general', 'yt_link', '#');
 
         $this->get('/')->assertOk()->assertSee('href="https://facebook.com/horizontia"', false)->assertSee('aria-label="Facebook"', false)->assertDontSee('aria-label="YouTube"', false);
+    }
+
+    public function test_empty_settings_fall_back_to_the_official_horizontia_networks(): void
+    {
+        config(['academy.social' => ['facebook' => 'https://www.facebook.com/somoshorizontia', 'instagram' => 'https://www.instagram.com/somoshorizontia/', 'youtube' => 'https://www.youtube.com/@SomosHorizontia', 'linkedin' => 'https://www.linkedin.com/company/somoshorizontia']]);
+        Settings::set('_general', 'insta_link', 'https://instagram.com/otra');
+        Settings::set('_general', 'yt_link', '#');   // valor de plantilla: tampoco cuenta
+
+        $html = $this->get('/')->assertOk()->getContent();
+        $this->assertStringContainsString('href="https://www.facebook.com/somoshorizontia"', $html);
+        $this->assertStringContainsString('href="https://www.youtube.com/@SomosHorizontia"', $html);
+        $this->assertStringContainsString('href="https://www.linkedin.com/company/somoshorizontia"', $html);
+        $this->assertStringContainsString('href="https://instagram.com/otra"', $html, 'lo capturado en Ajustes manda');
+        $this->assertStringNotContainsString('instagram.com/somoshorizontia', $html);
     }
 }

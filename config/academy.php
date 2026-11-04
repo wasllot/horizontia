@@ -34,6 +34,14 @@ return [
     'refund_days'   => (int) env('ACADEMY_REFUND_DAYS', 7),
     // Zona horaria de las fechas de cursos presenciales (se muestra la hora de la sede, no la del servidor)
     'timezone'      => env('ACADEMY_TIMEZONE', 'America/Mexico_City'),
+
+    // Redes oficiales de Horizontia. Se usan en el pie del sitio cuando Ajustes → Redes no tiene una dirección propia, y en las páginas de evento.
+    'social' => [
+        'facebook'  => env('ACADEMY_SOCIAL_FACEBOOK', 'https://www.facebook.com/somoshorizontia'),
+        'instagram' => env('ACADEMY_SOCIAL_INSTAGRAM', 'https://www.instagram.com/somoshorizontia/'),
+        'youtube'   => env('ACADEMY_SOCIAL_YOUTUBE', 'https://www.youtube.com/@SomosHorizontia'),
+        'linkedin'  => env('ACADEMY_SOCIAL_LINKEDIN', 'https://www.linkedin.com/company/somoshorizontia'),
+    ],
     // Instalación limpia (ProductionSeeder): el administrador inicial. Sin contraseña se genera una aleatoria y se muestra una sola vez.
     'admin_email'      => env('ACADEMY_ADMIN_EMAIL'),
     'admin_password'   => env('ACADEMY_ADMIN_PASSWORD'),

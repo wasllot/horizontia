@@ -36,6 +36,18 @@
       </table>
       <p style="margin:6px 0 0;font-size:12px;color:#5b6478;">Compra #{{ $order->id }}@if ($order->payment_id) · Pago Mercado Pago {{ $order->payment_id }}@endif</p>
     </td></tr>
+    @if ($event->show('rooms'))
+    <tr><td style="padding:14px 28px 0;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fffae3;border:1px dashed #fed304;border-radius:14px;"><tr><td style="padding:14px 18px;font-size:14px;line-height:1.6;color:#14213d;">
+        <strong style="font-family:Georgia,'Times New Roman',serif;font-size:16px;">¿Prefieres habitación?</strong><br>
+        @if (trim((string) data_get($event->content, 'text.rooms.code')))
+          {{ $event->text('rooms.code_note') }}<br><span style="display:inline-block;margin-top:6px;padding:6px 14px;border-radius:8px;background:#14213d;color:#fed304;font-family:Consolas,Menlo,monospace;font-size:18px;font-weight:700;letter-spacing:1.5px;">{{ data_get($event->content, 'text.rooms.code') }}</span>
+        @else
+          En breve te compartiremos por correo tu código para reservar directamente con el hotel, a un precio especial.
+        @endif
+      </td></tr></table>
+    </td></tr>
+    @endif
     <tr><td style="padding:18px 28px 6px;font-size:14px;line-height:1.6;color:#5b6478;">
       <strong style="color:#14213d;">Antes de ir:</strong> lleva ropa de invierno en capas, linterna con luz roja, tu comprobante e identificación. El estacionamiento ($60 por día) se paga directamente en el hotel.<br>
       Consulta las <a href="{{ $event->url('politicas') }}" style="color:#0d5bd6;">políticas del evento</a> y la <a href="{{ $event->url() }}" style="color:#0d5bd6;">página del evento</a>.

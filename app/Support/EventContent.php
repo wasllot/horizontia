@@ -28,7 +28,8 @@ class EventContent
                 'text' => 'Aparta tu lugar y mira hacia arriba con nosotros.',
             ],
             'rooms' => [
-                'text' => 'El hotel da tarifa especial a asistentes de Astrofest. Reserva directamente con el hotel; aquí compras tu entrada.',
+                'text' => 'Una vez que te inscribas recibirás un correo de confirmación con un código para que realices la reservación directamente con el hotel a un precio especial.',
+                'code_note' => 'Reserva directamente con el hotel usando este código, a un precio especial:',
             ],
             'sold_out' => 'Agotado',
         ];

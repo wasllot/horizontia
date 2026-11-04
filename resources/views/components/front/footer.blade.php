@@ -1,6 +1,15 @@
 @php
     // Una red social solo se muestra si tiene una dirección real (el '#' de la plantilla daba iconos que no llevan a ningún lado).
-    $socialUrl = fn (string $k) => (($v = trim((string) setting('_general.' . $k))) !== '' && preg_match('#^https?://#i', $v)) ? $v : null;
+    // Dirección escrita en Ajustes; si el campo está vacío o es de plantilla («#») se usa la red oficial de Horizontia (config/academy.php). Un valor inválido («#», texto suelto) nunca se muestra.
+    $socialMap = ['fb_link' => 'facebook', 'insta_link' => 'instagram', 'yt_link' => 'youtube', 'linkedin_link' => 'linkedin'];
+    $socialUrl = function (string $k) use ($socialMap) {
+        $v = trim((string) setting('_general.' . $k));
+        if (!preg_match('#^https?://#i', $v) && isset($socialMap[$k])) {   // vacío o de plantilla («#»): se usa la red oficial
+            $v = trim((string) config('academy.social.' . $socialMap[$k], ''));
+        }
+
+        return preg_match('#^https?://#i', $v) ? $v : null;
+    };
 @endphp
 @props(['page'=> null])
 @php

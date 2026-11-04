@@ -413,12 +413,41 @@ class EventTicketSalesTest extends TestCase
         $this->assertSame('finished', app(EventSales::class)->state($e));
     }
 
-    public function test_hidden_blocks_do_not_render_until_their_data_is_set(): void
+    public function test_rooms_block_has_no_hotel_buttons_and_can_be_hidden(): void
     {
-        $e = $this->event();
-        $this->get($e->url())->assertDontSee('Reservar habitación en el hotel')->assertDontSee('Abrir en Google Maps')->assertDontSee('En transporte público');
-        $e->update(['hotel_booking_url' => 'https://hotel.test/reservas', 'venue_map_url' => 'https://maps.test/pin']);
-        $this->get($e->url())->assertSee('Reservar habitación en el hotel')->assertSee('rel="noopener"', false)->assertSee('Abrir en Google Maps');
+        $e = $this->event(['hotel_booking_url' => 'https://hotel.test/reservas', 'hotel_phone' => '+52 55 0000 0000']);
+        $html = $this->get($e->url())->assertOk()->getContent();
+        $this->assertStringContainsString('¿Prefieres habitación?', $html);
+        $this->assertStringContainsString('recibirás un correo de confirmación con un código', $html);
+        foreach (['Reservar habitación en el hotel', 'hotel.test', 'click_reserve_room', 'Llamar:'] as $gone) {
+            $this->assertStringNotContainsString($gone, $html);
+        }
+        $this->assertStringNotContainsString('Abrir en Google Maps', $html, 'el mapa sigue oculto sin enlace');
+
+        $e->update(['content' => ['hide' => ['rooms' => true]]]);
+        $this->get($e->url())->assertDontSee('¿Prefieres habitación?');
+    }
+
+    public function test_confirmation_email_carries_the_hotel_code_when_set(): void
+    {
+        $e = $this->event(['content' => ['text' => ['rooms' => ['code' => 'ASTRO26']]]]);
+        $order = EventOrder::create(['event_id' => $e->id, 'code' => strtolower((string) Str::ulid()), 'name' => 'Ana', 'email' => 'a@example.com', 'phone' => '5555555555', 'quantity' => 1, 'unit_price' => 1740, 'total' => 1740, 'iva' => 240, 'status' => 'paid']);
+        EventTicket::create(['event_id' => $e->id, 'event_order_id' => $order->id, 'attendee_name' => 'Ana', 'code' => 'AF-HOTE-L123']);
+        $mail = new EventTicketsEmail($order->fresh(['event', 'tickets']));
+        $mail->assertSeeInHtml('¿Prefieres habitación?');
+        $mail->assertSeeInHtml('ASTRO26');
+
+        $e->update(['content' => []]);
+        (new EventTicketsEmail($order->fresh(['event', 'tickets'])))->assertSeeInHtml('En breve te compartiremos');
+    }
+
+    public function test_event_footer_shows_the_official_social_networks(): void
+    {
+        $html = $this->get($this->event()->url())->assertOk()->getContent();
+        foreach (['facebook.com/somoshorizontia', 'instagram.com/somoshorizontia', 'youtube.com/@SomosHorizontia', 'linkedin.com/company/somoshorizontia'] as $u) {
+            $this->assertStringContainsString($u, $html);
+        }
+        $this->assertStringContainsString('aria-label="Instagram de Horizontia"', $html);
     }
 
     // ---- Admin ----
