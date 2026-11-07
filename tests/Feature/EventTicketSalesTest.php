@@ -193,7 +193,7 @@ class EventTicketSalesTest extends TestCase
         $this->assertSame(1740.0, $sales->quote($e, 1)['total']);
         $this->assertSame(6264.0, $sales->quote($e, 4)['total'], 'grupo de 4: -10 %');
 
-        $e->update(['discounts' => ['early_bird' => ['enabled' => true, 'percent' => 15, 'label' => 'Preventa', 'ends_at' => now()->subDay()->toDateString()]]]);
+        $e->update(['discounts' => ['early_bird' => ['enabled' => true, 'percent' => 15, 'label' => 'Preventa', 'ends_at' => now()->subDays(2)->toDateString()]]]);
         $this->assertSame(1740.0, $sales->quote($e->fresh(), 1)['total'], 'preventa vencida');
         $e->update(['discounts' => ['early_bird' => ['enabled' => true, 'percent' => 15, 'label' => 'Preventa', 'ends_at' => now()->addDay()->toDateString()]]]);
         $this->assertSame(1479.0, $sales->quote($e->fresh(), 1)['total']);
@@ -551,5 +551,24 @@ class EventTicketSalesTest extends TestCase
             $this->assertFileExists(public_path('images/favicon/' . $f));
         }
         $this->assertGreaterThan(1000, filesize(public_path('favicon.ico')));
+    }
+
+    public function test_too_many_attempts_keep_the_buyer_inside_the_event_page_and_buckets_are_independent(): void
+    {
+        $e = $this->event();
+        $this->cartWith($e, 1);
+        // 30 «agregar al carrito» no gastan el contador del pago (cada ruta tiene el suyo).
+        for ($i = 0; $i < 25; $i++) {
+            $this->cartWith($e, 1);
+        }
+        $this->post($e->url('pago'), $this->buyer(['attendees' => ['A'], 'accept_policies' => null]))->assertSessionHasErrors('accept_policies');
+
+        // El intento 13 del pago en un minuto no muestra el 429 del sitio: regresa al evento con un aviso.
+        for ($i = 0; $i < 11; $i++) {
+            $this->post($e->url('pago'), $this->buyer(['attendees' => ['A'], 'accept_policies' => null]));
+        }
+        $res = $this->from($e->url('pago'))->post($e->url('pago'), $this->buyer(['attendees' => ['A'], 'accept_policies' => null]));
+        $res->assertRedirect($e->url('pago'))->assertSessionHas('event_error');
+        $this->assertStringContainsString('Demasiados intentos', session('event_error'));
     }
 }

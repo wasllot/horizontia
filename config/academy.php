@@ -35,6 +35,12 @@ return [
     // Zona horaria de las fechas de cursos presenciales (se muestra la hora de la sede, no la del servidor)
     'timezone'      => env('ACADEMY_TIMEZONE', 'America/Mexico_City'),
 
+    // Páginas de evento: intentos por minuto y por IP. Cada ruta tiene su propio contador. Súbelos si muchas personas comparten el mismo wifi.
+    'events' => [
+        'cart_per_minute'     => (int) env('ACADEMY_EVENT_CART_PER_MINUTE', 30),
+        'checkout_per_minute' => (int) env('ACADEMY_EVENT_CHECKOUT_PER_MINUTE', 12),
+    ],
+
     // Redes oficiales de Horizontia. Se usan en el pie del sitio cuando Ajustes → Redes no tiene una dirección propia, y en las páginas de evento.
     'social' => [
         'facebook'  => env('ACADEMY_SOCIAL_FACEBOOK', 'https://www.facebook.com/somoshorizontia'),

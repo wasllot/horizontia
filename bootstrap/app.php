@@ -58,6 +58,18 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->report(function (\Throwable $e) {
             \App\Services\ErrorAlert::report($e);
         });
+        // Dentro de las páginas de evento, un exceso de intentos o una sesión caducada no sacan al comprador a una pantalla de error del sitio:
+        // vuelve a donde estaba con un aviso (conserva su carrito si lo tenía).
+        $exceptions->render(function (\Illuminate\Http\Exceptions\ThrottleRequestsException|\Illuminate\Session\TokenMismatchException $e, Request $request) {
+            if ($request->routeIs('event.*') && !$request->expectsJson()) {
+                $slug = (string) $request->route('slug');
+                $msg = $e instanceof \Illuminate\Session\TokenMismatchException
+                    ? 'Tu sesión caducó. Vuelve a intentarlo: tu carrito sigue ahí.'
+                    : 'Demasiados intentos en poco tiempo. Espera un minuto e inténtalo de nuevo.';
+
+                return redirect($request->headers->get('referer') ?: url('/eventos/' . $slug))->with('event_error', $msg);
+            }
+        });
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             if($request->expectsJson()) {
                 return response()->json(

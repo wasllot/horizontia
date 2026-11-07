@@ -212,7 +212,11 @@ class EventLandingController extends Controller
             try {
                 $payment = $driver->getPayment($paymentId);
                 if (!empty($payment) && (string) ($payment['external_reference'] ?? '') === $order->reference()) {
-                    app(EventPaymentSettler::class)->settle($driver, $payment);
+                    $outcome = app(EventPaymentSettler::class)->settle($driver, $payment);
+                    // Volvió con el pago rechazado: la persona salió de Mercado Pago, así que el lugar se libera y se le ofrece reintentar.
+                    if ($outcome === 'failed' && $order->fresh()->status === EventOrder::PENDING) {
+                        $order->update(['status' => EventOrder::EXPIRED]);
+                    }
                     $order = $order->fresh('tickets');
                 }
             } catch (\Throwable $e) {

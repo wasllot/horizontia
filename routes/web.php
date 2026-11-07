@@ -60,10 +60,10 @@ Route::middleware(['locale', 'maintenance'])->prefix('eventos/{slug}')->where(['
     Route::get('/', [$c, 'show'])->name('show');
     Route::get('politicas', [$c, 'policies'])->name('policies');
     Route::get('carrito', [$c, 'cart'])->name('cart');
-    Route::post('carrito', [$c, 'cartAdd'])->middleware('throttle:30,1')->name('cart.add');
-    Route::post('carrito/actualizar', [$c, 'cartUpdate'])->middleware('throttle:60,1')->name('cart.update');
+    Route::post('carrito', [$c, 'cartAdd'])->middleware('throttle:' . config('academy.events.cart_per_minute', 30) . ',1,ev-cart')->name('cart.add');
+    Route::post('carrito/actualizar', [$c, 'cartUpdate'])->middleware('throttle:' . config('academy.events.cart_per_minute', 30) * 2 . ',1,ev-cart-update')->name('cart.update');
     Route::get('pago', [$c, 'checkout'])->name('checkout');
-    Route::post('pago', [$c, 'placeOrder'])->middleware('throttle:12,1')->name('checkout.store');
+    Route::post('pago', [$c, 'placeOrder'])->middleware('throttle:' . config('academy.events.checkout_per_minute', 12) . ',1,ev-checkout')->name('checkout.store');
     Route::get('gracias', [$c, 'thanks'])->name('thanks');
     Route::get('evento.ics', [$c, 'ics'])->name('ics');
     Route::get('boleto/{code}.png', [$c, 'qr'])->where('code', '[A-Za-z0-9\-]+')->name('qr');

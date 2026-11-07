@@ -259,7 +259,7 @@ class MercadoPago extends BasePaymentDriver
 
     protected function client(): PendingRequest
     {
-        return Http::baseUrl(self::API_URL)
+        return Http::baseUrl((string) config('services.mercadopago.base_url', self::API_URL))
             ->withToken($this->keys['mp_access_token'] ?? '')
             ->acceptJson()
             ->asJson()

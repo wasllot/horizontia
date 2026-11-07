@@ -52,4 +52,9 @@ return [
         'key' => env('GEMINI_API_KEY', env('GEMINI_APY_KEY')),
     ],
 
+    'mercadopago' => [
+        // Solo para pruebas E2E con un Mercado Pago simulado (tests/e2e-panel/mp-mock.mjs). En producción no se define.
+        'base_url' => env('MERCADOPAGO_API_URL', 'https://api.mercadopago.com'),
+    ],
+
 ];
