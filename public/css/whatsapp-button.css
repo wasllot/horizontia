@@ -8,5 +8,8 @@
 /* En móvil queda solo el icono para no tapar contenido. */
 @media (max-width: 640px) { .hz-wa { padding: 0; width: 52px; height: 52px; right: 14px; bottom: 14px; } .hz-wa--left { left: 14px; right: auto; } .hz-wa--raised { bottom: 78px; } .hz-wa__label { display: none; } }
 @media (prefers-reduced-motion: reduce) { .hz-wa { transition: none; } .hz-wa:hover { transform: none; } }
-/* Páginas de evento: en móvil sube para no tapar el CTA de la barra inferior. */
-@media (max-width: 820px) { .hz-wa--event { bottom: 84px; } }
+/* Páginas de evento: en móvil sube para no tapar el CTA de la barra inferior ni, mientras se vea, el aviso de cookies. */
+@media (max-width: 820px) {
+  .hz-wa--event { bottom: 84px; }
+  body:has([aria-label="Aviso de cookies"]:not([style*="display: none"]):not([style*="display:none"])) .hz-wa--event { bottom: 152px; }
+}
