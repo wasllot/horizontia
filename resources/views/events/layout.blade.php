@@ -11,7 +11,12 @@
     $dates = $startLocal ? $startLocal->format('j') . ($event->end_at ? ' y ' . $event->local($event->end_at)->format('j') : '') . ' de ' . $startLocal->locale('es')->translatedFormat('F') : '';
 @endphp
 {{-- Independiente: sin el menú ni el pie del sitio ('bare'), pero con su tipografía, colores y botones. --}}
-@extends('layouts.frontend-app', ['bare' => true, 'ownMeta' => true])
+@extends('layouts.frontend-app', [
+    'bare' => true,
+    'ownMeta' => true,
+    'eventWhatsapp' => config('academy.events.whatsapp'),
+    'eventWhatsappMessage' => 'Hola, tengo una duda sobre ' . $event->name,
+])
 
 @push('styles')
     <title>{{ $seo['title'] }}</title>

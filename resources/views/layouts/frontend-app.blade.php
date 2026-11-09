@@ -134,7 +134,7 @@
             {!! setting('_scripts_styles.footer_scripts') !!}
         @endif
    
-    <x-whatsapp-button />
+    <x-whatsapp-button :number="$eventWhatsapp ?? null" :message="$eventWhatsappMessage ?? null" :event="!empty($eventWhatsapp)" />
 </body>
 
 </html>

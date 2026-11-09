@@ -39,6 +39,8 @@ return [
     'events' => [
         'cart_per_minute'     => (int) env('ACADEMY_EVENT_CART_PER_MINUTE', 30),
         'checkout_per_minute' => (int) env('ACADEMY_EVENT_CHECKOUT_PER_MINUTE', 12),
+        // Número del botón flotante de WhatsApp en las páginas de evento (vacío = sin botón).
+        'whatsapp'            => env('ACADEMY_EVENT_WHATSAPP', '+525654478563'),
     ],
 
     // Redes oficiales de Horizontia. Se usan en el pie del sitio cuando Ajustes → Redes no tiene una dirección propia, y en las páginas de evento.
