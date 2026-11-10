@@ -167,7 +167,7 @@
                 <source src="{{ $promo['src'] }}" type="video/mp4">
                 Tu navegador no puede reproducir el video. <a href="{{ $promo['src'] }}">Descárgalo aquí</a>.
             </video>
-            <figcaption><b>Luz, Galileo y Telescopio te invitan</b><span>Video promocional · 1 min 53 s</span></figcaption>
+            <figcaption><b>Luz, Galileo y Telescopio te invitan</b><span>1 min 53 s</span></figcaption>
         </figure>
     </div>
 </section>
