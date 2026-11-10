@@ -11,7 +11,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-/** Admin > Eventos: precio, cupo, descuentos, textos, políticas, archivos y compras de cada evento con página propia. */
+/** Admin > Eventos: precio, cupo, descuentos, textos, políticas y archivos de cada evento con página propia. */
 class Events extends Component
 {
     use \App\Livewire\Concerns\AuthorizesAdmin;
@@ -31,7 +31,6 @@ class Events extends Component
     public array $hide = [];
     public array $assets = [];
     public array $uploads = [];
-    public string $orderStatus = 'paid';
 
     private function toast(string $message, string $type = 'success'): void
     {
@@ -202,19 +201,6 @@ class Events extends Component
         }
     }
 
-    public function resend(int $orderId): void
-    {
-        $order = EventOrder::where('event_id', $this->editingId)->findOrFail($orderId);
-        if (!$order->isPaid()) {
-            $this->toast('Solo se reenvía la confirmación de compras pagadas.', 'error');
-
-            return;
-        }
-        $order->update(['confirmation_sent_at' => null]);
-        app(EventSales::class)->sendConfirmation($order->fresh());
-        $this->toast('Confirmación reenviada a ' . $order->email . '.');
-    }
-
     public function delete(int $id): void
     {
         $e = Event::findOrFail($id);
@@ -252,12 +238,6 @@ class Events extends Component
             'sales' => $sales,
             'current' => $current,
             'ready' => $this->formOpen ? $this->readiness($current) : [],
-            'orders' => $current ? EventOrder::where('event_id', $current->id)->when($this->orderStatus !== 'all', fn ($q) => $q->where('status', $this->orderStatus))->with('tickets')->latest('id')->limit(100)->get() : collect(),
-            'stats' => $current ? [
-                'paid' => (int) EventOrder::where('event_id', $current->id)->where('status', EventOrder::PAID)->sum('quantity'),
-                'revenue' => (float) EventOrder::where('event_id', $current->id)->where('status', EventOrder::PAID)->sum('total'),
-                'pending' => (int) EventOrder::where('event_id', $current->id)->where('status', EventOrder::PENDING)->where('expires_at', '>', now())->sum('quantity'),
-            ] : null,
             'assetLabels' => self::ASSETS,
         ]);
     }

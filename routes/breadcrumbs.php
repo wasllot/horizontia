@@ -195,6 +195,11 @@ Breadcrumbs::for('admin.events', function (BreadcrumbTrail $trail) {
     $trail->push('Eventos', route('admin.events'));
 });
 
+Breadcrumbs::for('admin.events.orders', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.events');
+    $trail->push('Compras', route('admin.events.orders'));
+});
+
 Breadcrumbs::for('admin.coupons', function (BreadcrumbTrail $trail) {
     $trail->parent('admin.insights');
     $trail->push('Cupones', route('admin.coupons'));

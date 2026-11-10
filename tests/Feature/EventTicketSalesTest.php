@@ -488,6 +488,24 @@ class EventTicketSalesTest extends TestCase
         $this->assertTrue($e->discounts['group']['enabled']);
     }
 
+    public function test_admin_orders_screen_lists_paid_purchases_and_non_admins_cannot_open_it(): void
+    {
+        $e = $this->event();
+        EventOrder::create(['event_id' => $e->id, 'code' => strtolower((string) Str::ulid()), 'name' => 'Compradora Pagada', 'email' => 'paga@example.com', 'phone' => '5555555555', 'quantity' => 1, 'unit_price' => 1740, 'total' => 1740, 'iva' => 240, 'status' => 'paid']);
+        EventOrder::create(['event_id' => $e->id, 'code' => strtolower((string) Str::ulid()), 'name' => 'Compradora Pendiente', 'email' => 'pendiente@example.com', 'phone' => '5555555555', 'quantity' => 1, 'unit_price' => 1740, 'total' => 1740, 'iva' => 240, 'status' => 'pending', 'expires_at' => now()->addMinutes(30)]);
+
+        $this->actingAs($this->admin());
+        $this->get(route('admin.events.orders'))->assertOk()->assertSee('Compradora Pagada')->assertDontSee('Compradora Pendiente');
+
+        \Livewire\Livewire::test(\App\Livewire\Pages\Admin\Events\EventOrders::class)
+            ->assertSee('Compradora Pagada')
+            ->set('orderStatus', 'pending')
+            ->assertSee('Compradora Pendiente')->assertDontSee('Compradora Pagada');
+
+        \Livewire\Livewire::actingAs($this->student())->test(\App\Livewire\Pages\Admin\Events\EventOrders::class)->assertForbidden();
+        $this->actingAs($this->student())->get(route('admin.events.orders'))->assertForbidden();
+    }
+
     public function test_admin_events_screen_is_forbidden_to_non_admins(): void
     {
         \Livewire\Livewire::actingAs($this->student())->test(\App\Livewire\Pages\Admin\Events\Events::class)->assertForbidden();

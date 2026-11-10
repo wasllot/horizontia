@@ -2,7 +2,7 @@
     <header class="hz-seo__head">
         <div>
             <h2>Eventos <span class="hz-count">{{ $events->count() }}</span></h2>
-            <p>Eventos de entrada única con página propia (Astrofest y futuras ediciones): precio, cupo, descuentos, textos, políticas y compras. Las compras son de invitado, sin cuenta, y se cobran con Mercado Pago.</p>
+            <p>Eventos de entrada única con página propia (Astrofest y futuras ediciones): precio, cupo, descuentos, textos y políticas. Las compras (de invitado, sin cuenta, cobradas con Mercado Pago) están en el submenú Compras.</p>
         </div>
         <button type="button" class="hz-btn hz-btn--sm" wire:click="create" data-testid="event-new"><i class="icon-plus" aria-hidden="true"></i> Nuevo evento</button>
     </header>
@@ -130,43 +130,7 @@
         </form>
 
         @if ($current)
-            <section aria-labelledby="ev-orders" style="margin:26px 0">
-                <header class="hz-seo__head">
-                    <div><h2 id="ev-orders">Compras</h2>
-                        <p>{{ $stats['paid'] }} entradas pagadas · ${{ number_format($stats['revenue'], 2) }} MXN · {{ $stats['pending'] }} reservadas por pagar{{ $current->capacity ? ' · cupo ' . $current->capacity : '' }}</p></div>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-                        <select class="form-control" wire:model.live="orderStatus" aria-label="Estado" style="width:auto">
-                            <option value="paid">Pagadas</option><option value="pending">Por pagar</option><option value="expired">Vencidas</option><option value="refunded">Reembolsadas</option><option value="all">Todas</option>
-                        </select>
-                        <a class="hz-btn hz-btn--ghost hz-btn--sm" href="{{ route('admin.events.export', $current) }}?estado={{ $orderStatus }}" data-testid="event-csv">Descargar CSV</a>
-                    </div>
-                </header>
-                <div class="am-disputelist_wrap"><div class="am-disputelist">
-                    @if ($orders->isNotEmpty())
-                        <table class="tb-table">
-                            <thead><tr><th class="hz-col-main">Compra</th><th>Asistentes</th><th>Total</th><th>Estado</th><th><span class="hz-sr">Acciones</span></th></tr></thead>
-                            <tbody>
-                                @foreach ($orders as $o)
-                                    <tr wire:key="eo-{{ $o->id }}">
-                                        <td data-label="Compra"><strong>#{{ $o->id }} · {{ $o->name }}</strong><br><small>{{ $o->email }} · {{ $o->phone }}<br>{{ $o->created_at->timezone(\App\Models\Event::timezone())->format('d/m/Y H:i') }}</small></td>
-                                        <td data-label="Asistentes">{{ $o->quantity }} · <small>{{ $o->tickets->pluck('attendee_name')->implode(', ') }}</small></td>
-                                        <td data-label="Total">${{ number_format($o->total, 2) }}@if ($o->discount_label)<br><small>{{ $o->discount_label }}</small>@endif</td>
-                                        <td data-label="Estado">
-                                            @if ($o->status === 'paid')<x-panel.badge tone="success">Pagada</x-panel.badge>
-                                            @elseif ($o->status === 'pending')<x-panel.badge tone="warning" :dot="false">Por pagar</x-panel.badge>
-                                            @elseif ($o->status === 'refunded')<x-panel.badge tone="neutral">Reembolsada</x-panel.badge>
-                                            @else<x-panel.badge tone="neutral">Vencida</x-panel.badge>@endif
-                                        </td>
-                                        <td data-label="Acciones"><div class="hz-acts">@if ($o->status === 'paid')<x-panel.action icon="icon-mail" label="Reenviar confirmación" wire:click="resend({{ $o->id }})" />@endif</div></td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @else
-                        <div class="hz-empty"><h3>Sin compras en este estado</h3><p>Cuando alguien compre, aparecerá aquí.</p></div>
-                    @endif
-                </div></div>
-            </section>
+            <p style="margin:18px 0"><a class="hz-btn hz-btn--ghost hz-btn--sm" href="{{ route('admin.events.orders', ['evento' => $current->id]) }}" data-testid="event-orders-link">Ver compras de este evento</a></p>
         @endif
     @endif
 
