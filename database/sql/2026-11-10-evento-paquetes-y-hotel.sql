@@ -45,6 +45,9 @@ UPDATE `events`
 SET `packages` = '[{"key":"p1","name":"1 persona","persons":1,"price":1300,"active":true},{"key":"p2","name":"2 personas","persons":2,"price":2100,"active":true},{"key":"p3","name":"3 personas","persons":3,"price":2900,"active":true}]'
 WHERE `slug` = 'astrofest-geminidas-2026' AND `packages` IS NULL;
 
+-- Hasta 10 personas por compra (solo sube el límite; nunca lo baja)
+UPDATE `events` SET `max_per_order` = 10 WHERE `slug` = 'astrofest-geminidas-2026' AND `max_per_order` < 10;
+
 -- Registro en `migrations` (un lote nuevo; no duplica si ya estaba)
 INSERT INTO `migrations` (`migration`, `batch`)
 SELECT '2026_11_10_000001_add_packages_and_hotel_to_events', b.lote

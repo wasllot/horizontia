@@ -43,6 +43,9 @@ return new class extends Migration
         // Astrofest estrena los paquetes del flyer; solo si todavía no se configuraron (no pisa lo que se edite en el panel).
         DB::table('events')->where('slug', 'astrofest-geminidas-2026')->whereNull('packages')
             ->update(['packages' => json_encode(self::ASTROFEST_PACKAGES)]);
+
+        // Hasta 10 personas por compra (p. ej. 2 paquetes de 3 + 1 de 2 + 1 de 1 cabe en una sola compra).
+        DB::table('events')->where('slug', 'astrofest-geminidas-2026')->where('max_per_order', '<', 10)->update(['max_per_order' => 10]);
     }
 
     public function down(): void
