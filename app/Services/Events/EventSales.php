@@ -72,13 +72,58 @@ class EventSales
     }
 
     /**
-     * @return array{unit: float, quantity: int, subtotal: float, discounts: array<int, array{label: string, percent: float, amount: float}>, discount: float, total: float, iva: float, base: float}
+     * Lo elegido como [clave de paquete => cantidad], solo con paquetes vigentes. Un entero significa «n entradas individuales»
+     * (el paquete de 1 persona, o el más chico si no hay).
+     *
+     * @return array<string, int>
      */
-    public function quote(Event $event, int $quantity): array
+    public function selection(Event $event, int|array|null $selection): array
     {
-        $quantity = max(1, $quantity);
-        $unit = round((float) $event->price, 2);
-        $subtotal = round($unit * $quantity, 2);
+        $packages = array_column($event->packageList(), null, 'key');
+        if (!$packages) {
+            return [];
+        }
+        if (!is_array($selection)) {
+            $key = isset($packages['p1']) ? 'p1' : array_key_first($packages);
+
+            return [$key => max(1, (int) $selection)];
+        }
+        $out = [];
+        foreach ($selection as $key => $qty) {
+            if ((int) $qty > 0 && isset($packages[(string) $key])) {
+                $out[(string) $key] = (int) $qty;
+            }
+        }
+
+        return $out;
+    }
+
+    /** Personas que cubre lo elegido (cada persona lleva su entrada, su pulsera y su diploma). */
+    public function persons(Event $event, int|array|null $selection): int
+    {
+        $total = 0;
+        foreach ($this->selection($event, $selection) as $key => $qty) {
+            $total += ($event->findPackage($key)['persons'] ?? 0) * $qty;
+        }
+
+        return $total;
+    }
+
+    /**
+     * @return array{unit: float, quantity: int, persons: int, lines: array<int, array{key: string, name: string, persons: int, qty: int, unit: float, subtotal: float}>, subtotal: float, discounts: array<int, array{label: string, percent: float, amount: float}>, discount: float, total: float, iva: float, base: float}
+     */
+    public function quote(Event $event, int|array|null $selection): array
+    {
+        $lines = [];
+        $persons = 0;
+        $subtotal = 0.0;
+        foreach ($this->selection($event, $selection) as $key => $qty) {
+            $p = $event->findPackage($key);
+            $lines[] = ['key' => $key, 'name' => $p['name'], 'persons' => $p['persons'], 'qty' => $qty, 'unit' => $p['price'], 'subtotal' => round($p['price'] * $qty, 2)];
+            $persons += $p['persons'] * $qty;
+            $subtotal += $p['price'] * $qty;
+        }
+        $subtotal = round($subtotal, 2);
 
         $applied = [];
         $now = now();
@@ -92,7 +137,7 @@ class EventSales
             if (!empty($rule['ends_at']) && $now->gt(\Illuminate\Support\Carbon::parse($rule['ends_at'], Event::timezone())->endOfDay())) {
                 continue;
             }
-            if ($key === 'group' && $quantity < max(2, (int) ($rule['min_qty'] ?? 4))) {
+            if ($key === 'group' && $persons < max(2, (int) ($rule['min_qty'] ?? 4))) {
                 continue;
             }
             $percent = min(100.0, (float) $rule['percent']);
@@ -102,14 +147,14 @@ class EventSales
         $total = round($subtotal - $discount, 2);
         $iva = $event->ivaIn($total);
 
-        return ['unit' => $unit, 'quantity' => $quantity, 'subtotal' => $subtotal, 'discounts' => $applied, 'discount' => $discount, 'total' => $total, 'iva' => $iva, 'base' => round($total - $iva, 2)];
+        return ['unit' => (float) ($lines[0]['unit'] ?? 0), 'quantity' => $persons, 'persons' => $persons, 'lines' => $lines, 'subtotal' => $subtotal, 'discounts' => $applied, 'discount' => $discount, 'total' => $total, 'iva' => $iva, 'base' => round($total - $iva, 2)];
     }
 
     /**
      * Crea la compra con sus entradas nominales y reserva los lugares. Revalida todo con el evento bloqueado
      * para que dos compras simultáneas no rebasen el cupo.
      *
-     * @param array{name: string, email: string, phone: string, quantity: int, attendees: array<int,string>, minors?: int, has_telescope?: ?bool, heard_from?: ?string, newsletter?: bool, wants_invoice?: bool, invoice?: ?array, utm?: ?array} $data
+     * @param array{name: string, email: string, phone: string, items?: array<string,int>, quantity?: int, attendees: array<int,string>, minors?: int, has_telescope?: ?bool, heard_from?: ?string, newsletter?: bool, wants_invoice?: bool, invoice?: ?array, utm?: ?array} $data
      */
     public function createOrder(Event $event, array $data): EventOrder
     {
@@ -119,17 +164,21 @@ class EventSales
             if ($state !== self::OPEN) {
                 throw new EventSalesException($state);
             }
-            $quantity = (int) $data['quantity'];
+            $selection = $data['items'] ?? (int) ($data['quantity'] ?? 0);
+            if (!is_array($selection) && $selection < 1) {
+                throw new EventSalesException('quantity');
+            }
+            $quote = $this->quote($locked, $selection);
+            $quantity = $quote['persons'];   // el cupo y las entradas cuentan personas, no paquetes
             if ($quantity < 1 || $quantity > $this->maxQuantity($locked)) {
                 throw new EventSalesException($this->available($locked) === 0 ? self::SOLD_OUT : 'quantity');
             }
-
-            $quote = $this->quote($locked, $quantity);
             $order = EventOrder::create([
                 'event_id' => $locked->id,
                 'code' => strtolower((string) Str::ulid()),
                 'name' => $data['name'], 'email' => mb_strtolower($data['email']), 'phone' => $data['phone'],
                 'quantity' => $quantity,
+                'items' => array_map(fn ($l) => ['key' => $l['key'], 'name' => $l['name'], 'persons' => $l['persons'], 'qty' => $l['qty'], 'unit_price' => $l['unit'], 'subtotal' => $l['subtotal']], $quote['lines']),
                 'minors' => (int) ($data['minors'] ?? 0),
                 'has_telescope' => $data['has_telescope'] ?? null,
                 'heard_from' => $data['heard_from'] ?? null,
@@ -137,7 +186,7 @@ class EventSales
                 'wants_invoice' => (bool) ($data['wants_invoice'] ?? false),
                 'invoice' => !empty($data['wants_invoice']) ? ($data['invoice'] ?? null) : null,
                 'policies_accepted_at' => now(),
-                'unit_price' => $quote['unit'], 'discount' => $quote['discount'],
+                'unit_price' => round($quote['subtotal'] / $quantity, 2), 'discount' => $quote['discount'],
                 'discount_label' => $quote['discounts'] ? implode(' + ', array_map(fn ($d) => $d['label'] . ' ' . rtrim(rtrim(number_format($d['percent'], 2), '0'), '.') . ' %', $quote['discounts'])) : null,
                 'total' => $quote['total'], 'iva' => $quote['iva'],
                 'status' => EventOrder::PENDING,
@@ -145,7 +194,9 @@ class EventSales
                 'utm' => $data['utm'] ?? null,
             ]);
 
-            foreach (array_values($data['attendees']) as $i => $name) {
+            $attendees = array_values($data['attendees'] ?? []);
+            for ($i = 0; $i < $quantity; $i++) {
+                $name = $attendees[$i] ?? '';
                 EventTicket::create([
                     'event_id' => $locked->id, 'event_order_id' => $order->id,
                     'attendee_name' => $name ?: ($i === 0 ? $data['name'] : 'Asistente ' . ($i + 1)),
@@ -179,11 +230,13 @@ class EventSales
                 Log::warning('Evento: pago aprobado sobre una reserva vencida', ['order' => $locked->id, 'payment' => $paymentId]);
             }
             $locked->update(['status' => EventOrder::PAID, 'paid_at' => now(), 'payment_id' => $paymentId, 'payment_method' => $method, 'expires_at' => null]);
+            app(EventHotelNotifier::class)->assignCode($locked);
 
             return $locked;
         });
 
         $this->sendConfirmation($paid);
+        app(EventHotelNotifier::class)->notify($paid);
 
         return $paid;
     }

@@ -19,7 +19,7 @@ class Events extends Component
 
     public const ASSETS = [
         'logo' => 'Logotipo del evento (encabezado)', 'hero_desktop' => 'Imagen principal · escritorio (1920×800)', 'hero_mobile' => 'Imagen principal · móvil (1080×1350)',
-        'og' => 'Imagen para redes (1200×630)', 'galileo' => 'Galileo (PNG transparente)', 'telescopio' => 'Telescopio (PNG transparente)',
+        'og' => 'Imagen para redes (1200×630)', 'final_bg' => 'Fondo del cierre, con Galileo (cielo estrellado, 1920×1080)', 'galileo' => 'Galileo (PNG transparente)', 'telescopio' => 'Telescopio (PNG transparente)',
         'luz' => 'Foto de Luz Calderón', 'fama' => 'Logotipo de FAMA', 'club' => 'Logotipo del Club Campestre Teotihuacán',
     ];
 
@@ -27,6 +27,7 @@ class Events extends Component
     public ?int $editingId = null;
     public array $f = [];
     public array $d = [];
+    public array $pk = [];   // paquetes: [{persons, name, price, active}]
     public array $t = [];
     public array $hide = [];
     public array $assets = [];
@@ -71,6 +72,7 @@ class Events extends Component
             'venue_name' => (string) $e->venue_name, 'venue_city' => (string) $e->venue_city, 'venue_address' => (string) $e->venue_address, 'venue_map_url' => (string) $e->venue_map_url,
             
             'contact_email' => (string) $e->contact_email, 'contact_whatsapp' => (string) $e->contact_whatsapp,
+            'hotel_email' => (string) $e->hotel_email, 'hotel_phone' => (string) $e->hotel_phone, 'hotel_whatsapp' => (string) $e->hotel_whatsapp,
             'price' => (string) (float) $e->price, 'iva_rate' => (string) (float) $e->iva_rate, 'capacity' => $e->capacity === null ? '' : (string) $e->capacity, 'max_per_order' => $e->max_per_order,
             'sales_enabled' => (bool) $e->sales_enabled, 'sales_open_at' => $this->localInput($e->sales_open_at), 'sales_close_at' => $this->localInput($e->sales_close_at),
             'hold_minutes' => $e->hold_minutes, 'offline_hold_hours' => $e->offline_hold_hours, 'redirect_events_index' => (bool) $e->redirect_events_index,
@@ -83,12 +85,25 @@ class Events extends Component
             $d[$k]['enabled'] = !empty($r['enabled']);
         }
         $this->d = $d;
-        foreach (['hero.title', 'hero.subtitle', 'hero.cta', 'seo.title', 'seo.description', 'seo.h1', 'closing.title', 'closing.text', 'rooms.text', 'rooms.code', 'transport'] as $k) {
+        $this->pk = collect((array) $e->getAttribute('packages'))->map(fn ($p) => ['persons' => (string) (int) ($p['persons'] ?? 1), 'name' => (string) ($p['name'] ?? ''), 'price' => (string) (float) ($p['price'] ?? 0), 'active' => ($p['active'] ?? true) !== false])->sortBy(fn ($p) => (int) $p['persons'])->values()->all();
+        foreach (['hero.title', 'hero.subtitle', 'hero.cta', 'seo.title', 'seo.description', 'seo.h1', 'closing.title', 'closing.text', 'rooms.text', 'rooms.code', 'transport', 'speakers.c2', 'speakers.c4'] as $k) {
             data_set($this->t, $k, (string) data_get($e->content, 'text.' . $k, ''));
         }
-        $this->hide = ['rooms' => data_get($e->content, 'hide.rooms') === true, 'map' => data_get($e->content, 'hide.map') === true, 'partners' => data_get($e->content, 'hide.partners') === true];
+        $this->hide = ['rooms' => data_get($e->content, 'hide.rooms') === true, 'video' => data_get($e->content, 'hide.video') === true, 'map' => data_get($e->content, 'hide.map') === true, 'partners' => data_get($e->content, 'hide.partners') === true];
         $this->assets = (array) $e->assets;
         $this->formOpen = true;
+    }
+
+    public function addPackage(): void
+    {
+        $next = collect($this->pk)->max(fn ($p) => (int) $p['persons']) + 1;
+        $this->pk[] = ['persons' => (string) max(1, $next), 'name' => '', 'price' => '', 'active' => true];
+    }
+
+    public function removePackage(int $index): void
+    {
+        unset($this->pk[$index]);
+        $this->pk = array_values($this->pk);
     }
 
     public function closeForm(): void
@@ -98,7 +113,7 @@ class Events extends Component
 
     private function resetForm(): void
     {
-        $this->reset('formOpen', 'editingId', 'f', 'd', 't', 'hide', 'assets', 'uploads');
+        $this->reset('formOpen', 'editingId', 'f', 'd', 'pk', 't', 'hide', 'assets', 'uploads');
         $this->resetErrorBag();
     }
 
@@ -112,6 +127,15 @@ class Events extends Component
             'f.start_at' => 'nullable|date', 'f.end_at' => 'nullable|date|after_or_equal:f.start_at', 'f.countdown_from' => 'nullable|date',
             'f.venue_map_url' => 'nullable|url|max:500',
             'f.contact_email' => 'nullable|email|max:160',
+            'f.hotel_phone' => 'nullable|string|max:40', 'f.hotel_whatsapp' => 'nullable|string|max:40',
+            'f.hotel_email' => ['nullable', 'string', 'max:255', function ($attribute, $value, $fail) {
+                foreach (preg_split('/[\s,;]+/', (string) $value, -1, PREG_SPLIT_NO_EMPTY) as $address) {
+                    if (!filter_var($address, FILTER_VALIDATE_EMAIL)) {
+                        $fail('Revisa los correos del hotel: «' . $address . '» no es válido.');
+                    }
+                }
+            }],
+            'pk.*.persons' => 'required|integer|min:1|max:20|distinct', 'pk.*.price' => 'required|numeric|min:1|max:1000000', 'pk.*.name' => 'nullable|string|max:60',
             'f.price' => 'required|numeric|min:0|max:1000000', 'f.iva_rate' => 'required|numeric|min:0|max:100',
             'f.capacity' => 'nullable|integer|min:1|max:100000', 'f.max_per_order' => 'required|integer|min:1|max:50',
             'f.sales_open_at' => 'nullable|date', 'f.sales_close_at' => 'nullable|date',
@@ -120,7 +144,9 @@ class Events extends Component
             'd.*.percent' => 'nullable|numeric|min:0|max:100', 'd.group.min_qty' => 'nullable|integer|min:2|max:50',
             'uploads.*' => 'nullable|file|mimes:png,jpg,jpeg,webp,svg|max:4096',
         ], [
-            'f.name.required' => 'Escribe el nombre del evento.', 'f.slug.unique' => 'Ya existe un evento con esa dirección.', 'f.price.required' => 'Indica el precio (con IVA incluido).',
+            'pk.*.persons.required' => 'Indica cuántas personas cubre cada paquete.', 'pk.*.persons.distinct' => 'No repitas el mismo número de personas en dos paquetes.',
+            'pk.*.price.required' => 'Indica el precio de cada paquete (con IVA incluido).', 'pk.*.price.min' => 'El precio de un paquete debe ser mayor a cero.',
+            'f.name.required' => 'Escribe el nombre del evento.', 'f.slug.unique' => 'Ya existe un evento con esa dirección.', 'f.price.required' => 'Indica el precio individual (con IVA incluido); con paquetes puede quedar en 0.',
             'f.end_at.after_or_equal' => 'El fin no puede ser anterior al inicio.', 'f.venue_map_url.url' => 'Pega un enlace completo (https://…).',
             'uploads.*.mimes' => 'Sube una imagen PNG, JPG, WebP o SVG.', 'uploads.*.max' => 'Cada archivo puede pesar hasta 4 MB.',
         ]);
@@ -140,11 +166,17 @@ class Events extends Component
                 'min_qty' => (int) ($r['min_qty'] ?? 4), 'starts_at' => $r['starts_at'] ?: null, 'ends_at' => $r['ends_at'] ?: null];
         }
 
+        $packages = collect($this->pk)->map(fn ($p) => ['key' => 'p' . (int) $p['persons'], 'name' => trim(strip_tags((string) ($p['name'] ?? ''))) ?: ((int) $p['persons'] === 1 ? '1 persona' : (int) $p['persons'] . ' personas'),
+            'persons' => (int) $p['persons'], 'price' => round((float) $p['price'], 2), 'active' => (bool) ($p['active'] ?? true)])->sortBy('persons')->values()->all();
+        $hotelEmails = implode(', ', array_unique(array_map('mb_strtolower', preg_split('/[\s,;]+/', (string) ($this->f['hotel_email'] ?? ''), -1, PREG_SPLIT_NO_EMPTY) ?: [])));
+
         $data = [
             'name' => trim($this->f['name']), 'slug' => $this->f['slug'], 'status' => $this->f['status'],
             'start_at' => $this->fromInput($this->f['start_at'] ?? null), 'end_at' => $this->fromInput($this->f['end_at'] ?? null), 'countdown_from' => $this->fromInput($this->f['countdown_from'] ?? null),
             'venue_name' => $this->clean('venue_name'), 'venue_city' => $this->clean('venue_city'), 'venue_address' => $this->clean('venue_address'), 'venue_map_url' => $this->clean('venue_map_url'),
             'contact_email' => $this->clean('contact_email'), 'contact_whatsapp' => $this->clean('contact_whatsapp'),
+            'hotel_email' => $hotelEmails !== '' ? $hotelEmails : null, 'hotel_phone' => $this->clean('hotel_phone'), 'hotel_whatsapp' => $this->clean('hotel_whatsapp'),
+            'packages' => $packages ?: null,
             'price' => round((float) $this->f['price'], 2), 'iva_rate' => round((float) $this->f['iva_rate'], 2),
             'capacity' => filled($this->f['capacity'] ?? null) ? (int) $this->f['capacity'] : null, 'max_per_order' => (int) $this->f['max_per_order'],
             'sales_enabled' => (bool) ($this->f['sales_enabled'] ?? false), 'sales_open_at' => $this->fromInput($this->f['sales_open_at'] ?? null), 'sales_close_at' => $this->fromInput($this->f['sales_close_at'] ?? null),
@@ -219,7 +251,7 @@ class Events extends Component
         $gw = getGatewayObject('mercadopago');
 
         return [
-            ['Precio definido', (float) ($this->f['price'] ?? 0) > 0],
+            ['Precio o paquetes definidos', (float) ($this->f['price'] ?? 0) > 0 || collect($this->pk)->contains(fn ($p) => ($p['active'] ?? true) && (float) ($p['price'] ?? 0) > 0)],
             ['Políticas del evento redactadas', trim(strip_tags((string) ($this->f['policies_html'] ?? ''))) !== ''],
             ['Mercado Pago configurado (Ajustes → Pagos)', !empty($gw) && !empty($gw->getKeys()['mp_access_token'] ?? null)],
             ['Evento publicado', ($this->f['status'] ?? '') === Event::PUBLISHED],

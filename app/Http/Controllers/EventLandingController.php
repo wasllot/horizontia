@@ -63,9 +63,10 @@ class EventLandingController extends Controller
     public function cart(string $slug)
     {
         $event = $this->resolve($slug);
-        $quantity = $this->cartQuantity($event);
+        $items = $this->cartItems($event);
+        $quantity = $this->sales->persons($event, $items);
 
-        return view('events.cart', $this->shared($event) + ['noindex' => true, 'quantity' => $quantity, 'quote' => $quantity ? $this->sales->quote($event, $quantity) : null]);
+        return view('events.cart', $this->shared($event) + ['noindex' => true, 'items' => $items, 'quantity' => $quantity, 'quote' => $items ? $this->sales->quote($event, $items) : null]);
     }
 
     public function cartAdd(Request $request, string $slug)
@@ -75,12 +76,23 @@ class EventLandingController extends Controller
             return redirect($event->url())->with('event_error', $this->closedMessage($this->sales->state($event)));
         }
         $max = $this->sales->maxQuantity($event);
-        $quantity = min($max, max(1, (int) $request->input('quantity', 1)));
-        session(['event_cart.' . $event->id => $quantity]);
+        if (is_array($request->input('items'))) {
+            $items = $this->sales->selection($event, array_map('intval', $request->input('items')));
+            if (!$items) {
+                return redirect($event->url() . '#entrada')->with('event_error', 'Elige al menos un paquete.');
+            }
+            if ($this->sales->persons($event, $items) > $max) {
+                return redirect($event->url() . '#entrada')->with('event_error', $this->tooManyMessage($max));
+            }
+        } else {
+            $items = $this->sales->selection($event, min($max, max(1, (int) $request->input('quantity', 1))));
+        }
+        session(['event_cart.' . $event->id => $items]);
 
         return redirect($event->url('carrito'))->with('event_pixel', 'add_to_cart');
     }
 
+    /** Un cambio a la vez: quitar todo, fijar la cantidad de un paquete («p2|3»; 0 lo quita) o agregar uno más («add»). */
     public function cartUpdate(Request $request, string $slug)
     {
         $event = $this->resolve($slug);
@@ -89,8 +101,20 @@ class EventLandingController extends Controller
 
             return redirect($event->url('carrito'));
         }
-        $max = max(1, $this->sales->maxQuantity($event));
-        session(['event_cart.' . $event->id => min($max, max(1, (int) $request->input('quantity', 1)))]);
+        $items = $this->cartItems($event);
+        if ($request->filled('line')) {
+            [$key, $qty] = array_pad(explode('|', (string) $request->input('line'), 2), 2, 0);
+            $items = $this->sales->selection($event, array_merge($items, [$key => max(0, (int) $qty)]));
+        } elseif ($request->filled('add')) {
+            $key = (string) $request->input('add');
+            $items = $this->sales->selection($event, array_merge($items, [$key => ($items[$key] ?? 0) + 1]));
+        } elseif ($request->has('quantity')) {   // formularios antiguos: una sola entrada
+            $items = $this->sales->selection($event, min(max(1, $this->sales->maxQuantity($event)), max(1, (int) $request->input('quantity', 1))));
+        }
+        if ($this->sales->persons($event, $items) > $this->sales->maxQuantity($event)) {
+            return redirect($event->url('carrito'))->with('event_error', $this->tooManyMessage($this->sales->maxQuantity($event)));
+        }
+        $items ? session(['event_cart.' . $event->id => $items]) : session()->forget('event_cart.' . $event->id);
 
         return redirect($event->url('carrito'));
     }
@@ -100,21 +124,23 @@ class EventLandingController extends Controller
     public function checkout(string $slug)
     {
         $event = $this->resolve($slug);
-        $quantity = $this->cartQuantity($event);
-        if (!$quantity) {
+        $items = $this->cartItems($event);
+        if (!$items) {
             return redirect($event->url('carrito'));
         }
         if (!$this->sales->isOpen($event)) {
             return redirect($event->url())->with('event_error', $this->closedMessage($this->sales->state($event)));
         }
+        $quote = $this->sales->quote($event, $items);
 
-        return view('events.checkout', $this->shared($event) + ['noindex' => true, 'quantity' => $quantity, 'quote' => $this->sales->quote($event, $quantity)]);
+        return view('events.checkout', $this->shared($event) + ['noindex' => true, 'items' => $items, 'quantity' => $quote['persons'], 'quote' => $quote]);
     }
 
     public function placeOrder(Request $request, string $slug)
     {
         $event = $this->resolve($slug);
-        $quantity = $this->cartQuantity($event);
+        $items = $this->cartItems($event);
+        $quantity = $this->sales->persons($event, $items);
         if (!$quantity) {
             return redirect($event->url('carrito'));
         }
@@ -143,7 +169,7 @@ class EventLandingController extends Controller
         ], [
             'name.required' => 'Escribe tu nombre completo.', 'email.required' => 'Escribe tu correo.', 'email.email' => 'Revisa que el correo esté bien escrito.',
             'phone.required' => 'Escribe un teléfono o WhatsApp.', 'phone.regex' => 'Escribe un teléfono válido, con lada.',
-            'attendees.*.required' => 'Escribe el nombre de cada asistente.', 'accept_policies.accepted' => 'Para continuar acepta las políticas del evento.',
+            'attendees.*.required' => 'Escribe el nombre de cada asistente.', 'attendees.size' => 'Escribe el nombre de las ' . $quantity . ' personas de tu compra.', 'accept_policies.accepted' => 'Para continuar acepta las políticas del evento.',
             'invoice.rfc.required_if' => 'Indica el RFC para la factura.', 'invoice.razon_social.required_if' => 'Indica el nombre o razón social.', 'invoice.cp.required_if' => 'Indica el código postal fiscal.',
         ]);
 
@@ -157,7 +183,7 @@ class EventLandingController extends Controller
         try {
             $order = $this->sales->createOrder($event, [
                 'name' => trim($data['name']), 'email' => $data['email'], 'phone' => trim($data['phone']),
-                'quantity' => $quantity, 'attendees' => array_map('trim', $data['attendees']),
+                'items' => $items, 'quantity' => $quantity, 'attendees' => array_map('trim', $data['attendees']),
                 'minors' => $data['minors'] ?? 0,
                 'has_telescope' => isset($data['has_telescope']) ? $data['has_telescope'] === 'si' : null,
                 'heard_from' => $data['heard_from'] ?? null,
@@ -173,7 +199,7 @@ class EventLandingController extends Controller
         try {
             $result = $driver->createReferencedCheckout(
                 $order->reference(),
-                $event->name . ' · ' . $order->quantity . ($order->quantity === 1 ? ' entrada' : ' entradas'),
+                mb_substr($event->name . ' · ' . $order->packagesLabel(), 0, 250),
                 (float) $order->total,
                 ['email' => $order->email, 'name' => $order->name],
                 $event->url('gracias') . '?order=' . $order->code,
@@ -280,13 +306,22 @@ class EventLandingController extends Controller
             'event' => $event, 'state' => $state, 'sales' => $this->sales,
             'available' => $this->sales->available($event), 'maxQuantity' => $this->sales->maxQuantity($event),
             'sold' => (int) EventOrder::where('event_id', $event->id)->where('status', EventOrder::PAID)->sum('quantity'),   // prueba social real, nunca inventada
-            'cartCount' => $this->cartQuantity($event),
+            'cartCount' => $this->sales->persons($event, $this->cartItems($event)),   // personas en el carrito
+            'packages' => $event->packageList(),
         ];
     }
 
-    private function cartQuantity(Event $event): int
+    /** Lo que hay en el carrito: [clave de paquete => cantidad], solo con paquetes vigentes (la sesión de antes de los paquetes guardaba un entero). */
+    private function cartItems(Event $event): array
     {
-        return max(0, (int) session('event_cart.' . $event->id, 0));
+        $raw = session('event_cart.' . $event->id);
+
+        return $this->sales->selection($event, is_array($raw) ? $raw : ((int) $raw > 0 ? (int) $raw : []));
+    }
+
+    private function tooManyMessage(int $max): string
+    {
+        return 'Cada compra admite hasta ' . $max . ' ' . ($max === 1 ? 'persona' : 'personas') . '. Si son más, haz otra compra.';
     }
 
     private function rememberUtm(Request $request, Event $event): void

@@ -9,32 +9,33 @@
     $cd = $event->local($event->countdown_from);
     $minorsAge = (int) (data_get($event->content, 'minors_age') ?: 6);
     $earlyActive = collect($quote['discounts'])->first(fn ($d) => str_contains(mb_strtolower($d['label']), 'preventa'));
-    $pricing = ['unit' => (float) $event->price, 'rules' => collect((array) $event->discounts)->filter(fn ($r) => !empty($r['enabled']) && (float) ($r['percent'] ?? 0) > 0)->map(fn ($r, $k) => ['key' => $k, 'percent' => (float) $r['percent'], 'min' => $k === 'group' ? (int) ($r['min_qty'] ?? 4) : 1])->values()->all(), 'iva' => (float) $event->iva_rate];
+    $startingPrice = $event->startingPrice();
+    $multi = count($packages) > 1;
+    $promoFile = 'videos/eventos/astrofest-promo.mp4';
+    $promo = $event->show('video') && is_file(public_path($promoFile)) ? ['src' => asset($promoFile) . '?v=' . filemtime(public_path($promoFile)), 'poster' => asset('images/eventos/astrofest-promo-poster.webp')] : null;
+    $pricing = ['packages' => array_map(fn ($p) => ['key' => $p['key'], 'persons' => $p['persons'], 'price' => $p['price']], $packages), 'max' => (int) $maxQuantity, 'rules' => collect((array) $event->discounts)->filter(fn ($r) => !empty($r['enabled']) && (float) ($r['percent'] ?? 0) > 0)->map(fn ($r, $k) => ['key' => $k, 'percent' => (float) $r['percent'], 'min' => $k === 'group' ? (int) ($r['min_qty'] ?? 4) : 1])->values()->all(), 'iva' => (float) $event->iva_rate];
     $weekend = $start && $end ? 'Sáb ' . $start->format('j') . ' – dom ' . $end->format('j') . ' ' . $start->locale('es')->translatedFormat('M Y') : '';
     $icon = fn (string $n) => '<svg class="ev-i" aria-hidden="true"><use href="#i-' . $n . '"/></svg>';
     $takenNow = $event->capacity ? max(0, (int) $event->capacity - (int) $available) : null;
 
+    $speaker = fn (string $k) => ($n = trim((string) data_get($event->content, 'text.speakers.' . $k))) !== '' ? $n . '. En el auditorio.' : 'En el auditorio.';   // el nombre se captura en el panel cuando el conferencista confirma
     $sat = [
-        ['15:00', 'Check-in en el hotel', 'Instala tu casa de campaña o entra a tu habitación.', 'tent'],
-        ['16:00', 'Registro del evento', 'Recibe tu pulsera y tu kit con tu clave de acceso.', 'ticket'],
-        ['17:00', 'Bienvenida: ¿qué veremos esta noche?', 'Luz Calderón explica la noche y arranca el rally.', 'mic'],
-        ['17:45', 'Atardecer', 'Momento fotográfico mientras el Sol se despide.', 'sun'],
-        ['18:15', 'Conferencia: Teotihuacán y el cielo', 'En el auditorio: arqueoastronomía en Mesoamérica.', 'mic'],
-        ['19:00', 'Iniciamos: taller de cielo', 'Constelaciones y primera mirada a la Luna y a Saturno.', 'telescope'],
-        ['20:00', 'Cena', 'En el restaurante o la zona de snacks (no incluida).', 'cash'],
-        ['20:30', 'Música temática', 'Ambiente musical inspirado en el espacio.', 'music'],
-        ['21:00', 'Fogata', 'Bombones y plática, lejos de los telescopios.', 'flame'],
-        ['22:00', 'Primera observación + segunda conferencia', 'Planetas, cúmulos y la Nebulosa de Orión.', 'telescope'],
-        ['23:00', 'Caza de Gemínidas', 'Luces apagadas, sin música ni celulares.', 'star'],
-        ['00:30–02:00', 'La gran observación', 'El radiante de Géminis en lo más alto: el mejor momento de la noche.', 'star', true],
-        ['02:00', 'Observación libre', 'Para quienes sigan despiertos.', 'moon'],
+        ['15:00', 'Recepción y registro', 'Recibe tu pulsera con tu clave de acceso. Te guiamos a la zona de casas de campaña o al check-in del hotel.', 'ticket'],
+        ['17:00–18:00', 'Bienvenida: ¿qué veremos esta noche?', 'Luz Calderón explica la noche y arranca el rally mientras el Sol se despide: momento fotográfico.', 'sun'],
+        ['18:00', 'Arranca el planetario móvil', 'Funciones a lo largo de la noche, sin horario fijo (20–25 min cada una, cupo de 50 personas).', 'dome'],
+        ['19:00–20:00', 'Conferencia 1: El cielo, las constelaciones y el zodiaco', 'M. en C. Luz Calderón, Facultad de Ciencias, UNAM. En el auditorio.', 'mic'],
+        ['20:00–21:00', 'Música con DJ y observación con telescopios', 'Cada quien elige: cenar, escuchar música, observar o entrar al planetario.', 'music'],
+        ['21:00–22:00', 'Conferencia 2: Teotihuacán, la ciudad sagrada y la orientación calendárico-astronómica en Mesoamérica', $speaker('c2'), 'mic'],
+        ['22:00–23:00', 'Música con DJ, primera fogata y observación', 'Bombones en la fogata. Quien ya cenó, se va directo al fuego.', 'flame'],
+        ['23:00–00:00', 'Conferencia 3: Cometas, asteroides y lluvias de estrellas', 'M. en C. Luz Calderón, Facultad de Ciencias, UNAM. En el auditorio.', 'mic'],
+        ['00:00–01:00', 'Segunda fogata y momento estelar: lluvia de Gemínidas y tour por la bóveda celeste', 'El mejor momento para ver estrellas fugaces es después de la medianoche. Puede extenderse.', 'star', true],
+        ['Después de la 1:00', 'Observación libre', 'Para quienes sigan despiertos.', 'moon'],
     ];
     $sun = [
-        ['07:00', 'Café al amanecer', 'Ver salir el Sol después de una noche de estrellas.', 'sun'],
-        ['08:00', 'Desayuno', 'Buffet en el restaurante del hotel (no incluido).', 'cash'],
-        ['10:00', 'Observación solar y premiación', 'Manchas solares con filtros especializados y seguros.', 'sun', true],
-        ['12:00', 'Concluye el evento', 'Premios del rally, diplomas y foto de grupo. Check-out.', 'trophy'],
-        ['Después', 'Visita a la zona arqueológica', 'Por tu cuenta, con los horarios y reglas de la zona.', 'map'],
+        ['08:00', 'Desayuno buffet en el restaurante Don José', 'Opcional, $350 por persona, a partir de las 8:00 h.', 'cash'],
+        ['10:00–11:00', 'Observación solar', 'Con telescopios y filtros especializados y seguros.', 'sun', true],
+        ['11:00–12:00', 'Conferencia 4: El Sol, nuestra estrella', $speaker('c4'), 'mic'],
+        ['12:00', 'Cierre: premios del rally y de la AstroRifa', 'Fin del evento.', 'trophy'],
     ];
     $objects = [
         ['moon', 'La Luna creciente', 'Satélite natural', 'Al atardecer sus cráteres y montañas se ven con relieve. Parece que la estás tocando.'],
@@ -61,11 +62,19 @@
     'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
     'location' => array_filter(['@type' => 'Place', 'name' => $event->venue_name, 'address' => array_filter(['@type' => 'PostalAddress', 'streetAddress' => $event->venue_address, 'addressLocality' => $event->venue_city, 'addressCountry' => 'MX'])]),
     'image' => $event->asset('og') ? [$event->asset('og')] : [$heroImg],
-    'offers' => $event->hasPrice() ? ['@type' => 'Offer', 'priceCurrency' => 'MXN', 'price' => (string) (float) $event->price, 'url' => $event->url(), 'availability' => $state === 'sold_out' ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock'] : null,
+    'offers' => !$event->hasPrice() ? null : array_filter(['@type' => $multi ? 'AggregateOffer' : 'Offer', 'priceCurrency' => 'MXN',
+        ($multi ? 'lowPrice' : 'price') => (string) $startingPrice, 'highPrice' => $multi ? (string) max(array_column($packages, 'price')) : null, 'offerCount' => $multi ? count($packages) : null,
+        'url' => $event->url(), 'availability' => $state === 'sold_out' ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock']),
     'performer' => ['@type' => 'Person', 'name' => 'Luz Calderón', 'jobTitle' => 'Física y divulgadora de la astronomía', 'sameAs' => ['https://www.facebook.com/share/1KQd11UfYr/']],
     'organizer' => ['@type' => 'Organization', 'name' => 'Horizontia', 'url' => url('/'), 'sameAs' => array_values(array_filter((array) config('academy.social')))],
 ]), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
 </script>
+@if ($promo)
+<script type="application/ld+json">
+{!! json_encode(['@context' => 'https://schema.org', '@type' => 'VideoObject', 'name' => 'Así se vive ' . $event->name, 'description' => 'Luz Calderón, Galileo y Telescopio te cuentan cómo será la noche: conferencias, telescopios, planetario, DJ, fogata y la lluvia de Gemínidas.',
+    'thumbnailUrl' => [$promo['poster']], 'contentUrl' => $promo['src'], 'uploadDate' => date('c', filemtime(public_path($promoFile))), 'duration' => 'PT1M53S'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+</script>
+@endif
 @endpush
 
 @section('body')
@@ -86,7 +95,7 @@
             <a class="ev-btn ev-btn--ghost" href="#que-vamos-a-ver">{{ $event->text('hero.secondary') }}</a>
         </div>
         <p class="ev-hero__price" style="--d:1.15s">
-            @if ($event->hasPrice())<span>{{ $money($event->price) }} MXN · IVA incluido</span>@endif
+            @if ($event->hasPrice())<span>{{ $multi ? 'Desde ' : '' }}{{ $money($startingPrice) }} MXN · IVA incluido</span>@endif
             @if ($state === 'open' && $available !== null)<span class="is-hot">¡Cupo limitado!</span>@endif
             @if ($earlyActive)<span class="is-hot">{{ $earlyActive['label'] }} −{{ rtrim(rtrim(number_format($earlyActive['percent'], 2), '0'), '.') }} %</span>@endif
         </p>
@@ -99,7 +108,6 @@
         @if ($event->asset('telescopio'))<img class="is-r" src="{{ $event->asset('telescopio') }}" alt="Telescopio, mascota de Astrofest, un telescopio con brazos y zapatos" width="250" height="303">@endif
     </div>
     <a class="ev-scroll" href="#datos" aria-label="Ir al contenido"><span></span></a>
-    <button type="button" class="ev-wish" id="evWish" aria-live="polite"><span>✦</span> Pide un deseo</button>
 </section>
 
 {{-- Datos clave: una tarjeta de vidrio que cabalga entre la portada y lo que sigue --}}
@@ -109,7 +117,7 @@
         @if ($start)<li>{!! $icon('clock') !!}<span>Check-in</span><b>{{ $start->format('H:i') }} h</b></li>@endif
         @if ($event->venue_name)<li>{!! $icon('pin') !!}<span>Lugar</span><b>{{ $event->venue_name }}</b></li>@endif
         <li>{!! $icon('car') !!}<span>Distancia</span><b>~1 h de la CDMX</b></li>
-        @if ($event->hasPrice())<li class="price">{!! $icon('ticket') !!}<span>Por persona · camping incluido</span><b>{{ $money($event->price) }} MXN</b></li>@endif
+        @if ($event->hasPrice())<li class="price">{!! $icon('ticket') !!}<span>{{ $multi ? 'Paquetes desde · camping incluido' : 'Por persona · camping incluido' }}</span><b>{{ $money($startingPrice) }} MXN</b></li>@endif
     </ul></div>
 </section>
 
@@ -142,9 +150,28 @@
                 <li><span class="ev-incl__ico">{!! $icon($i) !!}</span>{{ $t }}</li>
             @endforeach
         </ul>
-        <p class="ev-mark" data-reveal><b>Una marca para coleccionar.</b> Astrofest Gemínidas 2026 es la primera edición de una nueva temporada de noches de estrellas. Cada lluvia de meteoros tendrá su propia pulsera, parche, playera y mapa del cielo. Guarda tu pulsera: será tu pase de coleccionista.</p>
+        <p class="ev-mark" data-reveal><b>Una marca para coleccionar.</b> Astrofest Gemínidas 2026 es la primera edición de una nueva temporada de noches de estrellas. Cada lluvia de meteoros tendrá su propia pulsera. Guárdala: será tu pase de coleccionista.</p>
     </div>
 </section>
+
+@if ($promo)
+{{-- Video promocional: Luz, Galileo y Telescopio cuentan la noche --}}
+<section class="ev-sec ev-night ev-video" id="video" aria-labelledby="h-video">
+    <div class="ev-wrap">
+        <div data-reveal>
+            <p class="ev-eyebrow">Míralo en movimiento</p>
+            <h2 id="h-video">Así se vive <em>Astrofest</em></h2>
+        </div>
+        <figure class="ev-video__frame" data-reveal>
+            <video id="evPromo" controls playsinline preload="none" poster="{{ $promo['poster'] }}" width="1280" height="720" aria-label="Video promocional de {{ $event->name }}">
+                <source src="{{ $promo['src'] }}" type="video/mp4">
+                Tu navegador no puede reproducir el video. <a href="{{ $promo['src'] }}">Descárgalo aquí</a>.
+            </video>
+            <figcaption><b>Luz, Galileo y Telescopio te invitan</b><span>Video promocional · 1 min 53 s</span></figcaption>
+        </figure>
+    </div>
+</section>
+@endif
 
 {{-- ACTO III · Lo que verás --}}
 <section class="ev-sec ev-night ev-see" id="que-vamos-a-ver" aria-labelledby="h-ver">
@@ -205,7 +232,7 @@
 
         @if ($state === 'open')
             <div class="ev-band" data-reveal>
-                <p><b>{{ $start ? ucfirst($start->locale('es')->translatedFormat('l j \d\e F')) : 'Sábado 12 de diciembre' }}</b> · a 1 hora de la CDMX · {{ $money($event->price) }} MXN con camping incluido</p>
+                <p><b>{{ $start ? ucfirst($start->locale('es')->translatedFormat('l j \d\e F')) : 'Sábado 12 de diciembre' }}</b> · a 1 hora de la CDMX · {{ $multi ? 'desde ' : '' }}{{ $money($startingPrice) }} MXN con camping incluido</p>
                 <a class="ev-btn ev-btn--glow" href="#entrada" data-ev-track="cta_band">{{ $event->text('hero.cta') }}</a>
             </div>
         @endif
@@ -239,31 +266,32 @@
                 </div>
             @endforeach
         </div>
+        <p class="ev-honest" data-reveal>{!! $icon('dome') !!}<span><strong>Planetario móvil.</strong> Estará dando funciones a lo largo de la noche, a partir de las 18:00 h.</span></p>
     </div>
 </section>
 
-{{-- Kit: lo que te llevas (ancla el valor antes del precio) --}}
-<section class="ev-sec ev-night ev-kitsec" id="kit" aria-labelledby="h-kit">
+{{-- Distintivo, rally y diploma: lo que te llevas (ancla el valor antes del precio) --}}
+<section class="ev-sec ev-night ev-kitsec" id="distintivo" aria-labelledby="h-distintivo">
     <div class="ev-wrap">
         <div data-reveal>
             <p class="ev-eyebrow">Tu recuerdo</p>
-            <h2 id="h-kit">Kit de bienvenida, rally y <em>diploma</em></h2>
+            <h2 id="h-distintivo">Distintivo de Astrofest, rally y <em>diploma</em></h2>
         </div>
         <div class="ev-kit-grid">
             <article class="ev-kit" data-reveal>
-                <svg viewBox="0 0 320 130" role="img" aria-label="Ilustración de la pulsera coleccionable"><rect x="10" y="38" width="300" height="54" rx="27" fill="#14213d"/><rect x="10" y="38" width="300" height="54" rx="27" fill="none" stroke="#fed304" stroke-width="3"/><text x="160" y="72" text-anchor="middle" font-family="Georgia,serif" font-size="19" font-weight="700" fill="#fed304" textLength="214" lengthAdjust="spacingAndGlyphs">ASTROFEST · 2026</text><circle cx="40" cy="65" r="9" fill="#fed304"/><circle cx="280" cy="65" r="9" fill="#fed304"/></svg>
-                <h3>Pulsera coleccionable</h3><p>De acceso: cada edición tendrá la suya. Guárdala, será tu pase de coleccionista.</p>
+                <svg viewBox="0 0 320 130" role="img" aria-label="Ilustración del distintivo de Astrofest"><rect x="10" y="38" width="300" height="54" rx="27" fill="#14213d"/><rect x="10" y="38" width="300" height="54" rx="27" fill="none" stroke="#fed304" stroke-width="3"/><text x="160" y="72" text-anchor="middle" font-family="Georgia,serif" font-size="19" font-weight="700" fill="#fed304" textLength="214" lengthAdjust="spacingAndGlyphs">ASTROFEST · 2026</text><circle cx="40" cy="65" r="9" fill="#fed304"/><circle cx="280" cy="65" r="9" fill="#fed304"/></svg>
+                <h3>Distintivo de Astrofest</h3><p>Tu pulsera con tu clave de acceso: te identifica en todas las actividades de la noche.</p>
             </article>
             <article class="ev-kit" data-reveal style="--d:.12s">
-                <svg viewBox="0 0 320 130" role="img" aria-label="Ilustración del Pasaporte Astrofest"><rect x="100" y="8" width="120" height="114" rx="10" fill="#14213d" stroke="#fed304" stroke-width="2"/><circle cx="160" cy="48" r="18" fill="none" stroke="#fed304" stroke-width="3"/><path d="M160 36l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#fed304"/><text x="160" y="92" text-anchor="middle" font-family="Georgia,serif" font-size="11" font-weight="700" fill="#fff" letter-spacing="1.5">PASAPORTE</text><text x="160" y="106" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#fed304" letter-spacing="2">ASTROFEST</text></svg>
-                <h3>Pasaporte Astrofest</h3><p>Anota tus estrellas fugaces, consigue sellos durante la noche y sigue el mapa del cielo de diciembre.</p>
+                <svg viewBox="0 0 320 130" role="img" aria-label="Ilustración del trofeo del rally de las estrellas"><path d="M120 24h80v34a40 40 0 0 1-80 0z" fill="#14213d" stroke="#fed304" stroke-width="3"/><path d="M120 34h-22a18 18 0 0 0 20 26M200 34h22a18 18 0 0 1-20 26" fill="none" stroke="#fed304" stroke-width="3"/><path d="M160 98v14M138 116h44" stroke="#fed304" stroke-width="4" stroke-linecap="round"/><path d="M160 36l4.5 9.5 10.5 1.2-7.8 7.2 2.2 10.4-9.4-5.3-9.4 5.3 2.2-10.4-7.8-7.2 10.5-1.2z" fill="#fed304"/></svg>
+                <h3>Rally de las estrellas</h3><p>Desde la bienvenida te contamos cómo participar. Durante la noche soltamos pistas sobre el cielo y el domingo premiamos a los ganadores.</p>
             </article>
             <article class="ev-kit" data-reveal style="--d:.24s">
                 <svg viewBox="0 0 320 130" role="img" aria-label="Ilustración del diploma de astrónomo"><rect x="50" y="10" width="220" height="110" rx="6" fill="#fffae3" stroke="#fed304" stroke-width="4"/><rect x="60" y="20" width="200" height="90" rx="3" fill="none" stroke="#14213d" stroke-width="1.2"/><text x="160" y="48" text-anchor="middle" font-family="Georgia,serif" font-size="16" font-weight="700" fill="#14213d" textLength="176" lengthAdjust="spacingAndGlyphs">Diploma de astrónomo</text><path d="M110 66h100" stroke="#14213d" stroke-width="1"/><text x="160" y="62" text-anchor="middle" font-family="Georgia,serif" font-size="12" font-style="italic" fill="#5b6478">con tu nombre</text><circle cx="160" cy="90" r="11" fill="#fed304"/><path d="M160 83l2.5 5 5.5.7-4 3.8 1 5.5-5-2.7-5 2.7 1-5.5-4-3.8 5.5-.7z" fill="#14213d"/></svg>
                 <h3>Diploma de astrónomo</h3><p>Todos los participantes se llevan un diploma con su nombre, firmado por los organizadores. Se guarda por años.</p>
             </article>
         </div>
-        <p class="ev-mark" data-reveal><b>El rally de las estrellas.</b> Desde la bienvenida te contamos cómo participar; durante las conferencias y la observación soltamos pistas sobre el cielo y el domingo, en la clausura, ¡premiamos a los ganadores! Tu kit también trae stickers de Galileo y Telescopio, y celofán rojo para convertir cualquier lámpara en linterna de astrónomo.</p>
+        <p class="ev-mark" data-reveal><b>Celofán rojo incluido.</b> Con él conviertes cualquier lámpara en una linterna de astrónomo: tus ojos se acostumbran a la oscuridad y ves muchas más estrellas.</p>
     </div>
 </section>
 
@@ -276,13 +304,13 @@
                 <div data-reveal>
                     <p class="ev-eyebrow">Tu lugar bajo las estrellas</p>
                     <h2 id="h-entrada">Tu entrada a <em>Astrofest</em></h2>
-                    <p class="ev-big">Una sola entrada. Toda la experiencia.</p>
+                    <p class="ev-big">{{ $multi ? 'Elige tu paquete. Toda la experiencia.' : 'Una sola entrada. Toda la experiencia.' }}</p>
                 </div>
                 <ul class="ev-value" data-reveal>
-                    <li>{!! $icon('mic') !!}<span>Conferencias, taller de cielo y observación guiada con telescopios</span></li>
-                    <li>{!! $icon('flame') !!}<span>Fogata, música temática, DJ en vivo, Planetario Móvil y rally con premios</span></li>
-                    <li>{!! $icon('gift') !!}<span>Pulsera coleccionable, Pasaporte, mapa del cielo, stickers y diploma</span></li>
-                    <li>{!! $icon('tent') !!}<span>Camping para 1 persona con tu casa de campaña: baños, vestidores y regaderas</span></li>
+                    <li>{!! $icon('mic') !!}<span>Conferencias, talleres de cielo y observación guiada con telescopios</span></li>
+                    <li>{!! $icon('flame') !!}<span>Fogata, música temática, DJ en vivo, planetario móvil, rally con premios y AstroRifa</span></li>
+                    <li>{!! $icon('gift') !!}<span>Pulsera coleccionable, celofán rojo y diploma de participación</span></li>
+                    <li>{!! $icon('tent') !!}<span>Espacio para tu casa de campaña{{ $multi ? ', según tu paquete' : '' }}: baños, vestidores y regaderas</span></li>
                 </ul>
                 <details class="ev-acc ev-acc--sm" data-reveal>
                     <summary>Ver todo lo que incluye y lo que no</summary>
@@ -291,15 +319,15 @@
                         <li>Observación con telescopios guiada por astrónomos, caza de Gemínidas y gran observación de madrugada.</li>
                         <li>Fogata, música temática, DJ en vivo, shows en Planetario Móvil, rally con pistas y premios y AstroRifa.</li>
                         <li>Observación del Sol el domingo por la mañana.</li>
-                        <li>Pulsera coleccionable, Pasaporte Astrofest, mapa del cielo de diciembre, stickers y celofán rojo para tu linterna.</li>
+                        <li>Pulsera coleccionable y celofán rojo para tu linterna.</li>
                         <li>Diploma de participación.</li>
-                        <li>Camping para 1 persona (con tu casa de campaña), con baños, vestidores y regaderas: un lugar seguro para acampar.</li>
+                        <li>Espacio para tu casa de campaña ({{ $multi ? '1, 2 o 3 personas, según tu paquete' : '1 persona' }}), con baños, vestidores y regaderas: un lugar seguro para acampar.</li>
                     </ul>
                     <ul class="ev-list ev-list--no" style="margin-top:12px">
                         <li>Habitación (se reserva con el hotel), transporte ni alimentos (cena, snacks, desayuno buffet).</li>
                         <li>Estacionamiento: $60 por día, se paga directamente en el hotel.</li>
                     </ul>
-                    <p class="ev-hint" style="margin-top:10px">Menores de {{ $minorsAge }} años no pagan. Cada persona de {{ $minorsAge }} años o más necesita su entrada.</p>
+                    <p class="ev-hint" style="margin-top:10px">Menores de {{ $minorsAge }} años no pagan. Cada persona de {{ $minorsAge }} años o más cuenta en tu {{ $multi ? 'paquete' : 'entrada' }}.</p>
                 </details>
 
                 <div class="ev-calm" id="plan-nube" data-reveal>
@@ -316,9 +344,9 @@
 
             <div class="ev-ticket" data-reveal style="--d:.15s">
                 @if (session('event_error'))<p class="ev-alert" role="alert">{{ session('event_error') }}</p>@endif
-                <p class="ev-ticket__label">Entrada general · Astrofest Gemínidas 2026</p>
+                <p class="ev-ticket__label">{{ $multi ? 'Elige tu paquete' : 'Entrada general' }} · {{ $event->name }}</p>
                 @if ($event->hasPrice())
-                    <div class="ev-ticket__price">{{ $money($event->price) }} <small>MXN por persona</small></div>
+                    <div class="ev-ticket__price">@if ($multi)<span class="ev-ticket__from">Desde</span>@endif{{ $money($startingPrice) }} <small>MXN {{ $multi ? '· 1 persona' : 'por persona' }}</small></div>
                     <p class="ev-tags"><span>{!! $icon('check') !!} IVA incluido</span><span>{!! $icon('check') !!} Camping incluido</span></p>
                 @endif
                 @foreach ($quote['discounts'] as $d)<p style="margin:0"><span class="ev-pill ev-pill--tag">{{ $d['label'] }} −{{ rtrim(rtrim(number_format($d['percent'], 2), '0'), '.') }} %</span></p>@endforeach
@@ -332,18 +360,31 @@
                 @if ($state === 'open' && $sold >= 10)<p class="ev-proof">{!! $icon('users') !!} Ya hay <strong>{{ $sold }}</strong> personas con su lugar apartado.</p>@endif
 
                 @if ($state === 'open')
+                    @php $twoPack = collect($packages)->firstWhere('persons', 2); @endphp
                     <form method="post" action="{{ $event->url('carrito') }}" id="evBuy" data-pricing='@json($pricing)'>
                         @csrf
-                        <div class="ev-field">
-                            <label for="evQty">¿Cuántas entradas?</label>
-                            <div class="ev-qty">
-                                <button type="button" data-step="-1" aria-label="Quitar una entrada">−</button>
-                                <input id="evQty" name="quantity" type="number" min="1" max="{{ $maxQuantity }}" value="1" inputmode="numeric">
-                                <button type="button" data-step="1" aria-label="Agregar una entrada">+</button>
-                            </div>
-                        </div>
-                        <p class="ev-total">Total <strong id="evTotal">{{ $money($quote['total']) }}</strong> <small>MXN</small> <span class="ev-hint" id="evSaving"></span></p>
-                        <button type="submit" class="ev-btn ev-btn--glow ev-btn--block" data-ev-track="add_to_cart_click">Agregar al carrito</button>
+                        <fieldset class="ev-pkgs">
+                            <legend>{{ $multi ? 'Elige cuántos paquetes de cada uno' : '¿Cuántas entradas?' }}</legend>
+                            @foreach ($packages as $pk)
+                                @php $each = $pk['price'] / $pk['persons']; @endphp
+                                <div class="ev-pkg" data-pkg="{{ $pk['key'] }}">
+                                    <div class="ev-pkg__info">
+                                        <b>{{ $pk['name'] }}</b>
+                                        <span>{{ $money($pk['price']) }} MXN{{ $pk['persons'] > 1 ? ' · ' . (floor($each) == $each ? '' : '≈ ') . $money(round($each)) . ' por persona' : '' }}</span>
+                                    </div>
+                                    <div class="ev-qty ev-qty--sm">
+                                        <button type="button" data-step="-1" aria-label="Quitar un paquete de {{ $pk['name'] }}">−</button>
+                                        <input name="items[{{ $pk['key'] }}]" type="number" min="0" max="{{ $maxQuantity }}" value="{{ $loop->first ? 1 : 0 }}" inputmode="numeric" aria-label="Cantidad de {{ $pk['name'] }}">
+                                        <button type="button" data-step="1" aria-label="Agregar un paquete de {{ $pk['name'] }}">+</button>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </fieldset>
+                        @if ($multi)
+                            <p class="ev-hint ev-pkgs__hint">¿Son más amigos? Combina paquetes{{ $twoPack ? ': 4 personas son 2 paquetes de 2 personas (' . $money($twoPack['price'] * 2) . ')' : '' }}. Hasta {{ $maxQuantity }} personas por compra. Menores de {{ $minorsAge }} años no pagan.</p>
+                        @endif
+                        <p class="ev-total">Total <strong id="evTotal">{{ $money($quote['total']) }}</strong> <small>MXN</small> <span class="ev-hint" id="evPersons"></span> <span class="ev-hint" id="evSaving"></span></p>
+                        <button type="submit" class="ev-btn ev-btn--glow ev-btn--block" id="evAdd" data-ev-track="add_to_cart_click">Agregar al carrito</button>
                         <p class="ev-secure">{!! $icon('shield') !!}<span>Pago seguro con Mercado Pago. Tarjeta y otros medios disponibles. <a href="{{ $event->url('politicas') }}">Políticas y cancelaciones</a></span></p>
                     </form>
                 @elseif ($state === 'sold_out')
@@ -381,9 +422,8 @@
                 @if ($event->venue_address)<p class="ev-address">{!! $icon('pin') !!}<span>{{ $event->venue_address }}</span></p>@endif
                 <div class="ev-route">
                     <div>{!! $icon('car') !!}<span><b>En auto</b>Aprox. 1 h desde la CDMX. Estacionamiento en el hotel ($60 por día).</span></div>
-                    <div>{!! $icon('alert') !!}<span><b>Transporte</b>El paquete no incluye transporte.</span></div>
+                    <div>{!! $icon('alert') !!}<span><b>Transporte</b>{{ $multi ? 'Los paquetes no incluyen' : 'La entrada no incluye' }} transporte. Te damos las indicaciones para que llegues sin problema: <a href="#preguntas" data-ev-track="click_how_to_arrive">cómo llegar en transporte público</a>.</span></div>
                 </div>
-                @if (trim((string) data_get($event->content, 'text.transport')))<p><strong>En transporte público:</strong> {{ data_get($event->content, 'text.transport') }}</p>@endif
                 @if ($event->venue_map_url && $event->show('map'))<p><a class="ev-btn ev-btn--ghost" href="{{ $event->venue_map_url }}" target="_blank" rel="noopener" data-ev-track="click_map">{!! $icon('map') !!} Abrir en Google Maps</a></p>@endif
             </div>
             <figure class="ev-photo ev-photo--tilt" data-reveal style="--d:.15s">
@@ -424,7 +464,7 @@
             <div data-reveal>
                 <h3>Tu mochila de cazador de estrellas <small class="ev-check-count" id="evCheckCount" aria-live="polite"></small></h3>
                 <ul class="ev-list ev-list--box ev-checklist" id="evChecklist">
-                    @foreach (['Ropa de invierno en capas, gorro, guantes, bufanda y cobija.', 'Linterna con luz roja (o el celofán rojo de tu kit sobre una lámpara).', 'Para camping: casa de campaña, sleeping bag y aislante o colchón inflable.', 'Silla plegable o tapete para recostarte a ver el cielo.', 'Termo para bebidas calientes.', 'Binoculares o tu propio telescopio, si tienes.', 'Batería portátil para tu celular.', 'Gorra y bloqueador para la observación solar del domingo.', 'Tu comprobante o clave de compra e identificación.'] as $n => $item)
+                    @foreach (['Ropa de invierno en capas, gorro, guantes, bufanda y cobija.', 'Linterna con luz roja (o el celofán rojo que recibirás, sobre una lámpara).', 'Para camping: casa de campaña, sleeping bag y aislante o colchón inflable.', 'Silla plegable o tapete para recostarte a ver el cielo.', 'Termo para bebidas calientes.', 'Binoculares o tu propio telescopio, si tienes.', 'Batería portátil para tu celular.', 'Gorra y bloqueador para la observación solar del domingo.', 'Tu comprobante o clave de compra e identificación.'] as $n => $item)
                         <li><label><input type="checkbox" data-k="{{ $n }}"><span>{{ $item }}</span></label></li>
                     @endforeach
                 </ul>
@@ -465,7 +505,7 @@
                     <ul class="ev-host__stats" aria-label="Lo más destacado de su trayectoria">
                         <li><b>+500</b><span>conferencias de divulgación en astronomía desde 1982</span></li>
                         <li><b>2006</b><span>participó en la votación de la reunión astronómica internacional que determinó si Plutón continuaba siendo planeta</span></li>
-                        <li><b>2013</b><span>colabora en Radio Fórmula con una sección de astronomía en «La Mujer Actual», con Jannette Arceo</span></li>
+                        <li><b>Desde 2013</b><span>colabora en Radio Fórmula con una sección de astronomía en «La Mujer Actual», con Jannette Arceo</span></li>
                         <li><b>Eclipses</b><span>de Sol y tránsitos de planetas interiores registrados, además de congresos a los que ha asistido en diferentes partes del mundo</span></li>
                     </ul>
                     <p class="ev-host__belief">Luz considera que un pueblo más educado es un pueblo más consciente; por eso cree que su aportación a esa educación es su pasión por compartir su conocimiento.</p>
@@ -477,7 +517,7 @@
                     @if ($event->asset('telescopio'))<img src="{{ $event->asset('telescopio') }}" alt="Telescopio, mascota de Astrofest, un telescopio con brazos y zapatos" loading="lazy" width="250" height="303">@endif
                 </div>
                 <h3>Galileo y Telescopio</h3>
-                <p>Tus guías del cielo: Galileo nunca deja de hacer preguntas y Telescopio siempre señala algo nuevo. Los encontrarás en el pasaporte, el diploma y los stickers.</p>
+                <p>Tus guías del cielo: Galileo nunca deja de hacer preguntas y Telescopio siempre señala algo nuevo. Los encontrarás en tu diploma.</p>
             </article>
             <article class="ev-card" data-reveal style="--d:.24s">
                 <div class="ico">{!! $icon('telescope') !!}</div>
@@ -501,7 +541,7 @@
                     ['¿Necesito saber de astronomía?', 'Para nada. Astrofest está pensado para que cualquiera disfrute: te explicamos todo con palabras sencillas.'],
                     ['¿Hace mucho frío?', 'Sí: la temperatura puede bajar a 6–7 °C o menos. Trae ropa de invierno en capas, gorro, guantes y cobija.'],
                     ['¿Puedo llevar mi telescopio o binoculares?', '¡Claro! Es más, te lo recomendamos. Nuestro equipo te ayuda a usarlo.'],
-                    ['¿A qué hora puedo llegar?', 'El check-in en el hotel es desde las ' . ($start?->format('H:i') ?? '15:00') . ' h y el registro del evento a las 16:00. Puedes llegar antes a comer al restaurante.'],
+                    ['¿A qué hora puedo llegar?', 'La recepción y el registro abren a las ' . ($start?->format('H:i') ?? '15:00') . ' h: ahí recibes tu pulsera con tu clave de acceso y te guiamos a la zona de casas de campaña o al check-in del hotel. Puedes llegar antes a comer al restaurante.'],
                     ['¿Los niños pagan?', "Los menores de {$minorsAge} años no pagan. A partir de los {$minorsAge} años pagan como cualquier asistente."],
                 ],
                 'Cielo y clima' => [
@@ -509,17 +549,19 @@
                     ['¿Y si se nubla?', 'La fiesta sigue con nuestro Plan Nube (charlas, planetario o proyección y fogata) y te llevas un crédito para la próxima edición. Consulta la política completa en Políticas del evento.'],
                 ],
                 'Boletos y pagos' => [
-                    ['¿Cómo pago y cómo entro?', 'Pagas en línea en esta página con Mercado Pago. Recibirás una confirmación con tu clave de acceso y un código QR; al llegar, muéstralo en el registro y recibe tu pulsera y tu kit.'],
+                    ['¿Cómo pago y cómo entro?', 'Pagas en línea en esta página con Mercado Pago. Recibirás una confirmación con tu clave de acceso y un código QR; al llegar, muéstralo en el registro y recibe tu pulsera.'],
+                    ['¿Puedo comprar varios paquetes?', $multi ? 'Sí. Combina los que necesites, por ejemplo 2 paquetes de 2 personas y 1 de 1 persona, hasta ' . $maxQuantity . ' personas por compra. Cada persona tiene su propia clave de acceso y su pulsera.' : 'Sí, hasta ' . $maxQuantity . ' personas por compra. Cada persona tiene su propia clave de acceso y su pulsera.'],
                     ['¿La comida está incluida?', 'No. Puedes comer en el restaurante del hotel (desayuno buffet de $350), comprar en el restobar o llevar tus propios alimentos.'],
                 ],
                 'Cómo llegar' => [
                     ['¿Hay estacionamiento?', 'Sí, cuesta $60 por día y se paga directamente en el hotel.'],
-                    ['¿Incluye transporte?', 'No. Puedes llegar en auto (≈1 h desde la CDMX).'],
+                    ['¿Incluye transporte?', 'No. Puedes llegar en auto (≈1 h desde la CDMX) o en transporte público; abajo te explicamos cómo.'],
+                    ['¿Cómo llego en transporte público?', trim((string) data_get($event->content, 'text.transport')) ?: 'Desde la CDMX, toma el Metro a la estación Autobuses del Norte (Línea 5) y compra tu boleto a «Pirámides» con Autobuses Teotihuacan; el viaje dura cerca de 1 hora. Baja en San Martín de las Pirámides o en San Juan Teotihuacán y toma un taxi o un servicio por aplicación hasta el club: son pocos minutos. Si llegas de noche, acuerda con anticipación cómo regresar y confirma el último horario de salida del autobús el domingo.'],
                     ['¿Puedo visitar las pirámides?', 'Sí, por tu cuenta, el domingo después del evento, con los horarios y reglas de la zona arqueológica.'],
                 ],
             ];
             if ($event->show('rooms')) {
-                $faq['Boletos y pagos'][] = ['¿Puedo compartir habitación con mis amigos o familia?', 'Sí. Al inscribirte recibes por correo un código para reservar directamente con el hotel, a un precio especial. Cada persona necesita su entrada de Astrofest.'];
+                $faq['Boletos y pagos'][] = ['¿Puedo compartir habitación con mis amigos o familia?', 'Sí. Al inscribirte recibes por correo un código de reservación: el hotel ya lo tiene registrado y, con él, te hace la reservación a un precio especial (sujeto a disponibilidad). Cada persona necesita su lugar en Astrofest.'];
             }
             $cols = [array_slice($faq, 0, 2, true), array_slice($faq, 2, 2, true)];
         @endphp
@@ -540,13 +582,13 @@
 
 {{-- ACTO FINAL · Amanecer: la última llamada --}}
 <section class="ev-sec ev-night ev-final" aria-labelledby="h-cierre">
-    <div class="ev-bg" style="background-image:url('{{ $img('amanecer') }}')" data-par="0.06" role="presentation"></div>
+    <div class="ev-bg" style="background-image:url('{{ $event->asset('final_bg') ?: $img('hero-geminids') }}')" data-par="0.06" role="presentation"></div>
     <div class="ev-narrow" data-reveal>
         @if ($event->asset('galileo'))<img class="ev-final__char" src="{{ $event->asset('galileo') }}" alt="Galileo, mascota de Astrofest, un sabio de barba gris con catalejo" loading="lazy" width="150" height="198">@endif
         <p class="ev-eyebrow">Mira hacia arriba</p>
         <h2 id="h-cierre">{{ $event->text('closing.title') }}</h2>
         <p class="ev-big">{{ $event->text('closing.text') }}</p>
-        @if ($event->hasPrice())<p class="ev-final__price">{{ $money($event->price) }} MXN <small>por persona · IVA incluido · camping incluido</small></p>@endif
+        @if ($event->hasPrice())<p class="ev-final__price">{{ $multi ? 'Desde ' : '' }}{{ $money($startingPrice) }} MXN <small>{{ $multi ? 'IVA incluido · camping incluido' : 'por persona · IVA incluido · camping incluido' }}</small></p>@endif
         @if ($state === 'open' && $available !== null && $available <= 30)<p class="ev-pill">Quedan {{ $available }} {{ $available === 1 ? 'lugar' : 'lugares' }}</p>@endif
         <div class="ev-cta" style="justify-content:center">
             @if ($state === 'open')<a class="ev-btn ev-btn--glow" href="#entrada" data-ev-track="cta_closing">{{ $event->text('hero.cta') }}</a>@endif
@@ -557,7 +599,7 @@
 
 @if ($state === 'open' && $event->hasPrice())
     <div class="ev-bar" id="evBar" hidden>
-        <div><small>Por persona</small><strong>{{ $money($event->price) }} MXN</strong></div>
+        <div><small>{{ $multi ? 'Paquetes desde' : 'Por persona' }}</small><strong>{{ $money($startingPrice) }} MXN</strong></div>
         <a class="ev-btn ev-btn--sm ev-btn--glow" href="#entrada" data-ev-track="cta_sticky">{{ $event->text('hero.cta') }}</a>
     </div>
 @endif
@@ -578,21 +620,29 @@
         tick(); setInterval(tick, 60000);
     }
 
-    // Selector de cantidad: el total se anima al cambiar
+    // Selector de paquetes: el total y las personas se recalculan al cambiar cualquier cantidad
     var f = document.getElementById('evBuy');
     if (f) {
-        var p = JSON.parse(f.getAttribute('data-pricing')), q = document.getElementById('evQty'), out = document.getElementById('evTotal'), sv = document.getElementById('evSaving'), shown = null;
+        var p = JSON.parse(f.getAttribute('data-pricing')), out = document.getElementById('evTotal'), sv = document.getElementById('evSaving'), pe = document.getElementById('evPersons'), add = document.getElementById('evAdd'), shown = null;
+        var rows = [].slice.call(f.querySelectorAll('[data-pkg]')), info = {}; p.packages.forEach(function (k) { info[k.key] = k; });
         var fmt = function (n) { return '$' + n.toLocaleString('es-MX', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }); };
         var paint = function (to) { if (reduce || shown === null) { out.textContent = fmt(to); shown = to; return; } var from = shown, t0 = performance.now(); shown = to;
             var step = function (t) { var k = Math.min(1, (t - t0) / 380), e = 1 - Math.pow(1 - k, 3); out.textContent = fmt(from + (to - from) * e); if (k < 1) requestAnimationFrame(step); else out.textContent = fmt(to); }; requestAnimationFrame(step); };
-        var calc = function () {
-            var max = parseInt(q.max, 10) || 1, n = Math.min(max, Math.max(1, parseInt(q.value, 10) || 1)); q.value = n;
-            var sub = p.unit * n, pct = 0; p.rules.forEach(function (r) { if (n >= r.min) pct += r.percent; }); pct = Math.min(100, pct);
-            var tot = Math.round(sub * (100 - pct)) / 100; paint(tot); sv.textContent = pct ? '(ahorras ' + fmt(Math.round(sub * pct) / 100) + ')' : '';
+        var read = function (row) { var i = row.querySelector('input'); return Math.max(0, parseInt(i.value, 10) || 0); };
+        var totals = function () { var persons = 0, sub = 0; rows.forEach(function (r) { var k = info[r.getAttribute('data-pkg')], n = read(r); persons += k.persons * n; sub += k.price * n; }); return { persons: persons, sub: sub }; };
+        var calc = function (changed) {
+            var t = totals();
+            if (changed) { var i = changed.querySelector('input'); while (t.persons > p.max && read(changed) > 0) { i.value = read(changed) - 1; t = totals(); } }
+            rows.forEach(function (r) { r.querySelector('input').value = read(r); });
+            var pct = 0; p.rules.forEach(function (x) { if (t.persons >= x.min) pct += x.percent; }); pct = Math.min(100, pct);
+            paint(Math.round(t.sub * (100 - pct)) / 100); sv.textContent = pct ? '(ahorras ' + fmt(Math.round(t.sub * pct) / 100) + ')' : '';
+            pe.textContent = t.persons ? '· ' + t.persons + (t.persons === 1 ? ' persona' : ' personas') : '';
+            if (add) { add.disabled = t.persons < 1; add.classList.toggle('is-off', t.persons < 1); }
+            rows.forEach(function (r) { r.classList.toggle('is-on', read(r) > 0); var btns = r.querySelectorAll('button'); btns[0].disabled = read(r) <= 0; btns[1].disabled = t.persons + info[r.getAttribute('data-pkg')].persons > p.max; });
         };
-        f.addEventListener('click', function (e) { var s = e.target.getAttribute('data-step'); if (s) { q.value = (parseInt(q.value, 10) || 1) + parseInt(s, 10); calc(); } });
-        q.addEventListener('input', calc); calc();
-        evPush('view_item', { value: p.unit, currency: 'MXN' });
+        f.addEventListener('click', function (e) { var b = e.target.closest('[data-step]'); if (!b) return; var row = b.closest('[data-pkg]'), i = row.querySelector('input'); i.value = Math.max(0, read(row) + parseInt(b.getAttribute('data-step'), 10)); calc(row); });
+        rows.forEach(function (r) { r.querySelector('input').addEventListener('input', function () { calc(r); }); }); calc();
+        evPush('view_item', { value: p.packages.length ? Math.min.apply(null, p.packages.map(function (k) { return k.price; })) : 0, currency: 'MXN' });
     }
 
     // Programa en pestañas (sin JavaScript se ven los dos días)
@@ -658,12 +708,9 @@
         [['.ev-hero', 'hero'], ['#entrada', 'entrada']].forEach(function (a) { var el = document.querySelector(a[0]); if (el) { el.setAttribute('data-k', a[1]); io2.observe(el); } });
     }
 
-    // «Pide un deseo»: una estrella fugaz cruza la portada
-    var wish = document.getElementById('evWish'), hero = document.getElementById('evHero');
-    if (wish && hero) {
-        var launch = function (x, y) { if (reduce) return; var s = document.createElement('i'); s.className = 'ev-meteor'; s.style.left = x + 'px'; s.style.top = y + 'px'; hero.appendChild(s); setTimeout(function () { s.remove(); }, 1500); };
-        wish.addEventListener('click', function () { var r = hero.getBoundingClientRect(); launch(r.width * (.5 + Math.random() * .35), r.height * (.12 + Math.random() * .25)); wish.innerHTML = '<span>✦</span> ¡Deseo pedido!'; setTimeout(function () { wish.innerHTML = '<span>✦</span> Pide un deseo'; }, 2400); evPush('wish'); });
-    }
+    // Video promocional: una sola marca de «reproducido» para las estadísticas
+    var promo = document.getElementById('evPromo');
+    if (promo) { promo.addEventListener('play', function () { evPush('play_video'); }, { once: true }); }
 
     // Lista de «qué traer» con casillas que se recuerdan en tu dispositivo
     var cl = document.getElementById('evChecklist'), cc = document.getElementById('evCheckCount');

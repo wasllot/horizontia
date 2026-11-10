@@ -28,8 +28,8 @@ class EventContent
                 'text' => 'Aparta tu lugar y mira hacia arriba con nosotros.',
             ],
             'rooms' => [
-                'text' => 'Una vez que te inscribas recibirás un correo de confirmación con un código para que realices la reservación directamente con el hotel a un precio especial.',
-                'code_note' => 'Reserva directamente con el hotel usando este código, a un precio especial:',
+                'text' => 'Una vez que te inscribas, recibirás un correo de confirmación con un código para que realices la reservación y obtengas un precio especial (sujeto a disponibilidad).',
+                'code_note' => 'Reserva con el hotel usando este código y obtén un precio especial (sujeto a disponibilidad):',
             ],
             'sold_out' => 'Agotado',
         ];

@@ -30,7 +30,12 @@ class SeedAstrofestEvent extends Command
             'venue_name' => 'Club Campestre Teotihuacán',
             'venue_city' => 'Estado de México',
             'venue_address' => 'Autopista México–Tuxpan, salida km 27, 55851 San Martín de las Pirámides, Méx.',
-            'price' => 1740,
+            'price' => 1300,   // precio de 1 persona; los paquetes de abajo mandan
+            'packages' => [
+                ['key' => 'p1', 'name' => '1 persona', 'persons' => 1, 'price' => 1300, 'active' => true],
+                ['key' => 'p2', 'name' => '2 personas', 'persons' => 2, 'price' => 2100, 'active' => true],
+                ['key' => 'p3', 'name' => '3 personas', 'persons' => 3, 'price' => 2900, 'active' => true],
+            ],
             'iva_rate' => 16,
             'max_per_order' => 10,
             'sales_enabled' => false,

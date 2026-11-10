@@ -41,8 +41,9 @@ async function newContext(viewport = { width: 1440, height: 900 }) {
 /** Landing → cantidad → carrito → datos del comprador. Deja el formulario listo; no envía. */
 async function fillCheckout(page, { qty = 1, email, name = 'Ana E2E' }) {
     await page.goto(EVENT, { waitUntil: 'networkidle' });
-    await page.fill('#evQty', String(qty));
-    await page.dispatchEvent('#evQty', 'input');
+    // Sin paquetes configurados el evento vende una «entrada individual» (clave p1); los paquetes se prueban en tests/Feature/EventPackagesTest.php.
+    await page.fill('input[name="items[p1]"]', String(qty));
+    await page.dispatchEvent('input[name="items[p1]"]', 'input');
     await page.click('text=Agregar al carrito');
     await page.waitForURL(/\/carrito$/);
     await page.click('text=Continuar al pago');
@@ -78,8 +79,8 @@ test.before(async () => {
         $m['mercadopago'] = ['status' => 'on', 'currency' => 'MXN', 'exchange_rate' => '', 'enable_test_mode' => '', 'binary_mode' => '', 'mp_access_token' => '${MOCK_TOKEN}', 'mp_public_key' => 'TEST-pk', 'mp_webhook_secret' => '${MOCK_SECRET}'];
         Larabuild\\Optionbuilder\\Facades\\Settings::set('admin_settings', 'payment_method', $m);`);
     const ev = php(`$e = App\\Models\\Event::where('slug', '${SLUG}')->firstOrFail();
-        echo base64_encode(json_encode($e->only(['status', 'sales_enabled', 'policies_html', 'capacity', 'max_per_order', 'price', 'hold_minutes', 'offline_hold_hours', 'sales_open_at', 'sales_close_at', 'content'])));
-        $e->update(['status' => 'published', 'sales_enabled' => true, 'policies_html' => '<p>Políticas de prueba E2E.</p>', 'capacity' => null, 'max_per_order' => 6, 'price' => 1740, 'hold_minutes' => 45, 'offline_hold_hours' => 72, 'sales_open_at' => null, 'sales_close_at' => null]);`);
+        echo base64_encode(json_encode($e->only(['status', 'sales_enabled', 'policies_html', 'capacity', 'max_per_order', 'price', 'packages', 'hold_minutes', 'offline_hold_hours', 'sales_open_at', 'sales_close_at', 'content'])));
+        $e->update(['status' => 'published', 'sales_enabled' => true, 'policies_html' => '<p>Políticas de prueba E2E.</p>', 'capacity' => null, 'max_per_order' => 6, 'price' => 1740, 'packages' => null, 'hold_minutes' => 45, 'offline_hold_hours' => 72, 'sales_open_at' => null, 'sales_close_at' => null]);`);
     saved = { gw, ev };
     browser = await launch();
 });
@@ -107,7 +108,7 @@ test('1 · tarjeta aprobada: del carrito al correo con QR (2 entradas)', async (
         assert.equal(o.status, 'pending'); assert.equal(o.qty, 2); assert.equal(o.total, 3480); assert.equal(o.iva, 480);
         assert.equal(pref.external_reference, o.ref); assert.match(pref.external_reference, /^EV-\d+$/);
         assert.equal(pref.items[0].unit_price, 3480); assert.equal(pref.items[0].currency_id, 'MXN'); assert.equal(pref.items[0].quantity, 1);
-        assert.match(pref.items[0].title, /2 entradas/); assert.equal(pref.payer.email, email);
+        assert.match(pref.items[0].title, /2 × Entrada individual/); assert.equal(pref.payer.email, email);
         assert.match(pref.back_urls.success, new RegExp(`/eventos/${SLUG}/gracias\\?order=`)); assert.equal(pref.back_urls.failure, pref.back_urls.success);
         assert.match(pref.notification_url, /\/mercadopago\/webhook$/); assert.equal(pref.auto_return, 'approved'); assert.equal(pref.expires, true);
         assert.equal((await mock.state()).requests.find((r) => r.path === '/checkout/preferences').headers.authorization, `Bearer ${MOCK_TOKEN}`);

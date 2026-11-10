@@ -32,12 +32,30 @@
                 <div><label for="ev-cd">El contador se muestra desde</label><input id="ev-cd" type="datetime-local" class="form-control" wire:model="f.countdown_from"><small class="hz-bn__save">Vacío = sin contador.</small></div>
             </div>
 
-            <h3>Precio, cupo y ventas</h3>
+            <h3>Paquetes y precios <small>(precios con IVA incluido; cada paquete incluye el espacio de camping)</small></h3>
+            @if ($pk)
+                <div class="hz-bn__row" style="flex-direction:column;align-items:stretch;gap:10px" data-testid="event-packages">
+                    @foreach ($pk as $i => $row)
+                        <fieldset class="hz-bn__row" style="align-items:end;border:1px solid #e6eaf2;border-radius:12px;padding:12px" wire:key="pk-{{ $i }}">
+                            <legend style="font-size:.95rem;padding:0 6px"><label class="hz-ct__check" style="margin:0"><input type="checkbox" wire:model="pk.{{ $i }}.active"> <span><b>Paquete {{ $i + 1 }}</b> a la venta</span></label></legend>
+                            <div><label for="pk-{{ $i }}-n">Personas</label><input id="pk-{{ $i }}-n" type="number" min="1" max="20" class="form-control" wire:model="pk.{{ $i }}.persons"><small class="hz-en__err" aria-live="polite">{{ $errors->first('pk.' . $i . '.persons') }}</small></div>
+                            <div><label for="pk-{{ $i }}-name">Nombre <small>(vacío = «N personas»)</small></label><input id="pk-{{ $i }}-name" class="form-control" wire:model="pk.{{ $i }}.name" maxlength="60"></div>
+                            <div><label for="pk-{{ $i }}-p">Precio del paquete</label><input id="pk-{{ $i }}-p" type="number" step="0.01" min="0" class="form-control" wire:model="pk.{{ $i }}.price"><small class="hz-en__err" aria-live="polite">{{ $errors->first('pk.' . $i . '.price') }}</small></div>
+                            <div><button type="button" class="hz-btn hz-btn--ghost hz-btn--sm" wire:click="removePackage({{ $i }})" wire:confirm="¿Quitar este paquete?">Quitar</button></div>
+                        </fieldset>
+                    @endforeach
+                </div>
+            @else
+                <p class="hz-bn__save">Sin paquetes, el evento vende una entrada individual al «precio individual» de abajo.</p>
+            @endif
+            <div><button type="button" class="hz-btn hz-btn--ghost hz-btn--sm" wire:click="addPackage" data-testid="event-package-add"><i class="icon-plus" aria-hidden="true"></i> Agregar paquete</button></div>
+
+            <h3>Cupo y ventas</h3>
             <div class="hz-bn__row">
-                <div><label for="ev-price">Precio por persona (IVA incluido)</label><input id="ev-price" type="number" step="0.01" min="0" class="form-control" wire:model="f.price"><small class="hz-en__err" aria-live="polite">{{ $errors->first('f.price') }}</small></div>
+                <div><label for="ev-price">Precio individual (IVA incluido) <small>(solo si no hay paquetes)</small></label><input id="ev-price" type="number" step="0.01" min="0" class="form-control" wire:model="f.price"><small class="hz-en__err" aria-live="polite">{{ $errors->first('f.price') }}</small></div>
                 <div><label for="ev-iva">IVA contenido (%)</label><input id="ev-iva" type="number" step="0.01" min="0" class="form-control" wire:model="f.iva_rate"></div>
-                <div><label for="ev-cap">Cupo máximo</label><input id="ev-cap" type="number" min="1" class="form-control" wire:model="f.capacity" placeholder="Sin límite"><small class="hz-bn__save">Al llegar al cupo se muestra «Agotado».</small><small class="hz-en__err" aria-live="polite">{{ $errors->first('f.capacity') }}</small></div>
-                <div><label for="ev-max">Máximo por compra</label><input id="ev-max" type="number" min="1" max="50" class="form-control" wire:model="f.max_per_order"></div>
+                <div><label for="ev-cap">Cupo máximo (personas)</label><input id="ev-cap" type="number" min="1" class="form-control" wire:model="f.capacity" placeholder="Sin límite"><small class="hz-bn__save">Al llegar al cupo se muestra «Agotado».</small><small class="hz-en__err" aria-live="polite">{{ $errors->first('f.capacity') }}</small></div>
+                <div><label for="ev-max">Máximo de personas por compra</label><input id="ev-max" type="number" min="1" max="50" class="form-control" wire:model="f.max_per_order"></div>
             </div>
             <div class="hz-bn__row">
                 <div><label for="ev-open">Abren las ventas</label><input id="ev-open" type="datetime-local" class="form-control" wire:model="f.sales_open_at"><small class="hz-bn__save">Vacío = ya.</small></div>
@@ -75,8 +93,15 @@
                 <div><label for="ev-ce">Correo del evento</label><input id="ev-ce" type="email" class="form-control" wire:model="f.contact_email"><small class="hz-en__err" aria-live="polite">{{ $errors->first('f.contact_email') }}</small></div>
                 <div><label for="ev-cw">WhatsApp del evento</label><input id="ev-cw" class="form-control" wire:model="f.contact_whatsapp"></div>
             </div>
+            <h3>Hotel y habitaciones <small>(el hotel recibe el código de cada compra pagada y, al cerrar las ventas, la lista completa)</small></h3>
+            <div class="hz-bn__row">
+                <div><label for="ev-he">Correo del hotel <small>(varios, separados por coma)</small></label><input id="ev-he" class="form-control" wire:model="f.hotel_email" maxlength="255" placeholder="reservaciones@hotel.com"><small class="hz-en__err" aria-live="polite">{{ $errors->first('f.hotel_email') }}</small></div>
+                <div><label for="ev-hp">Teléfono del hotel</label><input id="ev-hp" class="form-control" wire:model="f.hotel_phone"></div>
+                <div><label for="ev-hw">WhatsApp del hotel</label><input id="ev-hw" class="form-control" wire:model="f.hotel_whatsapp"></div>
+            </div>
             <label class="hz-ct__check"><input type="checkbox" wire:model="hide.rooms"> <span>Ocultar el bloque «¿Prefieres habitación?», la pregunta de habitaciones y el aviso del correo</span></label>
             <label class="hz-ct__check"><input type="checkbox" wire:model="hide.map"> <span>Ocultar el botón de mapa</span></label>
+            <label class="hz-ct__check"><input type="checkbox" wire:model="hide.video"> <span>Ocultar el video promocional</span></label>
             <label class="hz-ct__check"><input type="checkbox" wire:model="hide.partners"> <span>Ocultar los logotipos de FAMA y del Club Campestre (por ejemplo, mientras no haya permiso de uso)</span></label>
 
             <h3>Textos <small>(vacío = texto por defecto de la guía)</small></h3>
@@ -94,9 +119,13 @@
             <textarea id="t-hs" class="form-control" rows="2" wire:model="t.hero.subtitle"></textarea>
             <label for="t-rm">Texto de la sección de habitación</label>
             <textarea id="t-rm" class="form-control" rows="2" wire:model="t.rooms.text"></textarea>
-            <label for="t-rc">Código de habitación con el hotel <small>(sale en el correo de confirmación; vacío = el correo avisa que se compartirá en breve)</small></label>
+            <label for="t-rc">Código general de habitación <small>(opcional: si lo escribes, todos los compradores reciben ESTE código en vez de uno propio por compra)</small></label>
             <input id="t-rc" class="form-control" wire:model="t.rooms.code" maxlength="60" placeholder="Ej. ASTROFEST26">
-            <label for="t-tr">Cómo llegar en transporte público <small>(solo se muestra si lo escribes y está verificado)</small></label>
+            <div class="hz-bn__row">
+                <div><label for="t-sp2">Conferencista · Conferencia 2 <small>(nombre e institución; vacío = no se muestra)</small></label><input id="t-sp2" class="form-control" wire:model="t.speakers.c2" maxlength="160" placeholder="Dr. … · Institución"></div>
+                <div><label for="t-sp4">Conferencista · Conferencia 4 <small>(vacío = no se muestra)</small></label><input id="t-sp4" class="form-control" wire:model="t.speakers.c4" maxlength="160" placeholder="Lic. … · Institución"></div>
+            </div>
+            <label for="t-tr">Cómo llegar en transporte público <small>(vacío = se muestra la ruta por defecto: Metro a Autobuses del Norte, autobús a «Pirámides» y taxi)</small></label>
             <textarea id="t-tr" class="form-control" rows="2" wire:model="t.transport"></textarea>
             <div class="hz-bn__row">
                 <div><label for="t-ct">Titular de cierre</label><input id="t-ct" class="form-control" wire:model="t.closing.title"></div>

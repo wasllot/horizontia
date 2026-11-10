@@ -4,6 +4,7 @@ namespace App\Livewire\Pages\Admin\Events;
 
 use App\Models\Event;
 use App\Models\EventOrder;
+use App\Services\Events\EventHotelNotifier;
 use App\Services\Events\EventSales;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -51,6 +52,35 @@ class EventOrders extends Component
         $this->toast('Confirmación reenviada a ' . $order->email . '.');
     }
 
+    public function resendHotel(int $orderId): void
+    {
+        $order = EventOrder::with('event')->where('event_id', $this->eventId)->findOrFail($orderId);
+        if (!$order->isPaid() || !$order->roomCode()) {
+            $this->toast('Solo se avisa al hotel de compras pagadas con código de habitación.', 'error');
+
+            return;
+        }
+        if (!$order->event->hotelEmails()) {
+            $this->toast('Captura el correo del hotel en Eventos → Hotel y habitaciones.', 'error');
+
+            return;
+        }
+        $order->update(['hotel_notified_at' => null]);
+        app(EventHotelNotifier::class)->notify($order->fresh());
+        $this->toast('Aviso reenviado al hotel.');
+    }
+
+    public function sendHotelList(): void
+    {
+        $event = Event::findOrFail($this->eventId);
+        if (!$event->hotelEmails()) {
+            $this->toast('Captura el correo del hotel en Eventos → Hotel y habitaciones.', 'error');
+
+            return;
+        }
+        $this->toast(app(EventHotelNotifier::class)->sendSummary($event) ? 'Lista enviada al hotel.' : 'Todavía no hay compras pagadas con código de habitación.', app(EventHotelNotifier::class)->orders($event)->isEmpty() ? 'error' : 'success');
+    }
+
     #[Layout('layouts.admin-app')]
     public function render()
     {
@@ -63,7 +93,7 @@ class EventOrders extends Component
             'events' => $events,
             'current' => $current,
             'status' => $status,
-            'orders' => $current ? $base()->when($status !== 'all', fn ($q) => $q->where('status', $status))->with('tickets')->latest('id')->limit(100)->get() : collect(),
+            'orders' => $current ? $base()->when($status !== 'all', fn ($q) => $q->where('status', $status))->with(['tickets', 'event'])->latest('id')->limit(100)->get() : collect(),
             'stats' => $current ? [
                 'paid' => (int) $base()->where('status', EventOrder::PAID)->sum('quantity'),
                 'revenue' => (float) $base()->where('status', EventOrder::PAID)->sum('total'),

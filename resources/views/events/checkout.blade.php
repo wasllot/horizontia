@@ -9,8 +9,8 @@
 <div class="ev-page"><div class="ev-wrap">
     @include('events.steps', ['step' => 2])
     <h1>Tus datos y pago</h1>
-    <details class="ev-more ev-sumtop"><summary>Resumen: {{ $quantity }} {{ $quantity === 1 ? 'entrada' : 'entradas' }} · {{ $money($quote['total']) }} MXN</summary>
-        <p style="margin:0">{{ $quantity }} × {{ $money($quote['unit']) }} · IVA incluido ({{ $money($quote['iva']) }}). <a href="{{ $event->url('carrito') }}">Cambiar cantidad</a></p>
+    <details class="ev-more ev-sumtop"><summary>Resumen: {{ $quantity }} {{ $quantity === 1 ? 'persona' : 'personas' }} · {{ $money($quote['total']) }} MXN</summary>
+        <p style="margin:0">{{ collect($quote['lines'])->map(fn ($l) => $l['qty'] . ' × ' . $l['name'])->implode(' + ') }} · IVA incluido ({{ $money($quote['iva']) }}). <a href="{{ $event->url('carrito') }}">Cambiar paquetes</a></p>
     </details>
     @if (session('event_error'))<p class="ev-alert" role="alert">{{ session('event_error') }}</p>@endif
     @if ($errors->any())<p class="ev-alert" role="alert">Revisa los campos marcados para continuar.</p>@endif
@@ -29,7 +29,7 @@
 
             <fieldset class="ev-card" style="display:grid;gap:16px;border:1px solid var(--ev-line)">
                 <legend class="ev-hint" style="padding:0 8px">Quiénes asisten</legend>
-                <p class="ev-hint" style="margin:0">La pulsera, el pasaporte y el diploma llevan el nombre de cada asistente.</p>
+                <p class="ev-hint" style="margin:0">La pulsera y el diploma llevan el nombre de cada asistente.</p>
                 @for ($i = 0; $i < $quantity; $i++)
                     <div class="ev-field"><label for="att{{ $i }}">Asistente {{ $i + 1 }}</label><input id="att{{ $i }}" name="attendees[{{ $i }}]" type="text" value="{{ $f('attendees.' . $i) }}" required data-first="{{ $i === 0 ? '1' : '0' }}">@error('attendees.' . $i)<p class="ev-err">{{ $message }}</p>@enderror</div>
                 @endfor
@@ -61,6 +61,9 @@
             <div class="ev-field">
                 <label class="ev-check"><input type="checkbox" name="accept_policies" value="1" required @checked(old('accept_policies'))> <span>He leído y acepto las <a href="{{ $event->url('politicas') }}" target="_blank" rel="noopener">políticas del evento</a> (clima, cancelaciones y reglamento).</span></label>
                 @error('accept_policies')<p class="ev-err">{{ $message }}</p>@enderror
+                @if ($event->show('rooms') && $event->hotelEmails())
+                    <p class="ev-hint" style="margin:10px 0 0">Si reservas habitación, compartimos con el hotel tu nombre, correo, teléfono y código de reservación solo para validar tu precio especial.</p>
+                @endif
                 <label class="ev-check" style="margin-top:10px"><input type="checkbox" name="newsletter" value="1" @checked(old('newsletter'))> <span>Quiero recibir noticias de cursos y eventos (opcional).</span></label>
             </div>
 
@@ -70,13 +73,13 @@
 
         <aside class="ev-sum" aria-label="Resumen de tu compra">
             <dl>
-                <dt>{{ $quantity }} × Entrada {{ $money($quote['unit']) }}</dt><dd>{{ $money($quote['subtotal']) }}</dd>
+                @foreach ($quote['lines'] as $l)<dt>{{ $l['qty'] }} × {{ $l['name'] }} ({{ $money($l['unit']) }})</dt><dd>{{ $money($l['subtotal']) }}</dd>@endforeach
                 @foreach ($quote['discounts'] as $d)<dt>{{ $d['label'] }}</dt><dd>−{{ $money($d['amount']) }}</dd>@endforeach
                 <dt class="ev-hint">Subtotal sin IVA</dt><dd class="ev-hint">{{ $money($quote['base']) }}</dd>
                 <dt class="ev-hint">IVA ({{ rtrim(rtrim(number_format($event->iva_rate, 2), '0'), '.') }} %)</dt><dd class="ev-hint">{{ $money($quote['iva']) }}</dd>
                 <dt class="total">Total</dt><dd class="total">{{ $money($quote['total']) }} MXN</dd>
             </dl>
-            <p style="margin:16px 0 0"><a href="{{ $event->url('carrito') }}">Cambiar cantidad</a></p>
+            <p style="margin:16px 0 0"><a href="{{ $event->url('carrito') }}">Cambiar paquetes</a></p>
         </aside>
     </div>
 </div></div>

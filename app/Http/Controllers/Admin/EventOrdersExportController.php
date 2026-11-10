@@ -17,7 +17,7 @@ class EventOrdersExportController extends Controller
         $from = $request->query('desde');
         $to = $request->query('hasta');
 
-        $orders = EventOrder::where('event_id', $event->id)->with('tickets')
+        $orders = EventOrder::where('event_id', $event->id)->with(['tickets', 'event'])
             ->when($status !== 'all', fn ($q) => $q->where('status', $status))
             ->when($from && strtotime((string) $from), fn ($q) => $q->where('created_at', '>=', \Illuminate\Support\Carbon::parse($from, Event::timezone())->startOfDay()->timezone(config('app.timezone'))))
             ->when($to && strtotime((string) $to), fn ($q) => $q->where('created_at', '<=', \Illuminate\Support\Carbon::parse($to, Event::timezone())->endOfDay()->timezone(config('app.timezone'))))
@@ -29,11 +29,11 @@ class EventOrdersExportController extends Controller
         return response()->streamDownload(function () use ($orders, $safe, $tz) {
             $out = fopen('php://output', 'w');
             fwrite($out, "\xEF\xBB\xBF");
-            fputcsv($out, ['Compra', 'Fecha (hora de México)', 'Estado', 'Nombre', 'Correo', 'Teléfono', 'Entradas', 'Asistentes (clave)', 'Menores', 'Telescopio', 'Cómo se enteró', 'Precio unitario', 'Descuento', 'Subtotal sin IVA', 'IVA', 'Total', 'Método de pago', 'ID de pago', 'Factura', 'RFC', 'Razón social', 'CP fiscal', 'Origen (utm_source)', 'Medio (utm_medium)', 'Campaña (utm_campaign)']);
+            fputcsv($out, ['Compra', 'Fecha (hora de México)', 'Estado', 'Nombre', 'Correo', 'Teléfono', 'Personas', 'Paquetes', 'Código de habitación', 'Asistentes (clave)', 'Menores', 'Telescopio', 'Cómo se enteró', 'Precio unitario', 'Descuento', 'Subtotal sin IVA', 'IVA', 'Total', 'Método de pago', 'ID de pago', 'Factura', 'RFC', 'Razón social', 'CP fiscal', 'Origen (utm_source)', 'Medio (utm_medium)', 'Campaña (utm_campaign)']);
             $orders->chunk(200, function ($chunk) use ($out, $safe, $tz) {
                 foreach ($chunk as $o) {
                     fputcsv($out, array_map($safe, [
-                        $o->id, $o->created_at->timezone($tz)->format('Y-m-d H:i'), $o->status, $o->name, $o->email, $o->phone, $o->quantity,
+                        $o->id, $o->created_at->timezone($tz)->format('Y-m-d H:i'), $o->status, $o->name, $o->email, $o->phone, $o->quantity, $o->packagesLabel(), $o->roomCode(),
                         $o->tickets->map(fn ($t) => $t->attendee_name . ' (' . $t->code . ')')->implode('; '),
                         $o->minors, $o->has_telescope === null ? '' : ($o->has_telescope ? 'Sí' : 'No'), $o->heard_from,
                         $o->unit_price, $o->discount, $o->subtotalBeforeIva(), $o->iva, $o->total, $o->payment_method, $o->payment_id,

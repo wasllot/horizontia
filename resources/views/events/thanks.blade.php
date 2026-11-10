@@ -7,14 +7,21 @@
     @if ($order->isPaid())
         @if ($event->asset('galileo'))<img class="ev-char ev-char--card" src="{{ $event->asset('galileo') }}" alt="Galileo, mascota de Astrofest, un sabio de barba gris con catalejo" width="170" height="170">@endif
         <h1>¡Listo, {{ \Illuminate\Support\Str::of($order->name)->explode(' ')->first() }}! Tu lugar está apartado</h1>
-        <p>Te enviamos la confirmación a <strong>{{ $order->email }}</strong> con tu clave de acceso. Al llegar, muéstrala en el registro (desde el celular o impresa) y recibe tu pulsera y tu kit.</p>
+        <p>Te enviamos la confirmación a <strong>{{ $order->email }}</strong> con tu clave de acceso. Al llegar, muéstrala en el registro (desde el celular o impresa) y recibe tu pulsera.</p>
         @foreach ($order->tickets as $t)
             <div class="ev-ticket-card">
                 <img src="{{ $event->url('boleto/' . $t->code . '.png') }}" alt="Código QR de {{ $t->attendee_name }}" width="116" height="116">
                 <div><h2 style="margin:0 0 4px;font-size:1.15rem">{{ $t->attendee_name }}</h2><p style="margin:0">Clave de acceso</p><code>{{ $t->code }}</code></div>
             </div>
         @endforeach
-        <p class="ev-hint">Total pagado: {{ $money($order->total) }} MXN · IVA incluido ({{ $money($order->iva) }}). Compra #{{ $order->id }}.</p>
+        @if ($event->show('rooms') && $order->roomCode())
+            <div class="ev-card" style="margin:6px 0 16px">
+                <h2 style="margin:0 0 6px;font-size:1.15rem">¿Prefieres habitación?</h2>
+                <p style="margin:0 0 8px">Contacta al hotel con tu código de reservación: ya lo tiene registrado y te hace la reservación a un precio especial (sujeto a disponibilidad).</p>
+                <p style="margin:0"><code style="font-size:1.25rem;letter-spacing:.08em;color:var(--gold)">{{ $order->roomCode() }}</code></p>
+            </div>
+        @endif
+        <p class="ev-hint">{{ $order->packagesLabel() }} · Total pagado: {{ $money($order->total) }} MXN · IVA incluido ({{ $money($order->iva) }}). Compra #{{ $order->id }}.</p>
         <div class="ev-actions">
             <a class="ev-btn ev-btn--sm" href="{{ $event->url('evento.ics') }}">Agregar al calendario</a>
             <a class="ev-btn ev-btn--ghost ev-btn--sm" href="https://wa.me/?text={{ rawurlencode('¡Voy a ' . $event->name . '! Aparta tu lugar: ' . $event->url()) }}" target="_blank" rel="noopener" data-ev-track="share_whatsapp">Invitar por WhatsApp</a>

@@ -203,10 +203,10 @@ class EventTicketSalesTest extends TestCase
     {
         $e = $this->event(['max_per_order' => 6, 'capacity' => 4]);
         $this->cartWith($e, 99);
-        $this->assertSame(4, session('event_cart.' . $e->id));
+        $this->assertSame(['p1' => 4], session('event_cart.' . $e->id));
         $e->update(['capacity' => 100]);
         $this->cartWith($e, 99);
-        $this->assertSame(6, session('event_cart.' . $e->id));
+        $this->assertSame(['p1' => 6], session('event_cart.' . $e->id));
     }
 
     // ---- Compra de invitado y Mercado Pago ----
@@ -270,7 +270,7 @@ class EventTicketSalesTest extends TestCase
         // Otra persona: quedaba 1 lugar y pide 2.
         $this->flushSession();
         $this->cartWith($e, 2);
-        $this->assertSame(1, session('event_cart.' . $e->id));
+        $this->assertSame(['p1' => 1], session('event_cart.' . $e->id));
         $this->post($e->url('pago'), $this->buyer(['attendees' => ['A']]))->assertRedirect();
         $this->assertSame(0, app(EventSales::class)->available($e));
         $this->assertSame('sold_out', app(EventSales::class)->state($e));
@@ -531,7 +531,7 @@ class EventTicketSalesTest extends TestCase
     {
         $html = $this->get($this->event()->url())->assertOk()->getContent();
 
-        foreach (['role="tablist"', 'Compra tranquilo', 'Ciencia en un minuto', 'Lo que verás en la noche', 'Imprimir lista', 'Kit de bienvenida, rally y', 'Antes de ir', 'Pago seguro con Mercado Pago', 'id="evBar"'] as $needle) {
+        foreach (['role="tablist"', 'Compra tranquilo', 'Ciencia en un minuto', 'Lo que verás en la noche', 'Imprimir lista', 'Distintivo de Astrofest, rally y', 'Antes de ir', 'Pago seguro con Mercado Pago', 'id="evBar"'] as $needle) {
             $this->assertStringContainsString($needle, $html, "falta: $needle");
         }
         $this->assertSame(1, substr_count($html, '<h1'), 'un solo H1');
@@ -556,7 +556,7 @@ class EventTicketSalesTest extends TestCase
         $html = $this->get($e->url('pago'))->assertOk()->getContent();
         $this->assertStringContainsString('aria-label="Pasos de la compra"', $html);
         $this->assertStringContainsString('Datos opcionales', $html);
-        $this->assertStringContainsString('Resumen: 2 entradas', $html);
+        $this->assertStringContainsString('Resumen: 2 personas', $html);
     }
 
     public function test_event_pages_use_the_horizontia_favicon(): void

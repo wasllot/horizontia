@@ -11,7 +11,7 @@
     <tr><td style="padding:28px 28px 8px;" align="center"><table role="presentation" cellpadding="0" cellspacing="0" style="background:#1c1c1c;border-radius:14px;"><tr><td style="padding:10px 22px;"><img src="{{ $message->embed(public_path('images/eventos/astrofest-logo.png')) }}" width="220" alt="Astrofest {{ $event->name }}" style="display:block;width:220px;max-width:100%;height:auto;"></td></tr></table></td></tr>
     <tr><td style="padding:12px 28px 0;">
       <h1 style="margin:16px 0 8px;font-family:Georgia,'Times New Roman',serif;font-size:24px;line-height:1.25;color:#14213d;">¡Tu lugar está apartado, {{ \Illuminate\Support\Str::of($order->name)->explode(' ')->first() }}!</h1>
-      <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#5b6478;">Gracias por tu compra. Guarda este correo: al llegar al registro muestra el código QR (o la clave) de cada asistente y recibe tu pulsera y tu kit.</p>
+      <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#5b6478;">Gracias por tu compra. Guarda este correo: al llegar al registro muestra el código QR (o la clave) de cada asistente y recibe tu pulsera.</p>
       @if ($start)<p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:#14213d;"><strong style="color:#14213d;background:#fed304;padding:2px 8px;border-radius:6px;">{{ ucfirst($start->locale('es')->translatedFormat('l j \d\e F \d\e Y')) }}</strong> · check-in desde las {{ $start->format('H:i') }} h<br>{{ $event->venue_name }}{{ $event->venue_city ? ', ' . $event->venue_city : '' }}</p>@endif
     </td></tr>
     @foreach ($tickets as $t)
@@ -28,7 +28,9 @@
     @endforeach
     <tr><td style="padding:6px 28px 4px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:#5b6478;border-top:1px solid #d9deea;">
-        <tr><td style="padding:12px 0 4px;">{{ $order->quantity }} {{ $order->quantity === 1 ? 'entrada' : 'entradas' }} × {{ $money($order->unit_price) }}</td><td align="right" style="padding:12px 0 4px;">{{ $money($order->unit_price * $order->quantity) }}</td></tr>
+        @foreach ($order->lines() as $l)
+        <tr><td style="padding:{{ $loop->first ? '12px' : '2px' }} 0 4px;">{{ $l['qty'] }} × {{ $l['name'] }} ({{ $money($l['unit_price']) }})</td><td align="right" style="padding:{{ $loop->first ? '12px' : '2px' }} 0 4px;">{{ $money($l['subtotal']) }}</td></tr>
+        @endforeach
         @if ((float) $order->discount > 0)<tr><td style="padding:2px 0;">{{ $order->discount_label ?: 'Descuento' }}</td><td align="right">−{{ $money($order->discount) }}</td></tr>@endif
         <tr><td style="padding:2px 0;">Subtotal sin IVA</td><td align="right">{{ $money($order->subtotalBeforeIva()) }}</td></tr>
         <tr><td style="padding:2px 0;">IVA ({{ rtrim(rtrim(number_format($event->iva_rate, 2), '0'), '.') }} %)</td><td align="right">{{ $money($order->iva) }}</td></tr>
@@ -38,10 +40,16 @@
     </td></tr>
     @if ($event->show('rooms'))
     <tr><td style="padding:14px 28px 0;">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fffae3;border:1px dashed #fed304;border-radius:14px;"><tr><td style="padding:14px 18px;font-size:14px;line-height:1.6;color:#14213d;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fffae3;border:1px dashed #fed304;border-radius:14px;"><tr><td style="padding:16px 18px;font-size:14px;line-height:1.6;color:#14213d;">
         <strong style="font-family:Georgia,'Times New Roman',serif;font-size:16px;">¿Prefieres habitación?</strong><br>
-        @if (trim((string) data_get($event->content, 'text.rooms.code')))
-          {{ $event->text('rooms.code_note') }}<br><span style="display:inline-block;margin-top:6px;padding:6px 14px;border-radius:8px;background:#14213d;color:#fed304;font-family:Consolas,Menlo,monospace;font-size:18px;font-weight:700;letter-spacing:1.5px;">{{ data_get($event->content, 'text.rooms.code') }}</span>
+        @if ($order->roomCode())
+          Tu código de reservación es:<br>
+          <span style="display:inline-block;margin:8px 0;padding:6px 14px;border-radius:8px;background:#14213d;color:#fed304;font-family:Consolas,Menlo,monospace;font-size:20px;font-weight:700;letter-spacing:1.5px;">{{ $order->roomCode() }}</span><br>
+          Para reservar, contacta al hotel
+          @if ($event->hotel_whatsapp || $event->hotel_phone)
+            @if ($event->hotel_phone) al <strong>{{ $event->hotel_phone }}</strong>@endif @if ($event->hotel_phone && $event->hotel_whatsapp) o @endif @if ($event->hotel_whatsapp) por WhatsApp al <strong>{{ $event->hotel_whatsapp }}</strong>@endif
+          @endif
+          y da tu código: el hotel ya lo tiene registrado y te hace la reservación a un precio especial (sujeto a disponibilidad). @if ($event->hotel_booking_url)También puedes hacerlo en <a href="{{ $event->hotel_booking_url }}" style="color:#0d5bd6;">el sitio del hotel</a>.@endif
         @else
           En breve te compartiremos por correo tu código para reservar directamente con el hotel, a un precio especial.
         @endif

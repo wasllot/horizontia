@@ -3,7 +3,7 @@
         <div>
             <h2>Compras de eventos</h2>
             @if ($current)
-                <p>{{ $current->name }} · {{ $stats['paid'] }} entradas pagadas · ${{ number_format($stats['revenue'], 2) }} MXN · {{ $stats['pending'] }} reservadas por pagar{{ $current->capacity ? ' · cupo ' . $current->capacity : '' }}</p>
+                <p>{{ $current->name }} · {{ $stats['paid'] }} personas con lugar · ${{ number_format($stats['revenue'], 2) }} MXN · {{ $stats['pending'] }} reservadas por pagar{{ $current->capacity ? ' · cupo ' . $current->capacity : '' }}</p>
             @else
                 <p>Las compras son de invitado, sin cuenta, y se cobran con Mercado Pago.</p>
             @endif
@@ -19,6 +19,9 @@
                     <option value="paid">Pagadas</option><option value="pending">Por pagar</option><option value="expired">Vencidas</option><option value="refunded">Reembolsadas</option><option value="all">Todas</option>
                 </select>
                 <a class="hz-btn hz-btn--ghost hz-btn--sm" href="{{ route('admin.events.export', $current) }}?estado={{ $status }}" data-testid="event-csv">Descargar CSV</a>
+                @if ($current->hotelEmails())
+                    <button type="button" class="hz-btn hz-btn--ghost hz-btn--sm" wire:click="sendHotelList" wire:confirm="¿Enviar al hotel la lista completa de códigos de reservación?" data-testid="hotel-list">Enviar lista al hotel</button>
+                @endif
             </div>
         @endif
     </header>
@@ -31,8 +34,8 @@
                     <tbody>
                         @foreach ($orders as $o)
                             <tr wire:key="eo-{{ $o->id }}">
-                                <td data-label="Compra"><strong>#{{ $o->id }} · {{ $o->name }}</strong><br><small>{{ $o->email }} · {{ $o->phone }}<br>{{ $o->created_at->timezone(\App\Models\Event::timezone())->format('d/m/Y H:i') }}</small></td>
-                                <td data-label="Asistentes">{{ $o->quantity }} · <small>{{ $o->tickets->pluck('attendee_name')->implode(', ') }}</small></td>
+                                <td data-label="Compra"><strong>#{{ $o->id }} · {{ $o->name }}</strong><br><small>{{ $o->email }} · {{ $o->phone }}<br>{{ $o->created_at->timezone(\App\Models\Event::timezone())->format('d/m/Y H:i') }}@if ($o->roomCode())<br>Hotel: <b>{{ $o->roomCode() }}</b>{{ $o->hotel_notified_at ? ' · avisado' : '' }}@endif</small></td>
+                                <td data-label="Asistentes">{{ $o->quantity }} · <small>{{ $o->packagesLabel() }}<br>{{ $o->tickets->pluck('attendee_name')->implode(', ') }}</small></td>
                                 <td data-label="Total">${{ number_format($o->total, 2) }}@if ($o->discount_label)<br><small>{{ $o->discount_label }}</small>@endif</td>
                                 <td data-label="Estado">
                                     @if ($o->status === 'paid')<x-panel.badge tone="success">Pagada</x-panel.badge>
@@ -40,7 +43,7 @@
                                     @elseif ($o->status === 'refunded')<x-panel.badge tone="neutral">Reembolsada</x-panel.badge>
                                     @else<x-panel.badge tone="neutral">Vencida</x-panel.badge>@endif
                                 </td>
-                                <td data-label="Acciones"><div class="hz-acts">@if ($o->status === 'paid')<x-panel.action icon="icon-mail" label="Reenviar confirmación" wire:click="resend({{ $o->id }})" />@endif</div></td>
+                                <td data-label="Acciones"><div class="hz-acts">@if ($o->status === 'paid')<x-panel.action icon="icon-mail" label="Reenviar confirmación" wire:click="resend({{ $o->id }})" />@if ($o->roomCode() && $current->hotelEmails())<x-panel.action icon="icon-send" label="Reenviar aviso al hotel" wire:click="resendHotel({{ $o->id }})" />@endif @endif</div></td>
                             </tr>
                         @endforeach
                     </tbody>
