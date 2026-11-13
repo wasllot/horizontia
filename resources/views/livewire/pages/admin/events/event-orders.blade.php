@@ -34,7 +34,7 @@
                     <tbody>
                         @foreach ($orders as $o)
                             <tr wire:key="eo-{{ $o->id }}">
-                                <td data-label="Compra"><strong>#{{ $o->id }} · {{ $o->name }}</strong><br><small>{{ $o->email }} · {{ $o->phone }}<br>{{ $o->created_at->timezone(\App\Models\Event::timezone())->format('d/m/Y H:i') }}@if ($o->roomCode())<br>Hotel: <b>{{ $o->roomCode() }}</b>{{ $o->hotel_notified_at ? ' · avisado' : '' }}@endif</small></td>
+                                <td data-label="Compra"><strong>#{{ $o->id }} · {{ $o->name }}</strong><br><small>{{ $o->email }} · {{ $o->phone }}<br>{{ $o->created_at->timezone(\App\Models\Event::timezone())->format('d/m/Y H:i') }}@if ($o->roomCode())<br>Hotel: <b>{{ $o->roomCode() }}</b>{{ $o->hotel_notified_at ? ' · avisado' : '' }}@endif @if ($o->status === 'paid')<br>Correo al cliente: @if ($o->confirmation_sent_at)<span data-testid="mail-ok">enviado</span>@else<b data-testid="mail-missing" style="color:#a12622">SIN ENVIAR · usa «Reenviar confirmación»</b>@endif @endif</small></td>
                                 <td data-label="Asistentes">{{ $o->quantity }} · <small>{{ $o->packagesLabel() }}<br>{{ $o->tickets->pluck('attendee_name')->implode(', ') }}</small></td>
                                 <td data-label="Total">${{ number_format($o->total, 2) }}@if ($o->discount_label)<br><small>{{ $o->discount_label }}</small>@endif</td>
                                 <td data-label="Estado">

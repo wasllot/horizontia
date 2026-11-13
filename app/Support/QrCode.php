@@ -145,29 +145,64 @@ class QrCode
         return $best;
     }
 
-    /** PNG (GD) listo para incrustar en un correo. */
+    /** PNG listo para incrustar en un correo (no requiere GD). */
     public static function png(string $data, int $scale = 8, int $margin = 3): string
     {
         $m = self::matrix($data);
         $n = count($m);
         $px = ($n + 2 * $margin) * $scale;
-        $img = imagecreatetruecolor($px, $px);
-        $white = imagecolorallocate($img, 255, 255, 255);
-        $black = imagecolorallocate($img, 11, 15, 38);
-        imagefilledrectangle($img, 0, 0, $px, $px, $white);
-        for ($y = 0; $y < $n; $y++) {
-            for ($x = 0; $x < $n; $x++) {
-                if ($m[$y][$x]) {
-                    imagefilledrectangle($img, ($x + $margin) * $scale, ($y + $margin) * $scale, ($x + $margin + 1) * $scale - 1, ($y + $margin + 1) * $scale - 1, $black);
-                }
+        $rowBytes = intdiv($px + 7, 8);
+
+        // PNG indexado de 1 bit (0 = blanco, 1 = oscuro), escrito a mano: no depende de la extensión GD, que el hosting puede no tener.
+        $raw = '';
+        for ($y = 0; $y < $n + 2 * $margin; $y++) {
+            $bits = '';
+            for ($x = 0; $x < $n + 2 * $margin; $x++) {
+                $bits .= str_repeat(($m[$y - $margin][$x - $margin] ?? false) ? '1' : '0', $scale);
+            }
+            $line = "\x00" . self::packBits($bits, $rowBytes);
+            $raw .= str_repeat($line, $scale);
+        }
+
+        return "\x89PNG\r\n\x1a\n"
+            . self::chunk('IHDR', pack('NNCCCCC', $px, $px, 1, 3, 0, 0, 0))
+            . self::chunk('PLTE', "\xff\xff\xff" . "\x0b\x0f\x26")
+            . self::chunk('IDAT', self::zlib($raw))
+            . self::chunk('IEND', '');
+    }
+
+    /** '0110…' → bytes (primer bit = bit más alto), rellenado a $length bytes. */
+    private static function packBits(string $bits, int $length): string
+    {
+        $out = '';
+        foreach (str_split(str_pad($bits, $length * 8, '0'), 8) as $byte) {
+            $out .= chr(bindec($byte));
+        }
+
+        return $out;
+    }
+
+    private static function chunk(string $type, string $body): string
+    {
+        return pack('N', strlen($body)) . $type . $body . pack('N', crc32($type . $body));
+    }
+
+    /** Flujo zlib: comprimido si hay zlib; si no, en bloques sin comprimir (válido igual, solo pesa más). */
+    private static function zlib(string $raw): string
+    {
+        if (function_exists('gzcompress')) {
+            $z = gzcompress($raw, 9);
+            if ($z !== false) {
+                return $z;
             }
         }
-        ob_start();
-        imagepng($img);
-        $png = (string) ob_get_clean();
-        imagedestroy($img);
+        $out = "\x78\x01";
+        $blocks = str_split($raw, 65535) ?: [''];
+        foreach ($blocks as $i => $block) {
+            $out .= chr($i === array_key_last($blocks) ? 1 : 0) . pack('vv', strlen($block), strlen($block) ^ 0xFFFF) . $block;
+        }
 
-        return $png;
+        return $out . hash('adler32', $raw, true);
     }
 
     public static function svg(string $data, int $margin = 3): string

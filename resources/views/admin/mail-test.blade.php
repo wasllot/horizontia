@@ -18,7 +18,7 @@ table{width:100%;border-collapse:collapse;font-size:.92rem;margin-bottom:22px} t
     @if (session('mail_test_error'))<p class="res"><span class="bad" style="display:block;padding:10px 14px;border-radius:12px" role="alert">{{ session('mail_test_error') }}</span></p>@endif
 
     @if ($results)
-        <h2 style="font-size:1.05rem;margin:0 0 10px">Resultado ({{ $mode === 'cola' ? 'por la cola' : 'directo por SMTP' }})</h2>
+        <h2 style="font-size:1.05rem;margin:0 0 10px">Resultado ({{ $mode === 'cola' ? 'por la cola' : ($mode === 'entradas' ? 'correo de entradas de ejemplo, directo por SMTP' : 'directo por SMTP') }})</h2>
         <ul class="res" data-testid="mail-test-results">
             @foreach ($results as $r)
                 <li class="{{ $r['ok'] ? 'ok' : 'bad' }}">
@@ -52,6 +52,7 @@ Diálogo con el servidor SMTP:
         <div class="btns">
         <button type="submit" name="mode" value="directo">Enviar directo (SMTP)</button>
         <button type="submit" name="mode" value="cola" class="alt">Enviar por la cola</button>
+        <button type="submit" name="mode" value="entradas" class="alt" data-testid="mail-test-tickets">Probar correo de entradas (logo y QR)</button>
         </div>
     </form>
 
@@ -62,5 +63,5 @@ Diálogo con el servidor SMTP:
         </ul>
         <small style="margin-top:0">Si un correo «por la cola» no llega, aquí suele aparecer el motivo.</small>
     @endif
-    <small>«Directo» prueba solo el servidor SMTP. «Por la cola» prueba lo que usan los correos de compras de eventos: debe llegar en menos de un minuto; si no llega, falla el worker o el cron. Revisa también la carpeta de spam.</small>
+    <small>«Directo» prueba solo el servidor SMTP. «Por la cola» prueba lo que usan los correos de compras de eventos: debe llegar en menos de un minuto; si no llega, falla el worker o el cron. Revisa también la carpeta de spam. «Correo de entradas» manda la plantilla real que recibe quien compra (logo y QR, con datos de ejemplo del evento más reciente): si «Directo» llega pero este no, el problema está en esa plantilla y no en el servidor.</small>
 </div></body></html>
