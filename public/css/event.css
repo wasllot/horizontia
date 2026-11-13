@@ -567,3 +567,17 @@ body.ev-red .evp .evf { background:#000; } body.ev-red .evp .evf__chip { backgro
 .ev-video__frame video { display:block; width:100%; height:auto; aspect-ratio:16/9; background:#000; }
 .ev-video__frame figcaption { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 16px; padding:10px 18px; font-size:.74rem; letter-spacing:.1em; color:var(--on-mute); background:rgba(7,11,31,.9); }
 .ev-video__frame figcaption b { color:var(--gold2); font-weight:500; }
+
+/* ---------- Impresión de la confirmación y los boletos: hoja blanca y solo lo útil ---------- */
+@media print {
+    @page { margin: 14mm; }
+    html, body, .evp, .ev-page { background:#fff !important; color:#14213d !important; }
+    .evp { overflow:visible; }
+    .evp-sub, .ev-progress, .ev-steps, .ev-actions, .ev-char, .evf, .ev-bar, .ev-count, .hz-wa, #hz-install, [aria-label="Aviso de cookies"], .ev-page .ev-btn { display:none !important; }
+    .ev-page { padding:0; min-height:0; }
+    .ev-page h1 { font-size:26pt; color:#14213d !important; margin-bottom:12pt; }
+    .ev-page p, .ev-page li, .ev-page strong, .ev-page h2, .ev-page h3, .ev-page code { color:#14213d !important; }
+    .ev-page .ev-hint { color:#5f6680 !important; }
+    .ev-ticket-card { break-inside:avoid; box-shadow:none; background:#fffaf0 !important; border:2px solid #14213d; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .ev-page .ev-card { background:#fff !important; border:1px solid #14213d; box-shadow:none; backdrop-filter:none; break-inside:avoid; }
+}

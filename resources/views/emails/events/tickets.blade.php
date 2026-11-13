@@ -12,17 +12,17 @@
     <tr><td style="padding:12px 28px 0;">
       <h1 style="margin:16px 0 8px;font-family:Georgia,'Times New Roman',serif;font-size:24px;line-height:1.25;color:#14213d;">¡Tu lugar está apartado, {{ \Illuminate\Support\Str::of($order->name)->explode(' ')->first() }}!</h1>
       <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#5b6478;">Gracias por tu compra. Guarda este correo: al llegar al registro muestra el código QR (o la clave) de cada asistente y recibe tu pulsera.</p>
-      @if ($start)<p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:#14213d;"><strong style="color:#14213d;background:#fed304;padding:2px 8px;border-radius:6px;">{{ ucfirst($start->locale('es')->translatedFormat('l j \d\e F \d\e Y')) }}</strong> · check-in desde las {{ $start->format('H:i') }} h<br>{{ $event->venue_name }}{{ $event->venue_city ? ', ' . $event->venue_city : '' }}</p>@endif
+      @if ($start)<p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:#14213d;"><strong style="color:#14213d;background:#fed304;padding:2px 8px;border-radius:6px;">{{ ucfirst($start->locale('es')->translatedFormat('l j \d\e F \d\e Y')) }}</strong> · recepción y registro desde las {{ $start->format('H:i') }} h<br>{{ $event->venue_name }}{{ $event->venue_city ? ', ' . $event->venue_city : '' }}</p>@endif
     </td></tr>
     @foreach ($tickets as $t)
     <tr><td style="padding:0 28px 14px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fffae3;border:2px solid #fed304;border-radius:16px;"><tr>
-        <td width="150" align="center" style="padding:14px;"><img src="{{ $message->embedData(\App\Support\QrCode::png($t->code, 8), $t->code . '.png', 'image/png') }}" width="122" height="122" alt="QR {{ $t->code }}" style="display:block;border-radius:8px;background:#ffffff;"></td>
-        <td style="padding:14px 14px 14px 0;color:#14213d;">
-          <div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#5b6478;">Entrada {{ $loop->iteration }} de {{ $tickets->count() }}</div>
+        <td width="124" align="center" style="padding:12px;"><img src="{{ $message->embedData(\App\Support\QrCode::png($t->code, 8), $t->code . '.png', 'image/png') }}" width="100" height="100" alt="QR {{ $t->code }}" style="display:block;width:100px;height:100px;border-radius:8px;background:#ffffff;"></td>
+        <td style="padding:12px 12px 12px 0;color:#14213d;">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#5b6478;white-space:nowrap;">Entrada {{ $loop->iteration }} de {{ $tickets->count() }}</div>
           <div style="font-size:18px;font-weight:700;margin:2px 0 8px;">{{ $t->attendee_name }}</div>
           <div style="font-size:12px;color:#5b6478;">Clave de acceso</div>
-          <div style="font-family:Consolas,Menlo,monospace;font-size:20px;font-weight:700;letter-spacing:1.5px;">{{ $t->code }}</div>
+          <div style="font-family:Consolas,Menlo,monospace;font-size:18px;font-weight:700;letter-spacing:1px;white-space:nowrap;">{{ $t->code }}</div>
         </td></tr></table>
     </td></tr>
     @endforeach
@@ -61,7 +61,7 @@
       Consulta las <a href="{{ $event->url('politicas') }}" style="color:#0d5bd6;">políticas del evento</a> y la <a href="{{ $event->url() }}" style="color:#0d5bd6;">página del evento</a>.
     </td></tr>
     <tr><td style="padding:14px 28px 28px;font-size:13px;color:#5b6478;">
-      @if ($event->contact_email || $event->contact_whatsapp)¿Dudas? Escríbenos @if ($event->contact_email)a <a href="mailto:{{ $event->contact_email }}" style="color:#0d5bd6;">{{ $event->contact_email }}</a>@endif @if ($event->contact_whatsapp)por WhatsApp al {{ $event->contact_whatsapp }}@endif.<br>@endif
+      @if ($event->contact_email || $event->contact_whatsapp)¿Dudas? Escríbenos @if ($event->contact_email)a <a href="mailto:{{ $event->contact_email }}" style="color:#0d5bd6;">{{ $event->contact_email }}</a>@endif{{ $event->contact_email && $event->contact_whatsapp ? ' o ' : '' }}@if ($event->contact_whatsapp)por WhatsApp al {{ $event->contact_whatsapp }}@endif.<br>@endif
       Organiza Horizontia.
     </td></tr>
   </table>

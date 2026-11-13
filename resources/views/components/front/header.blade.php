@@ -53,6 +53,11 @@
                                         <li class="nav-item ht-nav__item"><a class="nav-link {{ $active ? 'is-active' : '' }}" href="{{ $item['url'] }}" target="{{ $item['target'] }}" @if ($active) aria-current="page" @endif>{{ $item['label'] }}</a></li>
                                     @endif
                                 @endforeach
+                                @guest
+                                    @if (\App\Services\AccessRequestService::enabled())
+                                        <li class="nav-item ht-nav__item ht-nav__request"><a class="nav-link" href="{{ route('access.request') }}">Solicitar acceso</a></li>
+                                    @endif
+                                @endguest
                             </ul>
                         </div>
                     </nav>
@@ -62,7 +67,7 @@
                     @guest
                         <div class="am-loginbtns">
                             @if (\App\Services\AccessRequestService::enabled())
-                                <a href="{{ route('access.request') }}" class="am-request-link" style="margin-right: 18px; color: #14213d; font-weight: 700; text-decoration: none; white-space: nowrap;">Solicitar acceso</a>
+                                <a href="{{ route('access.request') }}" class="am-request-link am-request-link--top" style="margin-right: 18px; color: #14213d; font-weight: 700; text-decoration: none; white-space: nowrap;">Solicitar acceso</a>
                             @endif
                             <a href="{{ route('login') }}" class="am-btn">{{ __('general.login') }}</a>
                         </div>
