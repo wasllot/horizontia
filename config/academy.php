@@ -36,6 +36,9 @@ return [
     'timezone'      => env('ACADEMY_TIMEZONE', 'America/Mexico_City'),
 
     // Páginas de evento: intentos por minuto y por IP. Cada ruta tiene su propio contador. Súbelos si muchas personas comparten el mismo wifi.
+    // Direcciones (separadas por coma) que reciben el correo de Admin → Prueba de correo (/admin/prueba-de-correo).
+    'mail_test_to' => env('ACADEMY_MAIL_TEST_TO', 'rei.vzl@gmail.com,reinaldo@cuantica.agency'),
+
     'events' => [
         'cart_per_minute'     => (int) env('ACADEMY_EVENT_CART_PER_MINUTE', 30),
         'checkout_per_minute' => (int) env('ACADEMY_EVENT_CHECKOUT_PER_MINUTE', 12),

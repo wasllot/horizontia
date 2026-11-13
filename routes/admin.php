@@ -57,6 +57,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('eventos/{event}/compras.csv', \App\Http\Controllers\Admin\EventOrdersExportController::class)->whereNumber('event')->name('events.export');
     Route::get('cupones', \App\Livewire\Pages\Admin\Coupons\Coupons::class)->name('coupons');
     Route::get('reembolsos', \App\Livewire\Pages\Admin\Refunds\Refunds::class)->name('refunds');
+    Route::get('/prueba-de-correo', [\App\Http\Controllers\Admin\MailTestController::class, 'show'])->name('mail-test');
+    Route::post('/prueba-de-correo', [\App\Http\Controllers\Admin\MailTestController::class, 'send'])->middleware('throttle:6,1')->name('mail-test.send');
     Route::get('/estado-del-sistema', \App\Livewire\Pages\Admin\SystemStatus\SystemStatus::class)->name('system-status');
     Route::get('/banners-de-paginas', \App\Livewire\Pages\Admin\PageBanners\PageBanners::class)->name('page-banners');
     Route::get('/paginas-de-curso', \App\Livewire\Pages\Admin\CoursePages\CoursePages::class)->name('course-pages');
