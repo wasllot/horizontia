@@ -1277,6 +1277,13 @@ body.hz .hz-dialog__head { display: flex; align-items: center; justify-content: 
 body.hz .hz-dialog__head h3 { margin: 0; font-size: var(--hz-fs-xl); }
 body.hz .hz-dialog__body { padding: 12px 24px 8px; }
 body.hz .hz-dialog__foot { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 24px 22px; }
+body.hz .hz-dialog__foot .hz-dialog__start { margin-right: auto; }   /* acción secundaria a la izquierda (p. ej. «Copiar enlace») */
+@media (max-width: 560px) {
+    /* En móvil los botones no caben en una fila: se apilan a lo ancho y la acción principal queda arriba. */
+    body.hz .hz-dialog__foot { flex-direction: column-reverse; align-items: stretch; padding: 14px 20px 20px; }
+    body.hz .hz-dialog__foot .hz-btn { width: 100%; margin-right: 0; }
+    body.hz .hz-dialog__head, body.hz .hz-dialog__body { padding-left: 20px; padding-right: 20px; }
+}
 body.hz .hz-fgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px; }
 body.hz .hz-fgrid > .is-wide { grid-column: 1 / -1; }
 @media (max-width: 640px) { body.hz .hz-fgrid { grid-template-columns: minmax(0, 1fr); } }

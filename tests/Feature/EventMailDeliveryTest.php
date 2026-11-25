@@ -173,12 +173,104 @@ class EventMailDeliveryTest extends TestCase
         $this->assertStringContainsString('data-testid="copy-link-' . $order->id . '"', $html);
         $this->assertStringContainsString($order->code, $html, 'el enlace lleva el código no adivinable de la compra');
         $this->assertStringNotContainsString('@js(', $html, '@js no se evalúa dentro de atributos de componentes Blade: saldría tal cual y el botón no funcionaría');
-        $this->assertStringContainsString('window.prompt', $html);
-        $this->assertStringContainsString('oscar@cuantica.agency', $html, 'el aviso de reenvío ofrece el correo del comprador');
+        $this->assertStringNotContainsString('Enviar los boletos a este correo', $html, 'el reenvío ya no usa el cuadro nativo del navegador');
+        $this->assertStringContainsString('wire:click="openResend(' . $order->id . ')"', $html);
 
         auth()->logout();
         $page = $this->get($e->url('gracias') . '?order=' . $order->code)->assertOk()->getContent();
         $this->assertStringContainsString($order->tickets()->first()->code, $page);
+    }
+
+    // ================= Ventana «Reenviar boletos» =================
+
+    private function orders(Event $e)
+    {
+        return Livewire::test(\App\Livewire\Pages\Admin\Events\EventOrders::class, ['eventId' => $e->id]);
+    }
+
+    public function test_the_resend_dialog_opens_with_the_buyers_email_and_closes_without_sending(): void
+    {
+        Mail::fake();
+        $e = $this->event();
+        $order = $this->paidOrder($e);
+        $this->actingAs($this->admin());
+
+        $c = $this->orders($e)->assertDontSeeHtml('data-testid="resend-dialog"')
+            ->call('openResend', $order->id)
+            ->assertSet('sendingId', $order->id)
+            ->assertSet('sendTo', 'oscar@cuantica.agency')
+            ->assertSeeHtml('data-testid="resend-dialog"')
+            ->assertSee('Reenviar boletos')
+            ->assertSee('Compra #' . $order->id)
+            ->assertSeeHtml('data-testid="resend-copy"');
+        $c->call('cancelResend')->assertSet('sendingId', null)->assertDontSeeHtml('data-testid="resend-dialog"');
+        Mail::assertNotSent(EventTicketsEmail::class);
+    }
+
+    public function test_the_resend_dialog_sends_to_the_typed_address_and_closes(): void
+    {
+        Mail::fake();
+        $e = $this->event();
+        $order = $this->paidOrder($e);
+        $this->actingAs($this->admin());
+
+        $this->orders($e)->call('openResend', $order->id)
+            ->set('sendTo', '  Otro.Correo@Ejemplo.COM ')
+            ->call('sendResend')
+            ->assertHasNoErrors()
+            ->assertSet('sendingId', null)
+            ->assertDontSeeHtml('data-testid="resend-dialog"')
+            ->assertDispatched('showAlertMessage', fn ($event, $params) => ($params['type'] ?? null) === 'success' && str_contains($params['message'], 'otro.correo@ejemplo.com'));
+        Mail::assertSent(EventTicketsEmail::class, fn ($m) => $m->hasTo('otro.correo@ejemplo.com'));
+        $this->assertSame('oscar@cuantica.agency', $order->fresh()->email);
+    }
+
+    public function test_the_resend_dialog_validates_the_address_inline_and_stays_open(): void
+    {
+        Mail::fake();
+        $e = $this->event();
+        $order = $this->paidOrder($e);
+        $this->actingAs($this->admin());
+
+        $c = $this->orders($e)->call('openResend', $order->id);
+        $c->set('sendTo', 'no-es-un-correo')->call('sendResend')
+            ->assertHasErrors(['sendTo' => 'email'])
+            ->assertSet('sendingId', $order->id)
+            ->assertSee('Ese correo no parece válido');
+        $c->set('sendTo', '   ')->call('sendResend')->assertHasErrors(['sendTo' => 'required'])->assertSee('Escribe el correo');
+        Mail::assertNotSent(EventTicketsEmail::class);
+    }
+
+    public function test_the_resend_dialog_shows_the_smtp_error_inside_and_keeps_the_address(): void
+    {
+        $e = $this->event();
+        $order = $this->paidQuietly($e);
+        $this->brokenSmtp();
+        $this->actingAs($this->admin());
+
+        $this->orders($e)->call('openResend', $order->id)
+            ->set('sendTo', 'otro@ejemplo.com')
+            ->call('sendResend')
+            ->assertSet('sendingId', $order->id)
+            ->assertSet('sendTo', 'otro@ejemplo.com')
+            ->assertSee('No se pudo enviar a otro@ejemplo.com')
+            ->assertSeeHtml('data-testid="resend-error"')
+            ->assertNotDispatched('showAlertMessage');
+        $this->assertNull($order->fresh()->confirmation_sent_at);
+    }
+
+    public function test_the_resend_dialog_only_opens_for_paid_orders_of_that_event(): void
+    {
+        Mail::fake();
+        $e = $this->event();
+        $pending = app(EventSales::class)->createOrder($e, ['name' => 'Sin pagar', 'email' => 'sp@example.com', 'phone' => '1', 'items' => ['p1' => 1], 'attendees' => ['X']]);
+        $other = $this->paidOrder($this->event());
+        $this->actingAs($this->admin());
+
+        $this->orders($e)->call('openResend', $pending->id)->assertSet('sendingId', null)
+            ->assertDispatched('showAlertMessage', fn ($event, $params) => ($params['type'] ?? null) === 'error');
+        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        $this->orders($e)->call('openResend', $other->id);
     }
 
     public function test_failed_hooks_only_touch_their_own_order_and_flag(): void
