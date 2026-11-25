@@ -28,7 +28,7 @@ class EventContent
                 'text' => 'Aparta tu lugar y mira hacia arriba con nosotros.',
             ],
             'rooms' => [
-                'text' => 'Una vez que te inscribas, recibirás un correo de confirmación con un código para que realices la reservación y obtengas un precio especial (sujeto a disponibilidad).',
+                'text' => 'Una vez que te inscribas, recibirás un correo de confirmación con tu clave de confirmación: compártela con el hotel por WhatsApp para que te identifiquen y obtengas un precio especial (sujeto a disponibilidad).',
                 'code_note' => 'Reserva con el hotel usando este código y obtén un precio especial (sujeto a disponibilidad):',
             ],
             'sold_out' => 'Agotado',

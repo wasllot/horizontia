@@ -418,7 +418,7 @@ class EventTicketSalesTest extends TestCase
         $e = $this->event(['hotel_booking_url' => 'https://hotel.test/reservas', 'hotel_phone' => '+52 55 0000 0000']);
         $html = $this->get($e->url())->assertOk()->getContent();
         $this->assertStringContainsString('¿Prefieres habitación?', $html);
-        $this->assertStringContainsString('recibirás un correo de confirmación con un código', $html);
+        $this->assertStringContainsString('recibirás un correo de confirmación con tu clave de confirmación', $html);
         foreach (['Reservar habitación en el hotel', 'hotel.test', 'click_reserve_room', 'Llamar:'] as $gone) {
             $this->assertStringNotContainsString($gone, $html);
         }
@@ -428,17 +428,17 @@ class EventTicketSalesTest extends TestCase
         $this->get($e->url())->assertDontSee('¿Prefieres habitación?');
     }
 
-    public function test_confirmation_email_carries_the_hotel_code_when_set(): void
+    public function test_confirmation_email_carries_the_shared_room_code_when_set(): void
     {
         $e = $this->event(['content' => ['text' => ['rooms' => ['code' => 'ASTRO26']]]]);
         $order = EventOrder::create(['event_id' => $e->id, 'code' => strtolower((string) Str::ulid()), 'name' => 'Ana', 'email' => 'a@example.com', 'phone' => '5555555555', 'quantity' => 1, 'unit_price' => 1740, 'total' => 1740, 'iva' => 240, 'status' => 'paid']);
         EventTicket::create(['event_id' => $e->id, 'event_order_id' => $order->id, 'attendee_name' => 'Ana', 'code' => 'AF-HOTE-L123']);
         $mail = new EventTicketsEmail($order->fresh(['event', 'tickets']));
-        $mail->assertSeeInHtml('¿Prefieres habitación?');
+        $mail->assertSeeInHtml('¿PREFIERES HABITACIÓN?');
         $mail->assertSeeInHtml('ASTRO26');
 
         $e->update(['content' => []]);
-        (new EventTicketsEmail($order->fresh(['event', 'tickets'])))->assertSeeInHtml('En breve te compartiremos');
+        (new EventTicketsEmail($order->fresh(['event', 'tickets'])))->assertDontSeeInHtml('ASTRO26');
     }
 
     public function test_event_footer_shows_the_official_social_networks(): void

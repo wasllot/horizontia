@@ -14,12 +14,22 @@
                 <div><h2 style="margin:0 0 4px;font-size:1.15rem">{{ $t->attendee_name }}</h2><p style="margin:0">Clave de acceso</p><code>{{ $t->code }}</code></div>
             </div>
         @endforeach
-        @if ($event->show('rooms') && $order->roomCode())
+        @if ($order->confirmationKey())
             <div class="ev-card" style="margin:6px 0 16px">
-                <h2 style="margin:0 0 6px;font-size:1.15rem">¿Prefieres habitación?</h2>
-                <p style="margin:0 0 8px">Contacta al hotel con tu código de reservación: ya lo tiene registrado y te hace la reservación a un precio especial (sujeto a disponibilidad).</p>
-                <p style="margin:0"><code style="font-size:1.25rem;letter-spacing:.08em;color:var(--gold)">{{ $order->roomCode() }}</code></p>
+                <h2 style="margin:0 0 6px;font-size:1.15rem">Tu clave de confirmación</h2>
+                <p style="margin:0 0 6px"><code style="font-size:1.25rem;letter-spacing:.08em;color:var(--gold)">{{ $order->confirmationKey() }}</code></p>
+                <p class="ev-hint" style="margin:0">{{ $order->spaceLabel() }} · {{ $order->quantity }} {{ $order->quantity === 1 ? 'persona registrada' : 'personas registradas' }}</p>
             </div>
+            @if ($event->show('rooms'))
+                <div class="ev-card" style="margin:6px 0 16px">
+                    <h2 style="margin:0 0 6px;font-size:1.15rem">¿Prefieres habitación?</h2>
+                    <p style="margin:0">Si tienes interés en hacer cambio para una habitación en el hotel, comunícate
+                        @if ($event->hotelWhatsappUrl()) por WhatsApp al <a href="{{ $event->hotelWhatsappUrl() }}" target="_blank" rel="noopener"><strong>{{ $event->hotel_whatsapp }}</strong></a>
+                        @elseif ($event->hotel_phone) por teléfono al <strong>{{ $event->hotel_phone }}</strong>
+                        @else directamente con el hotel @endif
+                        y comparte tu clave de confirmación para que te identifiquen y te ofrezcan un precio especial (sujeto a disponibilidad).</p>
+                </div>
+            @endif
         @endif
         <p class="ev-hint">{{ $order->packagesLabel() }} · Total pagado: {{ $money($order->total) }} MXN · IVA incluido ({{ $money($order->iva) }}). Compra #{{ $order->id }}.</p>
         <div class="ev-actions">

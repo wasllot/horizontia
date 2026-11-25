@@ -68,10 +68,32 @@ class EventOrder extends Model
         return implode(' + ', array_map(fn ($l) => $l['qty'] . ' × ' . $l['name'], $this->lines()));
     }
 
-    /** Código con el que el comprador reserva habitación en el hotel: el suyo, o el general del evento si lo hay. */
+    /**
+     * Clave de confirmación de la compra (QR-XXXX-XXXX): la que el comprador comparte con el hotel por WhatsApp para que lo identifiquen
+     * y le den el precio especial. Se guarda en la columna hotel_code (se llamaba «código de hotel»); toda compra pagada tiene una.
+     */
+    public function confirmationKey(): ?string
+    {
+        return $this->hotel_code ?: null;
+    }
+
+    /** Código para reservar habitación: el general del evento si lo hay (opcional, se captura en Textos); si no, la clave de la compra. */
     public function roomCode(): ?string
     {
-        return $this->hotel_code ?: $this->event?->sharedHotelCode();
+        return $this->event?->sharedHotelCode() ?: $this->confirmationKey();
+    }
+
+    /** «Espacio para 2 personas» (una compra de un paquete) o, con varios paquetes, «2 × 2 personas + 1 × 1 persona». */
+    public function spaceLabel(): string
+    {
+        $lines = $this->lines();
+        if (count($lines) === 1 && (int) $lines[0]['qty'] === 1) {
+            $n = (int) ($lines[0]['persons'] ?? $this->quantity);
+
+            return 'Espacio para ' . $n . ' ' . ($n === 1 ? 'persona' : 'personas');
+        }
+
+        return $this->packagesLabel();
     }
 
     public function subtotalBeforeIva(): float

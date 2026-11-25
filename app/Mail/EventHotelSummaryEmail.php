@@ -11,7 +11,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 
-/** Lista final al hotel al cerrar las ventas: todos los códigos de reservación con quién compró (también va como CSV adjunto). */
+/** Lista final al hotel al cerrar las ventas: todas las claves de confirmación con quién compró (también va como CSV adjunto). */
 class EventHotelSummaryEmail extends Mailable
 {
     use Queueable, SerializesModels;
@@ -23,7 +23,7 @@ class EventHotelSummaryEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->event->name . ' · Lista final de códigos de reservación (' . $this->orders->count() . ')',
+            subject: $this->event->name . ' · Lista final de claves de confirmación (' . $this->orders->count() . ')',
             replyTo: $this->event->contact_email ? [$this->event->contact_email] : [],
         );
     }

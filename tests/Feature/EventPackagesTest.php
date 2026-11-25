@@ -280,28 +280,31 @@ class EventPackagesTest extends TestCase
 
     // ================= Código y aviso al hotel =================
 
-    public function test_every_paid_order_gets_its_own_unique_hotel_code(): void
+    public function test_every_paid_order_gets_its_own_unique_confirmation_key(): void
     {
         Mail::fake();
         $e = $this->event();
         $a = $this->paid($e);
         $b = $this->paid($e, ['p1' => 1], ['email' => 'luis@example.com']);
 
-        $this->assertMatchesRegularExpression('/^HAB-[A-Z2-9]{4}-[A-Z2-9]{4}$/', $a->hotel_code);
+        $this->assertMatchesRegularExpression('/^QR-[A-Z2-9]{4}-[A-Z2-9]{4}$/', $a->hotel_code);
+        $this->assertSame($a->hotel_code, $a->confirmationKey());
         $this->assertNotSame($a->hotel_code, $b->hotel_code);
-        $this->assertNull($this->order($e, ['p1' => 1])->hotel_code, 'una compra pendiente todavía no tiene código');
+        $this->assertNull($this->order($e, ['p1' => 1])->hotel_code, 'una compra pendiente todavía no tiene clave');
     }
 
-    public function test_hotel_code_is_not_assigned_when_rooms_are_hidden_and_a_shared_code_wins(): void
+    public function test_every_paid_order_has_a_key_even_without_hotel_section_and_a_shared_code_only_changes_the_room_code(): void
     {
         Mail::fake();
         $hidden = $this->paid($this->event(['content' => ['hide' => ['rooms' => true]]]));
-        $this->assertNull($hidden->hotel_code);
+        $this->assertNotNull($hidden->hotel_code, 'es la clave del registro: la lleva toda compra, haya o no sección de hotel');
+        $this->assertSame($hidden->hotel_code, $hidden->roomCode());
 
         $shared = $this->event(['content' => ['text' => ['rooms' => ['code' => 'ASTRO26']]]]);
         $order = $this->paid($shared);
-        $this->assertNull($order->hotel_code, 'con código general no se genera uno por compra');
-        $this->assertSame('ASTRO26', $order->roomCode());
+        $this->assertMatchesRegularExpression('/^QR-/', $order->hotel_code, 'la clave sigue siendo propia de cada compra');
+        $this->assertSame('ASTRO26', $order->roomCode(), 'el código general sigue valiendo para reservar habitación');
+        $this->assertSame($order->hotel_code, $order->confirmationKey());
     }
 
     public function test_hotel_gets_one_email_per_paid_order_with_the_code_and_buyer_data(): void
@@ -321,7 +324,10 @@ class EventPackagesTest extends TestCase
         $mail->assertSeeInHtml('55 9999 0000');
         $mail->assertSeeInHtml('1 × 2 personas + 1 × 1 persona');
         $mail->assertSeeInHtml('Asistente 1, Asistente 2, Asistente 3');
+        $mail->assertSeeInHtml('Confirmación de registro de participante');
+        $mail->assertSeeInHtml('Personas registradas:');
         $this->assertStringContainsString($order->hotel_code, $mail->envelope()->subject);
+        $this->assertStringContainsString('Confirmación de registro', $mail->envelope()->subject);
 
         $this->assertNotNull($order->fresh()->hotel_notified_at);
         $this->assertFalse(app(EventHotelNotifier::class)->notify($order->fresh()), 'ya se avisó: no se repite');
@@ -364,14 +370,15 @@ class EventPackagesTest extends TestCase
         $mail->assertSeeInHtml('1 × 1 persona ($1,300)');
         $mail->assertSeeInHtml($order->hotel_code);
         $mail->assertSeeInHtml('55 4766 8637');
-        $mail->assertSeeInHtml('el hotel ya lo tiene registrado');
+        $mail->assertSeeInHtml('comparte tu clave de confirmación');
+        $mail->assertSeeInHtml('https://wa.me/525547668637');
         $mail->assertSeeInHtml('recibe tu pulsera.');
         $html = $mail->render();
         $this->assertDoesNotMatchRegularExpression('/\bkit\b/i', $this->visibleText($html));
         $this->assertSame(5, substr_count($html, 'Clave de acceso'), 'una clave por persona');
     }
 
-    public function test_thanks_page_shows_the_hotel_code_to_the_buyer(): void
+    public function test_thanks_page_shows_the_confirmation_key_and_how_to_book_a_room(): void
     {
         Mail::fake();
         $e = $this->event();
@@ -399,13 +406,13 @@ class EventPackagesTest extends TestCase
         $this->assertNotNull($e->fresh()->hotel_summary_sent_at);
 
         $csv = $notifier->csv($e->fresh());
-        $this->assertStringContainsString('Código de reservación', $csv);
+        $this->assertStringContainsString('Clave de confirmación', $csv);
         $this->assertStringContainsString($a->hotel_code, $csv);
         $this->assertStringContainsString($b->hotel_code, $csv);
         $this->assertStringContainsString('luis@example.com', $csv);
         $this->assertStringContainsString("'=CMD", $csv, 'neutraliza fórmulas');
 
-        (new EventHotelSummaryEmail($e->fresh(), $notifier->orders($e), $csv))->assertSeeInHtml('Lista final de códigos de reservación');
+        (new EventHotelSummaryEmail($e->fresh(), $notifier->orders($e), $csv))->assertSeeInHtml('Lista final de claves de confirmación');
     }
 
     public function test_final_list_needs_orders_and_a_hotel_email(): void
@@ -595,10 +602,10 @@ class EventPackagesTest extends TestCase
     public function test_faq_explains_packages_arrival_and_the_hotel_code(): void
     {
         $text = $this->visibleText($this->get($this->event()->url())->assertOk()->getContent());
-        foreach (['¿Puedo comprar varios paquetes?', '2 paquetes de 2 personas y 1 de 1 persona', 'La recepción y el registro abren', 'el hotel ya lo tiene registrado', 'recibe tu pulsera.'] as $needle) {
+        foreach (['¿Puedo comprar varios paquetes?', '2 paquetes de 2 personas y 1 de 1 persona', 'La recepción y el registro abren', 'una clave de confirmación: compártela con el hotel por WhatsApp', 'recibe tu pulsera.'] as $needle) {
             $this->assertStringContainsString($needle, $text, "falta: $needle");
         }
-        $this->assertStringContainsString('recibirás un correo de confirmación con un código', $text);
+        $this->assertStringContainsString('recibirás un correo de confirmación con tu clave de confirmación', $text);
         $this->assertStringContainsString('precio especial (sujeto a disponibilidad)', $text);
     }
 
@@ -629,7 +636,7 @@ class EventPackagesTest extends TestCase
     {
         $with = $this->event(['hotel_email' => 'reservas@hotel.test']);
         $this->post($with->url('carrito'), ['items' => ['p1' => 1]]);
-        $this->get($with->url('pago'))->assertOk()->assertSee('compartimos con el hotel tu nombre, correo, teléfono y código de reservación');
+        $this->get($with->url('pago'))->assertOk()->assertSee('compartimos con el hotel tu nombre, correo, teléfono y clave de confirmación');
 
         $without = $this->event();
         $this->post($without->url('carrito'), ['items' => ['p1' => 1]]);

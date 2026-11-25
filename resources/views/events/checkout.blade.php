@@ -62,7 +62,7 @@
                 <label class="ev-check"><input type="checkbox" name="accept_policies" value="1" required @checked(old('accept_policies'))> <span>He leído y acepto las <a href="{{ $event->url('politicas') }}" target="_blank" rel="noopener">políticas del evento</a> (clima, cancelaciones y reglamento).</span></label>
                 @error('accept_policies')<p class="ev-err">{{ $message }}</p>@enderror
                 @if ($event->show('rooms') && $event->hotelEmails())
-                    <p class="ev-hint" style="margin:10px 0 0">Si reservas habitación, compartimos con el hotel tu nombre, correo, teléfono y código de reservación solo para validar tu precio especial.</p>
+                    <p class="ev-hint" style="margin:10px 0 0">Si reservas habitación, compartimos con el hotel tu nombre, correo, teléfono y clave de confirmación solo para validar tu precio especial.</p>
                 @endif
                 <label class="ev-check" style="margin-top:10px"><input type="checkbox" name="newsletter" value="1" @checked(old('newsletter'))> <span>Quiero recibir noticias de cursos y eventos (opcional).</span></label>
             </div>

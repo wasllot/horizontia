@@ -86,7 +86,7 @@ class MailTestController extends Controller
     {
         $order = new EventOrder([
             'id' => 0, 'event_id' => $event->id, 'name' => 'PRUEBA · Ejemplo de comprador', 'email' => 'ejemplo@example.com', 'phone' => '55 0000 0000',
-            'quantity' => 2, 'status' => EventOrder::PAID, 'hotel_code' => 'HAB-EJEM-PLO2', 'payment_id' => 'EJEMPLO',
+            'quantity' => 2, 'status' => EventOrder::PAID, 'hotel_code' => 'QR-EJEM-PLO2', 'payment_id' => 'EJEMPLO',
             'unit_price' => 100, 'discount' => 0, 'total' => 200, 'iva' => 27.59,
             'items' => [['key' => 'p2', 'name' => '2 personas', 'persons' => 2, 'qty' => 1, 'unit_price' => 200, 'subtotal' => 200]],
         ]);

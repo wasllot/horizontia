@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-/** Aviso al hotel: código de reservación de una compra pagada y los datos de quien compró, para dar el precio especial. */
+/** Aviso al hotel: clave de confirmación de una compra pagada y los datos de quien compró, para identificarlo y darle el precio especial. */
 class EventHotelCodeEmail extends Mailable
 {
     use Queueable, SerializesModels;
@@ -24,7 +24,7 @@ class EventHotelCodeEmail extends Mailable
         $event = $this->order->event;
 
         return new Envelope(
-            subject: $event->name . ' · Código de reservación ' . $this->order->roomCode() . ' · ' . $this->order->name,
+            subject: $event->name . ' · Confirmación de registro ' . ($this->order->confirmationKey() ?: $this->order->roomCode()) . ' · ' . $this->order->name,
             replyTo: $event->contact_email ? [$event->contact_email] : [],
         );
     }

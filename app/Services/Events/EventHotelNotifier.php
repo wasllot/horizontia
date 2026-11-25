@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 /**
- * Código de habitación de cada compra y aviso al hotel: al aprobarse un pago el hotel recibe el código con los datos de quien compró
- * (así valida la reservación y da el precio especial), y al cerrar las ventas recibe la lista completa.
+ * Clave de confirmación de cada compra y aviso al hotel: al aprobarse un pago el hotel recibe la clave con los datos de quien compró
+ * (quien compró se la da por WhatsApp, así lo identifican y le dan el precio especial), y al cerrar las ventas recibe la lista completa.
  */
 class EventHotelNotifier
 {
@@ -22,7 +22,7 @@ class EventHotelNotifier
     public function newCode(): string
     {
         do {
-            $code = 'HAB-' . $this->chunk() . '-' . $this->chunk();
+            $code = 'QR-' . $this->chunk() . '-' . $this->chunk();
         } while (EventOrder::where('hotel_code', $code)->exists());
 
         return $code;
@@ -33,17 +33,16 @@ class EventHotelNotifier
         return substr(str_shuffle(str_repeat(self::ALPHABET, 2)), 0, 4);
     }
 
-    /** Cada compra pagada recibe su código, salvo que el evento use un código general (entonces todos comparten ese). */
+    /** Toda compra pagada recibe su clave de confirmación (también sin sección de hotel: es la clave del registro). */
     public function assignCode(EventOrder $order): void
     {
-        $order->loadMissing('event');
-        if ($order->hotel_code || !$order->event->show('rooms') || $order->event->sharedHotelCode()) {
+        if ($order->hotel_code) {
             return;
         }
         $order->update(['hotel_code' => $this->newCode()]);
     }
 
-    /** El hotel recibe el código y los datos de la compra. Una sola vez por compra (se puede forzar desde el panel). */
+    /** El hotel recibe la clave y los datos de la compra. Una sola vez por compra (se puede forzar desde el panel). */
     public function notify(EventOrder $order): bool
     {
         $order->loadMissing('event');
@@ -72,7 +71,7 @@ class EventHotelNotifier
         }
     }
 
-    /** Compras pagadas con código, de la más antigua a la más reciente. */
+    /** Compras pagadas con clave, de la más antigua a la más reciente. */
     public function orders(Event $event): Collection
     {
         return EventOrder::where('event_id', $event->id)->where('status', EventOrder::PAID)->with(['tickets', 'event'])->orderBy('paid_at')->orderBy('id')->get()
@@ -85,10 +84,10 @@ class EventHotelNotifier
         $safe = fn ($v) => is_string($v) && preg_match('/^[=+\-@\t\r]/', $v) ? "'" . $v : $v;
         $out = fopen('php://temp', 'w+');
         fwrite($out, "\xEF\xBB\xBF");
-        fputcsv($out, ['Código de reservación', 'Titular', 'Correo', 'Teléfono', 'Personas', 'Paquetes', 'Asistentes', 'Pagado el (hora de México)']);
+        fputcsv($out, ['Clave de confirmación', 'Titular', 'Correo', 'Teléfono', 'Personas', 'Paquetes', 'Asistentes', 'Pagado el (hora de México)']);
         foreach ($this->orders($event) as $o) {
             fputcsv($out, array_map($safe, [
-                $o->roomCode(), $o->name, $o->email, $o->phone, $o->quantity, $o->packagesLabel(),
+                $o->confirmationKey() ?: $o->roomCode(), $o->name, $o->email, $o->phone, $o->quantity, $o->packagesLabel(),
                 $o->tickets->pluck('attendee_name')->implode('; '),
                 $o->paid_at?->timezone(Event::timezone())->format('Y-m-d H:i'),
             ]));

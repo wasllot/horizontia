@@ -98,8 +98,87 @@ class EventMailDeliveryTest extends TestCase
             ->assertSee('SIN ENVIAR')
             ->call('resend', $order->id);
 
-        Mail::assertQueued(EventTicketsEmail::class, fn ($m) => $m->hasTo('oscar@cuantica.agency'));
-        $this->assertNotNull($order->fresh()->confirmation_sent_at);
+        Mail::assertSent(EventTicketsEmail::class, fn ($m) => $m->hasTo('oscar@cuantica.agency'));
+        $this->assertNotNull($order->fresh()->confirmation_sent_at, 'el reenvío vuelve a marcarla como enviada');
+    }
+
+    /** Compra pagada SIN pasar por los correos automáticos (para probar el reenvío con el SMTP caído). */
+    private function paidQuietly(Event $e): EventOrder
+    {
+        $order = app(EventSales::class)->createOrder($e, ['name' => 'Oscar Cota', 'email' => 'oscar@cuantica.agency', 'phone' => '4772918443', 'items' => ['p1' => 1], 'attendees' => ['Oscar Cota']]);
+        EventOrder::where('id', $order->id)->update(['status' => EventOrder::PAID, 'paid_at' => now(), 'payment_id' => 'PAY-Q', 'hotel_code' => 'QR-QUIE-TOS1']);
+
+        return $order->fresh();
+    }
+
+    public function test_resend_goes_out_immediately_not_through_the_queue_and_can_use_another_address(): void
+    {
+        Mail::fake();
+        $e = $this->event();
+        $order = $this->paidOrder($e);
+        Mail::assertQueued(EventTicketsEmail::class, 1);   // la del pago
+        $this->actingAs($this->admin());
+
+        $c = Livewire::test(\App\Livewire\Pages\Admin\Events\EventOrders::class, ['eventId' => $e->id]);
+        $c->call('resend', $order->id);
+        Mail::assertSent(EventTicketsEmail::class, fn ($m) => $m->hasTo('oscar@cuantica.agency'));
+        Mail::assertQueued(EventTicketsEmail::class, 1);   // el reenvío no fue a la cola
+
+        $c->call('resend', $order->id, '  Otro.Correo@Ejemplo.COM ');
+        Mail::assertSent(EventTicketsEmail::class, fn ($m) => $m->hasTo('otro.correo@ejemplo.com'));
+        $c->assertDispatched('showAlertMessage', fn ($event, $params) => ($params['type'] ?? null) === 'success' && str_contains($params['message'], 'otro.correo@ejemplo.com'));
+        $this->assertSame('oscar@cuantica.agency', $order->fresh()->email, 'mandarlo a otro correo no cambia el de la compra');
+    }
+
+    public function test_resend_rejects_an_invalid_address_and_unpaid_orders_without_sending(): void
+    {
+        Mail::fake();
+        $e = $this->event();
+        $order = $this->paidOrder($e);
+        $pending = app(EventSales::class)->createOrder($e, ['name' => 'Sin pagar', 'email' => 'sp@example.com', 'phone' => '1', 'items' => ['p1' => 1], 'attendees' => ['X']]);
+        $this->actingAs($this->admin());
+
+        $c = Livewire::test(\App\Livewire\Pages\Admin\Events\EventOrders::class, ['eventId' => $e->id]);
+        $c->call('resend', $order->id, 'no-es-un-correo')
+            ->assertDispatched('showAlertMessage', fn ($event, $params) => ($params['type'] ?? null) === 'error' && str_contains($params['message'], 'no es un correo válido'));
+        $c->call('resend', $pending->id)
+            ->assertDispatched('showAlertMessage', fn ($event, $params) => ($params['type'] ?? null) === 'error' && str_contains($params['message'], 'compras pagadas'));
+        Mail::assertNotSent(EventTicketsEmail::class);
+    }
+
+    public function test_resend_shows_the_real_smtp_error_instead_of_a_fake_success(): void
+    {
+        $e = $this->event();
+        $order = $this->paidQuietly($e);
+        $this->brokenSmtp();
+        $this->actingAs($this->admin());
+
+        Livewire::test(\App\Livewire\Pages\Admin\Events\EventOrders::class, ['eventId' => $e->id])
+            ->call('resend', $order->id)
+            ->assertDispatched('showAlertMessage', fn ($event, $params) => ($params['type'] ?? null) === 'error'
+                && str_contains($params['message'], 'No se pudo enviar a oscar@cuantica.agency')
+                && str_contains($params['message'], 'Copiar enlace de los boletos')
+                && ($params['autoclose'] ?? 0) >= 10000);
+        $this->assertNull($order->fresh()->confirmation_sent_at, 'si no salió, no queda marcada como enviada');
+    }
+
+    public function test_the_copy_link_opens_the_tickets_page_with_every_qr_and_works_without_logging_in(): void
+    {
+        Mail::fake();
+        $e = $this->event();
+        $order = $this->paidOrder($e);
+        $this->actingAs($this->admin());
+
+        $html = Livewire::test(\App\Livewire\Pages\Admin\Events\EventOrders::class, ['eventId' => $e->id])->html();
+        $this->assertStringContainsString('data-testid="copy-link-' . $order->id . '"', $html);
+        $this->assertStringContainsString($order->code, $html, 'el enlace lleva el código no adivinable de la compra');
+        $this->assertStringNotContainsString('@js(', $html, '@js no se evalúa dentro de atributos de componentes Blade: saldría tal cual y el botón no funcionaría');
+        $this->assertStringContainsString('window.prompt', $html);
+        $this->assertStringContainsString('oscar@cuantica.agency', $html, 'el aviso de reenvío ofrece el correo del comprador');
+
+        auth()->logout();
+        $page = $this->get($e->url('gracias') . '?order=' . $order->code)->assertOk()->getContent();
+        $this->assertStringContainsString($order->tickets()->first()->code, $page);
     }
 
     public function test_failed_hooks_only_touch_their_own_order_and_flag(): void
@@ -136,7 +215,7 @@ class EventMailDeliveryTest extends TestCase
         $this->assertStringContainsString('AF-EJEM-PLO2', $html);
         $this->assertStringContainsString('Tus entradas', (string) $email->getSubject());
         $inline = array_filter($email->getAttachments(), fn ($p) => $p->getMediaType() === 'image');
-        $this->assertCount(3, $inline, 'el logo y un QR por entrada, todos incrustados');
+        $this->assertCount(4, $inline, 'el banner, la mascota y un QR por entrada, todos incrustados');
 
         $page = $this->get('/admin/prueba-de-correo')->assertOk()->getContent();
         $this->assertStringContainsString('correo de entradas de ejemplo', $page);

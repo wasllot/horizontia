@@ -48,6 +48,71 @@ class Event extends Model
         return $date?->copy()->timezone(self::timezone());
     }
 
+    /**
+     * Fechas para los correos: «sábado 12 y domingo 13 de diciembre de 2026» (dos días seguidos), «del viernes 11 al domingo 13 de
+     * diciembre de 2026» (más de dos) o un solo día. En la zona horaria del evento, no en UTC.
+     */
+    public function datesLabel(): ?string
+    {
+        [$start, $end] = $this->localDays();
+        if (!$start) {
+            return null;
+        }
+        if (!$end) {
+            return $start->translatedFormat('l j \d\e F \d\e Y');
+        }
+        $consecutive = $start->copy()->addDay()->isSameDay($end);
+        $sameMonth = $start->format('Y-m') === $end->format('Y-m');
+        if ($sameMonth) {
+            return $consecutive
+                ? $start->translatedFormat('l j') . ' y ' . $end->translatedFormat('l j \d\e F \d\e Y')
+                : 'del ' . $start->translatedFormat('l j') . ' al ' . $end->translatedFormat('l j \d\e F \d\e Y');
+        }
+        $from = $start->translatedFormat('l j \d\e F' . ($start->year === $end->year ? '' : ' \d\e Y'));
+
+        return ($consecutive ? $from . ' y ' : 'del ' . $from . ' al ') . $end->translatedFormat('l j \d\e F \d\e Y');
+    }
+
+    /** Para despedirse: «el 12 y 13 de diciembre», «del 12 al 14 de diciembre» o «el 12 de diciembre». */
+    public function closingDatesLabel(): ?string
+    {
+        [$start, $end] = $this->localDays();
+        if (!$start) {
+            return null;
+        }
+        if (!$end) {
+            return 'el ' . $start->translatedFormat('j \d\e F');
+        }
+        if ($start->format('Y-m') === $end->format('Y-m')) {
+            return ($start->copy()->addDay()->isSameDay($end) ? 'el ' . $start->format('j') . ' y ' : 'del ' . $start->format('j') . ' al ') . $end->translatedFormat('j \d\e F');
+        }
+
+        return 'del ' . $start->translatedFormat('j \d\e F') . ' al ' . $end->translatedFormat('j \d\e F');
+    }
+
+    /** @return array{0: ?Carbon, 1: ?Carbon} inicio y fin en español; el fin es null si cae el mismo día. */
+    private function localDays(): array
+    {
+        $start = $this->local($this->start_at)?->locale('es');
+        $end = $this->local($this->end_at)?->locale('es');
+        if ($start && $end && $end->isSameDay($start)) {
+            $end = null;
+        }
+
+        return [$start, $end];
+    }
+
+    /** Enlace de WhatsApp del hotel (wa.me) a partir del número capturado; null si no hay número o no es válido. */
+    public function hotelWhatsappUrl(): ?string
+    {
+        $digits = preg_replace('/\D+/', '', (string) $this->hotel_whatsapp);
+        if (strlen((string) $digits) === 10) {
+            $digits = '52' . $digits;   // número mexicano capturado sin lada de país
+        }
+
+        return strlen((string) $digits) >= 11 ? 'https://wa.me/' . $digits : null;
+    }
+
     public function url(string $path = ''): string
     {
         return url('/eventos/' . $this->slug . ($path !== '' ? '/' . ltrim($path, '/') : ''));

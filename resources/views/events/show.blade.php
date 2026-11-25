@@ -561,7 +561,7 @@
                 ],
             ];
             if ($event->show('rooms')) {
-                $faq['Boletos y pagos'][] = ['¿Puedo compartir habitación con mis amigos o familia?', 'Sí. Al inscribirte recibes por correo un código de reservación: el hotel ya lo tiene registrado y, con él, te hace la reservación a un precio especial (sujeto a disponibilidad). Cada persona necesita su lugar en Astrofest.'];
+                $faq['Boletos y pagos'][] = ['¿Puedo compartir habitación con mis amigos o familia?', 'Sí. Al inscribirte recibes por correo una clave de confirmación: compártela con el hotel por WhatsApp (el número viene en el correo) para que te identifiquen y te hagan la reservación a un precio especial (sujeto a disponibilidad). Cada persona necesita su lugar en Astrofest.'];
             }
             $cols = [array_slice($faq, 0, 2, true), array_slice($faq, 2, 2, true)];
         @endphp

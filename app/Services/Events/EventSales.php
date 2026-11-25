@@ -262,6 +262,21 @@ class EventSales
         return EventOrder::where('status', EventOrder::PENDING)->where('expires_at', '<', now())->update(['status' => EventOrder::EXPIRED]);
     }
 
+    /**
+     * Envío inmediato (sin cola ni cron) de la confirmación con los boletos, para el botón «Reenviar» del panel: si el servidor
+     * SMTP la rechaza lanza la excepción real, para que quien la pulsa vea el motivo en vez de un «reenviado» que no llega nunca.
+     * $to permite mandarla a otro correo (el del comprador puede estar mal escrito o caer en su spam).
+     */
+    public function sendConfirmationNow(EventOrder $order, ?string $to = null): void
+    {
+        if (!$order->isPaid()) {
+            throw new \LogicException('Solo se envían boletos de compras pagadas.');
+        }
+        app(EventHotelNotifier::class)->assignCode($order);   // compras anteriores a las claves de confirmación no la tienen
+        Mail::to($to ?: $order->email)->send(new EventTicketsEmail($order->fresh(['event', 'tickets'])));
+        EventOrder::where('id', $order->id)->update(['confirmation_sent_at' => now()]);
+    }
+
     public function sendConfirmation(EventOrder $order): void
     {
         if (!$order->isPaid() || $order->confirmation_sent_at) {

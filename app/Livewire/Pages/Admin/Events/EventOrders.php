@@ -6,6 +6,8 @@ use App\Models\Event;
 use App\Models\EventOrder;
 use App\Services\Events\EventHotelNotifier;
 use App\Services\Events\EventSales;
+use App\Support\MailDiagnostics;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -34,22 +36,39 @@ class EventOrders extends Component
         }
     }
 
-    private function toast(string $message, string $type = 'success'): void
+    private function toast(string $message, string $type = 'success', int $autoclose = 2000): void
     {
-        $this->dispatch('showAlertMessage', type: $type, title: $type === 'success' ? __('general.success_title') : 'Atención', message: $message);
+        $this->dispatch('showAlertMessage', type: $type, title: $type === 'success' ? __('general.success_title') : 'Atención', message: $message, autoclose: $autoclose);
     }
 
-    public function resend(int $orderId): void
+    /**
+     * Reenvía los boletos AHORA (directo por SMTP, sin pasar por la cola) al correo indicado, o al del comprador. Si el servidor
+     * de correo falla, el aviso dice por qué; si lo acepta, dice que llegó al servidor (no que ya esté en la bandeja).
+     */
+    public function resend(int $orderId, ?string $to = null): void
     {
         $order = EventOrder::where('event_id', $this->eventId)->findOrFail($orderId);
         if (!$order->isPaid()) {
-            $this->toast('Solo se reenvía la confirmación de compras pagadas.', 'error');
+            $this->toast('Solo se reenvía la confirmación de compras pagadas.', 'error', 5000);
 
             return;
         }
-        $order->update(['confirmation_sent_at' => null]);
-        app(EventSales::class)->sendConfirmation($order->fresh());
-        $this->toast('Confirmación reenviada a ' . $order->email . '.');
+        $to = mb_strtolower(trim((string) ($to ?: $order->email)));
+        if (!filter_var($to, FILTER_VALIDATE_EMAIL)) {
+            $this->toast('«' . mb_substr($to, 0, 80) . '» no es un correo válido.', 'error', 5000);
+
+            return;
+        }
+        try {
+            app(EventSales::class)->sendConfirmationNow($order, $to);
+        } catch (\Throwable $e) {
+            $info = MailDiagnostics::describe($e, [config('mail.mailers.smtp.password'), config('mail.mailers.smtp.username')]);
+            Log::error('Evento: el reenvío de boletos falló', ['order' => $order->id, 'error' => $info['message']]);
+            $this->toast('No se pudo enviar a ' . $to . '. ' . ($info['hint'] ?: mb_substr($info['message'], 0, 220)) . ' Mientras, usa «Copiar enlace de los boletos» y mándalo por WhatsApp.', 'error', 15000);
+
+            return;
+        }
+        $this->toast('El servidor de correo aceptó los boletos para ' . $to . '. Si no los ve en unos minutos, que revise spam o usa «Copiar enlace de los boletos».', 'success', 9000);
     }
 
     public function resendHotel(int $orderId): void
